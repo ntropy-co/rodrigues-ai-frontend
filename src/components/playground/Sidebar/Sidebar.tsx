@@ -11,7 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 const SidebarHeader = () => (
   <div className="flex items-center gap-2">
     <Icon type="agno" size="xs" />
-    <span className="text-xs font-medium uppercase text-white">Ubyfol AI</span>
+    <span className="text-sm font-medium uppercase text-white">Ubyfol AI</span>
   </div>
 )
 
@@ -26,7 +26,7 @@ const NewChatButton = ({
     onClick={onClick}
     disabled={disabled}
     size="lg"
-    className="h-9 w-full rounded-xl bg-primary text-xs font-medium text-background hover:bg-primary/80"
+    className="h-10 w-full rounded-xl bg-primary text-sm font-medium text-background hover:bg-primary/80"
   >
     <Icon type="plus-icon" size="xs" className="text-background" />
     <span className="uppercase">New Chat</span>
@@ -95,7 +95,7 @@ const Sidebar = () => {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, ease: 'easeInOut' }}
             >
-              <div className="text-xs font-medium uppercase text-primary">
+              <div className="text-sm font-medium uppercase text-primary">
                 Agent
               </div>
               {isEndpointLoading ? (

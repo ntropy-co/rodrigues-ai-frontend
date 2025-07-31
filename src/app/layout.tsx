@@ -16,9 +16,9 @@ const dmMono = DM_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Agent UI',
+  title: 'Dr. Ubyfol - Especialista em Nutrição Foliar',
   description:
-    'A modern chat interface for AI agents built with Next.js, Tailwind CSS, and TypeScript. This template provides a ready-to-use UI for interacting with Agno agents.'
+    'Consulte o Dr. Ubyfol, especialista em nutrição vegetal da Ubyfol - líder brasileira em nutrição foliar desde 1985. Obtenha orientações técnicas especializadas para suas culturas.'
 }
 
 export default function RootLayout({
