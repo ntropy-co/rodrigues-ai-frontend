@@ -8,10 +8,14 @@ import { useState, useEffect } from 'react'
 import Icon from '@/components/ui/icon'
 import Sessions from './Sessions'
 import { Skeleton } from '@/components/ui/skeleton'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 const SidebarHeader = () => (
-  <div className="flex items-center gap-2">
-    <Icon type="agno" size="xs" />
-    <span className="text-sm font-medium uppercase text-white">Ubyfol AI</span>
+  <div className="flex items-center justify-between w-full">
+    <div className="flex items-center gap-2">
+      <Icon type="agno" size="xs" />
+      <span className="text-sm font-medium uppercase text-white">Ubyfol AI</span>
+    </div>
+    <ThemeToggle />
   </div>
 )
 
