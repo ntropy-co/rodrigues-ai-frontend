@@ -5,26 +5,36 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
+# Enable pnpm and create cache directory
+RUN corepack enable pnpm && pnpm config set store-dir /pnpm-store
+
+# Install dependencies with cache mount
 COPY package.json pnpm-lock.yaml* ./
-RUN corepack enable pnpm && pnpm i --frozen-lockfile
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm-store \
+    pnpm i --frozen-lockfile
 
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
+
+# Copy installed dependencies
 COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/package.json ./package.json
+COPY --from=deps /app/pnpm-lock.yaml* ./
 
-# Copy source files (excluding node_modules to avoid conflicts)
-COPY package.json pnpm-lock.yaml* ./
-COPY src ./src
-COPY *.config.* ./
+# Copy configuration files first (better caching)
+COPY next.config.ts ./
+COPY tailwind.config.ts ./
+COPY postcss.config.mjs ./
+COPY tsconfig.json ./
 COPY *.json ./
-COPY *.ts ./
-COPY *.js ./
-COPY *.mjs ./
 
-# Build the app
-RUN corepack enable pnpm && pnpm run build
+# Copy source files
+COPY src ./src
+
+# Build with Next.js cache mount
+RUN --mount=type=cache,target=/app/.next/cache \
+    corepack enable pnpm && pnpm run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
