@@ -32,15 +32,27 @@ const useSessionLoader = () => {
     (state) => state.setIsSessionsLoading
   )
   const setSessionsData = usePlaygroundStore((state) => state.setSessionsData)
+  
+  // Função para obter user ID do localStorage
+  const getCurrentUserId = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('ubyfol_user_id')
+    }
+    return null
+  }, [])
 
   const getSessions = useCallback(
     async (agentId: string) => {
       if (!agentId || !selectedEndpoint) return
+      const userId = getCurrentUserId()
+      if (!userId) return
+      
       try {
         setIsSessionsLoading(true)
         const sessions = await getAllPlaygroundSessionsAPI(
           selectedEndpoint,
-          agentId
+          agentId,
+          userId
         )
         setSessionsData(sessions)
       } catch {
@@ -49,7 +61,7 @@ const useSessionLoader = () => {
         setIsSessionsLoading(false)
       }
     },
-    [selectedEndpoint, setSessionsData, setIsSessionsLoading]
+    [selectedEndpoint, setSessionsData, setIsSessionsLoading, getCurrentUserId]
   )
 
   const getSession = useCallback(
@@ -57,12 +69,16 @@ const useSessionLoader = () => {
       if (!sessionId || !agentId || !selectedEndpoint) {
         return null
       }
+      
+      const userId = getCurrentUserId()
+      if (!userId) return null
 
       try {
         const response = (await getPlaygroundSessionAPI(
           selectedEndpoint,
           agentId,
-          sessionId
+          sessionId,
+          userId
         )) as SessionResponse
 
         if (response && response.memory) {
@@ -152,7 +168,7 @@ const useSessionLoader = () => {
         return null
       }
     },
-    [selectedEndpoint, setMessages]
+    [selectedEndpoint, setMessages, getCurrentUserId]
   )
 
   return { getSession, getSessions }

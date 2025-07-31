@@ -38,15 +38,18 @@ export const getPlaygroundStatusAPI = async (base: string): Promise<number> => {
 
 export const getAllPlaygroundSessionsAPI = async (
   base: string,
-  agentId: string
+  agentId: string,
+  userId?: string
 ): Promise<SessionEntry[]> => {
   try {
-    const response = await fetch(
-      APIRoutes.GetPlaygroundSessions(base, agentId),
-      {
-        method: 'GET'
-      }
-    )
+    let url = APIRoutes.GetPlaygroundSessions(base, agentId)
+    if (userId) {
+      url += `?user_id=${encodeURIComponent(userId)}`
+    }
+    
+    const response = await fetch(url, {
+      method: 'GET'
+    })
     if (!response.ok) {
       if (response.status === 404) {
         // Return empty array when storage is not enabled
@@ -63,14 +66,17 @@ export const getAllPlaygroundSessionsAPI = async (
 export const getPlaygroundSessionAPI = async (
   base: string,
   agentId: string,
-  sessionId: string
+  sessionId: string,
+  userId?: string
 ) => {
-  const response = await fetch(
-    APIRoutes.GetPlaygroundSession(base, agentId, sessionId),
-    {
-      method: 'GET'
-    }
-  )
+  let url = APIRoutes.GetPlaygroundSession(base, agentId, sessionId)
+  if (userId) {
+    url += `?user_id=${encodeURIComponent(userId)}`
+  }
+  
+  const response = await fetch(url, {
+    method: 'GET'
+  })
   return response.json()
 }
 

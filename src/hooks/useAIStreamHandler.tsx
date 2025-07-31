@@ -21,7 +21,7 @@ import { getJsonMarkdown } from '@/lib/utils'
  */
 const useAIChatStreamHandler = () => {
   const setMessages = usePlaygroundStore((state) => state.setMessages)
-  const { addMessage, focusChatInput } = useChatActions()
+  const { addMessage, focusChatInput, getCurrentUserId } = useChatActions()
   const [agentId] = useQueryState('agent')
   const [sessionId, setSessionId] = useQueryState('session')
   const selectedEndpoint = usePlaygroundStore((state) => state.selectedEndpoint)
@@ -156,6 +156,7 @@ const useAIChatStreamHandler = () => {
 
         formData.append('stream', 'true')
         formData.append('session_id', sessionId ?? '')
+        formData.append('user_id', getCurrentUserId())
 
         await streamResponse({
           apiUrl: playgroundRunUrl,
@@ -384,7 +385,8 @@ const useAIChatStreamHandler = () => {
       sessionId,
       setSessionId,
       hasStorage,
-      processChunkToolCalls
+      processChunkToolCalls,
+      getCurrentUserId
     ]
   )
 

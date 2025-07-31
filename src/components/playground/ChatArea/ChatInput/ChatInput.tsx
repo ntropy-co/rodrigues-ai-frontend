@@ -7,16 +7,21 @@ import { usePlaygroundStore } from '@/store'
 import useAIChatStreamHandler from '@/hooks/useAIStreamHandler'
 import { useQueryState } from 'nuqs'
 import Icon from '@/components/ui/icon'
+import useChatActions from '@/hooks/useChatActions'
 
 const ChatInput = () => {
   const { chatInputRef } = usePlaygroundStore()
 
   const { handleStreamResponse } = useAIChatStreamHandler()
+  const { ensureSessionExists } = useChatActions()
   const [selectedAgent] = useQueryState('agent')
   const [inputMessage, setInputMessage] = useState('')
   const isStreaming = usePlaygroundStore((state) => state.isStreaming)
   const handleSubmit = async () => {
     if (!inputMessage.trim()) return
+
+    // Garantir que existe uma sessão antes de enviar a mensagem
+    ensureSessionExists()
 
     const currentMessage = inputMessage
     setInputMessage('')
@@ -35,7 +40,7 @@ const ChatInput = () => {
   return (
     <div className="relative mx-auto mb-1 flex w-full max-w-2xl items-end justify-center gap-x-2 font-geist">
       <TextArea
-        placeholder={'Ask anything'}
+        placeholder={'Como posso ajudar com nutrição foliar hoje?'}
         value={inputMessage}
         onChange={(e) => setInputMessage(e.target.value)}
         onKeyDown={(e) => {

@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { toast } from 'sonner'
 
 import { usePlaygroundStore } from '../store'
@@ -13,7 +13,7 @@ import { useQueryState } from 'nuqs'
 const useChatActions = () => {
   const { chatInputRef } = usePlaygroundStore()
   const selectedEndpoint = usePlaygroundStore((state) => state.selectedEndpoint)
-  const [, setSessionId] = useQueryState('session')
+  const [sessionId, setSessionId] = useQueryState('session')
   const setMessages = usePlaygroundStore((state) => state.setMessages)
   const setIsEndpointActive = usePlaygroundStore(
     (state) => state.setIsEndpointActive
@@ -24,6 +24,78 @@ const useChatActions = () => {
   const setAgents = usePlaygroundStore((state) => state.setAgents)
   const setSelectedModel = usePlaygroundStore((state) => state.setSelectedModel)
   const [agentId, setAgentId] = useQueryState('agent')
+  
+  // Função para gerar um novo user ID (UUID)
+  const generateUserId = useCallback(() => {
+    return `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  }, [])
+  
+  // Função para gerar um novo session ID
+  const generateSessionId = useCallback(() => {
+    return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  }, [])
+  
+  // Função para salvar user ID no localStorage
+  const saveUserIdToStorage = useCallback((userId: string) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('ubyfol_user_id', userId)
+    }
+  }, [])
+  
+  // Função para carregar user ID do localStorage
+  const loadUserIdFromStorage = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('ubyfol_user_id')
+    }
+    return null
+  }, [])
+  
+  // Função para garantir que existe um user ID
+  const ensureUserIdExists = useCallback(() => {
+    let userId = loadUserIdFromStorage()
+    if (!userId) {
+      userId = generateUserId()
+      saveUserIdToStorage(userId)
+    }
+    return userId
+  }, [loadUserIdFromStorage, generateUserId, saveUserIdToStorage])
+  
+  // Função para salvar session ID no localStorage
+  const saveSessionIdToStorage = useCallback((sessionId: string) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('ubyfol_current_session_id', sessionId)
+    }
+  }, [])
+  
+  
+  // Função para criar uma nova sessão automaticamente
+  const ensureSessionExists = useCallback(() => {
+    if (!sessionId) {
+      const newSessionId = generateSessionId()
+      setSessionId(newSessionId)
+      saveSessionIdToStorage(newSessionId)
+    }
+  }, [sessionId, setSessionId, generateSessionId, saveSessionIdToStorage])
+  
+  // Função para criar uma nova sessão (sempre nova)
+  const createNewSession = useCallback(() => {
+    const newSessionId = generateSessionId()
+    setSessionId(newSessionId)
+    saveSessionIdToStorage(newSessionId)
+    return newSessionId
+  }, [generateSessionId, setSessionId, saveSessionIdToStorage])
+  
+  // Função para obter o user ID atual
+  const getCurrentUserId = useCallback(() => {
+    return ensureUserIdExists()
+  }, [ensureUserIdExists])
+  
+  // Efeito para criar nova sessão quando agente for selecionado
+  useEffect(() => {
+    if (agentId && agentId !== 'no-agents' && !sessionId) {
+      createNewSession()
+    }
+  }, [agentId, sessionId, createNewSession])
 
   const getStatus = useCallback(async () => {
     try {
@@ -46,9 +118,10 @@ const useChatActions = () => {
 
   const clearChat = useCallback(() => {
     setMessages([])
-    setSessionId(null)
+    // Criar uma nova sessão automaticamente
+    createNewSession()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [createNewSession])
 
   const focusChatInput = useCallback(() => {
     setTimeout(() => {
@@ -72,10 +145,12 @@ const useChatActions = () => {
       if (status === 200) {
         setIsEndpointActive(true)
         agents = await getAgents()
-        if (agents.length > 0 && !agentId) {
-          const firstAgent = agents[0]
-          setAgentId(firstAgent.value)
-          setSelectedModel(firstAgent.model.provider || '')
+        if (agents.length > 0) {
+          if (!agentId || agentId === 'no-agents') {
+            const firstAgent = agents[0]
+            setAgentId(firstAgent.value)
+            setSelectedModel(firstAgent.model.provider || '')
+          }
         }
       } else {
         setIsEndpointActive(false)
@@ -103,7 +178,10 @@ const useChatActions = () => {
     addMessage,
     getAgents,
     focusChatInput,
-    initializePlayground
+    initializePlayground,
+    ensureSessionExists,
+    createNewSession,
+    getCurrentUserId
   }
 }
 

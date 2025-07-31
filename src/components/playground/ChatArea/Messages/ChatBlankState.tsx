@@ -1,40 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { motion, Variants } from 'framer-motion'
-import Icon from '@/components/ui/icon'
-import { IconType } from '@/components/ui/icon/types'
-import React, { useState } from 'react'
+import { motion } from 'framer-motion'
+import React from 'react'
 
 const EXTERNAL_LINKS = {
-  documentation: 'https://agno.link/agent-ui',
-  playground: 'https://app.agno.com/playground/agents',
-  agno: 'https://agno.com'
+  website: 'https://www.ubyfol.com',
+  contact: 'https://www.ubyfol.com/contato'
 }
-
-const TECH_ICONS = [
-  {
-    type: 'nextjs' as IconType,
-    position: 'left-0',
-    link: 'https://nextjs.org',
-    name: 'Next.js',
-    zIndex: 10
-  },
-  {
-    type: 'shadcn' as IconType,
-    position: 'left-[15px]',
-    link: 'https://ui.shadcn.com',
-    name: 'shadcn/ui',
-    zIndex: 20
-  },
-  {
-    type: 'tailwind' as IconType,
-    position: 'left-[30px]',
-    link: 'https://tailwindcss.com',
-    name: 'Tailwind CSS',
-    zIndex: 30
-  }
-]
 
 interface ActionButtonProps {
   href: string
@@ -61,119 +34,48 @@ const ActionButton = ({ href, variant, text }: ActionButtonProps) => {
 }
 
 const ChatBlankState = () => {
-  const [hoveredIcon, setHoveredIcon] = useState<string | null>(null)
-
-  // Animation variants for the icon
-  const iconVariants: Variants = {
-    initial: { y: 0 },
-    hover: {
-      y: -8,
-      transition: {
-        type: 'spring',
-        stiffness: 150,
-        damping: 10,
-        mass: 0.5
-      }
-    },
-    exit: {
-      y: 0,
-      transition: {
-        type: 'spring',
-        stiffness: 200,
-        damping: 15,
-        mass: 0.6
-      }
-    }
-  }
-
-  // Animation variants for the tooltip
-  const tooltipVariants: Variants = {
-    hidden: {
-      opacity: 0,
-      transition: {
-        duration: 0.15,
-        ease: 'easeInOut'
-      }
-    },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.15,
-        ease: 'easeInOut'
-      }
-    }
-  }
-
   return (
     <section
       className="flex flex-col items-center text-center font-geist"
       aria-label="Welcome message"
     >
-      <div className="flex max-w-3xl flex-col gap-y-8">
-        <motion.h1
+      <div className="flex max-w-4xl flex-col gap-y-8">
+        <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="text-3xl font-[600] tracking-tight"
+          className="flex flex-col gap-y-6"
         >
-          <div className="flex items-center justify-center gap-x-2 whitespace-nowrap font-medium">
-            <span className="flex items-center font-[600]">
-              This is an open-source
-            </span>
-            <span className="inline-flex translate-y-[10px] scale-125 items-center transition-transform duration-200 hover:rotate-6">
-              <Link
-                href={EXTERNAL_LINKS.agno}
-                target="_blank"
-                rel="noopener"
-                className="cursor-pointer"
-              >
-                <Icon type="agno-tag" size="default" />
-              </Link>
-            </span>
-            <span className="flex items-center font-[600]">
-              Agent UI, built with
-            </span>
-            <span className="inline-flex translate-y-[5px] scale-125 items-center">
-              <div className="relative ml-2 h-[40px] w-[90px]">
-                {TECH_ICONS.map((icon) => (
-                  <motion.div
-                    key={icon.type}
-                    className={`absolute ${icon.position} top-0`}
-                    style={{ zIndex: icon.zIndex }}
-                    variants={iconVariants}
-                    initial="initial"
-                    whileHover="hover"
-                    animate={hoveredIcon === icon.type ? 'hover' : 'exit'}
-                    onHoverStart={() => setHoveredIcon(icon.type)}
-                    onHoverEnd={() => setHoveredIcon(null)}
-                  >
-                    <Link
-                      href={icon.link}
-                      target="_blank"
-                      rel="noopener"
-                      className="relative block cursor-pointer"
-                    >
-                      <div>
-                        <Icon type={icon.type} size="default" />
-                      </div>
-                      <motion.div
-                        className="pointer-events-none absolute bottom-full left-1/2 mb-1 -translate-x-1/2 transform whitespace-nowrap rounded bg-neutral-800 px-2 py-1 text-xs text-primary"
-                        variants={tooltipVariants}
-                        initial="hidden"
-                        animate={
-                          hoveredIcon === icon.type ? 'visible' : 'hidden'
-                        }
-                      >
-                        {icon.name}
-                      </motion.div>
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
-            </span>
+          <h1 className="text-4xl font-[700] tracking-tight text-primary">
+            Bem-vindo ao <span className="text-green-600">Dr. Ubyfol</span>
+          </h1>
+          
+          <div className="text-lg text-muted-foreground leading-relaxed">
+            <p className="mb-4">
+              Seu especialista em <strong>nutrição foliar</strong> está aqui para ajudar.
+            </p>
+            
+            <div className="text-base text-left max-w-3xl mx-auto space-y-4">
+              <p>
+                A <strong className="text-green-600">Ubyfol</strong> é uma multinacional brasileira que, desde <strong>1985</strong>, 
+                desenvolve produtos especiais para nutrição vegetal. Somos líderes em:
+              </p>
+              
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                <li>Macro e micronutrientes para recobrimento de grânulos</li>
+                <li>Tratamento de sementes, mudas e toletes</li>
+                <li>Aplicações foliares para todas as culturas agrícolas</li>
+                <li>Condicionador de solos e fertilizantes foliares</li>
+                <li>Adjuvantes e condicionadores de caldas</li>
+              </ul>
+              
+              <p className="text-center italic text-sm mt-6">
+                &ldquo;Eleitos a melhor empresa de nutrição vegetal do Brasil por diversas instituições independentes&rdquo;
+              </p>
+            </div>
           </div>
-          <p>For the full experience, visit the Agent Playground.</p>
-        </motion.h1>
+        </motion.div>
+        
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -181,13 +83,13 @@ const ChatBlankState = () => {
           className="flex justify-center gap-4"
         >
           <ActionButton
-            href={EXTERNAL_LINKS.documentation}
+            href={EXTERNAL_LINKS.website}
             variant="primary"
-            text="GO TO DOCS"
+            text="VISITE NOSSO SITE"
           />
           <ActionButton
-            href={EXTERNAL_LINKS.playground}
-            text="VISIT AGENT PLAYGROUND"
+            href={EXTERNAL_LINKS.contact}
+            text="ENTRE EM CONTATO"
           />
         </motion.div>
       </div>
