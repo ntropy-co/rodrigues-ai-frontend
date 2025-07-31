@@ -8,14 +8,10 @@ import { useState, useEffect } from 'react'
 import Icon from '@/components/ui/icon'
 import Sessions from './Sessions'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ThemeToggle } from '@/components/ui/theme-toggle'
 const SidebarHeader = () => (
-  <div className="flex items-center justify-between w-full">
-    <div className="flex items-center gap-2">
-      <Icon type="agno" size="xs" />
-      <span className="text-sm font-medium uppercase text-white">Ubyfol AI</span>
-    </div>
-    <ThemeToggle />
+  <div className="flex items-center gap-2 w-full">
+    <Icon type="agno" size="xs" />
+    <span className="text-sm font-medium uppercase text-white">Ubyfol AI</span>
   </div>
 )
 
@@ -40,7 +36,13 @@ const NewChatButton = ({
 
 
 const Sidebar = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    // Check if mobile on initial render
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 768
+    }
+    return false
+  })
   const { clearChat, focusChatInput, initializePlayground } = useChatActions()
   const {
     messages,
@@ -49,6 +51,20 @@ const Sidebar = () => {
     isEndpointLoading
   } = usePlaygroundStore()
   const [isMounted, setIsMounted] = useState(false)
+  
+  // Handle responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      const isMobile = window.innerWidth < 768
+      if (isMobile && !isCollapsed) {
+        setIsCollapsed(true)
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [isCollapsed])
+  
   useEffect(() => {
     setIsMounted(true)
     if (hydrated) initializePlayground()
@@ -66,7 +82,7 @@ const Sidebar = () => {
     >
       <motion.button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute right-2 top-2 z-10 p-1"
+        className="absolute right-2 top-2 z-10 p-1 text-foreground hover:text-foreground/80"
         aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         type="button"
         whileTap={{ scale: 0.95 }}
@@ -74,11 +90,11 @@ const Sidebar = () => {
         <Icon
           type="sheet"
           size="xs"
-          className={`transform ${isCollapsed ? 'rotate-180' : 'rotate-0'}`}
+          className={`transform text-foreground ${isCollapsed ? 'rotate-180' : 'rotate-0'}`}
         />
       </motion.button>
       <motion.div
-        className="w-60 space-y-5"
+        className="w-60 space-y-5 text-base"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: isCollapsed ? 0 : 1, x: isCollapsed ? -20 : 0 }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}

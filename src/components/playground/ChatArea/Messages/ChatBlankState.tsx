@@ -46,16 +46,16 @@ const ChatBlankState = () => {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="flex flex-col gap-y-6"
         >
-          <h1 className="text-4xl font-[700] tracking-tight text-primary">
+          <h1 className="text-5xl font-[700] tracking-tight text-primary">
             Bem-vindo ao <span className="text-green-600">Dr. Ubyfol</span>
           </h1>
           
-          <div className="text-lg text-muted-foreground leading-relaxed">
+          <div className="text-xl text-muted-foreground leading-relaxed">
             <p className="mb-4">
               Seu especialista em <strong>nutrição foliar</strong> está aqui para ajudar.
             </p>
             
-            <div className="text-base text-left max-w-3xl mx-auto space-y-4">
+            <div className="text-lg text-left max-w-3xl mx-auto space-y-4">
               <p>
                 A <strong className="text-green-600">Ubyfol</strong> é uma multinacional brasileira que, desde <strong>1985</strong>, 
                 desenvolve produtos especiais para nutrição vegetal. Somos líderes em:

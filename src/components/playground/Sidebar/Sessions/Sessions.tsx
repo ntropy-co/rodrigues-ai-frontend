@@ -99,23 +99,38 @@ const Sessions = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hydrated])
 
-  useEffect(() => {
-    if (!selectedEndpoint || !agentId || !hasStorage) {
-      setSessionsData(() => null)
+  const refreshSessions = useCallback(() => {
+    if (!selectedEndpoint || !agentId || !hasStorage || isEndpointLoading) {
       return
     }
-    if (!isEndpointLoading) {
-      setSessionsData(() => null)
-      getSessions(agentId)
+    setSessionsData(() => null)
+    getSessions(agentId)
+  }, [selectedEndpoint, agentId, hasStorage, isEndpointLoading, setSessionsData, getSessions])
+
+  useEffect(() => {
+    refreshSessions()
+  }, [refreshSessions])
+
+  // Listen for new session events
+  useEffect(() => {
+    const handleSessionCreated = () => {
+      setTimeout(() => refreshSessions(), 500) // Small delay to ensure session is saved
     }
-  }, [
-    selectedEndpoint,
-    agentId,
-    getSessions,
-    isEndpointLoading,
-    hasStorage,
-    setSessionsData
-  ])
+
+    window.addEventListener('sessionCreated', handleSessionCreated)
+    return () => window.removeEventListener('sessionCreated', handleSessionCreated)
+  }, [refreshSessions])
+
+  // Auto-refresh sessions every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (selectedEndpoint && agentId && hasStorage && !isEndpointLoading) {
+        getSessions(agentId)
+      }
+    }, 30000)
+
+    return () => clearInterval(interval)
+  }, [selectedEndpoint, agentId, hasStorage, isEndpointLoading, getSessions])
 
   useEffect(() => {
     if (sessionId) {

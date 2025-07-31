@@ -119,7 +119,11 @@ const useChatActions = () => {
   const clearChat = useCallback(() => {
     setMessages([])
     // Criar uma nova sessão automaticamente
-    createNewSession()
+    const newSessionId = createNewSession()
+    // Trigger a refresh of sessions list
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('sessionCreated', { detail: { sessionId: newSessionId } }))
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createNewSession])
 
