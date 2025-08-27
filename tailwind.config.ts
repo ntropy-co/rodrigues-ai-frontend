@@ -62,6 +62,8 @@ export default {
         'gemini-gray-900': 'hsl(var(--gemini-gray-900))'
       },
       fontFamily: {
+        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        inter: 'var(--font-inter)',
         geist: 'var(--font-geist-sans)',
         dmmono: 'var(--font-dm-mono)'
       },

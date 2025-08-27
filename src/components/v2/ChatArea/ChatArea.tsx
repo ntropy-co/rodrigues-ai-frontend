@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { PlaygroundChatMessage } from '@/types/playground'
+import MarkdownRenderer from '@/components/ui/typography/MarkdownRenderer/MarkdownRenderer'
 
 interface ChatAreaProps {
   messages: PlaygroundChatMessage[]
@@ -55,40 +56,25 @@ export function ChatArea({ messages, isStreaming }: ChatAreaProps) {
 
               {/* Conteúdo da mensagem */}
               <div className="text-sm leading-relaxed">
-                {message.content || (isStreaming && index === messages.length - 1 ? (
-                  <div className="flex items-center gap-1">
-                    <div className="flex space-x-1">
-                      <div className="h-2 w-2 bg-current rounded-full animate-pulse"></div>
-                      <div className="h-2 w-2 bg-current rounded-full animate-pulse" style={{ animationDelay: '0.1s' }}></div>
-                      <div className="h-2 w-2 bg-current rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                {message.content ? (
+                  message.role === 'agent' ? (
+                    <MarkdownRenderer classname="prose-sm prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ol:my-1 max-w-none w-full">
+                      {message.content}
+                    </MarkdownRenderer>
+                  ) : (
+                    <div>{message.content}</div>
+                  )
+                ) : (isStreaming && index === messages.length - 1 ? (
+                  <div className="flex items-center justify-start">
+                    <div className="relative">
+                      <div className="w-6 h-6 border-2 border-transparent border-t-gemini-blue border-r-gemini-purple rounded-full animate-spin"></div>
+                      <div className="absolute top-1 left-1 w-4 h-4 border-2 border-transparent border-t-gemini-purple border-r-gemini-blue rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1s' }}></div>
                     </div>
-                    <span className="text-xs opacity-60 ml-2">Pensando...</span>
                   </div>
                 ) : (
                   'Processando...'
                 ))}
               </div>
-
-              {/* Tool calls se existirem */}
-              {message.tool_calls && message.tool_calls.length > 0 && (
-                <div className="mt-3 space-y-2">
-                  {message.tool_calls.map((toolCall, toolIndex) => (
-                    <div
-                      key={`${toolCall.tool_call_id || toolIndex}`}
-                      className="rounded-lg bg-background/50 p-2 text-xs"
-                    >
-                      <div className="font-medium opacity-80">
-                        🔧 {toolCall.tool_name}
-                      </div>
-                      {toolCall.args && (
-                        <div className="mt-1 opacity-60">
-                          {JSON.stringify(toolCall.args, null, 2)}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
 
               {/* Error state */}
               {message.streamingError && (

@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
-import { Send, Mic, Plus, Wrench } from 'lucide-react'
+import { useRef, useEffect } from 'react'
+import { Send, Plus, Wrench } from 'lucide-react'
 import { useUIConfig } from '@/hooks/useUIConfig'
 
 interface InputBarProps {
@@ -13,7 +13,6 @@ interface InputBarProps {
 
 export function InputBar({ onSendMessage, message, setMessage, disabled = false }: InputBarProps) {
   const { ui } = useUIConfig()
-  const [isRecording, setIsRecording] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const adjustTextareaHeight = () => {
@@ -42,11 +41,6 @@ export function InputBar({ onSendMessage, message, setMessage, disabled = false 
     }
   }
 
-  const handleVoiceRecording = () => {
-    setIsRecording(!isRecording)
-    // TODO: Implementar gravação de voz
-    console.log('Voice recording:', isRecording ? 'stopping' : 'starting')
-  }
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border p-4 pb-safe">
@@ -96,35 +90,18 @@ export function InputBar({ onSendMessage, message, setMessage, disabled = false 
 
           {/* Ações principais - 3/10 */}
           <div className="flex items-center gap-2">
-            {!message.trim() ? (
-              <button
-                onClick={handleVoiceRecording}
-                disabled={disabled}
-                className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
-                  disabled
-                    ? 'bg-gemini-gray-100 text-gemini-gray-400 cursor-not-allowed'
-                    : isRecording 
-                      ? 'bg-red-500 text-white' 
-                      : 'bg-gemini-gray-100 text-gemini-gray-600 hover:bg-gemini-gray-200'
-                }`}
-                aria-label={isRecording ? 'Parar gravação' : 'Gravar áudio'}
-              >
-                <Mic className="h-5 w-5" />
-              </button>
-            ) : (
-              <button
-                onClick={handleSend}
-                disabled={disabled}
-                className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
-                  disabled
-                    ? 'bg-gemini-gray-300 text-gemini-gray-500 cursor-not-allowed'
-                    : 'bg-gemini-blue text-white hover:bg-gemini-blue-hover'
-                }`}
-                aria-label="Enviar mensagem"
-              >
-                <Send className="h-5 w-5" />
-              </button>
-            )}
+            <button
+              onClick={handleSend}
+              disabled={disabled || !message.trim()}
+              className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
+                disabled || !message.trim()
+                  ? 'bg-gemini-gray-300 text-gemini-gray-500 cursor-not-allowed'
+                  : 'bg-gemini-blue text-white hover:bg-gemini-blue-hover'
+              }`}
+              aria-label="Enviar mensagem"
+            >
+              <Send className="h-5 w-5" />
+            </button>
           </div>
         </div>
 

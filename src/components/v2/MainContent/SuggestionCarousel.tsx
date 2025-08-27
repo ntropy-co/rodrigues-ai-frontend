@@ -13,28 +13,27 @@ export function SuggestionCarousel({ onSuggestionClick }: SuggestionCarouselProp
   const { suggestions, ui } = useUIConfig()
   const [currentIndex, setCurrentIndex] = useState(0)
   
-  // Calcular items por view baseado na largura fixa
+  // Carrossel cíclico infinito
   const itemsPerView = 3 // Desktop: 3, Mobile: 1
-  const maxIndex = Math.max(0, suggestions.length - itemsPerView)
-
+  
   const nextSlide = () => {
-    setCurrentIndex(prev => Math.min(prev + 1, maxIndex))
+    setCurrentIndex(prev => (prev + 1) % suggestions.length)
   }
 
   const prevSlide = () => {
-    setCurrentIndex(prev => Math.max(prev - 1, 0))
+    setCurrentIndex(prev => (prev - 1 + suggestions.length) % suggestions.length)
   }
 
   // Auto-scroll opcional
   useEffect(() => {
     if (ui.features.carouselMode) {
       const interval = setInterval(() => {
-        setCurrentIndex(prev => (prev >= maxIndex ? 0 : prev + 1))
+        setCurrentIndex(prev => (prev + 1) % suggestions.length)
       }, 6000) // 6 segundos
       
       return () => clearInterval(interval)
     }
-  }, [maxIndex, ui.features.carouselMode])
+  }, [suggestions.length, ui.features.carouselMode])
 
   const getCategoryColor = (category: string) => {
     switch (category) {
@@ -76,8 +75,7 @@ export function SuggestionCarousel({ onSuggestionClick }: SuggestionCarouselProp
         {/* Botão anterior */}
         <button
           onClick={prevSlide}
-          disabled={currentIndex === 0}
-          className="absolute -left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-md transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          className="absolute -left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-md transition-all hover:shadow-lg"
         >
           <ChevronLeft className="h-5 w-5 text-gemini-gray-600" />
         </button>
@@ -85,8 +83,7 @@ export function SuggestionCarousel({ onSuggestionClick }: SuggestionCarouselProp
         {/* Botão próximo */}
         <button
           onClick={nextSlide}
-          disabled={currentIndex >= maxIndex}
-          className="absolute -right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-md transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          className="absolute -right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-md transition-all hover:shadow-lg"
         >
           <ChevronRight className="h-5 w-5 text-gemini-gray-600" />
         </button>
@@ -95,7 +92,7 @@ export function SuggestionCarousel({ onSuggestionClick }: SuggestionCarouselProp
         <div className="overflow-hidden">
           <div 
             className="flex transition-transform duration-300 ease-in-out"
-            style={{ transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)` }}
+            style={{ transform: `translateX(-${(currentIndex * 100) / itemsPerView}%)` }}
           >
             {suggestions.map((suggestion) => {
               const Icon = getIcon(suggestion.icon)
@@ -134,7 +131,7 @@ export function SuggestionCarousel({ onSuggestionClick }: SuggestionCarouselProp
 
       {/* Indicadores de posição */}
       <div className="mt-4 flex justify-center gap-1">
-        {Array.from({ length: maxIndex + 1 }, (_, i) => (
+        {suggestions.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrentIndex(i)}

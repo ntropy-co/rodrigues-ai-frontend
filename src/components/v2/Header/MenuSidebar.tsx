@@ -1,7 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { X, MessageSquare, Trash2, Plus } from 'lucide-react'
+import { useQueryState } from 'nuqs'
+import { usePlaygroundStore } from '@/store'
+import useSessionLoader from '@/hooks/useSessionLoader'
+import useChatActions from '@/hooks/useChatActions'
 
 interface ChatSession {
   id: string
@@ -16,26 +20,53 @@ interface MenuSidebarProps {
 }
 
 export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
-  const [sessions] = useState<ChatSession[]>([
-    {
-      id: '1',
-      title: 'Deficiência de Manganês na Soja',
-      lastMessage: 'Como identificar sintomas de deficiência de Mn?',
-      timestamp: '2 horas atrás'
-    },
-    {
-      id: '2', 
-      title: 'Compatibilidade com Glifosato',
-      lastMessage: 'Posso misturar quelato de Mn com glifosato?',
-      timestamp: '1 dia atrás'
-    },
-    {
-      id: '3',
-      title: 'Nutrição Foliar no Florescimento',
-      lastMessage: 'Qual nutriente aplicar em R1?',
-      timestamp: '3 dias atrás'
+  const [sessions, setSessions] = useState<ChatSession[]>([])
+  const [agentId] = useQueryState('agent')
+  const [sessionId, setSessionId] = useQueryState('session')
+  
+  const sessionsData = usePlaygroundStore((state) => state.sessionsData)
+  const isSessionsLoading = usePlaygroundStore((state) => state.isSessionsLoading)
+  
+  const { getSession, getSessions } = useSessionLoader()
+  const { createNewSession } = useChatActions()
+
+  // Carregar sessões quando o agente mudar
+  useEffect(() => {
+    if (agentId && agentId !== 'no-agents') {
+      getSessions(agentId)
     }
-  ])
+  }, [agentId, getSessions])
+
+  // Converter sessionsData para o formato local
+  useEffect(() => {
+    if (sessionsData) {
+      const convertedSessions = sessionsData.map(session => ({
+        id: session.session_id,
+        title: session.title || 'Nova Conversa',
+        lastMessage: session.title || '',
+        timestamp: new Date(session.created_at * 1000).toLocaleDateString('pt-BR')
+      }))
+      setSessions(convertedSessions)
+    } else {
+      setSessions([])
+    }
+  }, [sessionsData])
+
+  const handleSessionClick = async (sessionIdToLoad: string) => {
+    if (agentId && sessionIdToLoad !== sessionId) {
+      setSessionId(sessionIdToLoad)
+      await getSession(sessionIdToLoad, agentId)
+      onClose()
+    }
+  }
+
+  const handleNewConversation = () => {
+    // Limpar mensagens atuais e criar nova sessão
+    const { setMessages } = usePlaygroundStore.getState()
+    setMessages([])
+    createNewSession()
+    onClose()
+  }
 
   if (!isOpen) return null
 
@@ -63,7 +94,10 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
 
           {/* Nova Conversa */}
           <div className="p-4 border-b border-border">
-            <button className="w-full flex items-center gap-3 p-3 rounded-lg border border-dashed border-border hover:bg-muted transition-colors">
+            <button 
+              onClick={handleNewConversation}
+              className="w-full flex items-center gap-3 p-3 rounded-lg border border-dashed border-border hover:bg-muted transition-colors"
+            >
               <Plus className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm text-muted-foreground">Nova Conversa</span>
             </button>
@@ -71,11 +105,23 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
 
           {/* Lista de Conversas */}
           <div className="flex-1 overflow-y-auto p-4 space-y-2">
-            {sessions.map((session) => (
-              <div
-                key={session.id}
-                className="group flex items-start gap-3 p-3 rounded-lg hover:bg-muted cursor-pointer transition-colors"
-              >
+            {isSessionsLoading ? (
+              <div className="flex items-center justify-center p-4">
+                <div className="text-sm text-muted-foreground">Carregando conversas...</div>
+              </div>
+            ) : sessions.length === 0 ? (
+              <div className="flex items-center justify-center p-4">
+                <div className="text-sm text-muted-foreground">Nenhuma conversa anterior</div>
+              </div>
+            ) : (
+              sessions.map((session) => (
+                <div
+                  key={session.id}
+                  onClick={() => handleSessionClick(session.id)}
+                  className={`group flex items-start gap-3 p-3 rounded-lg hover:bg-muted cursor-pointer transition-colors ${
+                    sessionId === session.id ? 'bg-muted' : ''
+                  }`}
+                >
                 <div className="flex-shrink-0 mt-1">
                   <MessageSquare className="h-4 w-4 text-muted-foreground" />
                 </div>
@@ -101,8 +147,9 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                 >
                   <Trash2 className="h-3 w-3" />
                 </button>
-              </div>
-            ))}
+                </div>
+              ))
+            )}
           </div>
 
           {/* Footer */}
