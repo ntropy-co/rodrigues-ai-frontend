@@ -31,6 +31,19 @@
     --primary-accent: 240 5.9% 96%;
     --brand: 14 100% 57%;
     --positive: 142 76% 36%;
+    
+    /* Cores Gemini */
+    --gemini-blue: 217 91% 60%;
+    --gemini-blue-hover: 217 91% 50%;
+    --gemini-purple: 271 81% 56%;
+    --gemini-gray-50: 0 0% 98%;
+    --gemini-gray-100: 0 0% 96%;
+    --gemini-gray-200: 220 13% 91%;
+    --gemini-gray-300: 220 9% 85%;
+    --gemini-gray-500: 220 9% 46%;
+    --gemini-gray-600: 220 14% 35%;
+    --gemini-gray-700: 215 25% 27%;
+    --gemini-gray-900: 224 71% 4%;
   }
 
   .dark {
@@ -59,6 +72,19 @@
     --primary-accent: 240 5.9% 10%;
     --brand: 14 100% 57%;
     --positive: 142 76% 36%;
+    
+    /* Cores Gemini - Dark */
+    --gemini-blue: 217 91% 70%;
+    --gemini-blue-hover: 217 91% 60%;
+    --gemini-purple: 271 81% 66%;
+    --gemini-gray-50: 240 10% 3.9%;
+    --gemini-gray-100: 240 3.7% 15.9%;
+    --gemini-gray-200: 240 3.7% 25%;
+    --gemini-gray-300: 240 3.7% 35%;
+    --gemini-gray-500: 240 5% 64.9%;
+    --gemini-gray-600: 220 9% 75%;
+    --gemini-gray-700: 220 9% 85%;
+    --gemini-gray-900: 0 0% 98%;
   }
 
   * {
@@ -83,4 +109,12 @@
 ::-webkit-scrollbar-track {
   background-color: transparent;
   border-radius: 9999px;
+}
+
+/* Line clamp utility */
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }

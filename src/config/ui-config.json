@@ -1,0 +1,128 @@
+{
+  "ui": {
+    "branding": {
+      "appName": "Ubyfol",
+      "displayModelName": "Dr. Ubyfol AI"
+    },
+    "features": {
+      "showProButton": false,
+      "showUploadButton": false,
+      "showToolsButton": false,
+      "showModelSelector": true,
+      "carouselMode": true,
+      "minimalSuggestions": true
+    },
+    "layout": {
+      "headerHeight": "h-16 md:h-20",
+      "maxContentWidth": "max-w-4xl",
+      "suggestionColumns": {
+        "mobile": 1,
+        "tablet": 2,
+        "desktop": 4
+      }
+    },
+    "theme": {
+      "primaryColor": "gemini-blue",
+      "accentColor": "gemini-purple",
+      "greetingColor": "gemini-blue"
+    }
+  },
+  "suggestions": [
+    {
+      "id": "nutrient-deficiency",
+      "title": "Identificar deficiências",
+      "description": "Diagnosticar problemas nutricionais",
+      "icon": "Microscope",
+      "prompt": "Preciso identificar uma deficiência nutricional na minha cultura. Quais são os sintomas que devo observar?",
+      "category": "basic"
+    },
+    {
+      "id": "fertilization-plan",
+      "title": "Plano de adubação",
+      "description": "Cronograma personalizado",
+      "icon": "Calendar",
+      "prompt": "Quero criar um plano de adubação foliar para minha cultura. Qual seria o cronograma ideal?",
+      "category": "basic"
+    },
+    {
+      "id": "product-recommendation",
+      "title": "Produtos Ubyfol",
+      "description": "Recomendações específicas",
+      "icon": "Target",
+      "prompt": "Qual produto Ubyfol você recomenda para melhorar a produtividade da minha cultura?",
+      "category": "basic"
+    },
+    {
+      "id": "disease-prevention",
+      "title": "Prevenção fitossanitária",
+      "description": "Fortalecer contra patógenos",
+      "icon": "Leaf",
+      "prompt": "Como posso usar a nutrição foliar para prevenir doenças e fortalecer minhas plantas?",
+      "category": "basic"
+    },
+    {
+      "id": "compatibility-glyphosate",
+      "title": "Compatibilidade química",
+      "description": "Mistura com defensivos",
+      "icon": "Beaker",
+      "prompt": "Vou aplicar glifosato e quero adicionar manganês na calda. Tenho sulfato e quelato de manganês. Qual a recomendação técnica e por que a escolha da fonte é crítica?",
+      "category": "advanced"
+    },
+    {
+      "id": "nutrient-mobility",
+      "title": "Mobilidade nutricional",
+      "description": "Transporte na planta",
+      "icon": "TrendingUp",
+      "prompt": "Um produtor acredita que aplicar Boro na folha nutrirá a planta inteira. Corrija usando o conceito de mobilidade no floema comparando Boro e Molibdênio.",
+      "category": "advanced"
+    },
+    {
+      "id": "hidden-hunger",
+      "title": "Fome oculta",
+      "description": "Deficiências silenciosas",
+      "icon": "AlertTriangle",
+      "prompt": "Minha soja está verde e saudável, sem sintomas visuais. Por que me preocupar com nutrição foliar? Que ferramenta de diagnóstico recomenda?",
+      "category": "advanced"
+    },
+    {
+      "id": "flowering-stage",
+      "title": "Estádio R1",
+      "description": "Nutrição no florescimento",
+      "icon": "Clock",
+      "prompt": "Estou em R1 e quero maximizar pegamento de flores evitando abortamento. Qual nutriente é crítico e seu papel fisiológico específico neste momento?",
+      "category": "advanced"
+    },
+    {
+      "id": "induced-deficiency",
+      "title": "Deficiência induzida",
+      "description": "Problemas de pH",
+      "icon": "Target",
+      "prompt": "Agricultor no Cerrado corrigiu pH para 6.5 e agora tem deficiência de Mn. Quer aplicar mais Mn no solo. É a estratégia correta? Explique o fenômeno.",
+      "category": "expert"
+    },
+    {
+      "id": "application-physiology",
+      "title": "Fisiologia da aplicação",
+      "description": "Condições ideais",
+      "icon": "Microscope",
+      "prompt": "Por que aplicar foliar ao meio-dia, em dia quente e seco, anula o investimento? O que acontece com a gota na folha e qual via de absorção é prejudicada?",
+      "category": "expert"
+    },
+    {
+      "id": "cost-benefit",
+      "title": "Análise econômica",
+      "description": "Custo vs benefício",
+      "icon": "TrendingUp",
+      "prompt": "Quando quelatos justificam o custo versus sais inorgânicos? Descreva um cenário onde 'barato pode sair caro' com defensivos caros.",
+      "category": "expert"
+    },
+    {
+      "id": "diagnostic-methods",
+      "title": "Métodos diagnósticos",
+      "description": "DRIS vs Suficiência",
+      "icon": "Microscope",
+      "prompt": "Análise foliar: Níveis de Suficiência vs DRIS. Para alta produtividade, qual método oferece diagnóstico mais refinado e por quê?",
+      "category": "expert"
+    }
+  ]
+}

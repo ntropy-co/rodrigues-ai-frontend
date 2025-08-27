@@ -47,7 +47,19 @@ export default {
         // Cores customizadas da Ubyfol
         primaryAccent: 'hsl(var(--primary-accent))',
         brand: 'hsl(var(--brand))',
-        positive: 'hsl(var(--positive))'
+        positive: 'hsl(var(--positive))',
+        // Cores Gemini
+        'gemini-blue': 'hsl(var(--gemini-blue))',
+        'gemini-blue-hover': 'hsl(var(--gemini-blue-hover))',
+        'gemini-purple': 'hsl(var(--gemini-purple))',
+        'gemini-gray-50': 'hsl(var(--gemini-gray-50))',
+        'gemini-gray-100': 'hsl(var(--gemini-gray-100))',
+        'gemini-gray-200': 'hsl(var(--gemini-gray-200))',
+        'gemini-gray-300': 'hsl(var(--gemini-gray-300))',
+        'gemini-gray-500': 'hsl(var(--gemini-gray-500))',
+        'gemini-gray-600': 'hsl(var(--gemini-gray-600))',
+        'gemini-gray-700': 'hsl(var(--gemini-gray-700))',
+        'gemini-gray-900': 'hsl(var(--gemini-gray-900))'
       },
       fontFamily: {
         geist: 'var(--font-geist-sans)',
