@@ -37,6 +37,27 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
     }
   }, [agentId, getSessions])
 
+  // Atualizar lista de conversas periodicamente quando o sidebar estiver aberto
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null
+    
+    if (isOpen && agentId && agentId !== 'no-agents') {
+      // Atualizar imediatamente quando abrir
+      getSessions(agentId)
+      
+      // Configurar atualização a cada 3 segundos
+      interval = setInterval(() => {
+        getSessions(agentId)
+      }, 3000)
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval)
+      }
+    }
+  }, [isOpen, agentId, getSessions])
+
   // Converter sessionsData para o formato local
   useEffect(() => {
     if (sessionsData) {
@@ -105,11 +126,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
 
           {/* Lista de Conversas */}
           <div className="flex-1 overflow-y-auto p-4 space-y-2">
-            {isSessionsLoading ? (
-              <div className="flex items-center justify-center p-4">
-                <div className="text-sm text-muted-foreground">Carregando conversas...</div>
-              </div>
-            ) : sessions.length === 0 ? (
+            {sessions.length === 0 ? (
               <div className="flex items-center justify-center p-4">
                 <div className="text-sm text-muted-foreground">Nenhuma conversa anterior</div>
               </div>

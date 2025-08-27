@@ -3,6 +3,8 @@
 import { useEffect, useRef } from 'react'
 import { PlaygroundChatMessage } from '@/types/playground'
 import MarkdownRenderer from '@/components/ui/typography/MarkdownRenderer/MarkdownRenderer'
+import { StreamingText } from './StreamingText'
+import { usePlaygroundStore } from '@/store'
 
 interface ChatAreaProps {
   messages: PlaygroundChatMessage[]
@@ -11,6 +13,7 @@ interface ChatAreaProps {
 
 export function ChatArea({ messages, isStreaming }: ChatAreaProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const isStreamingFromStore = usePlaygroundStore((state) => state.isStreaming)
 
   // Auto-scroll para a última mensagem
   useEffect(() => {
@@ -58,9 +61,19 @@ export function ChatArea({ messages, isStreaming }: ChatAreaProps) {
               <div className="text-sm leading-relaxed">
                 {message.content ? (
                   message.role === 'agent' ? (
-                    <MarkdownRenderer classname="prose-sm prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ol:my-1 max-w-none w-full">
-                      {message.content}
-                    </MarkdownRenderer>
+                    // Se estiver streaming e for a última mensagem, usar StreamingText
+                    isStreamingFromStore && index === messages.length - 1 ? (
+                      <StreamingText 
+                        text={message.content} 
+                        speed={80} 
+                        renderMarkdown={true}
+                        className=""
+                      />
+                    ) : (
+                      <MarkdownRenderer classname="prose-sm prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ol:my-1 max-w-none w-full">
+                        {message.content}
+                      </MarkdownRenderer>
+                    )
                   ) : (
                     <div>{message.content}</div>
                   )
