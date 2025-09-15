@@ -55,7 +55,7 @@ export function InputBar({ onSendMessage, message, setMessage, disabled = false 
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={disabled ? "Aguarde a resposta..." : "Pergunte ao Dr. Ubyfol..."}
+              placeholder={disabled ? "Aguarde a resposta..." : "Pergunte ao Rodrigues AI..."}
               className="w-full resize-none border-0 bg-transparent text-foreground placeholder-muted-foreground focus:outline-none focus:ring-0"
               disabled={disabled}
               rows={1}
@@ -107,7 +107,7 @@ export function InputBar({ onSendMessage, message, setMessage, disabled = false 
 
         {/* Disclaimer */}
         <p className="mt-2 text-center text-xs text-gemini-gray-500">
-          Dr. Ubyfol pode cometer erros. Verifique informações importantes.
+          Rodrigues AI pode cometer erros. Verifique informações importantes.
         </p>
       </div>
     </div>

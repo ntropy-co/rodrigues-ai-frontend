@@ -47,30 +47,29 @@ const ChatBlankState = () => {
           className="flex flex-col gap-y-6"
         >
           <h1 className="text-5xl font-[700] tracking-tight text-primary">
-            Bem-vindo ao <span className="text-green-600">Dr. Ubyfol</span>
+            Bem-vindo ao <span className="text-green-600">Rodrigues AI</span>
           </h1>
           
           <div className="text-xl text-muted-foreground leading-relaxed">
             <p className="mb-4">
-              Seu especialista em <strong>nutrição foliar</strong> está aqui para ajudar.
+              Seu especialista em <strong>Crédito Agro e CPR</strong> está aqui para ajudar.
             </p>
             
             <div className="text-lg text-left max-w-3xl mx-auto space-y-4">
               <p>
-                A <strong className="text-green-600">Ubyfol</strong> é uma multinacional brasileira que, desde <strong>1985</strong>, 
-                desenvolve produtos especiais para nutrição vegetal. Somos líderes em:
+                O <strong className="text-green-600">Rodrigues AI</strong> é um especialista em crédito rural com mais de <strong>20 anos</strong> de experiência. Sou especialista em:
               </p>
               
               <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                <li>Macro e micronutrientes para recobrimento de grânulos</li>
-                <li>Tratamento de sementes, mudas e toletes</li>
-                <li>Aplicações foliares para todas as culturas agrícolas</li>
-                <li>Condicionador de solos e fertilizantes foliares</li>
-                <li>Adjuvantes e condicionadores de caldas</li>
+                <li>Estruturação de CPR (Física e Financeira)</li>
+                <li>Análise de risco e viabilidade rural</li>
+                <li>Compliance regulatório (BACEN/CMN)</li>
+                <li>Precificação de operações agropecuárias</li>
+                <li>Due diligence em propriedades rurais</li>
               </ul>
-              
+
               <p className="text-center italic text-sm mt-6">
-                &ldquo;Eleitos a melhor empresa de nutrição vegetal do Brasil por diversas instituições independentes&rdquo;
+                &ldquo;Especialista certificado em crédito rural com expertise em CPR e financiamento agropecuário&rdquo;
               </p>
             </div>
           </div>

@@ -172,7 +172,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
           {/* Footer */}
           <div className="p-4 border-t border-border">
             <div className="text-xs text-muted-foreground text-center">
-              Dr. Ubyfol - Especialista em Nutrição Foliar
+              Rodrigues AI - Especialista em Crédito Agro e CPR
             </div>
           </div>
         </div>

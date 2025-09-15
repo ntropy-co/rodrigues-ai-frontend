@@ -53,7 +53,7 @@ export function ChatArea({ messages, isStreaming }: ChatAreaProps) {
                   {message.role === 'user' ? 'U' : 'AI'}
                 </div>
                 <span className="text-xs opacity-70">
-                  {message.role === 'user' ? 'Você' : 'Dr. Ubyfol'}
+                  {message.role === 'user' ? 'Você' : 'Rodrigues AI'}
                 </span>
               </div>
 

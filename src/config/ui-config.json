@@ -1,13 +1,14 @@
 {
   "ui": {
     "branding": {
-      "appName": "Ubyfol",
-      "displayModelName": "Dr. Ubyfol AI"
+      "appName": "Rodrigues AI",
+      "displayModelName": "Rodrigues AI",
+      "specialization": "Especialista em Crédito Agro e CPR"
     },
     "features": {
       "showProButton": false,
-      "showUploadButton": false,
-      "showToolsButton": false,
+      "showUploadButton": true,
+      "showToolsButton": true,
       "showModelSelector": true,
       "carouselMode": true,
       "minimalSuggestions": true
@@ -23,105 +24,105 @@
     },
     "theme": {
       "primaryColor": "gemini-blue",
-      "accentColor": "gemini-purple",
+      "accentColor": "green-600",
       "greetingColor": "gemini-blue"
     }
   },
   "suggestions": [
     {
-      "id": "nutrient-deficiency",
-      "title": "Identificar deficiências",
-      "description": "Diagnosticar problemas nutricionais",
-      "icon": "Microscope",
-      "prompt": "Preciso identificar uma deficiência nutricional na minha cultura. Quais são os sintomas que devo observar?",
+      "id": "cpr-fisica-introducao",
+      "title": "O que é CPR Física?",
+      "description": "Entenda os conceitos básicos",
+      "icon": "FileText",
+      "prompt": "Preciso entender o que é uma CPR Física e como ela funciona. Quais são suas principais características?",
       "category": "basic"
     },
     {
-      "id": "fertilization-plan",
-      "title": "Plano de adubação",
-      "description": "Cronograma personalizado",
-      "icon": "Calendar",
-      "prompt": "Quero criar um plano de adubação foliar para minha cultura. Qual seria o cronograma ideal?",
+      "id": "cpr-financeira-introducao",
+      "title": "CPR Financeira vs Física",
+      "description": "Diferenças fundamentais",
+      "icon": "CreditCard",
+      "prompt": "Qual a diferença entre CPR Física e CPR Financeira? Quando usar cada uma?",
       "category": "basic"
     },
     {
-      "id": "product-recommendation",
-      "title": "Produtos Ubyfol",
-      "description": "Recomendações específicas",
-      "icon": "Target",
-      "prompt": "Qual produto Ubyfol você recomenda para melhorar a produtividade da minha cultura?",
+      "id": "garantias-cpr",
+      "title": "Garantias necessárias",
+      "description": "Tipos e documentação",
+      "icon": "Shield",
+      "prompt": "Quais garantias são aceitas para uma operação de CPR? Como estruturar adequadamente?",
       "category": "basic"
     },
     {
-      "id": "disease-prevention",
-      "title": "Prevenção fitossanitária",
-      "description": "Fortalecer contra patógenos",
-      "icon": "Leaf",
-      "prompt": "Como posso usar a nutrição foliar para prevenir doenças e fortalecer minhas plantas?",
+      "id": "financiamento-custeio",
+      "title": "Financiamento de custeio",
+      "description": "Planejamento de safra",
+      "icon": "DollarSign",
+      "prompt": "Como estruturar um financiamento de custeio agrícola? Quais os prazos e condições típicas?",
       "category": "basic"
     },
     {
-      "id": "compatibility-glyphosate",
-      "title": "Compatibilidade química",
-      "description": "Mistura com defensivos",
-      "icon": "Beaker",
-      "prompt": "Vou aplicar glifosato e quero adicionar manganês na calda. Tenho sulfato e quelato de manganês. Qual a recomendação técnica e por que a escolha da fonte é crítica?",
+      "id": "calculo-preco-cpr",
+      "title": "Cálculo de preço CPR",
+      "description": "Metodologia de precificação",
+      "icon": "Calculator",
+      "prompt": "Como calcular o preço justo de uma CPR considerando taxa de juros, prazo e volatilidade do mercado?",
       "category": "advanced"
     },
     {
-      "id": "nutrient-mobility",
-      "title": "Mobilidade nutricional",
-      "description": "Transporte na planta",
-      "icon": "TrendingUp",
-      "prompt": "Um produtor acredita que aplicar Boro na folha nutrirá a planta inteira. Corrija usando o conceito de mobilidade no floema comparando Boro e Molibdênio.",
-      "category": "advanced"
-    },
-    {
-      "id": "hidden-hunger",
-      "title": "Fome oculta",
-      "description": "Deficiências silenciosas",
+      "id": "analise-risco-rural",
+      "title": "Análise de risco rural",
+      "description": "Avaliação de viabilidade",
       "icon": "AlertTriangle",
-      "prompt": "Minha soja está verde e saudável, sem sintomas visuais. Por que me preocupar com nutrição foliar? Que ferramenta de diagnóstico recomenda?",
+      "prompt": "Como fazer uma análise completa de risco para crédito rural? Quais variáveis considerar?",
       "category": "advanced"
     },
     {
-      "id": "flowering-stage",
-      "title": "Estádio R1",
-      "description": "Nutrição no florescimento",
-      "icon": "Clock",
-      "prompt": "Estou em R1 e quero maximizar pegamento de flores evitando abortamento. Qual nutriente é crítico e seu papel fisiológico específico neste momento?",
+      "id": "compliance-bacen",
+      "title": "Compliance BACEN",
+      "description": "Regulamentação vigente",
+      "icon": "FileCheck",
+      "prompt": "Quais as principais normas do BACEN para operações de crédito rural? Como garantir compliance?",
       "category": "advanced"
     },
     {
-      "id": "induced-deficiency",
-      "title": "Deficiência induzida",
-      "description": "Problemas de pH",
-      "icon": "Target",
-      "prompt": "Agricultor no Cerrado corrigiu pH para 6.5 e agora tem deficiência de Mn. Quer aplicar mais Mn no solo. É a estratégia correta? Explique o fenômeno.",
+      "id": "avalista-fiador",
+      "title": "Avalista vs Fiador",
+      "description": "Responsabilidades legais",
+      "icon": "Users",
+      "prompt": "Qual a diferença jurídica entre avalista e fiador em operações de CPR? Quando usar cada um?",
+      "category": "advanced"
+    },
+    {
+      "id": "liquidacao-cpr-inadimplencia",
+      "title": "Inadimplência em CPR",
+      "description": "Estratégias de cobrança",
+      "icon": "AlertCircle",
+      "prompt": "Como proceder em caso de inadimplência de CPR? Quais os mecanismos de cobrança e execução?",
       "category": "expert"
     },
     {
-      "id": "application-physiology",
-      "title": "Fisiologia da aplicação",
-      "description": "Condições ideais",
-      "icon": "Microscope",
-      "prompt": "Por que aplicar foliar ao meio-dia, em dia quente e seco, anula o investimento? O que acontece com a gota na folha e qual via de absorção é prejudicada?",
+      "id": "estruturacao-complexa",
+      "title": "Estruturação complexa",
+      "description": "Operações sofisticadas",
+      "icon": "Settings",
+      "prompt": "Como estruturar uma operação de CPR com múltiplas garantias e cessão de direitos? Quais cuidados contratuais?",
       "category": "expert"
     },
     {
-      "id": "cost-benefit",
-      "title": "Análise econômica",
-      "description": "Custo vs benefício",
+      "id": "mercado-futuro-hedge",
+      "title": "Hedge com futuros",
+      "description": "Proteção de preços",
       "icon": "TrendingUp",
-      "prompt": "Quando quelatos justificam o custo versus sais inorgânicos? Descreva um cenário onde 'barato pode sair caro' com defensivos caros.",
+      "prompt": "Como usar o mercado futuro para fazer hedge em operações de CPR? Qual a correlação com preços spot?",
       "category": "expert"
     },
     {
-      "id": "diagnostic-methods",
-      "title": "Métodos diagnósticos",
-      "description": "DRIS vs Suficiência",
-      "icon": "Microscope",
-      "prompt": "Análise foliar: Níveis de Suficiência vs DRIS. Para alta produtividade, qual método oferece diagnóstico mais refinado e por quê?",
+      "id": "due-diligence-rural",
+      "title": "Due diligence rural",
+      "description": "Checklist completo",
+      "icon": "Search",
+      "prompt": "Qual o checklist completo para due diligence em propriedades rurais? Como verificar a capacidade produtiva?",
       "category": "expert"
     }
   ]
