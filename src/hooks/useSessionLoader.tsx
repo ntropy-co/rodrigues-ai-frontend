@@ -36,7 +36,7 @@ const useSessionLoader = () => {
   // Função para obter user ID do localStorage
   const getCurrentUserId = useCallback(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('ubyfol_user_id')
+      return localStorage.getItem('rodrigues_user_id')
     }
     return null
   }, [])

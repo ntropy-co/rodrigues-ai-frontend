@@ -34,7 +34,7 @@ const allSuggestions: SuggestionCard[] = [
     title: 'Recomendação de produtos',
     description: 'Sugerir fertilizantes para sua cultura',
     icon: Target,
-    prompt: 'Qual produto Ubyfol você recomenda para melhorar a produtividade da minha cultura?',
+    prompt: 'Que opções de crédito rural você recomenda para financiar minha próxima safra?',
     category: 'basic'
   },
   {

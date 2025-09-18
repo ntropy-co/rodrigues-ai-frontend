@@ -38,14 +38,14 @@ const useChatActions = () => {
   // Função para salvar user ID no localStorage
   const saveUserIdToStorage = useCallback((userId: string) => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('ubyfol_user_id', userId)
+      localStorage.setItem('rodrigues_user_id', userId)
     }
   }, [])
   
   // Função para carregar user ID do localStorage
   const loadUserIdFromStorage = useCallback(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('ubyfol_user_id')
+      return localStorage.getItem('rodrigues_user_id')
     }
     return null
   }, [])
@@ -63,7 +63,7 @@ const useChatActions = () => {
   // Função para salvar session ID no localStorage
   const saveSessionIdToStorage = useCallback((sessionId: string) => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('ubyfol_current_session_id', sessionId)
+      localStorage.setItem('rodrigues_current_session_id', sessionId)
     }
   }, [])
   

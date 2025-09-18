@@ -25,9 +25,12 @@ const dmMono = DM_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Dr. Ubyfol - Especialista em Nutrição Foliar',
+  title: 'Rodrigues AI - Especialista em Crédito Agro e CPR',
   description:
-    'Consulte o Dr. Ubyfol, especialista em nutrição vegetal da Ubyfol - líder brasileira em nutrição foliar desde 1985. Obtenha orientações técnicas especializadas para suas culturas.'
+    'Consulte o Rodrigues AI, especialista em crédito agrícola e CPR (Cédula de Produto Rural). Obtenha orientações especializadas sobre financiamento rural, instrumentos de crédito e mercado agropecuário.',
+  icons: {
+    icon: '/rodrigues-icon.png'
+  }
 }
 
 export default function RootLayout({

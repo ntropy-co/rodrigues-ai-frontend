@@ -7,9 +7,9 @@ import { useUIConfig } from '@/hooks/useUIConfig'
 export function ModelSelector() {
   const { ui } = useUIConfig()
   const [selectedModel, setSelectedModel] = useState({
-    id: 'dr-ubyfol',
+    id: 'rodrigues-ai',
     name: ui.branding.displayModelName,
-    description: 'Especialista em nutrição foliar'
+    description: 'Especialista em crédito agro e CPR'
   })
   const [isOpen, setIsOpen] = useState(false)
 

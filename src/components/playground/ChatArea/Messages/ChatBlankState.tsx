@@ -5,8 +5,8 @@ import { motion } from 'framer-motion'
 import React from 'react'
 
 const EXTERNAL_LINKS = {
-  website: 'https://www.ubyfol.com',
-  contact: 'https://www.ubyfol.com/contato'
+  website: 'https://www.rodriguesagro.com.br',
+  contact: 'https://www.rodriguesagro.com.br/contato'
 }
 
 interface ActionButtonProps {

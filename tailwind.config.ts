@@ -44,7 +44,7 @@ export default {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))'
         },
-        // Cores customizadas da Ubyfol
+        // Cores customizadas do Rodrigues AI
         primaryAccent: 'hsl(var(--primary-accent))',
         brand: 'hsl(var(--brand))',
         positive: 'hsl(var(--positive))',
