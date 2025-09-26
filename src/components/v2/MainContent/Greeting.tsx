@@ -15,7 +15,7 @@ export function Greeting() {
         {getGreetingMessage()}
       </h1>
       <p className="mt-2 text-lg text-gemini-gray-600 md:text-xl">
-        Como posso ajudar com sua nutrição foliar hoje?
+        Como posso ajudar com suas questões de crédito rural e CPR hoje?
       </p>
     </div>
   )

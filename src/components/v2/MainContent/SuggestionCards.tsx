@@ -1,6 +1,6 @@
 'use client'
 
-import { Leaf, Target, Microscope, Calendar, Beaker, AlertTriangle, Clock, TrendingUp } from 'lucide-react'
+import { DollarSign, Target, FileText, Calendar, Scale, AlertTriangle, Clock, TrendingUp } from 'lucide-react'
 
 interface SuggestionCard {
   id: string
@@ -14,87 +14,87 @@ interface SuggestionCard {
 const allSuggestions: SuggestionCard[] = [
   // Sugestões Básicas
   {
-    id: 'nutrient-deficiency',
-    title: 'Identificar deficiências',
-    description: 'Diagnosticar problemas nutricionais nas plantas',
-    icon: Microscope,
-    prompt: 'Preciso identificar uma deficiência nutricional na minha cultura. Quais são os sintomas que devo observar?',
+    id: 'cpr-basics',
+    title: 'CPR Básica',
+    description: 'Entenda o que é uma Cédula de Produto Rural',
+    icon: FileText,
+    prompt: 'O que é uma CPR e quais são as principais diferenças entre CPR Física e CPR Financeira?',
     category: 'basic'
   },
   {
-    id: 'fertilization-plan',
-    title: 'Plano de adubação',
-    description: 'Criar cronograma personalizado de nutrição',
-    icon: Calendar,
-    prompt: 'Quero criar um plano de adubação foliar para minha cultura. Qual seria o cronograma ideal?',
-    category: 'basic'
-  },
-  {
-    id: 'product-recommendation',
-    title: 'Recomendação de produtos',
-    description: 'Sugerir fertilizantes para sua cultura',
-    icon: Target,
+    id: 'credit-options',
+    title: 'Opções de Crédito',
+    description: 'Conheça as linhas de crédito disponíveis',
+    icon: DollarSign,
     prompt: 'Que opções de crédito rural você recomenda para financiar minha próxima safra?',
     category: 'basic'
   },
   {
-    id: 'disease-prevention',
-    title: 'Prevenção de doenças',
-    description: 'Fortalecer plantas contra patógenos',
-    icon: Leaf,
-    prompt: 'Como posso usar a nutrição foliar para prevenir doenças e fortalecer minhas plantas?',
+    id: 'garantias',
+    title: 'Garantias',
+    description: 'Tipos de garantias aceitas no crédito rural',
+    icon: Scale,
+    prompt: 'Quais tipos de garantias são aceitas para operações de CPR e crédito rural?',
+    category: 'basic'
+  },
+  {
+    id: 'documentation',
+    title: 'Documentação',
+    description: 'Documentos necessários para CPR',
+    icon: Calendar,
+    prompt: 'Quais documentos preciso para emitir uma CPR? Existe algum prazo específico?',
     category: 'basic'
   },
   
-  // Sugestões Avançadas (baseadas no documento)
+  // Sugestões Avançadas
   {
-    id: 'compatibility-glyphosate',
-    title: 'Compatibilidade com glifosato',
-    description: 'Mistura segura de manganês com herbicida',
-    icon: Beaker,
-    prompt: 'Um cliente vai aplicar glifosato e quer adicionar manganês na calda. Ele tem sulfato de manganês, que é mais barato, e um quelato de manganês. Qual a sua recomendação técnica e por que a escolha da fonte é o fator mais crítico nessa situação?',
-    category: 'advanced'
-  },
-  {
-    id: 'nutrient-mobility',
-    title: 'Mobilidade de nutrientes',
-    description: 'Como nutrientes se movem na planta',
-    icon: TrendingUp,
-    prompt: 'Um produtor acredita que, por aplicar Boro na folha, ele nutrirá a planta inteira, incluindo as raízes. Corrija essa percepção usando o conceito de mobilidade no floema e compare o comportamento do Boro com o do Molibdênio.',
-    category: 'advanced'
-  },
-  {
-    id: 'hidden-hunger',
-    title: 'Fome oculta',
-    description: 'Deficiências sem sintomas visuais',
-    icon: AlertTriangle,
-    prompt: 'Minha lavoura de soja está com uma aparência verde e saudável, sem nenhum sintoma visual de deficiência. Por que eu deveria me preocupar com a nutrição foliar e qual ferramenta de diagnóstico você recomendaria?',
-    category: 'advanced'
-  },
-  {
-    id: 'flowering-stage',
-    title: 'Nutrição no florescimento',
-    description: 'Nutrientes críticos em R1',
+    id: 'cpr-execution',
+    title: 'Liquidação de CPR',
+    description: 'Processos e prazos para liquidação',
     icon: Clock,
-    prompt: 'Estou no estádio R1 (início do florescimento) e meu objetivo é garantir o máximo pegamento de flores, evitando o abortamento. Qual nutriente é absolutamente crítico nesta fase e qual o seu papel fisiológico específico?',
+    prompt: 'Como funciona o processo de liquidação de uma CPR Física? Quais são os prazos e penalidades em caso de inadimplência?',
+    category: 'advanced'
+  },
+  {
+    id: 'tax-benefits',
+    title: 'Benefícios Fiscais',
+    description: 'Vantagens tributárias do crédito rural',
+    icon: TrendingUp,
+    prompt: 'Quais são os principais benefícios fiscais ao utilizar CPR em comparação com outras formas de financiamento rural?',
+    category: 'advanced'
+  },
+  {
+    id: 'risk-assessment',
+    title: 'Análise de Risco',
+    description: 'Avaliação de riscos em operações rurais',
+    icon: AlertTriangle,
+    prompt: 'Como é feita a análise de risco para aprovação de crédito rural? Quais fatores são considerados prioritários?',
+    category: 'advanced'
+  },
+  {
+    id: 'market-prices',
+    title: 'Precificação',
+    description: 'Como definir preços em CPR',
+    icon: Target,
+    prompt: 'Como devo precificar minha CPR considerando as oscilações do mercado? Existe alguma estratégia de hedge recomendada?',
     category: 'advanced'
   },
   
   // Sugestões Expert
   {
-    id: 'induced-deficiency',
-    title: 'Deficiência induzida por pH',
-    description: 'Manganês bloqueado no solo',
-    icon: Target,
-    prompt: 'Um agricultor no Cerrado corrigiu o pH do solo para 6.5 com calagem e agora está observando sintomas de deficiência de Manganês. Ele planeja aplicar mais Manganês via solo. Essa é a estratégia correta?',
+    id: 'legal-framework',
+    title: 'Marco Legal',
+    description: 'Legislação avançada sobre CPR',
+    icon: Scale,
+    prompt: 'Explique as principais mudanças trazidas pela Lei 14.421/22 (Nova Lei do Agro) e como ela impacta as operações de CPR existentes.',
     category: 'expert'
   },
   {
-    id: 'application-physiology',
-    title: 'Fisiologia da aplicação',
-    description: 'Condições ideais para absorção',
-    icon: Microscope,
-    prompt: 'Por que aplicar um fertilizante foliar ao meio-dia, em um dia quente e com baixa umidade, pode anular completamente o investimento, mesmo usando o produto correto? Descreva o que acontece com a gota na folha.',
+    id: 'complex-structures',
+    title: 'Estruturas Complexas',
+    description: 'Operações estruturadas com CPR',
+    icon: FileText,
+    prompt: 'Como estruturar uma operação de CPR com garantia fidejussória envolvendo múltiplas safras e diferentes culturas? Quais os riscos jurídicos?',
     category: 'expert'
   }
 ]
