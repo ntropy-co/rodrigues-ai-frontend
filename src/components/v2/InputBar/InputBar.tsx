@@ -1,19 +1,34 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { Send, Plus, Wrench } from 'lucide-react'
 import { useUIConfig } from '@/hooks/useUIConfig'
+import { useDocuments } from '@/hooks/useDocuments'
+import { FileUploadModal } from '@/components/v2/FileUpload/FileUploadModal'
+import { FileList } from '@/components/v2/FileUpload/FileList'
 
 interface InputBarProps {
   onSendMessage: (message: string) => void
   message: string
   setMessage: (message: string) => void
   disabled?: boolean
+  userId?: string
+  sessionId?: string
 }
 
-export function InputBar({ onSendMessage, message, setMessage, disabled = false }: InputBarProps) {
+export function InputBar({ onSendMessage, message, setMessage, disabled = false, userId, sessionId }: InputBarProps) {
   const { ui } = useUIConfig()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const [showUploadModal, setShowUploadModal] = useState(false)
+
+  // Document management
+  const {
+    documents,
+    loading: documentsLoading,
+    fetchDocuments,
+    removeDocument,
+    downloadDocument
+  } = useDocuments(userId || 'default-user', sessionId)
 
   const adjustTextareaHeight = () => {
     const textarea = textareaRef.current
@@ -42,9 +57,40 @@ export function InputBar({ onSendMessage, message, setMessage, disabled = false 
   }
 
 
+  const handleUploadComplete = async (documentId: string) => {
+    // Refresh documents list
+    await fetchDocuments()
+  }
+
+  const handleRemoveDocument = async (documentId: string) => {
+    try {
+      await removeDocument(documentId)
+    } catch (error) {
+      console.error('Error removing document:', error)
+    }
+  }
+
+  const handleDownloadDocument = async (documentId: string) => {
+    try {
+      await downloadDocument(documentId)
+    } catch (error) {
+      console.error('Error downloading document:', error)
+    }
+  }
+
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border p-4 pb-safe">
-      <div className="mx-auto max-w-4xl">
+      <div className="mx-auto max-w-4xl space-y-3">
+        {/* File List */}
+        {documents.length > 0 && (
+          <FileList
+            documents={documents}
+            onRemove={handleRemoveDocument}
+            onDownload={handleDownloadDocument}
+            loading={documentsLoading}
+          />
+        )}
+
         {/* Barra principal */}
         <div className="flex items-end gap-3 rounded-2xl border border-border bg-card p-3 shadow-sm focus-within:border-gemini-blue focus-within:shadow-md transition-all">
           
@@ -66,9 +112,9 @@ export function InputBar({ onSendMessage, message, setMessage, disabled = false 
             {!message.trim() && (
               <div className="mt-2 flex gap-2">
                 {ui.features.showUploadButton && (
-                  <button 
+                  <button
                     className="flex items-center gap-1 rounded-full bg-gemini-gray-100 px-3 py-1 text-sm text-gemini-gray-600 hover:bg-gemini-gray-200 transition-colors"
-                    onClick={() => console.log('Upload file')}
+                    onClick={() => setShowUploadModal(true)}
                   >
                     <Plus className="h-4 w-4" />
                     Arquivo
@@ -110,6 +156,15 @@ export function InputBar({ onSendMessage, message, setMessage, disabled = false 
           Rodrigues AI pode cometer erros. Verifique informações importantes.
         </p>
       </div>
+
+      {/* Upload Modal */}
+      <FileUploadModal
+        isOpen={showUploadModal}
+        onClose={() => setShowUploadModal(false)}
+        onUploadComplete={handleUploadComplete}
+        userId={userId || 'default-user'}
+        sessionId={sessionId}
+      />
     </div>
   )
 }
