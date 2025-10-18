@@ -1,66 +1,184 @@
-# Agent UI
+# Rodrigues AI - Frontend
 
-A modern chat interface for AI agents built with Next.js, Tailwind CSS, and TypeScript. This template provides a ready-to-use UI for interacting with Agno agents.
+Frontend Next.js para o sistema de crédito agrícola com IA da Rodrigues.
 
-<img src="https://github.com/user-attachments/assets/7765fae5-a813-46cb-993b-904af9bc1672" alt="agent-ui" style="border-radius: 10px; width: 100%; max-width: 800px;" />
+## 🚀 Stack Tecnológica
 
-## Features
+- **Framework**: Next.js 15+ (App Router)
+- **Linguagem**: TypeScript
+- **Estilização**: Tailwind CSS + shadcn/ui
+- **Gerenciador de Pacotes**: pnpm
+- **Node**: 18+
+- **Deploy**: Vercel
 
-- 💬 **Modern Chat Interface**: Clean design with real-time streaming support
-- 🧩 **Tool Calls Support**: Visualizes agent tool calls and their results
-- 🧠 **Reasoning Steps**: Displays agent reasoning process (when available)
-- 📚 **References Support**: Show sources used by the agent
-- 🖼️ **Multi-modality Support**: Handles various content types including images, video, and audio
-- 🎨 **Customizable UI**: Built with Tailwind CSS for easy styling
-- 🧰 **Built with Modern Stack**: Next.js, TypeScript, shadcn/ui, Framer Motion, and more
+## 📋 Funcionalidades
 
-## Getting Started
+- ✅ Chat com IA (integração com backend FastAPI)
+- ✅ Upload de documentos com drag & drop
+- ✅ Gerenciamento de sessões
+- ✅ Interface responsiva e moderna
+- ✅ Componentes reutilizáveis (shadcn/ui)
 
-### Prerequisites
+## 🛠️ Setup Local
 
-Before setting up Agent UI, you may want to have an Agno Playground running. If you haven't set up the Agno Playground yet, follow the [official guide](https://agno.link/agent-ui#connect-to-local-agents) to run the Playground locally.
+### Requisitos
 
-### Installation
+- Node.js 18+
+- pnpm 8+
 
-### Automatic Installation (Recommended)
-
-```bash
-npx create-agent-ui@latest
-```
-
-### Manual Installation
-
-1. Clone the repository:
+### Instalação
 
 ```bash
-git clone https://github.com/agno-agi/agent-ui.git
-cd agent-ui
-```
+# Clonar repositório
+git clone https://github.com/PabloBispo/rodrigues-ai-frontend.git
+cd rodrigues-ai-frontend
 
-2. Install dependencies:
-
-```bash
+# Instalar dependências
 pnpm install
+
+# Copiar arquivo de ambiente
+cp .env.example .env.local
+
+# Editar .env.local com a URL do backend
 ```
 
-3. Start the development server:
+### Rodar em Desenvolvimento
 
 ```bash
+# Iniciar servidor de desenvolvimento
 pnpm dev
+
+# Aplicação disponível em http://localhost:3000
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Build de Produção
 
-## Connecting to an Agent Backend
+```bash
+# Criar build otimizado
+pnpm build
 
-By default Agent UI connects to `http://localhost:7777`. You can easily change this by hovering over the endpoint URL and clicking the edit option.
+# Rodar em modo produção
+pnpm start
+```
 
-The default endpoint works with the standard Agno Playground setup described in the [official documentation](https://agno.link/agent-ui#connect-to-local-agents).
+## 🚀 Deploy na Vercel
 
-## Contributing
+### 1. Conectar Repositório GitHub
 
-Contributions are welcome! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution guidelines.
+1. Acesse [vercel.com](https://vercel.com)
+2. Clique em **"New Project"**
+3. Importe `PabloBispo/rodrigues-ai-frontend`
+4. Configure as variáveis de ambiente
+5. Clique em **"Deploy"**
 
-## License
+### 2. Variáveis de Ambiente na Vercel
 
-This project is licensed under the [MIT License](./LICENSE).
+No dashboard da Vercel, adicione:
+
+```
+NEXT_PUBLIC_API_URL=https://rodrigues-ai-backend-production.up.railway.app
+```
+
+### 3. Deploy Automático
+
+- Cada push na branch `master` faz deploy automático
+- Preview deployments em pull requests
+- Rollback instantâneo se necessário
+
+## 📁 Estrutura do Projeto
+
+```
+.
+├── src/
+│   ├── app/              # App Router (Next.js 15)
+│   ├── components/       # Componentes React
+│   │   ├── ui/          # shadcn/ui components
+│   │   ├── Chat/        # Componentes de chat
+│   │   ├── FileUpload/  # Upload de documentos
+│   │   └── ...
+│   ├── lib/             # Utilitários e helpers
+│   └── styles/          # Estilos globais
+├── public/              # Arquivos estáticos
+├── next.config.ts       # Configuração Next.js
+├── tailwind.config.ts   # Configuração Tailwind
+└── package.json         # Dependências
+```
+
+## 🔐 Variáveis de Ambiente
+
+| Variável | Descrição | Obrigatória |
+|----------|-----------|-------------|
+| `NEXT_PUBLIC_API_URL` | URL do backend FastAPI | ✅ |
+
+**Nota:** Variáveis com prefixo `NEXT_PUBLIC_` são expostas no browser.
+
+**Produção:**
+- Backend: `https://rodrigues-ai-backend-production.up.railway.app`
+
+**Desenvolvimento local:**
+- Backend: `http://localhost:8000`
+
+## 🧪 Testes
+
+```bash
+# Lint
+pnpm lint
+
+# Type check
+pnpm type-check
+
+# Format
+pnpm format
+```
+
+## 🔧 Desenvolvimento
+
+### Adicionar Dependência
+
+```bash
+pnpm add nome-do-pacote
+```
+
+### Adicionar Componente shadcn/ui
+
+```bash
+npx shadcn@latest add button
+```
+
+## 🐛 Troubleshooting
+
+### Erro de conexão com backend
+
+Verifique se:
+- Backend está rodando em Railway
+- `NEXT_PUBLIC_API_URL` está correta
+- CORS está configurado no backend para aceitar origem da Vercel
+
+### Build falha na Vercel
+
+```bash
+# Testar build localmente
+pnpm build
+
+# Verificar logs na Vercel Dashboard
+```
+
+### Variáveis de ambiente não funcionam
+
+- Lembre-se de adicionar `NEXT_PUBLIC_` no prefixo
+- Redeploy após adicionar variáveis na Vercel
+- Limpar cache do navegador
+
+## 📝 Licença
+
+Proprietário - Rodrigues Agro
+
+## 🤝 Contribuindo
+
+Este é um projeto privado. Contate a equipe para mais informações.
+
+## 📧 Contato
+
+- **Projeto**: [github.com/PabloBispo/rodrigues-ai-frontend](https://github.com/PabloBispo/rodrigues-ai-frontend)
+- **Backend**: [github.com/PabloBispo/rodrigues-ai-backend](https://github.com/PabloBispo/rodrigues-ai-backend)
+- **Deploy**: Vercel (automático via GitHub)
