@@ -23,10 +23,9 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
   const [sessions, setSessions] = useState<ChatSession[]>([])
   const [agentId] = useQueryState('agent')
   const [sessionId, setSessionId] = useQueryState('session')
-  
+
   const sessionsData = usePlaygroundStore((state) => state.sessionsData)
-  const isSessionsLoading = usePlaygroundStore((state) => state.isSessionsLoading)
-  
+
   const { getSession, getSessions } = useSessionLoader()
   const { createNewSession } = useChatActions()
 
