@@ -86,8 +86,8 @@ export function InputBar({
   }
 
   return (
-    <div className="pb-safe fixed bottom-0 left-0 right-0 border-t border-border bg-background p-4">
-      <div className="mx-auto max-w-4xl space-y-3">
+    <div className="fixed bottom-0 left-0 right-0 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+      <div className="mx-auto max-w-4xl space-y-3 px-4">
         {/* File List */}
         {documents.length > 0 && (
           <FileList
@@ -99,7 +99,7 @@ export function InputBar({
         )}
 
         {/* Barra principal */}
-        <div className="flex items-end gap-3 rounded-2xl border border-border bg-card p-3 shadow-sm transition-all focus-within:border-gemini-blue focus-within:shadow-md">
+        <div className="flex items-end gap-3 rounded-2xl border border-border bg-card/95 backdrop-blur-sm p-3 shadow-[0_-4px_16px_rgba(0,0,0,0.12)] dark:shadow-[0_-4px_16px_rgba(0,0,0,0.4)] transition-all focus-within:border-gemini-blue focus-within:shadow-xl">
           {/* Área de texto - 7/10 */}
           <div className="flex-1">
             <textarea
@@ -116,6 +116,8 @@ export function InputBar({
               disabled={disabled}
               rows={1}
               style={{ minHeight: '20px', maxHeight: '120px' }}
+              aria-label="Campo de mensagem"
+              aria-describedby="message-disclaimer"
             />
 
             {/* Botões de ação (abaixo do texto quando não há mensagem) */}
@@ -123,8 +125,9 @@ export function InputBar({
               <div className="mt-2 flex gap-2">
                 {ui.features.showUploadButton && (
                   <button
-                    className="flex items-center gap-1 rounded-full bg-gemini-gray-100 px-3 py-1 text-sm text-gemini-gray-600 transition-colors hover:bg-gemini-gray-200"
+                    className="flex min-h-[44px] items-center gap-1 rounded-full bg-gemini-gray-100 px-4 py-2 text-sm text-gemini-gray-600 transition-all hover:bg-gemini-gray-200 active:scale-95"
                     onClick={() => setShowUploadModal(true)}
+                    aria-label="Adicionar arquivo"
                   >
                     <Plus className="h-4 w-4" />
                     Arquivo
@@ -133,8 +136,9 @@ export function InputBar({
 
                 {ui.features.showToolsButton && (
                   <button
-                    className="flex items-center gap-1 rounded-full bg-gemini-gray-100 px-3 py-1 text-sm text-gemini-gray-600 transition-colors hover:bg-gemini-gray-200"
+                    className="flex min-h-[44px] items-center gap-1 rounded-full bg-gemini-gray-100 px-4 py-2 text-sm text-gemini-gray-600 transition-all hover:bg-gemini-gray-200 active:scale-95"
                     onClick={() => console.log('Open tools')}
+                    aria-label="Abrir ferramentas"
                   >
                     <Wrench className="h-4 w-4" />
                     Ferramentas
@@ -149,10 +153,10 @@ export function InputBar({
             <button
               onClick={handleSend}
               disabled={disabled || !message.trim()}
-              className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
+              className={`flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full transition-all ${
                 disabled || !message.trim()
                   ? 'cursor-not-allowed bg-gemini-gray-300 text-gemini-gray-500'
-                  : 'bg-gemini-blue text-white hover:bg-gemini-blue-hover'
+                  : 'bg-gemini-blue text-white hover:bg-gemini-blue-hover active:scale-95'
               }`}
               aria-label="Enviar mensagem"
             >
@@ -162,7 +166,7 @@ export function InputBar({
         </div>
 
         {/* Disclaimer */}
-        <p className="mt-2 text-center text-xs text-gemini-gray-500">
+        <p id="message-disclaimer" className="mt-2 text-center text-xs text-gemini-gray-500">
           Rodrigues AI pode cometer erros. Verifique informações importantes.
         </p>
       </div>

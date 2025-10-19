@@ -1,34 +1,58 @@
 'use client'
 
 import { useState } from 'react'
-import { Settings, Moon, Sun, LogOut, Info } from 'lucide-react'
+import { Moon, Sun, LogOut } from 'lucide-react'
 import { useTheme } from 'next-themes'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext'
 
 export function UserAvatar() {
   const [isOpen, setIsOpen] = useState(false)
   const { theme, setTheme } = useTheme()
+  const router = useRouter()
+  const { user, logout } = useAuth()
+
+  // Função para extrair a primeira letra do nome do usuário
+  const getInitial = (): string => {
+    if (user?.full_name && user.full_name.trim()) {
+      return user.full_name.trim()[0].toUpperCase()
+    }
+    if (user?.email) {
+      return user.email[0].toUpperCase()
+    }
+    return 'U'
+  }
+
+  // Função de logout com redirect
+  const handleLogout = () => {
+    logout()
+    setIsOpen(false)
+    router.push('/login')
+  }
 
   const menuItems = [
-    {
-      icon: Settings,
-      label: 'Configurações',
-      onClick: () => console.log('Configurações')
-    },
+    // Temporariamente desabilitado - será implementado futuramente
+    // {
+    //   icon: Settings,
+    //   label: 'Configurações',
+    //   onClick: () => console.log('Configurações')
+    // },
     {
       icon: theme === 'dark' ? Sun : Moon,
       label: theme === 'dark' ? 'Modo Claro' : 'Modo Escuro',
       onClick: () => setTheme(theme === 'dark' ? 'light' : 'dark')
     },
-    {
-      icon: Info,
-      label: 'Sobre',
-      onClick: () => console.log('Sobre')
-    },
+    // Temporariamente desabilitado - será implementado futuramente
+    // {
+    //   icon: Info,
+    //   label: 'Sobre',
+    //   onClick: () => console.log('Sobre')
+    // },
     {
       icon: LogOut,
       label: 'Sair',
-      onClick: () => console.log('Logout'),
-      className: 'text-red-600 hover:bg-red-50'
+      onClick: handleLogout,
+      className: 'text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950'
     }
   ]
 
@@ -37,12 +61,14 @@ export function UserAvatar() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-purple-600 font-medium text-white shadow-sm transition-shadow hover:shadow-md"
+        aria-label="Menu do usuário"
+        title={user?.full_name || user?.email || 'Usuário'}
       >
-        U
+        {getInitial()}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-48 rounded-lg border border-gray-200 bg-white shadow-lg">
+        <div className="absolute right-0 top-full z-50 mt-2 w-48 rounded-lg border border-border bg-background shadow-lg">
           <div className="py-2">
             {menuItems.map((item, index) => {
               const Icon = item.icon
@@ -54,7 +80,7 @@ export function UserAvatar() {
                     setIsOpen(false)
                   }}
                   className={`flex w-full items-center gap-3 px-4 py-2 text-left text-sm transition-colors ${
-                    item.className || 'text-gray-700 hover:bg-gray-50'
+                    item.className || 'text-foreground hover:bg-muted'
                   }`}
                 >
                   <Icon className="h-4 w-4" />

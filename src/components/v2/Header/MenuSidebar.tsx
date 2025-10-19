@@ -1,11 +1,21 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { X, MessageSquare, Trash2, Plus } from 'lucide-react'
+import { useState, useEffect, useMemo } from 'react'
+import { X, MessageSquare, Trash2, Plus, AlertTriangle, Search } from 'lucide-react'
 import { useQueryState } from 'nuqs'
 import { usePlaygroundStore } from '@/store'
 import useSessionLoader from '@/hooks/useSessionLoader'
 import useChatActions from '@/hooks/useChatActions'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { SessionSkeletonList } from './SessionSkeleton'
 
 interface ChatSession {
   id: string
@@ -23,6 +33,10 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
   const [sessions, setSessions] = useState<ChatSession[]>([])
   const [agentId] = useQueryState('agent')
   const [sessionId, setSessionId] = useQueryState('session')
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [sessionToDelete, setSessionToDelete] = useState<ChatSession | null>(null)
+  const [isLoadingSessions, setIsLoadingSessions] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
 
   const sessionsData = usePlaygroundStore((state) => state.sessionsData)
 
@@ -31,9 +45,17 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
 
   // Carregar sessões quando o agente mudar
   useEffect(() => {
-    if (agentId && agentId !== 'no-agents') {
-      getSessions(agentId)
+    const loadSessions = async () => {
+      if (agentId && agentId !== 'no-agents') {
+        setIsLoadingSessions(true)
+        try {
+          await getSessions(agentId)
+        } finally {
+          setIsLoadingSessions(false)
+        }
+      }
     }
+    loadSessions()
   }, [agentId, getSessions])
 
   // Atualizar lista de conversas periodicamente quando o sidebar estiver aberto
@@ -42,12 +64,20 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
 
     if (isOpen && agentId && agentId !== 'no-agents') {
       // Atualizar imediatamente quando abrir
-      getSessions(agentId)
+      const loadSessions = async () => {
+        setIsLoadingSessions(true)
+        try {
+          await getSessions(agentId)
+        } finally {
+          setIsLoadingSessions(false)
+        }
+      }
+      loadSessions()
 
-      // Configurar atualização a cada 3 segundos
+      // Configurar atualização a cada 5 segundos (reduzido de 3 para melhor performance)
       interval = setInterval(() => {
-        getSessions(agentId)
-      }, 3000)
+        getSessions(agentId) // Sem loading para não piscar
+      }, 5000)
     }
 
     return () => {
@@ -90,6 +120,53 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
     onClose()
   }
 
+  const handleDeleteClick = (session: ChatSession) => {
+    setSessionToDelete(session)
+    setDeleteDialogOpen(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (sessionToDelete && agentId) {
+      try {
+        // Importar a API de delete
+        const { deletePlaygroundSessionAPI } = await import('@/api/playground')
+        const endpoint = process.env.NEXT_PUBLIC_PLAYGROUND_ENDPOINT || ''
+
+        await deletePlaygroundSessionAPI(endpoint, agentId, sessionToDelete.id)
+
+        // Refresh sessions list
+        await getSessions(agentId)
+
+        // Se a sessão deletada for a atual, criar uma nova
+        if (sessionId === sessionToDelete.id) {
+          handleNewConversation()
+        }
+      } catch (error) {
+        console.error('Error deleting session:', error)
+      } finally {
+        setDeleteDialogOpen(false)
+        setSessionToDelete(null)
+      }
+    }
+  }
+
+  const handleCancelDelete = () => {
+    setDeleteDialogOpen(false)
+    setSessionToDelete(null)
+  }
+
+  // Filtrar sessões baseado na busca
+  const filteredSessions = useMemo(() => {
+    if (!searchQuery.trim()) return sessions
+
+    const query = searchQuery.toLowerCase()
+    return sessions.filter(
+      (session) =>
+        session.title.toLowerCase().includes(query) ||
+        session.lastMessage.toLowerCase().includes(query)
+    )
+  }, [sessions, searchQuery])
+
   if (!isOpen) return null
 
   return (
@@ -101,7 +178,12 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
       />
 
       {/* Sidebar */}
-      <div className="fixed left-0 top-0 z-50 h-full w-80 transform border-r border-border bg-background shadow-xl transition-transform duration-300">
+      <aside
+        id="navigation-sidebar"
+        className="fixed left-0 top-0 z-50 h-full w-full max-w-[280px] sm:w-80 sm:max-w-none transform border-r border-border bg-background shadow-xl transition-transform duration-300"
+        role="navigation"
+        aria-label="Menu de navegação e conversas"
+      >
         <div className="flex h-full flex-col">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border p-4">
@@ -127,16 +209,43 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
             </button>
           </div>
 
+          {/* Search */}
+          <div className="border-b border-border p-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type="text"
+                placeholder="Buscar conversas..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full rounded-lg border border-input bg-background py-2 pl-9 pr-3 text-sm placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20"
+                aria-label="Buscar conversas"
+              />
+            </div>
+          </div>
+
           {/* Lista de Conversas */}
           <div className="flex-1 space-y-2 overflow-y-auto p-4">
-            {sessions.length === 0 ? (
-              <div className="flex items-center justify-center p-4">
+            {isLoadingSessions ? (
+              <SessionSkeletonList />
+            ) : filteredSessions.length === 0 ? (
+              <div className="flex flex-col items-center justify-center p-4 text-center">
                 <div className="text-sm text-muted-foreground">
-                  Nenhuma conversa anterior
+                  {searchQuery
+                    ? 'Nenhuma conversa encontrada'
+                    : 'Nenhuma conversa anterior'}
                 </div>
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="mt-2 text-xs text-gemini-blue hover:underline"
+                  >
+                    Limpar busca
+                  </button>
+                )}
               </div>
             ) : (
-              sessions.map((session) => (
+              filteredSessions.map((session) => (
                 <div
                   key={session.id}
                   onClick={() => handleSessionClick(session.id)}
@@ -164,8 +273,9 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                     className="flex-shrink-0 rounded p-1 opacity-0 transition-all hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
                     onClick={(e) => {
                       e.stopPropagation()
-                      console.log('Delete session:', session.id)
+                      handleDeleteClick(session)
                     }}
+                    aria-label="Deletar conversa"
                   >
                     <Trash2 className="h-3 w-3" />
                   </button>
@@ -181,7 +291,44 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
             </div>
           </div>
         </div>
-      </div>
+      </aside>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
+                <AlertTriangle className="h-5 w-5 text-destructive" />
+              </div>
+              <DialogTitle>Deletar Conversa</DialogTitle>
+            </div>
+            <DialogDescription className="pt-3">
+              Tem certeza que deseja deletar a conversa{' '}
+              <span className="font-semibold text-foreground">
+                &ldquo;{sessionToDelete?.title}&rdquo;
+              </span>
+              ? Esta ação não pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-4 gap-2">
+            <Button
+              variant="outline"
+              onClick={handleCancelDelete}
+              className="flex-1"
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleConfirmDelete}
+              className="flex-1"
+            >
+              Deletar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
