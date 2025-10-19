@@ -3,11 +3,11 @@
 /**
  * Reset Password Page
  */
-import { useEffect, useState, Suspense } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { verifyResetTokenApi, resetPasswordApi } from '@/lib/auth-api'
+import { resetPasswordApi } from '@/lib/auth-api'
 import { toast } from 'sonner'
 
 function ResetPasswordContent() {
@@ -15,34 +15,10 @@ function ResetPasswordContent() {
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
 
-  const [isValidating, setIsValidating] = useState(true)
-  const [isTokenValid, setIsTokenValid] = useState(false)
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
-
-  // Validate token on mount
-  useEffect(() => {
-    const validateToken = async () => {
-      if (!token) {
-        setIsValidating(false)
-        setIsTokenValid(false)
-        return
-      }
-
-      try {
-        const response = await verifyResetTokenApi(token)
-        setIsTokenValid(response.valid)
-      } catch {
-        setIsTokenValid(false)
-      } finally {
-        setIsValidating(false)
-      }
-    }
-
-    validateToken()
-  }, [token])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -77,20 +53,8 @@ function ResetPasswordContent() {
     }
   }
 
-  // Loading state
-  if (isValidating) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="text-center">
-          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-          <p className="text-muted-foreground">Validando link...</p>
-        </div>
-      </div>
-    )
-  }
-
-  // Invalid or expired token
-  if (!isTokenValid) {
+  // Missing token - show error
+  if (!token) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background p-4">
         <div className="w-full max-w-md">

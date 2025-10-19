@@ -13,7 +13,7 @@ export async function loginApi(credentials: {
   username: string
   password: string
 }): Promise<{ access_token: string; token_type: string }> {
-  const response = await fetch(`${API_URL}/api/v1/auth/login`, {
+  const response = await fetch(`${API_URL}/api/v1/login/access-token`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
@@ -36,7 +36,7 @@ export async function loginApi(credentials: {
  * Register a new user
  */
 export async function registerApi(data: RegisterRequest): Promise<User> {
-  const response = await fetch(`${API_URL}/api/v1/auth/register`, {
+  const response = await fetch(`${API_URL}/api/v1/users/signup`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -71,20 +71,13 @@ export async function getCurrentUserApi(token: string): Promise<User> {
 }
 
 /**
- * Logout (invalidate token)
+ * Logout (client-side only - no backend endpoint)
  */
-export async function logoutApi(token: string): Promise<void> {
-  const response = await fetch(`${API_URL}/api/v1/auth/logout`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
-
-  if (!response.ok) {
-    const error = await response.json()
-    throw new Error(error.detail || 'Logout failed')
-  }
+export async function logoutApi(_token: string): Promise<void> {
+  // The reference backend doesn't have a logout endpoint
+  // Token invalidation is handled client-side by removing the token
+  // This function is kept for API compatibility but does nothing
+  return Promise.resolve()
 }
 
 /**
@@ -93,12 +86,8 @@ export async function logoutApi(token: string): Promise<void> {
 export async function forgotPasswordApi(
   email: string
 ): Promise<{ message: string }> {
-  const response = await fetch(`${API_URL}/api/v1/auth/forgot-password`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ email })
+  const response = await fetch(`${API_URL}/api/v1/password-recovery/${email}`, {
+    method: 'POST'
   })
 
   if (!response.ok) {
@@ -110,30 +99,14 @@ export async function forgotPasswordApi(
 }
 
 /**
- * Verify password reset token
- */
-export async function verifyResetTokenApi(
-  token: string
-): Promise<{ valid: boolean }> {
-  const response = await fetch(
-    `${API_URL}/api/v1/auth/verify-reset-token/${token}`
-  )
-
-  if (!response.ok) {
-    return { valid: false }
-  }
-
-  return response.json()
-}
-
-/**
  * Reset password with token
+ * Note: Token validation happens during the reset call
  */
 export async function resetPasswordApi(
   token: string,
   newPassword: string
 ): Promise<{ message: string }> {
-  const response = await fetch(`${API_URL}/api/v1/auth/reset-password`, {
+  const response = await fetch(`${API_URL}/api/v1/reset-password/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
