@@ -14,30 +14,55 @@ export function SuggestionCarousel({
 }: SuggestionCarouselProps) {
   const { suggestions, ui } = useUIConfig()
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [itemsPerView, setItemsPerView] = useState(3)
 
-  // Carrossel cíclico infinito
-  const itemsPerView = 3 // Desktop: 3, Mobile: 1
+  // Detectar viewport e ajustar items por view
+  useEffect(() => {
+    const updateItemsPerView = () => {
+      if (window.innerWidth < 768) {
+        setItemsPerView(1) // Mobile: 1 card
+      } else {
+        setItemsPerView(3) // Desktop: 3 cards
+      }
+    }
+
+    updateItemsPerView()
+    window.addEventListener('resize', updateItemsPerView)
+    return () => window.removeEventListener('resize', updateItemsPerView)
+  }, [])
+
+  // Calcular total de páginas
+  const totalPages = Math.ceil(suggestions.length / itemsPerView)
 
   const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % suggestions.length)
+    setCurrentIndex((prev) => {
+      const nextPage = prev + itemsPerView
+      return nextPage >= suggestions.length ? 0 : nextPage
+    })
   }
 
   const prevSlide = () => {
-    setCurrentIndex(
-      (prev) => (prev - 1 + suggestions.length) % suggestions.length
-    )
+    setCurrentIndex((prev) => {
+      const prevPage = prev - itemsPerView
+      return prevPage < 0
+        ? Math.max(0, suggestions.length - itemsPerView)
+        : prevPage
+    })
   }
 
-  // Auto-scroll opcional
+  // Auto-scroll opcional (página por página)
   useEffect(() => {
     if (ui.features.carouselMode) {
       const interval = setInterval(() => {
-        setCurrentIndex((prev) => (prev + 1) % suggestions.length)
+        setCurrentIndex((prev) => {
+          const nextPage = prev + itemsPerView
+          return nextPage >= suggestions.length ? 0 : nextPage
+        })
       }, 6000) // 6 segundos
 
       return () => clearInterval(interval)
     }
-  }, [suggestions.length, ui.features.carouselMode])
+  }, [suggestions.length, ui.features.carouselMode, itemsPerView])
 
   const getCategoryColor = (category: string) => {
     switch (category) {
@@ -102,7 +127,7 @@ export function SuggestionCarousel({
           <div
             className="flex transition-transform duration-300 ease-in-out"
             style={{
-              transform: `translateX(-${(currentIndex * 100) / itemsPerView}%)`
+              transform: `translateX(-${Math.floor(currentIndex / itemsPerView) * 100}%)`
             }}
           >
             {suggestions.map((suggestion) => {
@@ -111,7 +136,7 @@ export function SuggestionCarousel({
               return (
                 <div
                   key={suggestion.id}
-                  className="w-[280px] flex-shrink-0 px-2 md:w-[240px]"
+                  className="w-full flex-shrink-0 px-2 md:w-1/3"
                 >
                   <button
                     onClick={() => onSuggestionClick(suggestion.prompt)}
@@ -143,13 +168,16 @@ export function SuggestionCarousel({
 
       {/* Indicadores de posição */}
       <div className="mt-4 flex justify-center gap-1">
-        {suggestions.map((_, i) => (
+        {Array.from({ length: totalPages }).map((_, pageIndex) => (
           <button
-            key={i}
-            onClick={() => setCurrentIndex(i)}
+            key={pageIndex}
+            onClick={() => setCurrentIndex(pageIndex * itemsPerView)}
             className={`h-2 w-2 rounded-full transition-colors ${
-              i === currentIndex ? 'bg-gemini-blue' : 'bg-gemini-gray-300'
+              Math.floor(currentIndex / itemsPerView) === pageIndex
+                ? 'bg-gemini-blue'
+                : 'bg-gemini-gray-300'
             }`}
+            aria-label={`Ir para página ${pageIndex + 1}`}
           />
         ))}
       </div>
