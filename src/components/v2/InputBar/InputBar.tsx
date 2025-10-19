@@ -57,6 +57,7 @@ export function InputBar({ onSendMessage, message, setMessage, disabled = false,
   }
 
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleUploadComplete = async (_documentId: string) => {
     // Refresh documents list
     await fetchDocuments()
