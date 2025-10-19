@@ -1,32 +1,40 @@
 /**
  * Authentication API functions
+ * Handles all HTTP requests to the backend auth endpoints
  */
 
-import type { User, RegisterRequest } from '@/types/auth'
+import type {
+  AuthResponse,
+  ForgotPasswordRequest,
+  LoginRequest,
+  MessageResponse,
+  RegisterRequest,
+  ResetPasswordRequest,
+  TokenValidation,
+  User
+} from '@/types/auth'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 /**
  * Login with email and password
  */
-export async function loginApi(credentials: {
-  username: string
-  password: string
-}): Promise<{ access_token: string; token_type: string }> {
-  const response = await fetch(`${API_URL}/api/v1/auth/login`, {
+export async function loginApi(credentials: LoginRequest): Promise<AuthResponse> {
+  const formData = new URLSearchParams()
+  formData.append('username', credentials.username)
+  formData.append('password', credentials.password)
+
+  const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
-    body: new URLSearchParams({
-      username: credentials.username,
-      password: credentials.password
-    })
+    body: formData
   })
 
   if (!response.ok) {
-    const error = await response.json()
-    throw new Error(error.detail || 'Login failed')
+    const error = await response.json().catch(() => ({ detail: 'Erro ao fazer login' }))
+    throw new Error(error.detail || 'Credenciais inválidas')
   }
 
   return response.json()
@@ -36,7 +44,7 @@ export async function loginApi(credentials: {
  * Register a new user
  */
 export async function registerApi(data: RegisterRequest): Promise<User> {
-  const response = await fetch(`${API_URL}/api/v1/auth/register`, {
+  const response = await fetch(`${API_BASE_URL}/api/v1/auth/register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -45,36 +53,37 @@ export async function registerApi(data: RegisterRequest): Promise<User> {
   })
 
   if (!response.ok) {
-    const error = await response.json()
-    throw new Error(error.detail || 'Registration failed')
+    const error = await response.json().catch(() => ({ detail: 'Erro ao criar conta' }))
+    throw new Error(error.detail || 'Não foi possível criar a conta')
   }
 
   return response.json()
 }
 
 /**
- * Get current user information
+ * Get current authenticated user
  */
 export async function getCurrentUserApi(token: string): Promise<User> {
-  const response = await fetch(`${API_URL}/api/v1/users/me`, {
+  const response = await fetch(`${API_BASE_URL}/api/v1/auth/me`, {
+    method: 'GET',
     headers: {
       Authorization: `Bearer ${token}`
     }
   })
 
   if (!response.ok) {
-    const error = await response.json()
-    throw new Error(error.detail || 'Failed to get user info')
+    const error = await response.json().catch(() => ({ detail: 'Erro ao buscar usuário' }))
+    throw new Error(error.detail || 'Não foi possível obter dados do usuário')
   }
 
   return response.json()
 }
 
 /**
- * Logout (invalidate token)
+ * Logout (client-side token removal, server just returns success)
  */
-export async function logoutApi(token: string): Promise<void> {
-  const response = await fetch(`${API_URL}/api/v1/auth/logout`, {
+export async function logoutApi(token: string): Promise<MessageResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/auth/logout`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`
@@ -82,45 +91,28 @@ export async function logoutApi(token: string): Promise<void> {
   })
 
   if (!response.ok) {
-    const error = await response.json()
-    throw new Error(error.detail || 'Logout failed')
+    const error = await response.json().catch(() => ({ message: 'Erro ao fazer logout' }))
+    throw new Error(error.message || 'Não foi possível fazer logout')
   }
+
+  return response.json()
 }
 
 /**
- * Request password reset
+ * Request password reset email
  */
-export async function forgotPasswordApi(
-  email: string
-): Promise<{ message: string }> {
-  const response = await fetch(`${API_URL}/api/v1/auth/forgot-password`, {
+export async function forgotPasswordApi(data: ForgotPasswordRequest): Promise<MessageResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/auth/forgot-password`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ email })
+    body: JSON.stringify(data)
   })
 
   if (!response.ok) {
-    const error = await response.json()
-    throw new Error(error.detail || 'Failed to send reset email')
-  }
-
-  return response.json()
-}
-
-/**
- * Verify password reset token
- */
-export async function verifyResetTokenApi(
-  token: string
-): Promise<{ valid: boolean }> {
-  const response = await fetch(
-    `${API_URL}/api/v1/auth/verify-reset-token/${token}`
-  )
-
-  if (!response.ok) {
-    return { valid: false }
+    const error = await response.json().catch(() => ({ message: 'Erro ao solicitar reset de senha' }))
+    throw new Error(error.message || 'Não foi possível solicitar reset de senha')
   }
 
   return response.json()
@@ -129,24 +121,37 @@ export async function verifyResetTokenApi(
 /**
  * Reset password with token
  */
-export async function resetPasswordApi(
-  token: string,
-  newPassword: string
-): Promise<{ message: string }> {
-  const response = await fetch(`${API_URL}/api/v1/auth/reset-password`, {
+export async function resetPasswordApi(data: ResetPasswordRequest): Promise<MessageResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/auth/reset-password`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      token,
-      new_password: newPassword
-    })
+    body: JSON.stringify(data)
   })
 
   if (!response.ok) {
-    const error = await response.json()
-    throw new Error(error.detail || 'Failed to reset password')
+    const error = await response.json().catch(() => ({ message: 'Erro ao redefinir senha' }))
+    throw new Error(error.message || 'Não foi possível redefinir a senha')
+  }
+
+  return response.json()
+}
+
+/**
+ * Validate password reset token
+ */
+export async function validateResetTokenApi(token: string): Promise<TokenValidation> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/auth/validate-reset-token`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ token })
+  })
+
+  if (!response.ok) {
+    return { valid: false }
   }
 
   return response.json()
