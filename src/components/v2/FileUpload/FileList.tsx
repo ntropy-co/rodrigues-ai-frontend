@@ -18,11 +18,16 @@ interface FileListProps {
   loading?: boolean
 }
 
-export function FileList({ documents, onRemove, onDownload, loading }: FileListProps) {
+export function FileList({
+  documents,
+  onRemove,
+  onDownload,
+  loading
+}: FileListProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-4">
-        <Loader2 className="h-5 w-5 animate-spin text-gemini-gray-400" />
+        <Loader2 className="text-gemini-gray-400 h-5 w-5 animate-spin" />
       </div>
     )
   }
@@ -39,7 +44,8 @@ export function FileList({ documents, onRemove, onDownload, loading }: FileListP
 
   const getFileTypeLabel = (mimeType: string): string => {
     if (mimeType.includes('pdf')) return 'PDF'
-    if (mimeType.includes('word') || mimeType.includes('document')) return 'DOCX'
+    if (mimeType.includes('word') || mimeType.includes('document'))
+      return 'DOCX'
     if (mimeType.includes('text')) return 'TXT'
     if (mimeType.includes('image')) return 'Imagem'
     return 'Arquivo'
@@ -87,7 +93,7 @@ export function FileList({ documents, onRemove, onDownload, loading }: FileListP
               {onDownload && (
                 <button
                   onClick={() => onDownload(doc.id)}
-                  className="rounded-lg p-2 text-gemini-gray-600 hover:bg-gemini-gray-100 transition-colors"
+                  className="rounded-lg p-2 text-gemini-gray-600 transition-colors hover:bg-gemini-gray-100"
                   title="Baixar documento"
                 >
                   <Download className="h-4 w-4" />
@@ -97,7 +103,7 @@ export function FileList({ documents, onRemove, onDownload, loading }: FileListP
               {onRemove && (
                 <button
                   onClick={() => onRemove(doc.id)}
-                  className="rounded-lg p-2 text-gemini-gray-600 hover:bg-red-100 hover:text-red-600 transition-colors"
+                  className="rounded-lg p-2 text-gemini-gray-600 transition-colors hover:bg-red-100 hover:text-red-600"
                   title="Remover documento"
                 >
                   <X className="h-4 w-4" />

@@ -1,7 +1,14 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { Upload, X, FileText, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
+import {
+  Upload,
+  X,
+  FileText,
+  Loader2,
+  CheckCircle,
+  AlertCircle
+} from 'lucide-react'
 
 interface FileUploadModalProps {
   isOpen: boolean
@@ -11,10 +18,23 @@ interface FileUploadModalProps {
   sessionId?: string
 }
 
-const ALLOWED_TYPES = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword', 'text/plain', 'image/jpeg', 'image/png']
+const ALLOWED_TYPES = [
+  'application/pdf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/msword',
+  'text/plain',
+  'image/jpeg',
+  'image/png'
+]
 const MAX_SIZE = 10 * 1024 * 1024 // 10MB
 
-export function FileUploadModal({ isOpen, onClose, onUploadComplete, userId, sessionId }: FileUploadModalProps) {
+export function FileUploadModal({
+  isOpen,
+  onClose,
+  onUploadComplete,
+  userId,
+  sessionId
+}: FileUploadModalProps) {
   const [file, setFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
@@ -88,7 +108,7 @@ export function FileUploadModal({ isOpen, onClose, onUploadComplete, userId, ses
 
       const response = await fetch(`${apiUrl}/api/v1/documents/upload`, {
         method: 'POST',
-        body: formData,
+        body: formData
       })
 
       if (!response.ok) {
@@ -106,7 +126,6 @@ export function FileUploadModal({ isOpen, onClose, onUploadComplete, userId, ses
         onUploadComplete(data.id)
         handleClose()
       }, 1500)
-
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao fazer upload')
       setUploading(false)
@@ -123,7 +142,7 @@ export function FileUploadModal({ isOpen, onClose, onUploadComplete, userId, ses
   }
 
   const getFileIcon = () => {
-    if (!file) return <Upload className="h-12 w-12 text-gemini-gray-400" />
+    if (!file) return <Upload className="text-gemini-gray-400 h-12 w-12" />
     if (success) return <CheckCircle className="h-12 w-12 text-green-500" />
     if (error) return <AlertCircle className="h-12 w-12 text-red-500" />
     return <FileText className="h-12 w-12 text-gemini-blue" />
@@ -139,7 +158,7 @@ export function FileUploadModal({ isOpen, onClose, onUploadComplete, userId, ses
           </h2>
           <button
             onClick={handleClose}
-            className="rounded-lg p-1 hover:bg-gemini-gray-100 transition-colors"
+            className="rounded-lg p-1 transition-colors hover:bg-gemini-gray-100"
             disabled={uploading}
           >
             <X className="h-5 w-5 text-gemini-gray-600" />
@@ -184,7 +203,9 @@ export function FileUploadModal({ isOpen, onClose, onUploadComplete, userId, ses
                     />
                   </div>
                   <p className="mt-2 text-sm text-gemini-gray-600">
-                    {success ? 'Processado com sucesso!' : 'Processando documento...'}
+                    {success
+                      ? 'Processado com sucesso!'
+                      : 'Processando documento...'}
                   </p>
                 </div>
               )}
@@ -212,7 +233,9 @@ export function FileUploadModal({ isOpen, onClose, onUploadComplete, userId, ses
             type="file"
             className="hidden"
             accept=".pdf,.docx,.doc,.txt,.jpg,.jpeg,.png"
-            onChange={(e) => e.target.files?.[0] && handleFileSelect(e.target.files[0])}
+            onChange={(e) =>
+              e.target.files?.[0] && handleFileSelect(e.target.files[0])
+            }
             disabled={uploading}
           />
         </div>
@@ -228,7 +251,7 @@ export function FileUploadModal({ isOpen, onClose, onUploadComplete, userId, ses
         <div className="mt-6 flex gap-3">
           <button
             onClick={handleClose}
-            className="flex-1 rounded-lg border border-gemini-gray-300 px-4 py-2 text-gemini-gray-700 hover:bg-gemini-gray-50 transition-colors"
+            className="flex-1 rounded-lg border border-gemini-gray-300 px-4 py-2 text-gemini-gray-700 transition-colors hover:bg-gemini-gray-50"
             disabled={uploading}
           >
             Cancelar
@@ -238,7 +261,7 @@ export function FileUploadModal({ isOpen, onClose, onUploadComplete, userId, ses
             disabled={!file || uploading || success}
             className={`flex-1 rounded-lg px-4 py-2 font-medium text-white transition-colors ${
               !file || uploading || success
-                ? 'bg-gemini-gray-300 cursor-not-allowed'
+                ? 'cursor-not-allowed bg-gemini-gray-300'
                 : 'bg-gemini-blue hover:bg-gemini-blue-hover'
             }`}
           >

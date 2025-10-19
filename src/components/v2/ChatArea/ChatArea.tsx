@@ -44,7 +44,7 @@ export function ChatArea({ messages, isStreaming }: ChatAreaProps) {
               {/* Avatar/Indicador do papel */}
               <div className="mb-2 flex items-center gap-2">
                 <div
-                  className={`h-6 w-6 rounded-full flex items-center justify-center text-xs font-medium ${
+                  className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium ${
                     message.role === 'user'
                       ? 'bg-white/20 text-white'
                       : 'bg-gemini-blue text-white'
@@ -63,9 +63,9 @@ export function ChatArea({ messages, isStreaming }: ChatAreaProps) {
                   message.role === 'agent' ? (
                     // Se estiver streaming e for a última mensagem, usar StreamingText
                     isStreamingFromStore && index === messages.length - 1 ? (
-                      <StreamingText 
-                        text={message.content} 
-                        speed={80} 
+                      <StreamingText
+                        text={message.content}
+                        speed={80}
                         renderMarkdown={true}
                         className=""
                       />
@@ -77,16 +77,22 @@ export function ChatArea({ messages, isStreaming }: ChatAreaProps) {
                   ) : (
                     <div>{message.content}</div>
                   )
-                ) : (isStreaming && index === messages.length - 1 ? (
+                ) : isStreaming && index === messages.length - 1 ? (
                   <div className="flex items-center justify-start">
                     <div className="relative">
-                      <div className="w-6 h-6 border-2 border-transparent border-t-gemini-blue border-r-gemini-purple rounded-full animate-spin"></div>
-                      <div className="absolute top-1 left-1 w-4 h-4 border-2 border-transparent border-t-gemini-purple border-r-gemini-blue rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1s' }}></div>
+                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-transparent border-r-gemini-purple border-t-gemini-blue"></div>
+                      <div
+                        className="absolute left-1 top-1 h-4 w-4 animate-spin rounded-full border-2 border-transparent border-r-gemini-blue border-t-gemini-purple"
+                        style={{
+                          animationDirection: 'reverse',
+                          animationDuration: '1s'
+                        }}
+                      ></div>
                     </div>
                   </div>
                 ) : (
                   'Processando...'
-                ))}
+                )}
               </div>
 
               {/* Error state */}

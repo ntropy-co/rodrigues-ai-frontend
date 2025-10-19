@@ -33,7 +33,7 @@ export function ThemeToggle() {
       variant="ghost"
       size="icon"
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      className="h-8 w-8 rounded-xl hover:bg-accent transition-colors"
+      className="h-8 w-8 rounded-xl transition-colors hover:bg-accent"
       title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
     >
       {isDark ? (

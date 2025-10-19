@@ -85,7 +85,7 @@ const UserMessage = memo(({ message }: MessageProps) => {
         <p className="flex items-center gap-x-2 text-sm font-medium text-muted">
           <Icon type="user" size="sm" />
         </p>
-        <div className="text-lg rounded-lg py-1 font-geist text-foreground">
+        <div className="rounded-lg py-1 font-geist text-lg text-foreground">
           {message.content}
         </div>
       </div>

@@ -37,12 +37,9 @@ export function useDocuments(userId: string, sessionId?: string) {
 
   const removeDocument = async (documentId: string) => {
     try {
-      const response = await fetch(
-        `${apiUrl}/api/v1/documents/${documentId}`,
-        {
-          method: 'DELETE',
-        }
-      )
+      const response = await fetch(`${apiUrl}/api/v1/documents/${documentId}`, {
+        method: 'DELETE'
+      })
 
       if (!response.ok) {
         throw new Error('Erro ao remover documento')
@@ -96,6 +93,6 @@ export function useDocuments(userId: string, sessionId?: string) {
     error,
     fetchDocuments,
     removeDocument,
-    downloadDocument,
+    downloadDocument
   }
 }

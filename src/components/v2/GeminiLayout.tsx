@@ -14,7 +14,7 @@ export function GeminiLayout() {
   const [hasMessages, setHasMessages] = useState(false)
   const messages = usePlaygroundStore((state) => state.messages)
   const isStreaming = usePlaygroundStore((state) => state.isStreaming)
-  
+
   const { initializePlayground, ensureSessionExists } = useChatActions()
   const { handleStreamResponse } = useAIChatStreamHandler()
 
@@ -30,7 +30,7 @@ export function GeminiLayout() {
 
   const handleSendMessage = async (msg: string) => {
     if (!msg.trim() || isStreaming) return
-    
+
     ensureSessionExists()
     await handleStreamResponse(msg)
     setMessage('')
@@ -45,18 +45,16 @@ export function GeminiLayout() {
     <div className="flex h-screen w-screen flex-col bg-background pb-20 md:pb-24">
       {/* Header - 8-10% da altura da tela */}
       <Header />
-      
+
       {/* Main Content ou Chat Area - Flexível */}
       {hasMessages ? (
         <ChatArea messages={messages} isStreaming={isStreaming} />
       ) : (
-        <MainContent 
-          onSuggestionClick={handleSuggestionClick}
-        />
+        <MainContent onSuggestionClick={handleSuggestionClick} />
       )}
-      
+
       {/* Input Bar - 10-15% da altura da tela */}
-      <InputBar 
+      <InputBar
         onSendMessage={handleSendMessage}
         message={message}
         setMessage={setMessage}

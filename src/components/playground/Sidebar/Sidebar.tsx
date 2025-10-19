@@ -9,9 +9,11 @@ import Icon from '@/components/ui/icon'
 import Sessions from './Sessions'
 import { Skeleton } from '@/components/ui/skeleton'
 const SidebarHeader = () => (
-  <div className="flex items-center gap-2 w-full">
+  <div className="flex w-full items-center gap-2">
     <Icon type="agno" size="xs" />
-    <span className="text-sm font-medium uppercase text-white">Rodrigues AI</span>
+    <span className="text-sm font-medium uppercase text-white">
+      Rodrigues AI
+    </span>
   </div>
 )
 
@@ -33,8 +35,6 @@ const NewChatButton = ({
   </Button>
 )
 
-
-
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(() => {
     // Check if mobile on initial render
@@ -44,14 +44,10 @@ const Sidebar = () => {
     return false
   })
   const { clearChat, focusChatInput, initializePlayground } = useChatActions()
-  const {
-    messages,
-    selectedEndpoint,
-    hydrated,
-    isEndpointLoading
-  } = usePlaygroundStore()
+  const { messages, selectedEndpoint, hydrated, isEndpointLoading } =
+    usePlaygroundStore()
   const [isMounted, setIsMounted] = useState(false)
-  
+
   // Handle responsive behavior
   useEffect(() => {
     const handleResize = () => {
@@ -64,7 +60,7 @@ const Sidebar = () => {
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [isCollapsed])
-  
+
   useEffect(() => {
     setIsMounted(true)
     if (hydrated) initializePlayground()
@@ -121,10 +117,7 @@ const Sidebar = () => {
               {isEndpointLoading ? (
                 <div className="flex w-full flex-col gap-2">
                   {Array.from({ length: 2 }).map((_, index) => (
-                    <Skeleton
-                      key={index}
-                      className="h-9 w-full rounded-xl"
-                    />
+                    <Skeleton key={index} className="h-9 w-full rounded-xl" />
                   ))}
                 </div>
               ) : (

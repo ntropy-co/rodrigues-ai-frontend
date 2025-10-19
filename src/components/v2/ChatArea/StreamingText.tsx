@@ -10,7 +10,12 @@ interface StreamingTextProps {
   renderMarkdown?: boolean
 }
 
-export function StreamingText({ text, speed = 50, className, renderMarkdown = false }: StreamingTextProps) {
+export function StreamingText({
+  text,
+  speed = 50,
+  className,
+  renderMarkdown = false
+}: StreamingTextProps) {
   const [displayedText, setDisplayedText] = useState('')
   const [currentIndex, setCurrentIndex] = useState(0)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -85,7 +90,7 @@ export function StreamingText({ text, speed = 50, className, renderMarkdown = fa
           {displayedText}
         </MarkdownRenderer>
         {isStreaming && (
-          <span className="inline-block w-2 h-4 bg-gemini-blue animate-pulse ml-1"></span>
+          <span className="ml-1 inline-block h-4 w-2 animate-pulse bg-gemini-blue"></span>
         )}
       </div>
     )
@@ -95,7 +100,7 @@ export function StreamingText({ text, speed = 50, className, renderMarkdown = fa
     <span className={className}>
       {displayedText}
       {isStreaming && (
-        <span className="inline-block w-2 h-4 bg-gemini-blue animate-pulse ml-1"></span>
+        <span className="ml-1 inline-block h-4 w-2 animate-pulse bg-gemini-blue"></span>
       )}
     </span>
   )

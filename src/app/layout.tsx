@@ -3,6 +3,7 @@ import { DM_Mono, Geist, Inter } from 'next/font/google'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/components/providers/theme-provider'
+import { AuthProvider } from '@/contexts/AuthContext'
 import './globals.css'
 
 const inter = Inter({
@@ -29,9 +30,7 @@ export const metadata: Metadata = {
   description:
     'Consulte o Rodrigues AI, especialista em crédito agrícola e CPR (Cédula de Produto Rural). Obtenha orientações especializadas sobre financiamento rural, instrumentos de crédito e mercado agropecuário.',
   icons: {
-    icon: [
-      { url: '/rodrigues-icon.png', sizes: 'any', type: 'image/png' },
-    ],
+    icon: [{ url: '/rodrigues-icon.png', sizes: 'any', type: 'image/png' }],
     apple: '/rodrigues-icon.png',
     shortcut: '/rodrigues-icon.png'
   }
@@ -44,15 +43,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${geistSans.variable} ${dmMono.variable} font-sans antialiased`}>
+      <body
+        className={`${inter.variable} ${geistSans.variable} ${dmMono.variable} font-sans antialiased`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
           enableSystem={false}
           disableTransitionOnChange={false}
         >
-          <NuqsAdapter>{children}</NuqsAdapter>
-          <Toaster />
+          <AuthProvider>
+            <NuqsAdapter>{children}</NuqsAdapter>
+            <Toaster />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

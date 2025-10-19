@@ -16,7 +16,14 @@ interface InputBarProps {
   sessionId?: string
 }
 
-export function InputBar({ onSendMessage, message, setMessage, disabled = false, userId, sessionId }: InputBarProps) {
+export function InputBar({
+  onSendMessage,
+  message,
+  setMessage,
+  disabled = false,
+  userId,
+  sessionId
+}: InputBarProps) {
   const { ui } = useUIConfig()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [showUploadModal, setShowUploadModal] = useState(false)
@@ -56,8 +63,8 @@ export function InputBar({ onSendMessage, message, setMessage, disabled = false,
     }
   }
 
-
-  const handleUploadComplete = async (documentId: string) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleUploadComplete = async (_documentId: string) => {
     // Refresh documents list
     await fetchDocuments()
   }
@@ -79,7 +86,7 @@ export function InputBar({ onSendMessage, message, setMessage, disabled = false,
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border p-4 pb-safe">
+    <div className="pb-safe fixed bottom-0 left-0 right-0 border-t border-border bg-background p-4">
       <div className="mx-auto max-w-4xl space-y-3">
         {/* File List */}
         {documents.length > 0 && (
@@ -92,8 +99,7 @@ export function InputBar({ onSendMessage, message, setMessage, disabled = false,
         )}
 
         {/* Barra principal */}
-        <div className="flex items-end gap-3 rounded-2xl border border-border bg-card p-3 shadow-sm focus-within:border-gemini-blue focus-within:shadow-md transition-all">
-          
+        <div className="flex items-end gap-3 rounded-2xl border border-border bg-card p-3 shadow-sm transition-all focus-within:border-gemini-blue focus-within:shadow-md">
           {/* Área de texto - 7/10 */}
           <div className="flex-1">
             <textarea
@@ -101,29 +107,33 @@ export function InputBar({ onSendMessage, message, setMessage, disabled = false,
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={disabled ? "Aguarde a resposta..." : "Pergunte ao Rodrigues AI..."}
+              placeholder={
+                disabled
+                  ? 'Aguarde a resposta...'
+                  : 'Pergunte ao Rodrigues AI...'
+              }
               className="w-full resize-none border-0 bg-transparent text-foreground placeholder-muted-foreground focus:outline-none focus:ring-0"
               disabled={disabled}
               rows={1}
               style={{ minHeight: '20px', maxHeight: '120px' }}
             />
-            
+
             {/* Botões de ação (abaixo do texto quando não há mensagem) */}
             {!message.trim() && (
               <div className="mt-2 flex gap-2">
                 {ui.features.showUploadButton && (
                   <button
-                    className="flex items-center gap-1 rounded-full bg-gemini-gray-100 px-3 py-1 text-sm text-gemini-gray-600 hover:bg-gemini-gray-200 transition-colors"
+                    className="flex items-center gap-1 rounded-full bg-gemini-gray-100 px-3 py-1 text-sm text-gemini-gray-600 transition-colors hover:bg-gemini-gray-200"
                     onClick={() => setShowUploadModal(true)}
                   >
                     <Plus className="h-4 w-4" />
                     Arquivo
                   </button>
                 )}
-                
+
                 {ui.features.showToolsButton && (
-                  <button 
-                    className="flex items-center gap-1 rounded-full bg-gemini-gray-100 px-3 py-1 text-sm text-gemini-gray-600 hover:bg-gemini-gray-200 transition-colors"
+                  <button
+                    className="flex items-center gap-1 rounded-full bg-gemini-gray-100 px-3 py-1 text-sm text-gemini-gray-600 transition-colors hover:bg-gemini-gray-200"
                     onClick={() => console.log('Open tools')}
                   >
                     <Wrench className="h-4 w-4" />
@@ -141,7 +151,7 @@ export function InputBar({ onSendMessage, message, setMessage, disabled = false,
               disabled={disabled || !message.trim()}
               className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
                 disabled || !message.trim()
-                  ? 'bg-gemini-gray-300 text-gemini-gray-500 cursor-not-allowed'
+                  ? 'cursor-not-allowed bg-gemini-gray-300 text-gemini-gray-500'
                   : 'bg-gemini-blue text-white hover:bg-gemini-blue-hover'
               }`}
               aria-label="Enviar mensagem"

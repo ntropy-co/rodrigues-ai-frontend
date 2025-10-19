@@ -32,7 +32,7 @@ const useSessionLoader = () => {
     (state) => state.setIsSessionsLoading
   )
   const setSessionsData = usePlaygroundStore((state) => state.setSessionsData)
-  
+
   // Função para obter user ID do localStorage
   const getCurrentUserId = useCallback(() => {
     if (typeof window !== 'undefined') {
@@ -46,7 +46,7 @@ const useSessionLoader = () => {
       if (!agentId || !selectedEndpoint) return
       const userId = getCurrentUserId()
       if (!userId) return
-      
+
       try {
         setIsSessionsLoading(true)
         const sessions = await getAllPlaygroundSessionsAPI(
@@ -69,7 +69,7 @@ const useSessionLoader = () => {
       if (!sessionId || !agentId || !selectedEndpoint) {
         return null
       }
-      
+
       const userId = getCurrentUserId()
       if (!userId) return null
 
