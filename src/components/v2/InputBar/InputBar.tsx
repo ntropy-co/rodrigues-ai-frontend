@@ -57,7 +57,7 @@ export function InputBar({ onSendMessage, message, setMessage, disabled = false,
   }
 
 
-  const handleUploadComplete = async (documentId: string) => {
+  const handleUploadComplete = async (_documentId: string) => {
     // Refresh documents list
     await fetchDocuments()
   }

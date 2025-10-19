@@ -34,7 +34,7 @@ function ResetPasswordContent() {
       try {
         const response = await verifyResetTokenApi(token)
         setIsTokenValid(response.valid)
-      } catch (error) {
+      } catch {
         setIsTokenValid(false)
       } finally {
         setIsValidating(false)

@@ -49,7 +49,7 @@ export function SuggestionCarousel({ onSuggestionClick }: SuggestionCarouselProp
   }
 
   const getIcon = (iconName: string) => {
-    const IconComponent = (LucideIcons as any)[iconName]
+    const IconComponent = (LucideIcons as Record<string, React.ComponentType>)[iconName]
     return IconComponent || LucideIcons.HelpCircle
   }
 

@@ -78,7 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = useCallback(async (data: RegisterRequest) => {
     try {
       setIsLoading(true)
-      const userData = await registerApi(data)
+      await registerApi(data)
 
       // Auto login after register
       await login(data.email, data.password)
