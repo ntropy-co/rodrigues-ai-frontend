@@ -9,28 +9,32 @@ interface SuggestionCarouselProps {
   onSuggestionClick: (prompt: string) => void
 }
 
-export function SuggestionCarousel({ onSuggestionClick }: SuggestionCarouselProps) {
+export function SuggestionCarousel({
+  onSuggestionClick
+}: SuggestionCarouselProps) {
   const { suggestions, ui } = useUIConfig()
   const [currentIndex, setCurrentIndex] = useState(0)
-  
+
   // Carrossel cíclico infinito
   const itemsPerView = 3 // Desktop: 3, Mobile: 1
-  
+
   const nextSlide = () => {
-    setCurrentIndex(prev => (prev + 1) % suggestions.length)
+    setCurrentIndex((prev) => (prev + 1) % suggestions.length)
   }
 
   const prevSlide = () => {
-    setCurrentIndex(prev => (prev - 1 + suggestions.length) % suggestions.length)
+    setCurrentIndex(
+      (prev) => (prev - 1 + suggestions.length) % suggestions.length
+    )
   }
 
   // Auto-scroll opcional
   useEffect(() => {
     if (ui.features.carouselMode) {
       const interval = setInterval(() => {
-        setCurrentIndex(prev => (prev + 1) % suggestions.length)
+        setCurrentIndex((prev) => (prev + 1) % suggestions.length)
       }, 6000) // 6 segundos
-      
+
       return () => clearInterval(interval)
     }
   }, [suggestions.length, ui.features.carouselMode])
@@ -49,7 +53,9 @@ export function SuggestionCarousel({ onSuggestionClick }: SuggestionCarouselProp
   }
 
   const getIcon = (iconName: string) => {
-    const IconComponent = (LucideIcons as Record<string, React.ComponentType>)[iconName]
+    const IconComponent = (LucideIcons as Record<string, React.ComponentType>)[
+      iconName
+    ]
     return IconComponent || LucideIcons.HelpCircle
   }
 
@@ -90,36 +96,39 @@ export function SuggestionCarousel({ onSuggestionClick }: SuggestionCarouselProp
 
         {/* Container do carrossel */}
         <div className="overflow-hidden">
-          <div 
+          <div
             className="flex transition-transform duration-300 ease-in-out"
-            style={{ transform: `translateX(-${(currentIndex * 100) / itemsPerView}%)` }}
+            style={{
+              transform: `translateX(-${(currentIndex * 100) / itemsPerView}%)`
+            }}
           >
             {suggestions.map((suggestion) => {
               const Icon = getIcon(suggestion.icon)
-              
+
               return (
                 <div
                   key={suggestion.id}
-                  className="w-[280px] md:w-[240px] flex-shrink-0 px-2"
+                  className="w-[280px] flex-shrink-0 px-2 md:w-[240px]"
                 >
                   <button
                     onClick={() => onSuggestionClick(suggestion.prompt)}
                     className="group flex h-[70px] w-full flex-col items-start justify-between rounded-xl border border-border bg-card p-3 text-left transition-all hover:border-gemini-gray-300 hover:shadow-sm active:scale-[0.98] dark:hover:border-gemini-gray-500"
                   >
                     {/* Primeira linha: Ícone + Tema */}
-                    <div className="flex items-center gap-2 w-full">
-                      <Icon className={`h-4 w-4 flex-shrink-0 ${getCategoryColor(suggestion.category)}`} />
-                      <h3 className="text-sm font-medium text-card-foreground group-hover:text-gemini-blue transition-colors truncate">
+                    <div className="flex w-full items-center gap-2">
+                      <Icon
+                        className={`h-4 w-4 flex-shrink-0 ${getCategoryColor(suggestion.category)}`}
+                      />
+                      <h3 className="truncate text-sm font-medium text-card-foreground transition-colors group-hover:text-gemini-blue">
                         {suggestion.title}
                       </h3>
                     </div>
-                    
+
                     {/* Segunda linha: Início da pergunta */}
-                    <p className="text-xs text-muted-foreground leading-tight line-clamp-1 w-full">
-                      {suggestion.description.length > 50 
+                    <p className="line-clamp-1 w-full text-xs leading-tight text-muted-foreground">
+                      {suggestion.description.length > 50
                         ? suggestion.description.substring(0, 50) + '...'
-                        : suggestion.description
-                      }
+                        : suggestion.description}
                     </p>
                   </button>
                 </div>

@@ -55,13 +55,21 @@ export function useUIConfig(): UIConfig {
           ...prevConfig.ui,
           branding: {
             ...prevConfig.ui.branding,
-            displayModelName: process.env.NEXT_PUBLIC_AGENT_NAME || prevConfig.ui.branding.displayModelName
+            displayModelName:
+              process.env.NEXT_PUBLIC_AGENT_NAME ||
+              prevConfig.ui.branding.displayModelName
           },
           features: {
             ...prevConfig.ui.features,
-            showProButton: process.env.NEXT_PUBLIC_SHOW_PRO_BUTTON === 'true' || prevConfig.ui.features.showProButton,
-            showUploadButton: process.env.NEXT_PUBLIC_SHOW_UPLOAD_BUTTON === 'true' || prevConfig.ui.features.showUploadButton,
-            showToolsButton: process.env.NEXT_PUBLIC_SHOW_TOOLS_BUTTON === 'true' || prevConfig.ui.features.showToolsButton
+            showProButton:
+              process.env.NEXT_PUBLIC_SHOW_PRO_BUTTON === 'true' ||
+              prevConfig.ui.features.showProButton,
+            showUploadButton:
+              process.env.NEXT_PUBLIC_SHOW_UPLOAD_BUTTON === 'true' ||
+              prevConfig.ui.features.showUploadButton,
+            showToolsButton:
+              process.env.NEXT_PUBLIC_SHOW_TOOLS_BUTTON === 'true' ||
+              prevConfig.ui.features.showToolsButton
           }
         }
       }

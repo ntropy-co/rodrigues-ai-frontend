@@ -2,15 +2,15 @@
 
 export function SessionSkeleton() {
   return (
-    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 animate-pulse">
-      <div className="flex-shrink-0 mt-1">
-        <div className="h-4 w-4 bg-muted-foreground/20 rounded" />
+    <div className="flex animate-pulse items-start gap-3 rounded-lg bg-muted/50 p-3">
+      <div className="mt-1 flex-shrink-0">
+        <div className="h-4 w-4 rounded bg-muted-foreground/20" />
       </div>
 
-      <div className="flex-1 min-w-0 space-y-2">
-        <div className="h-4 bg-muted-foreground/20 rounded w-3/4" />
-        <div className="h-3 bg-muted-foreground/20 rounded w-full" />
-        <div className="h-3 bg-muted-foreground/20 rounded w-1/3" />
+      <div className="min-w-0 flex-1 space-y-2">
+        <div className="h-4 w-3/4 rounded bg-muted-foreground/20" />
+        <div className="h-3 w-full rounded bg-muted-foreground/20" />
+        <div className="h-3 w-1/3 rounded bg-muted-foreground/20" />
       </div>
     </div>
   )

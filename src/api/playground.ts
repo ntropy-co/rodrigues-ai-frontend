@@ -46,7 +46,7 @@ export const getAllPlaygroundSessionsAPI = async (
     if (userId) {
       url += `?user_id=${encodeURIComponent(userId)}`
     }
-    
+
     const response = await fetch(url, {
       method: 'GET'
     })
@@ -73,7 +73,7 @@ export const getPlaygroundSessionAPI = async (
   if (userId) {
     url += `?user_id=${encodeURIComponent(userId)}`
   }
-  
+
   const response = await fetch(url, {
     method: 'GET'
   })

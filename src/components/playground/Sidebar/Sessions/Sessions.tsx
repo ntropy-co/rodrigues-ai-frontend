@@ -105,7 +105,14 @@ const Sessions = () => {
     }
     setSessionsData(() => null)
     getSessions(agentId)
-  }, [selectedEndpoint, agentId, hasStorage, isEndpointLoading, setSessionsData, getSessions])
+  }, [
+    selectedEndpoint,
+    agentId,
+    hasStorage,
+    isEndpointLoading,
+    setSessionsData,
+    getSessions
+  ])
 
   useEffect(() => {
     refreshSessions()
@@ -118,7 +125,8 @@ const Sessions = () => {
     }
 
     window.addEventListener('sessionCreated', handleSessionCreated)
-    return () => window.removeEventListener('sessionCreated', handleSessionCreated)
+    return () =>
+      window.removeEventListener('sessionCreated', handleSessionCreated)
   }, [refreshSessions])
 
   // Auto-refresh sessions every 30 seconds

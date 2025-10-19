@@ -75,24 +75,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
-  const register = useCallback(async (data: RegisterRequest) => {
-    try {
-      setIsLoading(true)
-      await registerApi(data)
+  const register = useCallback(
+    async (data: RegisterRequest) => {
+      try {
+        setIsLoading(true)
+        await registerApi(data)
 
-      // Auto login after register
-      await login(data.email, data.password)
+        // Auto login after register
+        await login(data.email, data.password)
 
-      toast.success('Conta criada com sucesso!')
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'Erro ao criar conta'
-      toast.error(message)
-      throw error
-    } finally {
-      setIsLoading(false)
-    }
-  }, [login])
+        toast.success('Conta criada com sucesso!')
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : 'Erro ao criar conta'
+        toast.error(message)
+        throw error
+      } finally {
+        setIsLoading(false)
+      }
+    },
+    [login]
+  )
 
   const logout = useCallback(() => {
     if (token) {

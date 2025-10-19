@@ -36,13 +36,13 @@ export function UserAvatar() {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white font-medium shadow-sm hover:shadow-md transition-shadow"
+        className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-purple-600 font-medium text-white shadow-sm transition-shadow hover:shadow-md"
       >
         U
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 z-50 mt-2 w-48 rounded-lg bg-white shadow-lg border border-gray-200">
+        <div className="absolute right-0 top-full z-50 mt-2 w-48 rounded-lg border border-gray-200 bg-white shadow-lg">
           <div className="py-2">
             {menuItems.map((item, index) => {
               const Icon = item.icon
@@ -68,10 +68,7 @@ export function UserAvatar() {
 
       {/* Overlay para fechar o dropdown */}
       {isOpen && (
-        <div 
-          className="fixed inset-0 z-40" 
-          onClick={() => setIsOpen(false)}
-        />
+        <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
       )}
     </div>
   )

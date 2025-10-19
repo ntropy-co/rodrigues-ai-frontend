@@ -62,7 +62,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
         {/* Card */}
-        <div className="rounded-2xl bg-card border border-border shadow-lg p-8">
+        <div className="rounded-2xl border border-border bg-card p-8 shadow-lg">
           {/* Logo/Header */}
           <div className="mb-8 text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[hsl(var(--gemini-blue))] to-[hsl(var(--gemini-purple))]">
@@ -80,9 +80,7 @@ export default function LoginPage() {
                 />
               </svg>
             </div>
-            <h1 className="text-3xl font-bold text-foreground">
-              Rodrigues AI
-            </h1>
+            <h1 className="text-3xl font-bold text-foreground">Rodrigues AI</h1>
             <p className="mt-2 text-sm text-muted-foreground">
               {mode === 'login'
                 ? 'Consultor Jurídico de Crédito Rural'
@@ -120,7 +118,7 @@ export default function LoginPage() {
               <div>
                 <label
                   htmlFor="fullName"
-                  className="block text-sm font-medium text-foreground mb-2"
+                  className="mb-2 block text-sm font-medium text-foreground"
                 >
                   Nome Completo
                 </label>
@@ -138,7 +136,7 @@ export default function LoginPage() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-foreground mb-2"
+                className="mb-2 block text-sm font-medium text-foreground"
               >
                 Email
               </label>
@@ -154,7 +152,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-2">
+              <div className="mb-2 flex items-center justify-between">
                 <label
                   htmlFor="password"
                   className="block text-sm font-medium text-foreground"
@@ -192,7 +190,7 @@ export default function LoginPage() {
               <div>
                 <label
                   htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-foreground mb-2"
+                  className="mb-2 block text-sm font-medium text-foreground"
                 >
                   Confirmar Senha
                 </label>
@@ -212,7 +210,7 @@ export default function LoginPage() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-[hsl(var(--gemini-blue))] to-[hsl(var(--gemini-purple))] hover:from-[hsl(var(--gemini-blue-hover))] hover:to-[hsl(var(--gemini-purple))] text-white font-medium py-3 rounded-lg transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full rounded-lg bg-gradient-to-r from-[hsl(var(--gemini-blue))] to-[hsl(var(--gemini-purple))] py-3 font-medium text-white shadow-md transition-all hover:from-[hsl(var(--gemini-blue-hover))] hover:to-[hsl(var(--gemini-purple))] hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isSubmitting ? (
                 <div className="flex items-center justify-center gap-2">

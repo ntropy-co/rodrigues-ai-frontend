@@ -24,24 +24,24 @@ const useChatActions = () => {
   const setAgents = usePlaygroundStore((state) => state.setAgents)
   const setSelectedModel = usePlaygroundStore((state) => state.setSelectedModel)
   const [agentId, setAgentId] = useQueryState('agent')
-  
+
   // Função para gerar um novo user ID (UUID)
   const generateUserId = useCallback(() => {
     return `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }, [])
-  
+
   // Função para gerar um novo session ID
   const generateSessionId = useCallback(() => {
     return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }, [])
-  
+
   // Função para salvar user ID no localStorage
   const saveUserIdToStorage = useCallback((userId: string) => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('rodrigues_user_id', userId)
     }
   }, [])
-  
+
   // Função para carregar user ID do localStorage
   const loadUserIdFromStorage = useCallback(() => {
     if (typeof window !== 'undefined') {
@@ -49,7 +49,7 @@ const useChatActions = () => {
     }
     return null
   }, [])
-  
+
   // Função para garantir que existe um user ID
   const ensureUserIdExists = useCallback(() => {
     let userId = loadUserIdFromStorage()
@@ -59,15 +59,14 @@ const useChatActions = () => {
     }
     return userId
   }, [loadUserIdFromStorage, generateUserId, saveUserIdToStorage])
-  
+
   // Função para salvar session ID no localStorage
   const saveSessionIdToStorage = useCallback((sessionId: string) => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('rodrigues_current_session_id', sessionId)
     }
   }, [])
-  
-  
+
   // Função para criar uma nova sessão automaticamente
   const ensureSessionExists = useCallback(() => {
     if (!sessionId) {
@@ -76,7 +75,7 @@ const useChatActions = () => {
       saveSessionIdToStorage(newSessionId)
     }
   }, [sessionId, setSessionId, generateSessionId, saveSessionIdToStorage])
-  
+
   // Função para criar uma nova sessão (sempre nova)
   const createNewSession = useCallback(() => {
     const newSessionId = generateSessionId()
@@ -84,12 +83,12 @@ const useChatActions = () => {
     saveSessionIdToStorage(newSessionId)
     return newSessionId
   }, [generateSessionId, setSessionId, saveSessionIdToStorage])
-  
+
   // Função para obter o user ID atual
   const getCurrentUserId = useCallback(() => {
     return ensureUserIdExists()
   }, [ensureUserIdExists])
-  
+
   // Efeito para criar nova sessão quando agente for selecionado
   useEffect(() => {
     if (agentId && agentId !== 'no-agents' && !sessionId) {
@@ -122,7 +121,11 @@ const useChatActions = () => {
     const newSessionId = createNewSession()
     // Trigger a refresh of sessions list
     if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('sessionCreated', { detail: { sessionId: newSessionId } }))
+      window.dispatchEvent(
+        new CustomEvent('sessionCreated', {
+          detail: { sessionId: newSessionId }
+        })
+      )
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createNewSession])

@@ -123,7 +123,7 @@ const HorizontalRule = ({ className, ...props }: HorizontalRuleProps) => (
 
 const InlineCode: FC<PreparedTextProps> = ({ children }) => {
   return (
-    <code className="relative whitespace-pre-wrap rounded-sm bg-background-secondary/50 p-1">
+    <code className="bg-background-secondary/50 relative whitespace-pre-wrap rounded-sm p-1">
       {children}
     </code>
   )

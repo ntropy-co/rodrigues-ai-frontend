@@ -40,7 +40,9 @@ const ChatInput = () => {
   return (
     <div className="relative mx-auto mb-1 flex w-full max-w-2xl items-end justify-center gap-x-2 font-geist">
       <TextArea
-        placeholder={'Como posso ajudar com suas questões de crédito rural e CPR hoje?'}
+        placeholder={
+          'Como posso ajudar com suas questões de crédito rural e CPR hoje?'
+        }
         value={inputMessage}
         onChange={(e) => setInputMessage(e.target.value)}
         onKeyDown={(e) => {

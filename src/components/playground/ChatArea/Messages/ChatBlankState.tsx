@@ -49,18 +49,21 @@ const ChatBlankState = () => {
           <h1 className="text-5xl font-[700] tracking-tight text-primary">
             Bem-vindo ao <span className="text-green-600">Rodrigues AI</span>
           </h1>
-          
-          <div className="text-xl text-muted-foreground leading-relaxed">
+
+          <div className="text-xl leading-relaxed text-muted-foreground">
             <p className="mb-4">
-              Seu especialista em <strong>Crédito Agro e CPR</strong> está aqui para ajudar.
+              Seu especialista em <strong>Crédito Agro e CPR</strong> está aqui
+              para ajudar.
             </p>
-            
-            <div className="text-lg text-left max-w-3xl mx-auto space-y-4">
+
+            <div className="mx-auto max-w-3xl space-y-4 text-left text-lg">
               <p>
-                O <strong className="text-green-600">Rodrigues AI</strong> é um especialista em crédito rural com mais de <strong>20 anos</strong> de experiência. Sou especialista em:
+                O <strong className="text-green-600">Rodrigues AI</strong> é um
+                especialista em crédito rural com mais de{' '}
+                <strong>20 anos</strong> de experiência. Sou especialista em:
               </p>
-              
-              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+
+              <ul className="list-inside list-disc space-y-2 text-muted-foreground">
                 <li>Estruturação de CPR (Física e Financeira)</li>
                 <li>Análise de risco e viabilidade rural</li>
                 <li>Compliance regulatório (BACEN/CMN)</li>
@@ -68,13 +71,14 @@ const ChatBlankState = () => {
                 <li>Due diligence em propriedades rurais</li>
               </ul>
 
-              <p className="text-center italic text-sm mt-6">
-                &ldquo;Especialista certificado em crédito rural com expertise em CPR e financiamento agropecuário&rdquo;
+              <p className="mt-6 text-center text-sm italic">
+                &ldquo;Especialista certificado em crédito rural com expertise
+                em CPR e financiamento agropecuário&rdquo;
               </p>
             </div>
           </div>
         </motion.div>
-        
+
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -86,10 +90,7 @@ const ChatBlankState = () => {
             variant="primary"
             text="VISITE NOSSO SITE"
           />
-          <ActionButton
-            href={EXTERNAL_LINKS.contact}
-            text="ENTRE EM CONTATO"
-          />
+          <ActionButton href={EXTERNAL_LINKS.contact} text="ENTRE EM CONTATO" />
         </motion.div>
       </div>
     </section>

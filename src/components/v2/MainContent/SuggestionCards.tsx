@@ -1,6 +1,15 @@
 'use client'
 
-import { DollarSign, Target, FileText, Calendar, Scale, AlertTriangle, Clock, TrendingUp } from 'lucide-react'
+import {
+  DollarSign,
+  Target,
+  FileText,
+  Calendar,
+  Scale,
+  AlertTriangle,
+  Clock,
+  TrendingUp
+} from 'lucide-react'
 
 interface SuggestionCard {
   id: string
@@ -18,7 +27,8 @@ const allSuggestions: SuggestionCard[] = [
     title: 'CPR Básica',
     description: 'Entenda o que é uma Cédula de Produto Rural',
     icon: FileText,
-    prompt: 'O que é uma CPR e quais são as principais diferenças entre CPR Física e CPR Financeira?',
+    prompt:
+      'O que é uma CPR e quais são as principais diferenças entre CPR Física e CPR Financeira?',
     category: 'basic'
   },
   {
@@ -26,7 +36,8 @@ const allSuggestions: SuggestionCard[] = [
     title: 'Opções de Crédito',
     description: 'Conheça as linhas de crédito disponíveis',
     icon: DollarSign,
-    prompt: 'Que opções de crédito rural você recomenda para financiar minha próxima safra?',
+    prompt:
+      'Que opções de crédito rural você recomenda para financiar minha próxima safra?',
     category: 'basic'
   },
   {
@@ -34,7 +45,8 @@ const allSuggestions: SuggestionCard[] = [
     title: 'Garantias',
     description: 'Tipos de garantias aceitas no crédito rural',
     icon: Scale,
-    prompt: 'Quais tipos de garantias são aceitas para operações de CPR e crédito rural?',
+    prompt:
+      'Quais tipos de garantias são aceitas para operações de CPR e crédito rural?',
     category: 'basic'
   },
   {
@@ -42,17 +54,19 @@ const allSuggestions: SuggestionCard[] = [
     title: 'Documentação',
     description: 'Documentos necessários para CPR',
     icon: Calendar,
-    prompt: 'Quais documentos preciso para emitir uma CPR? Existe algum prazo específico?',
+    prompt:
+      'Quais documentos preciso para emitir uma CPR? Existe algum prazo específico?',
     category: 'basic'
   },
-  
+
   // Sugestões Avançadas
   {
     id: 'cpr-execution',
     title: 'Liquidação de CPR',
     description: 'Processos e prazos para liquidação',
     icon: Clock,
-    prompt: 'Como funciona o processo de liquidação de uma CPR Física? Quais são os prazos e penalidades em caso de inadimplência?',
+    prompt:
+      'Como funciona o processo de liquidação de uma CPR Física? Quais são os prazos e penalidades em caso de inadimplência?',
     category: 'advanced'
   },
   {
@@ -60,7 +74,8 @@ const allSuggestions: SuggestionCard[] = [
     title: 'Benefícios Fiscais',
     description: 'Vantagens tributárias do crédito rural',
     icon: TrendingUp,
-    prompt: 'Quais são os principais benefícios fiscais ao utilizar CPR em comparação com outras formas de financiamento rural?',
+    prompt:
+      'Quais são os principais benefícios fiscais ao utilizar CPR em comparação com outras formas de financiamento rural?',
     category: 'advanced'
   },
   {
@@ -68,7 +83,8 @@ const allSuggestions: SuggestionCard[] = [
     title: 'Análise de Risco',
     description: 'Avaliação de riscos em operações rurais',
     icon: AlertTriangle,
-    prompt: 'Como é feita a análise de risco para aprovação de crédito rural? Quais fatores são considerados prioritários?',
+    prompt:
+      'Como é feita a análise de risco para aprovação de crédito rural? Quais fatores são considerados prioritários?',
     category: 'advanced'
   },
   {
@@ -76,17 +92,19 @@ const allSuggestions: SuggestionCard[] = [
     title: 'Precificação',
     description: 'Como definir preços em CPR',
     icon: Target,
-    prompt: 'Como devo precificar minha CPR considerando as oscilações do mercado? Existe alguma estratégia de hedge recomendada?',
+    prompt:
+      'Como devo precificar minha CPR considerando as oscilações do mercado? Existe alguma estratégia de hedge recomendada?',
     category: 'advanced'
   },
-  
+
   // Sugestões Expert
   {
     id: 'legal-framework',
     title: 'Marco Legal',
     description: 'Legislação avançada sobre CPR',
     icon: Scale,
-    prompt: 'Explique as principais mudanças trazidas pela Lei 14.421/22 (Nova Lei do Agro) e como ela impacta as operações de CPR existentes.',
+    prompt:
+      'Explique as principais mudanças trazidas pela Lei 14.421/22 (Nova Lei do Agro) e como ela impacta as operações de CPR existentes.',
     category: 'expert'
   },
   {
@@ -94,7 +112,8 @@ const allSuggestions: SuggestionCard[] = [
     title: 'Estruturas Complexas',
     description: 'Operações estruturadas com CPR',
     icon: FileText,
-    prompt: 'Como estruturar uma operação de CPR com garantia fidejussória envolvendo múltiplas safras e diferentes culturas? Quais os riscos jurídicos?',
+    prompt:
+      'Como estruturar uma operação de CPR com garantia fidejussória envolvendo múltiplas safras e diferentes culturas? Quais os riscos jurídicos?',
     category: 'expert'
   }
 ]
@@ -105,14 +124,14 @@ interface SuggestionCardsProps {
 
 function getRandomSuggestions(): SuggestionCard[] {
   // Pega sempre 1 básica, 2 avançadas e 1 expert
-  const basic = allSuggestions.filter(s => s.category === 'basic')
-  const advanced = allSuggestions.filter(s => s.category === 'advanced')
-  const expert = allSuggestions.filter(s => s.category === 'expert')
-  
+  const basic = allSuggestions.filter((s) => s.category === 'basic')
+  const advanced = allSuggestions.filter((s) => s.category === 'advanced')
+  const expert = allSuggestions.filter((s) => s.category === 'expert')
+
   const randomBasic = basic[Math.floor(Math.random() * basic.length)]
   const randomAdvanced = advanced.sort(() => 0.5 - Math.random()).slice(0, 2)
   const randomExpert = expert[Math.floor(Math.random() * expert.length)]
-  
+
   return [randomBasic, ...randomAdvanced, randomExpert]
 }
 
@@ -148,51 +167,55 @@ export function SuggestionCards({ onSuggestionClick }: SuggestionCardsProps) {
         {suggestions.map((suggestion) => {
           const Icon = suggestion.icon
           const colors = getCategoryColor(suggestion.category)
-          
+
           return (
             <button
               key={suggestion.id}
               onClick={() => onSuggestionClick(suggestion.prompt)}
               className={`flex flex-col items-start rounded-2xl border border-gemini-gray-300 p-4 text-left transition-all ${colors.border} hover:shadow-sm active:scale-[0.98]`}
             >
-              <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-lg ${colors.bg}`}>
+              <div
+                className={`mb-3 flex h-10 w-10 items-center justify-center rounded-lg ${colors.bg}`}
+              >
                 <Icon className={`h-5 w-5 ${colors.icon}`} />
               </div>
-              
+
               <h3 className="mb-2 font-medium text-gemini-gray-900">
                 {suggestion.title}
               </h3>
-              
-              <p className="text-sm text-gemini-gray-600 leading-relaxed">
+
+              <p className="text-sm leading-relaxed text-gemini-gray-600">
                 {suggestion.description}
               </p>
-              
+
               {/* Badge da categoria */}
               <div className="mt-2">
-                <span className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${
-                  suggestion.category === 'basic' 
-                    ? 'bg-green-100 text-green-700'
+                <span
+                  className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${
+                    suggestion.category === 'basic'
+                      ? 'bg-green-100 text-green-700'
+                      : suggestion.category === 'advanced'
+                        ? 'bg-blue-100 text-blue-700'
+                        : 'bg-purple-100 text-purple-700'
+                  }`}
+                >
+                  {suggestion.category === 'basic'
+                    ? 'Básico'
                     : suggestion.category === 'advanced'
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'bg-purple-100 text-purple-700'
-                }`}>
-                  {suggestion.category === 'basic' 
-                    ? 'Básico' 
-                    : suggestion.category === 'advanced'
-                    ? 'Avançado'
-                    : 'Expert'}
+                      ? 'Avançado'
+                      : 'Expert'}
                 </span>
               </div>
             </button>
           )
         })}
       </div>
-      
+
       {/* Botão para novas sugestões */}
       <div className="mt-6 text-center">
         <button
           onClick={() => window.location.reload()}
-          className="text-sm text-gemini-blue hover:text-gemini-blue-hover transition-colors"
+          className="text-sm text-gemini-blue transition-colors hover:text-gemini-blue-hover"
         >
           🔄 Ver novas sugestões
         </button>

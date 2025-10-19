@@ -69,7 +69,8 @@ function ResetPasswordContent() {
         router.push('/login')
       }, 3000)
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Erro ao redefinir senha'
+      const message =
+        error instanceof Error ? error.message : 'Erro ao redefinir senha'
       toast.error(message)
     } finally {
       setIsSubmitting(false)
@@ -93,7 +94,7 @@ function ResetPasswordContent() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background p-4">
         <div className="w-full max-w-md">
-          <div className="rounded-2xl bg-card border border-border shadow-lg p-8">
+          <div className="rounded-2xl border border-border bg-card p-8 shadow-lg">
             {/* Error Icon */}
             <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
               <svg
@@ -111,18 +112,19 @@ function ResetPasswordContent() {
               </svg>
             </div>
 
-            <h1 className="text-2xl font-bold text-foreground text-center mb-4">
+            <h1 className="mb-4 text-center text-2xl font-bold text-foreground">
               Link Inválido ou Expirado
             </h1>
 
-            <p className="text-muted-foreground text-center mb-6">
-              Este link de redefinição de senha é inválido ou já expirou. Por favor, solicite um novo link.
+            <p className="mb-6 text-center text-muted-foreground">
+              Este link de redefinição de senha é inválido ou já expirou. Por
+              favor, solicite um novo link.
             </p>
 
             <div className="space-y-3">
               <Button
                 onClick={() => router.push('/forgot-password')}
-                className="w-full bg-gradient-to-r from-[hsl(var(--gemini-blue))] to-[hsl(var(--gemini-purple))] hover:from-[hsl(var(--gemini-blue-hover))] hover:to-[hsl(var(--gemini-purple))] text-white"
+                className="w-full bg-gradient-to-r from-[hsl(var(--gemini-blue))] to-[hsl(var(--gemini-purple))] text-white hover:from-[hsl(var(--gemini-blue-hover))] hover:to-[hsl(var(--gemini-purple))]"
               >
                 Solicitar Novo Link
               </Button>
@@ -145,7 +147,7 @@ function ResetPasswordContent() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background p-4">
         <div className="w-full max-w-md">
-          <div className="rounded-2xl bg-card border border-border shadow-lg p-8">
+          <div className="rounded-2xl border border-border bg-card p-8 shadow-lg">
             {/* Success Icon */}
             <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/20">
               <svg
@@ -163,17 +165,18 @@ function ResetPasswordContent() {
               </svg>
             </div>
 
-            <h1 className="text-2xl font-bold text-foreground text-center mb-4">
+            <h1 className="mb-4 text-center text-2xl font-bold text-foreground">
               Senha Redefinida!
             </h1>
 
-            <p className="text-muted-foreground text-center mb-6">
-              Sua senha foi redefinida com sucesso. Você será redirecionado para a página de login...
+            <p className="mb-6 text-center text-muted-foreground">
+              Sua senha foi redefinida com sucesso. Você será redirecionado para
+              a página de login...
             </p>
 
             <Button
               onClick={() => router.push('/login')}
-              className="w-full bg-gradient-to-r from-[hsl(var(--gemini-blue))] to-[hsl(var(--gemini-purple))] hover:from-[hsl(var(--gemini-blue-hover))] hover:to-[hsl(var(--gemini-purple))] text-white"
+              className="w-full bg-gradient-to-r from-[hsl(var(--gemini-blue))] to-[hsl(var(--gemini-purple))] text-white hover:from-[hsl(var(--gemini-blue-hover))] hover:to-[hsl(var(--gemini-purple))]"
             >
               Ir para Login
             </Button>
@@ -188,7 +191,7 @@ function ResetPasswordContent() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
         {/* Card */}
-        <div className="rounded-2xl bg-card border border-border shadow-lg p-8">
+        <div className="rounded-2xl border border-border bg-card p-8 shadow-lg">
           {/* Header */}
           <div className="mb-8 text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[hsl(var(--gemini-blue))] to-[hsl(var(--gemini-purple))]">
@@ -219,7 +222,7 @@ function ResetPasswordContent() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-foreground mb-2"
+                className="mb-2 block text-sm font-medium text-foreground"
               >
                 Nova Senha
               </label>
@@ -241,7 +244,7 @@ function ResetPasswordContent() {
             <div>
               <label
                 htmlFor="confirmPassword"
-                className="block text-sm font-medium text-foreground mb-2"
+                className="mb-2 block text-sm font-medium text-foreground"
               >
                 Confirmar Nova Senha
               </label>
@@ -260,7 +263,7 @@ function ResetPasswordContent() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-[hsl(var(--gemini-blue))] to-[hsl(var(--gemini-purple))] hover:from-[hsl(var(--gemini-blue-hover))] hover:to-[hsl(var(--gemini-purple))] text-white font-medium py-3 rounded-lg transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full rounded-lg bg-gradient-to-r from-[hsl(var(--gemini-blue))] to-[hsl(var(--gemini-purple))] py-3 font-medium text-white shadow-md transition-all hover:from-[hsl(var(--gemini-blue-hover))] hover:to-[hsl(var(--gemini-purple))] hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isSubmitting ? (
                 <div className="flex items-center justify-center gap-2">
