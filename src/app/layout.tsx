@@ -3,6 +3,7 @@ import { DM_Mono, Geist, Inter } from 'next/font/google'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/components/providers/theme-provider'
+import { AuthProvider } from '@/contexts/AuthContext'
 import './globals.css'
 
 const inter = Inter({
@@ -51,8 +52,10 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange={false}
         >
-          <NuqsAdapter>{children}</NuqsAdapter>
-          <Toaster />
+          <AuthProvider>
+            <NuqsAdapter>{children}</NuqsAdapter>
+            <Toaster />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

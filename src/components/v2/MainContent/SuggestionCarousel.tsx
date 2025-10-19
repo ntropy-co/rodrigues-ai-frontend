@@ -53,9 +53,12 @@ export function SuggestionCarousel({
   }
 
   const getIcon = (iconName: string) => {
-    const IconComponent = (LucideIcons as Record<string, React.ComponentType>)[
-      iconName
-    ]
+    const IconComponent = (
+      LucideIcons as unknown as Record<
+        string,
+        React.ComponentType<{ className?: string }>
+      >
+    )[iconName]
     return IconComponent || LucideIcons.HelpCircle
   }
 
