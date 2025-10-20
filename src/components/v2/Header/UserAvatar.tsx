@@ -5,6 +5,7 @@ import { Moon, Sun, LogOut } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
+import { getInitialLetter } from '@/lib/utils/format'
 
 export function UserAvatar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -14,13 +15,7 @@ export function UserAvatar() {
 
   // Função para extrair a primeira letra do nome do usuário
   const getInitial = (): string => {
-    if (user?.full_name && user.full_name.trim()) {
-      return user.full_name.trim()[0].toUpperCase()
-    }
-    if (user?.email) {
-      return user.email[0].toUpperCase()
-    }
-    return 'U'
+    return getInitialLetter(user?.full_name, user?.email)
   }
 
   // Função de logout com redirect
