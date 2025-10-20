@@ -100,6 +100,7 @@ export default function useAIResponseStream() {
       apiUrl: string
       headers?: Record<string, string>
       requestBody: FormData | Record<string, unknown>
+      token?: string
       onChunk: (chunk: RunResponse) => void
       onError: (error: Error) => void
       onComplete: () => void
@@ -108,6 +109,7 @@ export default function useAIResponseStream() {
         apiUrl,
         headers = {},
         requestBody,
+        token,
         onChunk,
         onError,
         onComplete
@@ -123,6 +125,10 @@ export default function useAIResponseStream() {
             // Set content-type only for non-FormData requests.
             ...(!(requestBody instanceof FormData) && {
               'Content-Type': 'application/json'
+            }),
+            // Add Authorization header if token is provided
+            ...(token && {
+              Authorization: `Bearer ${token}`
             }),
             ...headers
           },
