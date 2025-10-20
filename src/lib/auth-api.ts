@@ -18,13 +18,14 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 /**
  * Login with email and password
+ * Uses OAuth2 standard endpoint /login/access-token
  */
 export async function loginApi(credentials: LoginRequest): Promise<AuthResponse> {
   const formData = new URLSearchParams()
   formData.append('username', credentials.username)
   formData.append('password', credentials.password)
 
-  const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
+  const response = await fetch(`${API_BASE_URL}/api/v1/login/access-token`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'

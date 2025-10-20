@@ -14,6 +14,7 @@ import useAIResponseStream from './useAIResponseStream'
 import { ToolCall } from '@/types/playground'
 import { useQueryState } from 'nuqs'
 import { getJsonMarkdown } from '@/lib/utils'
+import { useAuth } from '@/contexts/AuthContext'
 
 /**
  * useAIChatStreamHandler is responsible for making API calls and handling the stream response.
@@ -30,8 +31,8 @@ const useAIChatStreamHandler = () => {
   )
   const setIsStreaming = usePlaygroundStore((state) => state.setIsStreaming)
   const setSessionsData = usePlaygroundStore((state) => state.setSessionsData)
-  const hasStorage = usePlaygroundStore((state) => state.hasStorage)
   const { streamResponse } = useAIResponseStream()
+  const { token } = useAuth()
 
   const updateMessagesWithErrorState = useCallback(() => {
     setMessages((prevMessages) => {
@@ -161,6 +162,7 @@ const useAIChatStreamHandler = () => {
         await streamResponse({
           apiUrl: playgroundRunUrl,
           requestBody: formData,
+          token: token || undefined,
           onChunk: (chunk: RunResponse) => {
             if (
               chunk.event === RunEvent.RunStarted ||
@@ -169,7 +171,6 @@ const useAIChatStreamHandler = () => {
               newSessionId = chunk.session_id as string
               setSessionId(chunk.session_id as string)
               if (
-                hasStorage &&
                 (!sessionId || sessionId !== chunk.session_id) &&
                 chunk.session_id
               ) {
@@ -287,7 +288,7 @@ const useAIChatStreamHandler = () => {
               updateMessagesWithErrorState()
               const errorContent = chunk.content as string
               setStreamingErrorMessage(errorContent)
-              if (hasStorage && newSessionId) {
+              if (newSessionId) {
                 setSessionsData(
                   (prevSessionsData) =>
                     prevSessionsData?.filter(
@@ -342,7 +343,7 @@ const useAIChatStreamHandler = () => {
           onError: (error) => {
             updateMessagesWithErrorState()
             setStreamingErrorMessage(error.message)
-            if (hasStorage && newSessionId) {
+            if (newSessionId) {
               setSessionsData(
                 (prevSessionsData) =>
                   prevSessionsData?.filter(
@@ -358,7 +359,7 @@ const useAIChatStreamHandler = () => {
         setStreamingErrorMessage(
           error instanceof Error ? error.message : String(error)
         )
-        if (hasStorage && newSessionId) {
+        if (newSessionId) {
           setSessionsData(
             (prevSessionsData) =>
               prevSessionsData?.filter(
@@ -384,9 +385,9 @@ const useAIChatStreamHandler = () => {
       setSessionsData,
       sessionId,
       setSessionId,
-      hasStorage,
       processChunkToolCalls,
-      getCurrentUserId
+      getCurrentUserId,
+      token
     ]
   )
 

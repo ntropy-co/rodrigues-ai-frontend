@@ -89,7 +89,10 @@ export function UserAvatar() {
 
       {/* Overlay para fechar o dropdown */}
       {isOpen && (
-        <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+        <div 
+          className="fixed inset-0 z-40" 
+          onClick={() => setIsOpen(false)}
+        />
       )}
     </div>
   )
