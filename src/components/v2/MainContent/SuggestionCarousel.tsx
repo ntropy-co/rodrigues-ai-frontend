@@ -1,82 +1,51 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useUIConfig } from '@/hooks/useUIConfig'
-import * as LucideIcons from 'lucide-react'
+import { useCarouselPagination } from '@/hooks/useCarouselPagination'
+import { getIconComponent, getCategoryColor } from '@/lib/utils/ui'
+import { truncateText } from '@/lib/utils/format'
+import {
+  CATEGORY_BG_COLORS,
+  CATEGORY_LABELS,
+  SUGGESTION_CATEGORIES,
+  MAX_DESCRIPTION_LENGTH
+} from '@/lib/constants'
 
 interface SuggestionCarouselProps {
   onSuggestionClick: (prompt: string) => void
 }
 
-export function SuggestionCarousel({
-  onSuggestionClick
-}: SuggestionCarouselProps) {
+export function SuggestionCarousel({ onSuggestionClick }: SuggestionCarouselProps) {
   const { suggestions, ui } = useUIConfig()
-  const [currentIndex, setCurrentIndex] = useState(0)
 
-  // Carrossel cíclico infinito
-  const itemsPerView = 3 // Desktop: 3, Mobile: 1
-
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % suggestions.length)
-  }
-
-  const prevSlide = () => {
-    setCurrentIndex(
-      (prev) => (prev - 1 + suggestions.length) % suggestions.length
-    )
-  }
-
-  // Auto-scroll opcional
-  useEffect(() => {
-    if (ui.features.carouselMode) {
-      const interval = setInterval(() => {
-        setCurrentIndex((prev) => (prev + 1) % suggestions.length)
-      }, 6000) // 6 segundos
-
-      return () => clearInterval(interval)
-    }
-  }, [suggestions.length, ui.features.carouselMode])
-
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'basic':
-        return 'text-green-600'
-      case 'advanced':
-        return 'text-blue-600'
-      case 'expert':
-        return 'text-purple-600'
-      default:
-        return 'text-gemini-gray-600'
-    }
-  }
-
-  const getIcon = (iconName: string) => {
-    const IconComponent = (
-      LucideIcons as unknown as Record<
-        string,
-        React.ComponentType<{ className?: string }>
-      >
-    )[iconName]
-    return IconComponent || LucideIcons.HelpCircle
-  }
+  // Hook personalizado para gerenciar paginação
+  const {
+    totalPages,
+    currentPage,
+    nextSlide,
+    prevSlide,
+    goToPage
+  } = useCarouselPagination({
+    totalItems: suggestions.length,
+    autoScroll: ui.features.carouselMode
+  })
 
   return (
     <div className="w-full max-w-4xl">
       {/* Indicadores de categoria */}
       <div className="mb-4 flex justify-center gap-4 text-xs">
         <div className="flex items-center gap-1">
-          <div className="h-2 w-2 rounded-full bg-green-500" />
-          <span className="text-gemini-gray-600">Básico</span>
+          <div className={`h-2 w-2 rounded-full ${CATEGORY_BG_COLORS[SUGGESTION_CATEGORIES.BASIC]}`} />
+          <span className="text-gemini-gray-600">{CATEGORY_LABELS[SUGGESTION_CATEGORIES.BASIC]}</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="h-2 w-2 rounded-full bg-blue-500" />
-          <span className="text-gemini-gray-600">Avançado</span>
+          <div className={`h-2 w-2 rounded-full ${CATEGORY_BG_COLORS[SUGGESTION_CATEGORIES.ADVANCED]}`} />
+          <span className="text-gemini-gray-600">{CATEGORY_LABELS[SUGGESTION_CATEGORIES.ADVANCED]}</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="h-2 w-2 rounded-full bg-purple-500" />
-          <span className="text-gemini-gray-600">Expert</span>
+          <div className={`h-2 w-2 rounded-full ${CATEGORY_BG_COLORS[SUGGESTION_CATEGORIES.EXPERT]}`} />
+          <span className="text-gemini-gray-600">{CATEGORY_LABELS[SUGGESTION_CATEGORIES.EXPERT]}</span>
         </div>
       </div>
 
@@ -84,7 +53,8 @@ export function SuggestionCarousel({
         {/* Botão anterior */}
         <button
           onClick={prevSlide}
-          className="absolute -left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-md transition-all hover:shadow-lg"
+          className="absolute -left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-md transition-all hover:shadow-lg dark:bg-gray-800"
+          aria-label="Página anterior"
         >
           <ChevronLeft className="h-5 w-5 text-gemini-gray-600" />
         </button>
@@ -92,7 +62,8 @@ export function SuggestionCarousel({
         {/* Botão próximo */}
         <button
           onClick={nextSlide}
-          className="absolute -right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-md transition-all hover:shadow-lg"
+          className="absolute -right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-md transition-all hover:shadow-lg dark:bg-gray-800"
+          aria-label="Próxima página"
         >
           <ChevronRight className="h-5 w-5 text-gemini-gray-600" />
         </button>
@@ -102,20 +73,21 @@ export function SuggestionCarousel({
           <div
             className="flex transition-transform duration-300 ease-in-out"
             style={{
-              transform: `translateX(-${(currentIndex * 100) / itemsPerView}%)`
+              transform: `translateX(-${currentPage * 100}%)`
             }}
           >
             {suggestions.map((suggestion) => {
-              const Icon = getIcon(suggestion.icon)
+              const Icon = getIconComponent(suggestion.icon)
 
               return (
                 <div
                   key={suggestion.id}
-                  className="w-[280px] flex-shrink-0 px-2 md:w-[240px]"
+                  className="w-full flex-shrink-0 px-2 md:w-1/3"
                 >
                   <button
                     onClick={() => onSuggestionClick(suggestion.prompt)}
                     className="group flex h-[70px] w-full flex-col items-start justify-between rounded-xl border border-border bg-card p-3 text-left transition-all hover:border-gemini-gray-300 hover:shadow-sm active:scale-[0.98] dark:hover:border-gemini-gray-500"
+                    aria-label={`Sugestão: ${suggestion.title}`}
                   >
                     {/* Primeira linha: Ícone + Tema */}
                     <div className="flex w-full items-center gap-2">
@@ -129,9 +101,7 @@ export function SuggestionCarousel({
 
                     {/* Segunda linha: Início da pergunta */}
                     <p className="line-clamp-1 w-full text-xs leading-tight text-muted-foreground">
-                      {suggestion.description.length > 50
-                        ? suggestion.description.substring(0, 50) + '...'
-                        : suggestion.description}
+                      {truncateText(suggestion.description, MAX_DESCRIPTION_LENGTH)}
                     </p>
                   </button>
                 </div>
@@ -143,13 +113,15 @@ export function SuggestionCarousel({
 
       {/* Indicadores de posição */}
       <div className="mt-4 flex justify-center gap-1">
-        {suggestions.map((_, i) => (
+        {Array.from({ length: totalPages }).map((_, pageIndex) => (
           <button
-            key={i}
-            onClick={() => setCurrentIndex(i)}
+            key={pageIndex}
+            onClick={() => goToPage(pageIndex)}
             className={`h-2 w-2 rounded-full transition-colors ${
-              i === currentIndex ? 'bg-gemini-blue' : 'bg-gemini-gray-300'
+              currentPage === pageIndex ? 'bg-gemini-blue' : 'bg-gemini-gray-300'
             }`}
+            aria-label={`Ir para página ${pageIndex + 1}`}
+            aria-current={currentPage === pageIndex ? 'true' : 'false'}
           />
         ))}
       </div>
