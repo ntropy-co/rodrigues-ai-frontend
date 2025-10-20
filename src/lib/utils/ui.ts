@@ -19,7 +19,9 @@ export function getCategoryColor(category: string): string {
  * @param iconName - Nome do ícone Lucide
  * @returns Componente React do ícone ou HelpCircle como fallback
  */
-export function getIconComponent(iconName: string): React.ComponentType<{ className?: string }> {
+export function getIconComponent(
+  iconName: string
+): React.ComponentType<{ className?: string }> {
   const IconComponent = (
     LucideIcons as unknown as Record<
       string,
@@ -52,7 +54,10 @@ export function isNearBottom(
  * @param itemsPerPage - Items por página
  * @returns Número de páginas
  */
-export function calculateTotalPages(totalItems: number, itemsPerPage: number): number {
+export function calculateTotalPages(
+  totalItems: number,
+  itemsPerPage: number
+): number {
   return Math.ceil(totalItems / itemsPerPage)
 }
 
@@ -62,6 +67,9 @@ export function calculateTotalPages(totalItems: number, itemsPerPage: number): n
  * @param itemsPerView - Items por visualização
  * @returns Número da página atual (0-indexed)
  */
-export function getCurrentPage(currentIndex: number, itemsPerView: number): number {
+export function getCurrentPage(
+  currentIndex: number,
+  itemsPerView: number
+): number {
   return Math.floor(currentIndex / itemsPerView)
 }

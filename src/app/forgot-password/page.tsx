@@ -21,7 +21,7 @@ export default function ForgotPasswordPage() {
     setIsSubmitting(true)
 
     try {
-      const response = await forgotPasswordApi(email)
+      const response = await forgotPasswordApi({ email })
       setIsSuccess(true)
       toast.success(response.message)
     } catch (error) {

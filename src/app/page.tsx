@@ -4,7 +4,13 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
-import { ArrowRight, CheckCircle2, MessageSquare, Shield, Sparkles } from 'lucide-react'
+import {
+  ArrowRight,
+  CheckCircle2,
+  MessageSquare,
+  Shield,
+  Sparkles
+} from 'lucide-react'
 
 export default function LandingPage() {
   const router = useRouter()
@@ -31,13 +37,15 @@ export default function LandingPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+      <header className="sticky top-0 z-50 border-b border-border bg-card/50 backdrop-blur-sm">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[hsl(var(--gemini-blue))] to-[hsl(var(--gemini-purple))]">
               <MessageSquare className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-foreground">Rodrigues AI</span>
+            <span className="text-xl font-bold text-foreground">
+              Rodrigues AI
+            </span>
           </div>
           <div className="flex items-center gap-3">
             <Button
@@ -68,13 +76,15 @@ export default function LandingPage() {
           <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground md:text-6xl">
             Seu Especialista em
             <span className="bg-gradient-to-r from-[hsl(var(--gemini-blue))] to-[hsl(var(--gemini-purple))] bg-clip-text text-transparent">
-              {' '}Crédito Rural e CPR
+              {' '}
+              Crédito Rural e CPR
             </span>
           </h1>
 
           <p className="mb-8 text-lg text-muted-foreground md:text-xl">
-            Consultoria jurídica especializada em financiamento rural, instrumentos de crédito
-            e mercado agropecuário. Tire suas dúvidas sobre CPR, crédito agrícola e muito mais.
+            Consultoria jurídica especializada em financiamento rural,
+            instrumentos de crédito e mercado agropecuário. Tire suas dúvidas
+            sobre CPR, crédito agrícola e muito mais.
           </p>
 
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
@@ -116,7 +126,8 @@ export default function LandingPage() {
                   Especialização Jurídica
                 </h3>
                 <p className="text-muted-foreground">
-                  Conhecimento profundo em legislação de crédito rural, CPR e instrumentos financeiros do agronegócio.
+                  Conhecimento profundo em legislação de crédito rural, CPR e
+                  instrumentos financeiros do agronegócio.
                 </p>
               </div>
 
@@ -129,7 +140,8 @@ export default function LandingPage() {
                   Respostas Instantâneas
                 </h3>
                 <p className="text-muted-foreground">
-                  Obtenha orientações especializadas imediatamente, 24 horas por dia, 7 dias por semana.
+                  Obtenha orientações especializadas imediatamente, 24 horas por
+                  dia, 7 dias por semana.
                 </p>
               </div>
 
@@ -142,7 +154,8 @@ export default function LandingPage() {
                   Tecnologia Avançada
                 </h3>
                 <p className="text-muted-foreground">
-                  Powered by inteligência artificial de última geração para análises precisas e atualizadas.
+                  Powered by inteligência artificial de última geração para
+                  análises precisas e atualizadas.
                 </p>
               </div>
             </div>
@@ -188,7 +201,8 @@ export default function LandingPage() {
               Pronto para começar?
             </h2>
             <p className="mb-8 text-lg text-muted-foreground">
-              Crie sua conta gratuitamente e comece a consultar o Rodrigues AI agora mesmo.
+              Crie sua conta gratuitamente e comece a consultar o Rodrigues AI
+              agora mesmo.
             </p>
             <Button
               size="lg"

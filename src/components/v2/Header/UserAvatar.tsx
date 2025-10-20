@@ -47,7 +47,8 @@ export function UserAvatar() {
       icon: LogOut,
       label: 'Sair',
       onClick: handleLogout,
-      className: 'text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950'
+      className:
+        'text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950'
     }
   ]
 
@@ -89,10 +90,7 @@ export function UserAvatar() {
 
       {/* Overlay para fechar o dropdown */}
       {isOpen && (
-        <div 
-          className="fixed inset-0 z-40" 
-          onClick={() => setIsOpen(false)}
-        />
+        <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
       )}
     </div>
   )

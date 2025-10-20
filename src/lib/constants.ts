@@ -62,7 +62,8 @@ export const SUGGESTION_CATEGORIES = {
   EXPERT: 'expert'
 } as const
 
-export type SuggestionCategory = typeof SUGGESTION_CATEGORIES[keyof typeof SUGGESTION_CATEGORIES]
+export type SuggestionCategory =
+  (typeof SUGGESTION_CATEGORIES)[keyof typeof SUGGESTION_CATEGORIES]
 
 // ============================================
 // Cores por Categoria
@@ -99,4 +100,4 @@ export const MESSAGE_ROLES = {
   AGENT: 'agent'
 } as const
 
-export type MessageRole = typeof MESSAGE_ROLES[keyof typeof MESSAGE_ROLES]
+export type MessageRole = (typeof MESSAGE_ROLES)[keyof typeof MESSAGE_ROLES]
