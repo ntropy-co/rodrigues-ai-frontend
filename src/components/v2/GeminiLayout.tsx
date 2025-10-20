@@ -9,19 +9,30 @@ import { usePlaygroundStore } from '@/store'
 import useChatActions from '@/hooks/useChatActions'
 import useAIChatStreamHandler from '@/hooks/useAIStreamHandler'
 
-export function GeminiLayout() {
+interface GeminiLayoutProps {
+  sessionId?: string
+}
+
+export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
   const [message, setMessage] = useState('')
   const [hasMessages, setHasMessages] = useState(false)
   const messages = usePlaygroundStore((state) => state.messages)
   const isStreaming = usePlaygroundStore((state) => state.isStreaming)
 
-  const { initializePlayground, ensureSessionExists } = useChatActions()
+  const { initializePlayground, ensureSessionExists, loadSessionById } = useChatActions()
   const { handleStreamResponse } = useAIChatStreamHandler()
 
   // Inicializar playground na montagem
   useEffect(() => {
     initializePlayground()
   }, [initializePlayground])
+
+  // Carregar sessão se sessionId for fornecido
+  useEffect(() => {
+    if (sessionId) {
+      loadSessionById(sessionId)
+    }
+  }, [sessionId, loadSessionById])
 
   // Verificar se há mensagens para alternar entre MainContent e ChatArea
   useEffect(() => {

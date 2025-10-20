@@ -83,13 +83,16 @@ export const getPlaygroundSessionAPI = async (
 export const deletePlaygroundSessionAPI = async (
   base: string,
   agentId: string,
-  sessionId: string
+  sessionId: string,
+  userId?: string
 ) => {
-  const response = await fetch(
-    APIRoutes.DeletePlaygroundSession(base, agentId, sessionId),
-    {
-      method: 'DELETE'
-    }
-  )
+  let url = APIRoutes.DeletePlaygroundSession(base, agentId, sessionId)
+  if (userId) {
+    url += `?user_id=${encodeURIComponent(userId)}`
+  }
+
+  const response = await fetch(url, {
+    method: 'DELETE'
+  })
   return response
 }

@@ -180,6 +180,48 @@ const useChatActions = () => {
     agentId
   ])
 
+  // Função para carregar uma sessão pelo ID
+  const loadSessionById = useCallback(
+    async (sessionId: string) => {
+      if (!agentId || agentId === 'no-agents') {
+        // Aguardar inicialização do agente
+        return
+      }
+
+      try {
+        setIsEndpointLoading(true)
+        const userId = ensureUserIdExists()
+
+        // Importar função de API
+        const { getPlaygroundSessionAPI } = await import('@/api/playground')
+        const sessionData = await getPlaygroundSessionAPI(
+          selectedEndpoint,
+          agentId,
+          sessionId,
+          userId
+        )
+
+        if (sessionData && sessionData.messages) {
+          setMessages(sessionData.messages)
+          setSessionId(sessionId)
+        }
+      } catch (error) {
+        console.error('Error loading session:', error)
+        toast.error('Failed to load session')
+      } finally {
+        setIsEndpointLoading(false)
+      }
+    },
+    [
+      agentId,
+      selectedEndpoint,
+      setMessages,
+      setSessionId,
+      ensureUserIdExists,
+      setIsEndpointLoading
+    ]
+  )
+
   return {
     clearChat,
     addMessage,
@@ -188,7 +230,8 @@ const useChatActions = () => {
     initializePlayground,
     ensureSessionExists,
     createNewSession,
-    getCurrentUserId
+    getCurrentUserId,
+    loadSessionById
   }
 }
 

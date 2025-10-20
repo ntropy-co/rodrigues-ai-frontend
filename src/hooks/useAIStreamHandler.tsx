@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 
 import { APIRoutes } from '@/api/routes'
 
@@ -21,6 +22,7 @@ import { useAuth } from '@/contexts/AuthContext'
  * For now, it only streams message content and updates the messages state.
  */
 const useAIChatStreamHandler = () => {
+  const router = useRouter()
   const setMessages = usePlaygroundStore((state) => state.setMessages)
   const { addMessage, focusChatInput, getCurrentUserId } = useChatActions()
   const [agentId] = useQueryState('agent')
@@ -188,6 +190,9 @@ const useAIChatStreamHandler = () => {
                   }
                   return [sessionData, ...(prevSessionsData ?? [])]
                 })
+
+                // Navegar para a nova URL com sessionId
+                router.push(`/chat/${chunk.session_id}`)
               }
             } else if (chunk.event === RunEvent.ToolCallStarted) {
               setMessages((prevMessages) => {

@@ -1,4 +1,5 @@
 import { useQueryState } from 'nuqs'
+import { useRouter } from 'next/navigation'
 import { SessionEntry } from '@/types/playground'
 import { Button } from '../../../ui/button'
 import useSessionLoader from '@/hooks/useSessionLoader'
@@ -21,6 +22,7 @@ const SessionItem = ({
   isSelected,
   onSessionClick
 }: SessionItemProps) => {
+  const router = useRouter()
   const [agentId] = useQueryState('agent')
   const { getSession } = useSessionLoader()
   const [, setSessionId] = useQueryState('session')
@@ -30,20 +32,22 @@ const SessionItem = ({
   const { clearChat } = useChatActions()
 
   const handleGetSession = async () => {
-    if (agentId) {
-      onSessionClick()
-      await getSession(session_id, agentId)
-      setSessionId(session_id)
-    }
+    onSessionClick()
+    // Navegar para a nova URL com sessionId
+    router.push(`/chat/${session_id}`)
   }
+
+  const { getCurrentUserId } = useChatActions()
 
   const handleDeleteSession = async () => {
     if (agentId) {
       try {
+        const userId = getCurrentUserId()
         const response = await deletePlaygroundSessionAPI(
           selectedEndpoint,
           agentId,
-          session_id
+          session_id,
+          userId
         )
         if (response.status === 200 && sessionsData) {
           setSessionsData(
