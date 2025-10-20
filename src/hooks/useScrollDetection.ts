@@ -33,7 +33,12 @@ export function useScrollDetection({
 
     const handleScroll = () => {
       const { scrollTop, scrollHeight, clientHeight } = container
-      const nearBottom = isNearBottom(scrollTop, scrollHeight, clientHeight, threshold)
+      const nearBottom = isNearBottom(
+        scrollTop,
+        scrollHeight,
+        clientHeight,
+        threshold
+      )
       setShowScrollButton(!nearBottom)
     }
 

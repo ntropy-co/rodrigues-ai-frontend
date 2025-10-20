@@ -20,7 +20,9 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
  * Login with email and password
  * Uses OAuth2 standard endpoint /login/access-token
  */
-export async function loginApi(credentials: LoginRequest): Promise<AuthResponse> {
+export async function loginApi(
+  credentials: LoginRequest
+): Promise<AuthResponse> {
   const formData = new URLSearchParams()
   formData.append('username', credentials.username)
   formData.append('password', credentials.password)
@@ -34,7 +36,9 @@ export async function loginApi(credentials: LoginRequest): Promise<AuthResponse>
   })
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: 'Erro ao fazer login' }))
+    const error = await response
+      .json()
+      .catch(() => ({ detail: 'Erro ao fazer login' }))
     throw new Error(error.detail || 'Credenciais inválidas')
   }
 
@@ -54,7 +58,9 @@ export async function registerApi(data: RegisterRequest): Promise<User> {
   })
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: 'Erro ao criar conta' }))
+    const error = await response
+      .json()
+      .catch(() => ({ detail: 'Erro ao criar conta' }))
     throw new Error(error.detail || 'Não foi possível criar a conta')
   }
 
@@ -73,7 +79,9 @@ export async function getCurrentUserApi(token: string): Promise<User> {
   })
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: 'Erro ao buscar usuário' }))
+    const error = await response
+      .json()
+      .catch(() => ({ detail: 'Erro ao buscar usuário' }))
     throw new Error(error.detail || 'Não foi possível obter dados do usuário')
   }
 
@@ -92,7 +100,9 @@ export async function logoutApi(token: string): Promise<MessageResponse> {
   })
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Erro ao fazer logout' }))
+    const error = await response
+      .json()
+      .catch(() => ({ message: 'Erro ao fazer logout' }))
     throw new Error(error.message || 'Não foi possível fazer logout')
   }
 
@@ -102,7 +112,9 @@ export async function logoutApi(token: string): Promise<MessageResponse> {
 /**
  * Request password reset email
  */
-export async function forgotPasswordApi(data: ForgotPasswordRequest): Promise<MessageResponse> {
+export async function forgotPasswordApi(
+  data: ForgotPasswordRequest
+): Promise<MessageResponse> {
   const response = await fetch(`${API_BASE_URL}/api/v1/auth/forgot-password`, {
     method: 'POST',
     headers: {
@@ -112,8 +124,12 @@ export async function forgotPasswordApi(data: ForgotPasswordRequest): Promise<Me
   })
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Erro ao solicitar reset de senha' }))
-    throw new Error(error.message || 'Não foi possível solicitar reset de senha')
+    const error = await response
+      .json()
+      .catch(() => ({ message: 'Erro ao solicitar reset de senha' }))
+    throw new Error(
+      error.message || 'Não foi possível solicitar reset de senha'
+    )
   }
 
   return response.json()
@@ -122,7 +138,9 @@ export async function forgotPasswordApi(data: ForgotPasswordRequest): Promise<Me
 /**
  * Reset password with token
  */
-export async function resetPasswordApi(data: ResetPasswordRequest): Promise<MessageResponse> {
+export async function resetPasswordApi(
+  data: ResetPasswordRequest
+): Promise<MessageResponse> {
   const response = await fetch(`${API_BASE_URL}/api/v1/auth/reset-password`, {
     method: 'POST',
     headers: {
@@ -132,7 +150,9 @@ export async function resetPasswordApi(data: ResetPasswordRequest): Promise<Mess
   })
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Erro ao redefinir senha' }))
+    const error = await response
+      .json()
+      .catch(() => ({ message: 'Erro ao redefinir senha' }))
     throw new Error(error.message || 'Não foi possível redefinir a senha')
   }
 
@@ -142,14 +162,19 @@ export async function resetPasswordApi(data: ResetPasswordRequest): Promise<Mess
 /**
  * Validate password reset token
  */
-export async function validateResetTokenApi(token: string): Promise<TokenValidation> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/auth/validate-reset-token`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ token })
-  })
+export async function validateResetTokenApi(
+  token: string
+): Promise<TokenValidation> {
+  const response = await fetch(
+    `${API_BASE_URL}/api/v1/auth/validate-reset-token`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ token })
+    }
+  )
 
   if (!response.ok) {
     return { valid: false }

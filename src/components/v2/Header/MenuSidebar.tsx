@@ -1,7 +1,14 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
-import { X, MessageSquare, Trash2, Plus, AlertTriangle, Search } from 'lucide-react'
+import {
+  X,
+  MessageSquare,
+  Trash2,
+  Plus,
+  AlertTriangle,
+  Search
+} from 'lucide-react'
 import { useQueryState } from 'nuqs'
 import { usePlaygroundStore } from '@/store'
 import useSessionLoader from '@/hooks/useSessionLoader'
@@ -34,7 +41,9 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
   const [agentId] = useQueryState('agent')
   const [sessionId, setSessionId] = useQueryState('session')
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [sessionToDelete, setSessionToDelete] = useState<ChatSession | null>(null)
+  const [sessionToDelete, setSessionToDelete] = useState<ChatSession | null>(
+    null
+  )
   const [isLoadingSessions, setIsLoadingSessions] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -180,7 +189,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
       {/* Sidebar */}
       <aside
         id="navigation-sidebar"
-        className="fixed left-0 top-0 z-50 h-full w-full max-w-[280px] sm:w-80 sm:max-w-none transform border-r border-border bg-background shadow-xl transition-transform duration-300"
+        className="fixed left-0 top-0 z-50 h-full w-full max-w-[280px] transform border-r border-border bg-background shadow-xl transition-transform duration-300 sm:w-80 sm:max-w-none"
         role="navigation"
         aria-label="Menu de navegação e conversas"
       >

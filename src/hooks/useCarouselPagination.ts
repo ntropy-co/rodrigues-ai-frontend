@@ -41,7 +41,9 @@ export function useCarouselPagination({
   autoScroll = false
 }: UseCarouselPaginationOptions): UseCarouselPaginationReturn {
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [itemsPerView, setItemsPerView] = useState(CAROUSEL_ITEMS_PER_VIEW_DESKTOP)
+  const [itemsPerView, setItemsPerView] = useState(
+    CAROUSEL_ITEMS_PER_VIEW_DESKTOP
+  )
 
   // Detectar viewport e ajustar items por view
   useEffect(() => {

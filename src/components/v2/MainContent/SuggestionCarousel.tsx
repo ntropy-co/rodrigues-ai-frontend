@@ -16,36 +16,45 @@ interface SuggestionCarouselProps {
   onSuggestionClick: (prompt: string) => void
 }
 
-export function SuggestionCarousel({ onSuggestionClick }: SuggestionCarouselProps) {
+export function SuggestionCarousel({
+  onSuggestionClick
+}: SuggestionCarouselProps) {
   const { suggestions, ui } = useUIConfig()
 
   // Hook personalizado para gerenciar paginação
-  const {
-    totalPages,
-    currentPage,
-    nextSlide,
-    prevSlide,
-    goToPage
-  } = useCarouselPagination({
-    totalItems: suggestions.length,
-    autoScroll: ui.features.carouselMode
-  })
+  const { totalPages, currentPage, nextSlide, prevSlide, goToPage } =
+    useCarouselPagination({
+      totalItems: suggestions.length,
+      autoScroll: ui.features.carouselMode
+    })
 
   return (
     <div className="w-full max-w-4xl">
       {/* Indicadores de categoria */}
       <div className="mb-4 flex justify-center gap-4 text-xs">
         <div className="flex items-center gap-1">
-          <div className={`h-2 w-2 rounded-full ${CATEGORY_BG_COLORS[SUGGESTION_CATEGORIES.BASIC]}`} />
-          <span className="text-gemini-gray-600">{CATEGORY_LABELS[SUGGESTION_CATEGORIES.BASIC]}</span>
+          <div
+            className={`h-2 w-2 rounded-full ${CATEGORY_BG_COLORS[SUGGESTION_CATEGORIES.BASIC]}`}
+          />
+          <span className="text-gemini-gray-600">
+            {CATEGORY_LABELS[SUGGESTION_CATEGORIES.BASIC]}
+          </span>
         </div>
         <div className="flex items-center gap-1">
-          <div className={`h-2 w-2 rounded-full ${CATEGORY_BG_COLORS[SUGGESTION_CATEGORIES.ADVANCED]}`} />
-          <span className="text-gemini-gray-600">{CATEGORY_LABELS[SUGGESTION_CATEGORIES.ADVANCED]}</span>
+          <div
+            className={`h-2 w-2 rounded-full ${CATEGORY_BG_COLORS[SUGGESTION_CATEGORIES.ADVANCED]}`}
+          />
+          <span className="text-gemini-gray-600">
+            {CATEGORY_LABELS[SUGGESTION_CATEGORIES.ADVANCED]}
+          </span>
         </div>
         <div className="flex items-center gap-1">
-          <div className={`h-2 w-2 rounded-full ${CATEGORY_BG_COLORS[SUGGESTION_CATEGORIES.EXPERT]}`} />
-          <span className="text-gemini-gray-600">{CATEGORY_LABELS[SUGGESTION_CATEGORIES.EXPERT]}</span>
+          <div
+            className={`h-2 w-2 rounded-full ${CATEGORY_BG_COLORS[SUGGESTION_CATEGORIES.EXPERT]}`}
+          />
+          <span className="text-gemini-gray-600">
+            {CATEGORY_LABELS[SUGGESTION_CATEGORIES.EXPERT]}
+          </span>
         </div>
       </div>
 
@@ -101,7 +110,10 @@ export function SuggestionCarousel({ onSuggestionClick }: SuggestionCarouselProp
 
                     {/* Segunda linha: Início da pergunta */}
                     <p className="line-clamp-1 w-full text-xs leading-tight text-muted-foreground">
-                      {truncateText(suggestion.description, MAX_DESCRIPTION_LENGTH)}
+                      {truncateText(
+                        suggestion.description,
+                        MAX_DESCRIPTION_LENGTH
+                      )}
                     </p>
                   </button>
                 </div>
@@ -118,7 +130,9 @@ export function SuggestionCarousel({ onSuggestionClick }: SuggestionCarouselProp
             key={pageIndex}
             onClick={() => goToPage(pageIndex)}
             className={`h-2 w-2 rounded-full transition-colors ${
-              currentPage === pageIndex ? 'bg-gemini-blue' : 'bg-gemini-gray-300'
+              currentPage === pageIndex
+                ? 'bg-gemini-blue'
+                : 'bg-gemini-gray-300'
             }`}
             aria-label={`Ir para página ${pageIndex + 1}`}
             aria-current={currentPage === pageIndex ? 'true' : 'false'}

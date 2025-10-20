@@ -4,9 +4,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 export function MessageSkeleton({ isUser = false }: { isUser?: boolean }) {
   return (
-    <div
-      className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
-    >
+    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
       <div
         className={`max-w-[85%] rounded-2xl px-4 py-3 ${
           isUser ? 'bg-gemini-blue/10' : 'bg-muted'

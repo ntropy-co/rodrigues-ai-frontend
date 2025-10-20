@@ -13,12 +13,15 @@ export function Header() {
 
   return (
     <>
-      <header className="flex h-16 w-full items-center justify-between px-4 py-2 md:h-20 md:px-6" role="banner">
+      <header
+        className="flex h-16 w-full items-center justify-between px-4 py-2 md:h-20 md:px-6"
+        role="banner"
+      >
         {/* Menu - 1/10 */}
         <nav className="flex w-10 justify-start">
           <button
             onClick={() => setIsMenuOpen(true)}
-            className="flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full transition-colors hover:bg-muted active:scale-95"
+            className="flex h-11 min-h-[44px] w-11 min-w-[44px] items-center justify-center rounded-full transition-colors hover:bg-muted active:scale-95"
             aria-label="Abrir menu de navegação"
             aria-expanded={isMenuOpen}
             aria-controls="navigation-sidebar"

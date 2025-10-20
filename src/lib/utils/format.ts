@@ -51,7 +51,10 @@ export function truncateText(text: string, maxLength: number): string {
  * @param email - Email do usuário (fallback)
  * @returns Primeira letra em maiúscula ou 'U' como fallback
  */
-export function getInitialLetter(name?: string | null, email?: string | null): string {
+export function getInitialLetter(
+  name?: string | null,
+  email?: string | null
+): string {
   if (name && name.trim()) {
     return name.trim()[0].toUpperCase()
   }

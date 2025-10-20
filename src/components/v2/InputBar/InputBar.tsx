@@ -99,7 +99,7 @@ export function InputBar({
         )}
 
         {/* Barra principal */}
-        <div className="flex items-end gap-3 rounded-2xl border border-border bg-card/95 backdrop-blur-sm p-3 shadow-[0_-4px_16px_rgba(0,0,0,0.12)] dark:shadow-[0_-4px_16px_rgba(0,0,0,0.4)] transition-all focus-within:border-gemini-blue focus-within:shadow-xl">
+        <div className="flex items-end gap-3 rounded-2xl border border-border bg-card/95 p-3 shadow-[0_-4px_16px_rgba(0,0,0,0.12)] backdrop-blur-sm transition-all focus-within:border-gemini-blue focus-within:shadow-xl dark:shadow-[0_-4px_16px_rgba(0,0,0,0.4)]">
           {/* Área de texto - 7/10 */}
           <div className="flex-1">
             <textarea
@@ -153,7 +153,7 @@ export function InputBar({
             <button
               onClick={handleSend}
               disabled={disabled || !message.trim()}
-              className={`flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full transition-all ${
+              className={`flex h-11 min-h-[44px] w-11 min-w-[44px] items-center justify-center rounded-full transition-all ${
                 disabled || !message.trim()
                   ? 'cursor-not-allowed bg-gemini-gray-300 text-gemini-gray-500'
                   : 'bg-gemini-blue text-white hover:bg-gemini-blue-hover active:scale-95'
@@ -166,7 +166,10 @@ export function InputBar({
         </div>
 
         {/* Disclaimer */}
-        <p id="message-disclaimer" className="mt-2 text-center text-xs text-gemini-gray-500">
+        <p
+          id="message-disclaimer"
+          className="mt-2 text-center text-xs text-gemini-gray-500"
+        >
           Rodrigues AI pode cometer erros. Verifique informações importantes.
         </p>
       </div>
