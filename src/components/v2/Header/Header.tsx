@@ -1,11 +1,21 @@
 'use client'
 
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import { Menu } from 'lucide-react'
 // import { ModelSelector } from './ModelSelector'
 import { UserAvatar } from './UserAvatar'
-import { MenuSidebar } from './MenuSidebar'
 import { useUIConfig } from '@/hooks/useUIConfig'
+
+// Dynamic import para code splitting - Sidebar só carrega quando menu é aberto
+// Reduz bundle inicial em ~15KB
+const MenuSidebar = dynamic(
+  () => import('./MenuSidebar').then((m) => ({ default: m.MenuSidebar })),
+  {
+    ssr: false, // Sidebar não precisa SSR
+    loading: () => null // Sem loading state, sidebar aparece instantaneamente
+  }
+)
 
 export function Header() {
   const { ui } = useUIConfig()
