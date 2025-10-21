@@ -51,6 +51,8 @@ const ImageItem = ({ image }: { image: ImageData }) => {
         src={image.url}
         alt={image.revised_prompt || 'AI generated image'}
         className="w-full rounded-lg"
+        loading="lazy" // Lazy load imagens fora da viewport
+        decoding="async" // Decodificação assíncrona para melhor performance
         onError={() => setHasError(true)}
       />
     </div>
