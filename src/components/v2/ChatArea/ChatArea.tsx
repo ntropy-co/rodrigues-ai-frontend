@@ -96,7 +96,7 @@ export function ChatArea({ messages, isStreaming }: ChatAreaProps) {
                           className=""
                         />
                       ) : (
-                        <MarkdownRenderer classname="prose-sm prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ol:my-1 max-w-none w-full">
+                        <MarkdownRenderer classname="prose-sm prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ol:my-1 prose-hr:my-2 prose-hr:border-muted-foreground/20 max-w-none w-full [&_hr~p]:text-xs [&_hr~p]:opacity-70 [&_hr~p_strong]:text-xs [&_hr~p_strong]:font-medium">
                           {message.content}
                         </MarkdownRenderer>
                       )
