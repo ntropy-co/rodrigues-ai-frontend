@@ -172,7 +172,7 @@ export function SuggestionCards({ onSuggestionClick }: SuggestionCardsProps) {
             <button
               key={suggestion.id}
               onClick={() => onSuggestionClick(suggestion.prompt)}
-              className={`flex flex-col items-start rounded-2xl border border-gemini-gray-300 p-4 text-left transition-all ${colors.border} hover-hover:shadow-sm active:scale-[0.98]`}
+              className={`flex flex-col items-start rounded-2xl border border-gemini-gray-300 p-4 text-left transition-all ${colors.border} active:scale-[0.98] hover-hover:shadow-sm`}
             >
               <div
                 className={`mb-3 flex h-10 w-10 items-center justify-center rounded-lg ${colors.bg}`}
