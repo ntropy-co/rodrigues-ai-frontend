@@ -13,8 +13,13 @@ import type {
   TokenValidation,
   User
 } from '@/types/auth'
+import { validateApiUrl } from '@/lib/utils/url-validator'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+// Validar URL da API na inicialização para prevenir SSRF
+const API_BASE_URL = validateApiUrl(
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
+  { allowLocalhost: true } // Permitir localhost para desenvolvimento
+)
 
 /**
  * Login with email and password
@@ -32,6 +37,7 @@ export async function loginApi(
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
+    credentials: 'include',
     body: formData
   })
 
@@ -54,6 +60,7 @@ export async function registerApi(data: RegisterRequest): Promise<User> {
     headers: {
       'Content-Type': 'application/json'
     },
+    credentials: 'include',
     body: JSON.stringify(data)
   })
 
@@ -75,7 +82,8 @@ export async function getCurrentUserApi(token: string): Promise<User> {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${token}`
-    }
+    },
+    credentials: 'include'
   })
 
   if (!response.ok) {
@@ -96,7 +104,8 @@ export async function logoutApi(token: string): Promise<MessageResponse> {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`
-    }
+    },
+    credentials: 'include'
   })
 
   if (!response.ok) {
@@ -120,6 +129,7 @@ export async function forgotPasswordApi(
     headers: {
       'Content-Type': 'application/json'
     },
+    credentials: 'include',
     body: JSON.stringify(data)
   })
 
@@ -146,6 +156,7 @@ export async function resetPasswordApi(
     headers: {
       'Content-Type': 'application/json'
     },
+    credentials: 'include',
     body: JSON.stringify(data)
   })
 
@@ -172,6 +183,7 @@ export async function validateResetTokenApi(
       headers: {
         'Content-Type': 'application/json'
       },
+      credentials: 'include',
       body: JSON.stringify({ token })
     }
   )

@@ -1,7 +1,61 @@
-import { memo } from 'react'
+import { memo, useState, useMemo } from 'react'
 
 import { type ImageData } from '@/types/playground'
 import { cn } from '@/lib/utils'
+
+/**
+ * Componente seguro para exibir fallback quando a imagem falha ao carregar
+ * Sanitiza URLs para prevenir XSS via javascript: ou data: protocols
+ */
+const ImageErrorFallback = ({ url }: { url: string }) => {
+  const sanitizedUrl = useMemo(() => {
+    try {
+      const urlObj = new URL(url)
+      // Apenas permitir http/https protocols
+      if (!['http:', 'https:'].includes(urlObj.protocol)) {
+        return '#'
+      }
+      return url
+    } catch {
+      // URL inválida, retornar fallback seguro
+      return '#'
+    }
+  }, [url])
+
+  return (
+    <div className="flex h-40 flex-col items-center justify-center gap-2 rounded-md bg-secondary/50 text-muted">
+      <p className="text-primary">Image unavailable</p>
+      <a
+        href={sanitizedUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="max-w-md truncate underline text-primary text-xs w-full text-center p-2"
+      >
+        {url}
+      </a>
+    </div>
+  )
+}
+
+const ImageItem = ({ image }: { image: ImageData }) => {
+  const [hasError, setHasError] = useState(false)
+
+  if (hasError) {
+    return <ImageErrorFallback url={image.url} />
+  }
+
+  return (
+    <div className="group relative">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={image.url}
+        alt={image.revised_prompt || 'AI generated image'}
+        className="w-full rounded-lg"
+        onError={() => setHasError(true)}
+      />
+    </div>
+  )
+}
 
 const Images = ({ images }: { images: ImageData[] }) => (
   <div
@@ -11,27 +65,7 @@ const Images = ({ images }: { images: ImageData[] }) => (
     )}
   >
     {images.map((image) => (
-      <div key={image.url} className="group relative">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={image.url}
-          alt={image.revised_prompt || 'AI generated image'}
-          className="w-full rounded-lg"
-          onError={(e) => {
-            const parent = e.currentTarget.parentElement
-            if (parent) {
-              parent.innerHTML = `
-                    <div class="flex h-40 flex-col items-center justify-center gap-2 rounded-md bg-secondary/50 text-muted" >
-                      <p class="text-primary">Image unavailable</p>
-                      <a href="${image.url}" target="_blank" class="max-w-md truncate underline text-primary text-xs w-full text-center p-2">
-                        ${image.url}
-                      </a>
-                    </div>
-                  `
-            }
-          }}
-        />
-      </div>
+      <ImageItem key={image.url} image={image} />
     ))}
   </div>
 )
