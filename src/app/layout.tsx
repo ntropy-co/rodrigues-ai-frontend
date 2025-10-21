@@ -4,6 +4,7 @@ import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import { AuthProvider } from '@/contexts/AuthContext'
+import { InstallPrompt } from '@/components/v2/InstallPrompt'
 import './globals.css'
 
 const inter = Inter({
@@ -75,6 +76,7 @@ export default function RootLayout({
           <AuthProvider>
             <NuqsAdapter>{children}</NuqsAdapter>
             <Toaster />
+            <InstallPrompt />
           </AuthProvider>
         </ThemeProvider>
       </body>
