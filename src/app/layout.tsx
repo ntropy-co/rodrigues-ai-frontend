@@ -36,15 +36,23 @@ export const metadata: Metadata = {
     userScalable: true,
     viewportFit: 'cover' // iOS notch/dynamic island support
   },
+  manifest: '/manifest.json', // PWA manifest
   appleWebApp: {
     capable: true,
     title: 'Rodrigues AI',
     statusBarStyle: 'black-translucent'
   },
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#0a0a0a' }
+  ],
   icons: {
-    icon: [{ url: '/rodrigues-icon.png', sizes: 'any', type: 'image/png' }],
-    apple: '/rodrigues-icon.png',
-    shortcut: '/rodrigues-icon.png'
+    icon: [
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' }
+    ],
+    apple: '/icon-192.png',
+    shortcut: '/icon-192.png'
   }
 }
 
