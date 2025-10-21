@@ -11,7 +11,7 @@ import {
   ReasoningMessage,
   ChatEntry
 } from '@/types/playground'
-import { getJsonMarkdown } from '@/lib/utils'
+import { getJsonMarkdown } from '@/lib/utils/format'
 
 interface SessionResponse {
   session_id: string
