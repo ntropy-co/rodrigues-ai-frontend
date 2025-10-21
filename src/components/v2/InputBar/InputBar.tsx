@@ -1,12 +1,30 @@
 'use client'
 
 import { useRef, useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
 import { Send, Plus, Wrench } from 'lucide-react'
 import { useUIConfig } from '@/hooks/useUIConfig'
 import { useDocuments } from '@/hooks/useDocuments'
 import { useKeyboardHeight } from '@/hooks/useKeyboardHeight'
-import { FileUploadModal } from '@/components/v2/FileUpload/FileUploadModal'
 import { FileList } from '@/components/v2/FileUpload/FileList'
+
+// Dynamic import para code splitting - Modal só carrega quando clicado
+// Reduz bundle inicial em ~20KB, pois FileUploadModal raramente é usado
+const FileUploadModal = dynamic(
+  () =>
+    import('@/components/v2/FileUpload/FileUploadModal').then((m) => ({
+      default: m.FileUploadModal
+    })),
+  {
+    ssr: false, // Modal não precisa SSR
+    loading: () => (
+      // Spinner centralizado durante carregamento
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+      </div>
+    )
+  }
+)
 
 interface InputBarProps {
   onSendMessage: (message: string) => void
