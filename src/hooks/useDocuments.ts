@@ -6,8 +6,6 @@ export function useDocuments(userId: string, sessionId?: string) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
-
   const fetchDocuments = useCallback(async () => {
     if (!userId) return
 
@@ -15,31 +13,46 @@ export function useDocuments(userId: string, sessionId?: string) {
     setError(null)
 
     try {
-      const url = new URL(`${apiUrl}/api/v1/documents/user/${userId}`)
+      // Use Next.js API Route as proxy to avoid CORS issues
+      const url = new URL(
+        `/api/documents/user/${userId}`,
+        window.location.origin
+      )
       if (sessionId) {
         url.searchParams.append('session_id', sessionId)
       }
 
+      console.log('[useDocuments] Fetching documents from:', url.toString())
+
       const response = await fetch(url.toString())
+
+      console.log('[useDocuments] Response status:', response.status)
 
       if (!response.ok) {
         throw new Error('Erro ao carregar documentos')
       }
 
       const data = await response.json()
+      console.log('[useDocuments] Fetched', data.length, 'documents')
       setDocuments(data)
     } catch (err) {
+      console.error('[useDocuments] Error:', err)
       setError(err instanceof Error ? err.message : 'Erro desconhecido')
     } finally {
       setLoading(false)
     }
-  }, [userId, sessionId, apiUrl])
+  }, [userId, sessionId])
 
   const removeDocument = async (documentId: string) => {
     try {
-      const response = await fetch(`${apiUrl}/api/v1/documents/${documentId}`, {
+      // Use Next.js API Route as proxy to avoid CORS issues
+      console.log('[useDocuments] Deleting document:', documentId)
+
+      const response = await fetch(`/api/documents/${documentId}`, {
         method: 'DELETE'
       })
+
+      console.log('[useDocuments] Delete response status:', response.status)
 
       if (!response.ok) {
         throw new Error('Erro ao remover documento')
@@ -48,15 +61,19 @@ export function useDocuments(userId: string, sessionId?: string) {
       // Remove from local state
       setDocuments((prev) => prev.filter((doc) => doc.id !== documentId))
     } catch (err) {
+      console.error('[useDocuments] Delete error:', err)
       throw err
     }
   }
 
   const downloadDocument = async (documentId: string) => {
     try {
-      const response = await fetch(
-        `${apiUrl}/api/v1/documents/${documentId}/download`
-      )
+      // Use Next.js API Route as proxy to avoid CORS issues
+      console.log('[useDocuments] Downloading document:', documentId)
+
+      const response = await fetch(`/api/documents/${documentId}/download`)
+
+      console.log('[useDocuments] Download response status:', response.status)
 
       if (!response.ok) {
         throw new Error('Erro ao baixar documento')
@@ -66,6 +83,8 @@ export function useDocuments(userId: string, sessionId?: string) {
       const contentDisposition = response.headers.get('Content-Disposition')
       const filenameMatch = contentDisposition?.match(/filename="?(.+)"?/i)
       const filename = filenameMatch?.[1] || 'document'
+
+      console.log('[useDocuments] Downloading file:', filename)
 
       // Download file
       const blob = await response.blob()
@@ -77,7 +96,10 @@ export function useDocuments(userId: string, sessionId?: string) {
       a.click()
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
+
+      console.log('[useDocuments] Download complete')
     } catch (err) {
+      console.error('[useDocuments] Download error:', err)
       throw err
     }
   }

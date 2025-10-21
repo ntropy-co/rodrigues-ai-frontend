@@ -1,8 +1,6 @@
 import { useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 
-import { APIRoutes } from '@/api/routes'
-
 import useChatActions from '@/hooks/useChatActions'
 import { usePlaygroundStore } from '../store'
 import {
@@ -10,7 +8,6 @@ import {
   RunResponseContent,
   type RunResponse
 } from '@/types/playground'
-import { constructEndpointUrl } from '@/lib/constructEndpointUrl'
 import useAIResponseStream from './useAIResponseStream'
 import { ToolCall } from '@/types/playground'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -151,13 +148,11 @@ const useAIChatStreamHandler = () => {
       let lastContent = ''
       let newSessionId = sessionId
       try {
-        const endpointUrl = constructEndpointUrl(selectedEndpoint)
-
         if (!agentId) return
-        const playgroundRunUrl = APIRoutes.AgentRun(endpointUrl).replace(
-          '{agent_id}',
-          agentId
-        )
+
+        // Use Next.js API Route as proxy to avoid CORS issues
+        const playgroundRunUrl = `/api/playground/agents/${agentId}/runs`
+        console.log('[useAIStreamHandler] Using proxy URL:', playgroundRunUrl)
 
         formData.append('stream', 'true')
         // Só envia session_id se existir, senão backend cria um novo
@@ -165,6 +160,11 @@ const useAIChatStreamHandler = () => {
           formData.append('session_id', sessionId)
         }
         formData.append('user_id', getCurrentUserId())
+
+        console.log(
+          '[useAIStreamHandler] FormData fields:',
+          Array.from(formData.keys())
+        )
 
         await streamResponse({
           apiUrl: playgroundRunUrl,

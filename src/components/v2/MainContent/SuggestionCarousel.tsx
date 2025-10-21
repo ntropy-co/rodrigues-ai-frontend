@@ -92,7 +92,7 @@ export function SuggestionCarousel({
         {/* Container do carrossel */}
         <div className="overflow-hidden" {...handlers}>
           <div
-            className="flex transition-transform duration-300 ease-spring"
+            className="duration-[600ms] flex transition-transform ease-spring-smooth"
             style={{
               transform: `translate3d(calc(-${currentPage * 100}% + ${swipeDragOffset}px), 0, 0)`,
               transition: swipeDragOffset !== 0 ? 'none' : undefined
