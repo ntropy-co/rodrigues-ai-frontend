@@ -17,9 +17,9 @@ import {
   loginApi,
   logoutApi,
   registerApi
-} from '@/lib/auth-api'
-import { getAuthToken, setAuthToken, removeAuthToken } from '@/lib/auth-cookies'
-import { loginSchema } from '@/lib/validations/auth'
+} from '@/lib/auth/api'
+import { getAuthToken, setAuthToken, removeAuthToken } from '@/lib/auth/cookies'
+import { loginSchema } from '@/lib/auth/validations'
 import {
   loginRateLimiter,
   registerRateLimiter,

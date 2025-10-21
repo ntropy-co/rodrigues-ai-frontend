@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { forgotPasswordApi } from '@/lib/auth-api'
+import { forgotPasswordApi } from '@/lib/auth/api'
 import { toast } from 'sonner'
 
 export default function ForgotPasswordPage() {

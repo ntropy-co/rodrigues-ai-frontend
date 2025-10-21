@@ -63,3 +63,18 @@ export function getInitialLetter(
   }
   return 'U'
 }
+
+/**
+ * Formata objeto para bloco markdown JSON
+ * @param content - Objeto a ser formatado
+ * @returns String com bloco markdown JSON formatado
+ */
+export function getJsonMarkdown(content: object = {}): string {
+  let jsonBlock = ''
+  try {
+    jsonBlock = `\`\`\`json\n${JSON.stringify(content, null, 2)}\n\`\`\``
+  } catch {
+    jsonBlock = `\`\`\`\n${String(content)}\n\`\`\``
+  }
+  return jsonBlock
+}
