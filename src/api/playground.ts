@@ -87,6 +87,7 @@ export const deletePlaygroundSessionAPI = async (
   base: string,
   agentId: string,
   sessionId: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   userId?: string
 ) => {
   const response = await fetch(

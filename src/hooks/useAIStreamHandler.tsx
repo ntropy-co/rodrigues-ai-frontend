@@ -13,6 +13,7 @@ import {
 import { constructEndpointUrl } from '@/lib/constructEndpointUrl'
 import useAIResponseStream from './useAIResponseStream'
 import { ToolCall } from '@/types/playground'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useQueryState } from 'nuqs'
 import { getJsonMarkdown } from '@/lib/utils/format'
 import { useAuth } from '@/contexts/AuthContext'
@@ -389,6 +390,7 @@ const useAIChatStreamHandler = () => {
         setIsStreaming(false)
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       setMessages,
       addMessage,

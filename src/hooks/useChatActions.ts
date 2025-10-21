@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useCallback, useEffect } from 'react'
 import { toast } from 'sonner'
 
@@ -129,7 +130,6 @@ const useChatActions = () => {
     setMessages([])
     // Limpar session ID - nova sessão será criada ao enviar primeira mensagem
     setSessionId(null)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setMessages, setSessionId])
 
   const focusChatInput = useCallback(() => {
