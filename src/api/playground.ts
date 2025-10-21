@@ -5,16 +5,29 @@ import { APIRoutes } from './routes'
 import { Agent, ComboboxAgent, SessionEntry } from '@/types/playground'
 
 export const getPlaygroundAgentsAPI = async (
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   endpoint: string
 ): Promise<ComboboxAgent[]> => {
-  const url = APIRoutes.GetPlaygroundAgents(endpoint)
+  // Use Next.js API Route as proxy to avoid CORS issues
+  const url = '/api/playground/agents'
+  console.log('[getPlaygroundAgentsAPI] Fetching from:', url)
+
   try {
     const response = await fetch(url, { method: 'GET', credentials: 'include' })
+    console.log('[getPlaygroundAgentsAPI] Response status:', response.status)
+
     if (!response.ok) {
+      console.error(
+        '[getPlaygroundAgentsAPI] Response not ok:',
+        response.statusText
+      )
       toast.error(`Failed to fetch playground agents: ${response.statusText}`)
       return []
     }
+
     const data = await response.json()
+    console.log('[getPlaygroundAgentsAPI] Received data:', data)
+
     // Transform the API response into the expected shape.
     const agents: ComboboxAgent[] = data.map((item: Agent) => ({
       value: item.agent_id || '',
@@ -22,15 +35,22 @@ export const getPlaygroundAgentsAPI = async (
       model: item.model || '',
       storage: item.storage || false
     }))
+
+    console.log('[getPlaygroundAgentsAPI] Transformed agents:', agents)
     return agents
-  } catch {
+  } catch (error) {
+    console.error('[getPlaygroundAgentsAPI] Error:', error)
     toast.error('Error fetching playground agents')
     return []
   }
 }
 
-export const getPlaygroundStatusAPI = async (base: string): Promise<number> => {
-  const response = await fetch(APIRoutes.PlaygroundStatus(base), {
+export const getPlaygroundStatusAPI = async (
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  base: string
+): Promise<number> => {
+  // Use Next.js API Route as proxy to avoid CORS issues
+  const response = await fetch('/api/playground/status', {
     method: 'GET',
     credentials: 'include'
   })
