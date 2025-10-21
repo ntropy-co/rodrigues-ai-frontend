@@ -1,19 +1,21 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useCallback, useEffect } from 'react'
 import { toast } from 'sonner'
 
 import { usePlaygroundStore } from '../store'
+import useSessionLoader from './useSessionLoader'
 
 import { ComboboxAgent, type PlaygroundChatMessage } from '@/types/playground'
 import {
   getPlaygroundAgentsAPI,
   getPlaygroundStatusAPI
 } from '@/api/playground'
-import { useQueryState } from 'nuqs'
 
 const useChatActions = () => {
   const { chatInputRef } = usePlaygroundStore()
   const selectedEndpoint = usePlaygroundStore((state) => state.selectedEndpoint)
-  const [sessionId, setSessionId] = useQueryState('session')
+  const sessionId = usePlaygroundStore((state) => state.sessionId)
+  const setSessionId = usePlaygroundStore((state) => state.setSessionId)
   const setMessages = usePlaygroundStore((state) => state.setMessages)
   const setIsEndpointActive = usePlaygroundStore(
     (state) => state.setIsEndpointActive
@@ -23,16 +25,29 @@ const useChatActions = () => {
   )
   const setAgents = usePlaygroundStore((state) => state.setAgents)
   const setSelectedModel = usePlaygroundStore((state) => state.setSelectedModel)
-  const [agentId, setAgentId] = useQueryState('agent')
+  const agentId = usePlaygroundStore((state) => state.agentId)
+  const setAgentId = usePlaygroundStore((state) => state.setAgentId)
+
+  // Usar o hook useSessionLoader
+  const { getSession } = useSessionLoader()
 
   // Função para gerar um novo user ID (UUID)
   const generateUserId = useCallback(() => {
     return `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }, [])
 
-  // Função para gerar um novo session ID
+  // Função para gerar um novo session ID (UUID v4)
   const generateSessionId = useCallback(() => {
-    return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    // Use crypto.randomUUID() if available, otherwise fallback
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      return crypto.randomUUID()
+    }
+    // Fallback UUID v4 generation
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = (Math.random() * 16) | 0
+      const v = c === 'x' ? r : (r & 0x3) | 0x8
+      return v.toString(16)
+    })
   }, [])
 
   // Função para salvar user ID no localStorage
@@ -89,12 +104,8 @@ const useChatActions = () => {
     return ensureUserIdExists()
   }, [ensureUserIdExists])
 
-  // Efeito para criar nova sessão quando agente for selecionado
-  useEffect(() => {
-    if (agentId && agentId !== 'no-agents' && !sessionId) {
-      createNewSession()
-    }
-  }, [agentId, sessionId, createNewSession])
+  // NÃO criar sessão automaticamente - deixar backend criar na primeira mensagem
+  // useEffect REMOVIDO: estava criando sessionId antes de enviar a mensagem
 
   const getStatus = useCallback(async () => {
     try {
@@ -117,18 +128,9 @@ const useChatActions = () => {
 
   const clearChat = useCallback(() => {
     setMessages([])
-    // Criar uma nova sessão automaticamente
-    const newSessionId = createNewSession()
-    // Trigger a refresh of sessions list
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(
-        new CustomEvent('sessionCreated', {
-          detail: { sessionId: newSessionId }
-        })
-      )
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [createNewSession])
+    // Limpar session ID - nova sessão será criada ao enviar primeira mensagem
+    setSessionId(null)
+  }, [setMessages, setSessionId])
 
   const focusChatInput = useCallback(() => {
     setTimeout(() => {
@@ -180,6 +182,38 @@ const useChatActions = () => {
     agentId
   ])
 
+  // Função para carregar uma sessão pelo ID
+  const loadSessionById = useCallback(
+    async (sessionId: string): Promise<boolean> => {
+      if (!agentId || agentId === 'no-agents') {
+        return false
+      }
+
+      try {
+        setIsEndpointLoading(true)
+
+        // Usar getSession do useSessionLoader que faz a transformação correta
+        const messages = await getSession(sessionId, agentId)
+
+        if (messages && messages.length > 0) {
+          setSessionId(sessionId)
+          return true
+        }
+
+        // Se não há mensagens, considerar como erro
+        toast.error('Sessão não encontrada ou vazia')
+        return false
+      } catch (error) {
+        console.error('Error loading session:', error)
+        toast.error('Falha ao carregar a conversa')
+        return false
+      } finally {
+        setIsEndpointLoading(false)
+      }
+    },
+    [agentId, getSession, setSessionId, setIsEndpointLoading]
+  )
+
   return {
     clearChat,
     addMessage,
@@ -188,7 +222,8 @@ const useChatActions = () => {
     initializePlayground,
     ensureSessionExists,
     createNewSession,
-    getCurrentUserId
+    getCurrentUserId,
+    loadSessionById
   }
 }
 

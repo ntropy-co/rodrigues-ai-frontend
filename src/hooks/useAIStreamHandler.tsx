@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 
 import { APIRoutes } from '@/api/routes'
 
@@ -12,6 +13,7 @@ import {
 import { constructEndpointUrl } from '@/lib/constructEndpointUrl'
 import useAIResponseStream from './useAIResponseStream'
 import { ToolCall } from '@/types/playground'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useQueryState } from 'nuqs'
 import { getJsonMarkdown } from '@/lib/utils/format'
 import { useAuth } from '@/contexts/AuthContext'
@@ -21,10 +23,12 @@ import { useAuth } from '@/contexts/AuthContext'
  * For now, it only streams message content and updates the messages state.
  */
 const useAIChatStreamHandler = () => {
+  const router = useRouter()
   const setMessages = usePlaygroundStore((state) => state.setMessages)
   const { addMessage, focusChatInput, getCurrentUserId } = useChatActions()
-  const [agentId] = useQueryState('agent')
-  const [sessionId, setSessionId] = useQueryState('session')
+  const agentId = usePlaygroundStore((state) => state.agentId)
+  const sessionId = usePlaygroundStore((state) => state.sessionId)
+  const setSessionId = usePlaygroundStore((state) => state.setSessionId)
   const selectedEndpoint = usePlaygroundStore((state) => state.selectedEndpoint)
   const setStreamingErrorMessage = usePlaygroundStore(
     (state) => state.setStreamingErrorMessage
@@ -156,7 +160,10 @@ const useAIChatStreamHandler = () => {
         )
 
         formData.append('stream', 'true')
-        formData.append('session_id', sessionId ?? '')
+        // Só envia session_id se existir, senão backend cria um novo
+        if (sessionId) {
+          formData.append('session_id', sessionId)
+        }
         formData.append('user_id', getCurrentUserId())
 
         await streamResponse({
@@ -169,25 +176,37 @@ const useAIChatStreamHandler = () => {
               chunk.event === RunEvent.ReasoningStarted
             ) {
               newSessionId = chunk.session_id as string
+
+              // Guardar o sessionId ANTIGO para comparação
+              const previousSessionId = sessionId
+
+              // Setar sessionId no store IMEDIATAMENTE
               setSessionId(chunk.session_id as string)
+
+              // Adicionar sessão ao histórico se for nova
+              const sessionData = {
+                session_id: chunk.session_id as string,
+                title: formData.get('message') as string,
+                created_at: chunk.created_at
+              }
+              setSessionsData((prevSessionsData) => {
+                const sessionExists = prevSessionsData?.some(
+                  (session) => session.session_id === chunk.session_id
+                )
+                if (sessionExists) {
+                  return prevSessionsData
+                }
+                return [sessionData, ...(prevSessionsData ?? [])]
+              })
+
+              // Navegar apenas se o sessionId mudou (backend criou um novo)
+              // Se o sessionId foi criado no frontend e enviado, não navegar novamente
               if (
-                (!sessionId || sessionId !== chunk.session_id) &&
+                (!previousSessionId ||
+                  previousSessionId !== chunk.session_id) &&
                 chunk.session_id
               ) {
-                const sessionData = {
-                  session_id: chunk.session_id as string,
-                  title: formData.get('message') as string,
-                  created_at: chunk.created_at
-                }
-                setSessionsData((prevSessionsData) => {
-                  const sessionExists = prevSessionsData?.some(
-                    (session) => session.session_id === chunk.session_id
-                  )
-                  if (sessionExists) {
-                    return prevSessionsData
-                  }
-                  return [sessionData, ...(prevSessionsData ?? [])]
-                })
+                router.push(`/chat/${chunk.session_id}`)
               }
             } else if (chunk.event === RunEvent.ToolCallStarted) {
               setMessages((prevMessages) => {
@@ -372,6 +391,7 @@ const useAIChatStreamHandler = () => {
         setIsStreaming(false)
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       setMessages,
       addMessage,

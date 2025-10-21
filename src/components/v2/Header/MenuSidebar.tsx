@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   X,
   MessageSquare,
@@ -9,7 +10,6 @@ import {
   AlertTriangle,
   Search
 } from 'lucide-react'
-import { useQueryState } from 'nuqs'
 import { usePlaygroundStore } from '@/store'
 import useSessionLoader from '@/hooks/useSessionLoader'
 import useChatActions from '@/hooks/useChatActions'
@@ -37,9 +37,11 @@ interface MenuSidebarProps {
 }
 
 export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
+  const router = useRouter()
   const [sessions, setSessions] = useState<ChatSession[]>([])
-  const [agentId] = useQueryState('agent')
-  const [sessionId, setSessionId] = useQueryState('session')
+  const agentId = usePlaygroundStore((state) => state.agentId)
+  const sessionId = usePlaygroundStore((state) => state.sessionId)
+  const setSessionId = usePlaygroundStore((state) => state.setSessionId)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [sessionToDelete, setSessionToDelete] = useState<ChatSession | null>(
     null
@@ -117,15 +119,19 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
     if (agentId && sessionIdToLoad !== sessionId) {
       setSessionId(sessionIdToLoad)
       await getSession(sessionIdToLoad, agentId)
+      // Navegar para a URL da sessão
+      router.push(`/chat/${sessionIdToLoad}`)
       onClose()
     }
   }
 
   const handleNewConversation = () => {
-    // Limpar mensagens atuais e criar nova sessão
+    // Limpar mensagens atuais e navegar para nova conversa
     const { setMessages } = usePlaygroundStore.getState()
     setMessages([])
     createNewSession()
+    // Navegar para /chat (nova conversa)
+    router.push('/chat')
     onClose()
   }
 
