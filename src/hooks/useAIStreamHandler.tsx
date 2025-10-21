@@ -13,7 +13,7 @@ import { constructEndpointUrl } from '@/lib/constructEndpointUrl'
 import useAIResponseStream from './useAIResponseStream'
 import { ToolCall } from '@/types/playground'
 import { useQueryState } from 'nuqs'
-import { getJsonMarkdown } from '@/lib/utils'
+import { getJsonMarkdown } from '@/lib/utils/format'
 import { useAuth } from '@/contexts/AuthContext'
 
 /**
