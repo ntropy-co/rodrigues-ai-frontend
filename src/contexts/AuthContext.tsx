@@ -17,11 +17,16 @@ import {
   loginApi,
   logoutApi,
   registerApi
-} from '@/lib/auth-api'
+} from '@/lib/auth/api'
+import { getAuthToken, setAuthToken, removeAuthToken } from '@/lib/auth/cookies'
+import { loginSchema } from '@/lib/auth/validations'
+import {
+  loginRateLimiter,
+  registerRateLimiter,
+  RATE_LIMIT_CONFIGS
+} from '@/lib/utils/rate-limiter'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
-
-const TOKEN_KEY = 'auth_token'
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
@@ -32,7 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const loadAuth = async () => {
       try {
-        const storedToken = localStorage.getItem(TOKEN_KEY)
+        const storedToken = getAuthToken()
         if (storedToken) {
           setToken(storedToken)
           const userData = await getCurrentUserApi(storedToken)
@@ -40,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       } catch (error) {
         console.error('Failed to load user:', error)
-        localStorage.removeItem(TOKEN_KEY)
+        removeAuthToken()
         setToken(null)
       } finally {
         setIsLoading(false)
@@ -53,16 +58,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = useCallback(async (email: string, password: string) => {
     try {
       setIsLoading(true)
-      const authResponse = await loginApi({ username: email, password })
+
+      // Rate limiting: verificar se não excedeu tentativas
+      const {
+        maxAttempts,
+        windowMs,
+        message: rateLimitMessage
+      } = RATE_LIMIT_CONFIGS.login
+      if (!loginRateLimiter.canAttempt('login', maxAttempts, windowMs)) {
+        toast.error(rateLimitMessage)
+        throw new Error(rateLimitMessage)
+      }
+
+      // Validação de input com Zod
+      const validatedData = loginSchema.parse({ username: email, password })
+
+      const authResponse = await loginApi(validatedData)
       const { access_token } = authResponse
 
-      // Save token
-      localStorage.setItem(TOKEN_KEY, access_token)
+      // Save token in secure cookie
+      setAuthToken(access_token)
       setToken(access_token)
 
       // Fetch user data
       const userData = await getCurrentUserApi(access_token)
       setUser(userData)
+
+      // Reset rate limiter on successful login
+      loginRateLimiter.reset('login')
 
       toast.success('Login realizado com sucesso!')
     } catch (error) {
@@ -79,7 +102,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (data: RegisterRequest) => {
       try {
         setIsLoading(true)
+
+        // Rate limiting: verificar se não excedeu tentativas
+        const {
+          maxAttempts,
+          windowMs,
+          message: rateLimitMessage
+        } = RATE_LIMIT_CONFIGS.register
+        if (
+          !registerRateLimiter.canAttempt('register', maxAttempts, windowMs)
+        ) {
+          toast.error(rateLimitMessage)
+          throw new Error(rateLimitMessage)
+        }
+
+        // Nota: validação do RegisterRequest pode ser feita no componente de formulário
+        // com confirmPassword antes de chamar esta função
         await registerApi(data)
+
+        // Reset rate limiter on successful registration
+        registerRateLimiter.reset('register')
 
         // Auto login after register
         await login(data.email, data.password)
@@ -101,7 +143,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (token) {
       logoutApi(token).catch(console.error)
     }
-    localStorage.removeItem(TOKEN_KEY)
+    removeAuthToken()
     setToken(null)
     setUser(null)
     toast.success('Logout realizado com sucesso!')

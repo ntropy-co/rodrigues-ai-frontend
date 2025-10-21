@@ -1,16 +1,14 @@
 'use client'
 
+import { useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useUIConfig } from '@/hooks/useUIConfig'
 import { useCarouselPagination } from '@/hooks/useCarouselPagination'
+import { useSwipeGesture } from '@/hooks/useSwipeGesture'
+import { useHaptic } from '@/hooks/useHaptic'
 import { getIconComponent, getCategoryColor } from '@/lib/utils/ui'
 import { truncateText } from '@/lib/utils/format'
-import {
-  CATEGORY_BG_COLORS,
-  CATEGORY_LABELS,
-  SUGGESTION_CATEGORIES,
-  MAX_DESCRIPTION_LENGTH
-} from '@/lib/constants'
+import { MAX_DESCRIPTION_LENGTH } from '@/lib/constants'
 
 interface SuggestionCarouselProps {
   onSuggestionClick: (prompt: string) => void
@@ -20,6 +18,8 @@ export function SuggestionCarousel({
   onSuggestionClick
 }: SuggestionCarouselProps) {
   const { suggestions, ui } = useUIConfig()
+  const [swipeDragOffset, setSwipeDragOffset] = useState(0)
+  const { trigger: triggerHaptic } = useHaptic()
 
   // Hook personalizado para gerenciar paginação
   const { totalPages, currentPage, nextSlide, prevSlide, goToPage } =
@@ -28,41 +28,53 @@ export function SuggestionCarousel({
       autoScroll: ui.features.carouselMode
     })
 
+  // Wrap navigation with haptic feedback
+  const handleNextSlide = () => {
+    triggerHaptic('light')
+    nextSlide()
+  }
+
+  const handlePrevSlide = () => {
+    triggerHaptic('light')
+    prevSlide()
+  }
+
+  const handleGoToPage = (pageIndex: number) => {
+    triggerHaptic('light')
+    goToPage(pageIndex)
+  }
+
+  const handleSuggestionClick = (prompt: string) => {
+    triggerHaptic('medium')
+    onSuggestionClick(prompt)
+  }
+
+  // Hook de swipe gesture para navegação por toque com haptic
+  const handleSwipeLeft = () => {
+    triggerHaptic('success')
+    nextSlide()
+  }
+
+  const handleSwipeRight = () => {
+    triggerHaptic('success')
+    prevSlide()
+  }
+
+  const { handlers } = useSwipeGesture({
+    threshold: 50,
+    velocityThreshold: 0.3,
+    onSwipeLeft: handleSwipeLeft,
+    onSwipeRight: handleSwipeRight,
+    onDrag: setSwipeDragOffset
+  })
+
   return (
     <div className="w-full max-w-4xl">
-      {/* Indicadores de categoria */}
-      <div className="mb-4 flex justify-center gap-4 text-xs">
-        <div className="flex items-center gap-1">
-          <div
-            className={`h-2 w-2 rounded-full ${CATEGORY_BG_COLORS[SUGGESTION_CATEGORIES.BASIC]}`}
-          />
-          <span className="text-gemini-gray-600">
-            {CATEGORY_LABELS[SUGGESTION_CATEGORIES.BASIC]}
-          </span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div
-            className={`h-2 w-2 rounded-full ${CATEGORY_BG_COLORS[SUGGESTION_CATEGORIES.ADVANCED]}`}
-          />
-          <span className="text-gemini-gray-600">
-            {CATEGORY_LABELS[SUGGESTION_CATEGORIES.ADVANCED]}
-          </span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div
-            className={`h-2 w-2 rounded-full ${CATEGORY_BG_COLORS[SUGGESTION_CATEGORIES.EXPERT]}`}
-          />
-          <span className="text-gemini-gray-600">
-            {CATEGORY_LABELS[SUGGESTION_CATEGORIES.EXPERT]}
-          </span>
-        </div>
-      </div>
-
       <div className="relative">
         {/* Botão anterior */}
         <button
-          onClick={prevSlide}
-          className="absolute -left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-md transition-all hover:shadow-lg dark:bg-gray-800"
+          onClick={handlePrevSlide}
+          className="absolute -left-4 top-1/2 z-10 flex min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-full bg-white p-2 shadow-md transition-all hover-hover:shadow-lg dark:bg-gray-800"
           aria-label="Página anterior"
         >
           <ChevronLeft className="h-5 w-5 text-gemini-gray-600" />
@@ -70,19 +82,20 @@ export function SuggestionCarousel({
 
         {/* Botão próximo */}
         <button
-          onClick={nextSlide}
-          className="absolute -right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-md transition-all hover:shadow-lg dark:bg-gray-800"
+          onClick={handleNextSlide}
+          className="absolute -right-4 top-1/2 z-10 flex min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-full bg-white p-2 shadow-md transition-all hover-hover:shadow-lg dark:bg-gray-800"
           aria-label="Próxima página"
         >
           <ChevronRight className="h-5 w-5 text-gemini-gray-600" />
         </button>
 
         {/* Container do carrossel */}
-        <div className="overflow-hidden">
+        <div className="overflow-hidden" {...handlers}>
           <div
-            className="flex transition-transform duration-300 ease-in-out"
+            className="flex transition-transform duration-300 ease-spring"
             style={{
-              transform: `translateX(-${currentPage * 100}%)`
+              transform: `translate3d(calc(-${currentPage * 100}% + ${swipeDragOffset}px), 0, 0)`,
+              transition: swipeDragOffset !== 0 ? 'none' : undefined
             }}
           >
             {suggestions.map((suggestion) => {
@@ -94,8 +107,8 @@ export function SuggestionCarousel({
                   className="w-full flex-shrink-0 px-2 md:w-1/3"
                 >
                   <button
-                    onClick={() => onSuggestionClick(suggestion.prompt)}
-                    className="group flex h-[70px] w-full flex-col items-start justify-between rounded-xl border border-border bg-card p-3 text-left transition-all hover:border-gemini-gray-300 hover:shadow-sm active:scale-[0.98] dark:hover:border-gemini-gray-500"
+                    onClick={() => handleSuggestionClick(suggestion.prompt)}
+                    className="group flex h-[70px] w-full flex-col items-start justify-between rounded-xl border border-border bg-card p-3 text-left transition-all active:scale-[0.98] hover-hover:border-gemini-gray-300 hover-hover:shadow-sm dark:hover-hover:border-gemini-gray-500"
                     aria-label={`Sugestão: ${suggestion.title}`}
                   >
                     {/* Primeira linha: Ícone + Tema */}
@@ -103,7 +116,7 @@ export function SuggestionCarousel({
                       <Icon
                         className={`h-4 w-4 flex-shrink-0 ${getCategoryColor(suggestion.category)}`}
                       />
-                      <h3 className="truncate text-sm font-medium text-card-foreground transition-colors group-hover:text-gemini-blue">
+                      <h3 className="group-hover-hover:text-gemini-blue truncate text-sm font-medium text-card-foreground transition-colors">
                         {suggestion.title}
                       </h3>
                     </div>
@@ -128,7 +141,7 @@ export function SuggestionCarousel({
         {Array.from({ length: totalPages }).map((_, pageIndex) => (
           <button
             key={pageIndex}
-            onClick={() => goToPage(pageIndex)}
+            onClick={() => handleGoToPage(pageIndex)}
             className={`h-2 w-2 rounded-full transition-colors ${
               currentPage === pageIndex
                 ? 'bg-gemini-blue'

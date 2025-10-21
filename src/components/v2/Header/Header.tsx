@@ -1,11 +1,21 @@
 'use client'
 
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import { Menu } from 'lucide-react'
 // import { ModelSelector } from './ModelSelector'
 import { UserAvatar } from './UserAvatar'
-import { MenuSidebar } from './MenuSidebar'
 import { useUIConfig } from '@/hooks/useUIConfig'
+
+// Dynamic import para code splitting - Sidebar só carrega quando menu é aberto
+// Reduz bundle inicial em ~15KB
+const MenuSidebar = dynamic(
+  () => import('./MenuSidebar').then((m) => ({ default: m.MenuSidebar })),
+  {
+    ssr: false, // Sidebar não precisa SSR
+    loading: () => null // Sem loading state, sidebar aparece instantaneamente
+  }
+)
 
 export function Header() {
   const { ui } = useUIConfig()
@@ -21,7 +31,7 @@ export function Header() {
         <nav className="flex w-10 justify-start">
           <button
             onClick={() => setIsMenuOpen(true)}
-            className="flex h-11 min-h-[44px] w-11 min-w-[44px] items-center justify-center rounded-full transition-colors hover:bg-muted active:scale-95"
+            className="flex h-11 min-h-[44px] w-11 min-w-[44px] items-center justify-center rounded-full transition-colors active:scale-95 hover-hover:bg-muted"
             aria-label="Abrir menu de navegação"
             aria-expanded={isMenuOpen}
             aria-controls="navigation-sidebar"
@@ -46,7 +56,7 @@ export function Header() {
         <div className="flex w-10 justify-center">
           {ui.features.showProButton && (
             <button
-              className="rounded-full bg-gradient-to-r from-gemini-blue to-gemini-purple px-3 py-1 text-sm font-medium text-white transition-all hover:from-gemini-blue-hover hover:to-gemini-purple"
+              className="rounded-full bg-gradient-to-r from-gemini-blue to-gemini-purple px-3 py-1 text-sm font-medium text-white transition-all hover-hover:from-gemini-blue-hover hover-hover:to-gemini-purple"
               aria-label="Upgrade para versão PRO"
             >
               PRO

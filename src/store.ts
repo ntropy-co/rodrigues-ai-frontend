@@ -88,8 +88,7 @@ export const usePlaygroundStore = create<PlaygroundStore>()(
       hasStorage: false,
       setHasStorage: (hasStorage) => set(() => ({ hasStorage })),
       chatInputRef: { current: null },
-      selectedEndpoint:
-        process.env.NEXT_PUBLIC_API_URL || 'https://api.rodriguesagro.com.br',
+      selectedEndpoint: process.env.NEXT_PUBLIC_API_URL || '',
       setSelectedEndpoint: (selectedEndpoint) =>
         set(() => ({ selectedEndpoint })),
       agents: [],
@@ -112,8 +111,7 @@ export const usePlaygroundStore = create<PlaygroundStore>()(
       name: 'endpoint-storage',
       storage: createJSONStorage(() => localStorage),
       partialize: () => ({
-        selectedEndpoint:
-          process.env.NEXT_PUBLIC_API_URL || 'https://api.rodriguesagro.com.br'
+        selectedEndpoint: process.env.NEXT_PUBLIC_API_URL || ''
       }),
       onRehydrateStorage: () => (state) => {
         state?.setHydrated?.()

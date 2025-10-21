@@ -7,7 +7,7 @@ import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { resetPasswordApi } from '@/lib/auth-api'
+import { resetPasswordApi } from '@/lib/auth/api'
 import { toast } from 'sonner'
 
 function ResetPasswordContent() {

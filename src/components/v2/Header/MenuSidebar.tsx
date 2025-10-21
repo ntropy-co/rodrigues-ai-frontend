@@ -188,7 +188,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
     <>
       {/* Overlay */}
       <div
-        className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+        className="fixed inset-0 z-40 bg-black/95 backdrop-safe:backdrop-blur-sm"
         onClick={onClose}
       />
 
@@ -205,7 +205,8 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
             <h2 className="text-lg font-semibold text-foreground">Conversas</h2>
             <button
               onClick={onClose}
-              className="rounded-lg p-2 transition-colors hover:bg-muted"
+              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 transition-colors hover-hover:bg-muted"
+              aria-label="Fechar menu"
             >
               <X className="h-5 w-5 text-muted-foreground" />
             </button>
@@ -215,7 +216,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
           <div className="border-b border-border p-4">
             <button
               onClick={handleNewConversation}
-              className="flex w-full items-center gap-3 rounded-lg border border-dashed border-border p-3 transition-colors hover:bg-muted"
+              className="flex w-full items-center gap-3 rounded-lg border border-dashed border-border p-3 transition-colors hover-hover:bg-muted"
             >
               <Plus className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm text-muted-foreground">
@@ -253,7 +254,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="mt-2 text-xs text-gemini-blue hover:underline"
+                    className="mt-2 text-xs text-gemini-blue hover-hover:underline"
                   >
                     Limpar busca
                   </button>
@@ -264,7 +265,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                 <div
                   key={session.id}
                   onClick={() => handleSessionClick(session.id)}
-                  className={`group flex cursor-pointer items-start gap-3 rounded-lg p-3 transition-colors hover:bg-muted ${
+                  className={`group flex cursor-pointer items-start gap-3 rounded-lg p-3 transition-colors hover-hover:bg-muted ${
                     sessionId === session.id ? 'bg-muted' : ''
                   }`}
                 >
@@ -285,14 +286,14 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   </div>
 
                   <button
-                    className="flex-shrink-0 rounded p-1 opacity-0 transition-all hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
+                    className="group-hover-hover:opacity-100 flex min-h-[44px] min-w-[44px] flex-shrink-0 items-center justify-center rounded p-2 opacity-0 transition-all hover-hover:bg-destructive/10 hover-hover:text-destructive"
                     onClick={(e) => {
                       e.stopPropagation()
                       handleDeleteClick(session)
                     }}
                     aria-label="Deletar conversa"
                   >
-                    <Trash2 className="h-3 w-3" />
+                    <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
               ))
