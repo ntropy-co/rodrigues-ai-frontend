@@ -24,10 +24,10 @@ export const COPY_FEEDBACK_DURATION = 2000
 export const SESSION_REFRESH_INTERVAL = 5000
 
 /** Intervalo de rotação automática do carrossel em milissegundos */
-export const CAROUSEL_AUTO_SCROLL_INTERVAL = 6000
+export const CAROUSEL_AUTO_SCROLL_INTERVAL = 10000
 
 /** Duração da transição do carrossel em milissegundos */
-export const CAROUSEL_TRANSITION_DURATION = 300
+export const CAROUSEL_TRANSITION_DURATION = 600
 
 // ============================================
 // Carrossel - Responsividade
