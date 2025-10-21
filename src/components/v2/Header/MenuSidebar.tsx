@@ -182,7 +182,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
     <>
       {/* Overlay */}
       <div
-        className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+        className="fixed inset-0 z-40 bg-black/95 backdrop-safe:backdrop-blur-sm"
         onClick={onClose}
       />
 
