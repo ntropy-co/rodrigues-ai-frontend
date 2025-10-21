@@ -183,13 +183,20 @@ export async function getCurrentUserApi(token: string): Promise<User> {
  * Logout (client-side token removal, server just returns success)
  */
 export async function logoutApi(token: string): Promise<MessageResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/auth/logout`, {
+  // Use Next.js API Route as proxy to avoid CORS issues
+  const logoutUrl = '/api/auth/logout'
+  console.log('[logoutApi] Attempting fetch to:', logoutUrl)
+
+  const response = await fetch(logoutUrl, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`
     },
     credentials: 'include'
   })
+
+  console.log('[logoutApi] Response status:', response.status)
+  console.log('[logoutApi] Response ok:', response.ok)
 
   if (!response.ok) {
     const error = await response
