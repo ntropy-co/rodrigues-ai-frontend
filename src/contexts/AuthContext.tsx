@@ -18,12 +18,8 @@ import {
   logoutApi,
   registerApi
 } from '@/lib/auth-api'
-import {
-  getAuthToken,
-  setAuthToken,
-  removeAuthToken
-} from '@/lib/auth-cookies'
-import { loginSchema, registerSchema } from '@/lib/validations/auth'
+import { getAuthToken, setAuthToken, removeAuthToken } from '@/lib/auth-cookies'
+import { loginSchema } from '@/lib/validations/auth'
 import {
   loginRateLimiter,
   registerRateLimiter,
@@ -64,8 +60,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(true)
 
       // Rate limiting: verificar se não excedeu tentativas
-      const { maxAttempts, windowMs, message: rateLimitMessage } =
-        RATE_LIMIT_CONFIGS.login
+      const {
+        maxAttempts,
+        windowMs,
+        message: rateLimitMessage
+      } = RATE_LIMIT_CONFIGS.login
       if (!loginRateLimiter.canAttempt('login', maxAttempts, windowMs)) {
         toast.error(rateLimitMessage)
         throw new Error(rateLimitMessage)
@@ -105,9 +104,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(true)
 
         // Rate limiting: verificar se não excedeu tentativas
-        const { maxAttempts, windowMs, message: rateLimitMessage } =
-          RATE_LIMIT_CONFIGS.register
-        if (!registerRateLimiter.canAttempt('register', maxAttempts, windowMs)) {
+        const {
+          maxAttempts,
+          windowMs,
+          message: rateLimitMessage
+        } = RATE_LIMIT_CONFIGS.register
+        if (
+          !registerRateLimiter.canAttempt('register', maxAttempts, windowMs)
+        ) {
           toast.error(rateLimitMessage)
           throw new Error(rateLimitMessage)
         }

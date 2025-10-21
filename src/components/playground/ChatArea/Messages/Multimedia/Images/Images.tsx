@@ -29,7 +29,7 @@ const ImageErrorFallback = ({ url }: { url: string }) => {
         href={sanitizedUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="max-w-md truncate underline text-primary text-xs w-full text-center p-2"
+        className="w-full max-w-md truncate p-2 text-center text-xs text-primary underline"
       >
         {url}
       </a>

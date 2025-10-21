@@ -61,11 +61,7 @@ export const registerSchema = z
  * Schema de validação para forgot password
  */
 export const forgotPasswordSchema = z.object({
-  email: z
-    .string()
-    .min(1, 'Email obrigatório')
-    .email('Email inválido')
-    .max(255)
+  email: z.string().min(1, 'Email obrigatório').email('Email inválido').max(255)
 })
 
 /**
@@ -93,19 +89,22 @@ export const resetPasswordSchema = z
  * - Deve ser uma URL válida
  * - Apenas protocolos HTTP e HTTPS permitidos
  */
-export const urlSchema = z.string().url('URL inválida').refine(
-  (url) => {
-    try {
-      const parsed = new URL(url)
-      return ['http:', 'https:'].includes(parsed.protocol)
-    } catch {
-      return false
+export const urlSchema = z
+  .string()
+  .url('URL inválida')
+  .refine(
+    (url) => {
+      try {
+        const parsed = new URL(url)
+        return ['http:', 'https:'].includes(parsed.protocol)
+      } catch {
+        return false
+      }
+    },
+    {
+      message: 'URL deve usar protocolo HTTP ou HTTPS'
     }
-  },
-  {
-    message: 'URL deve usar protocolo HTTP ou HTTPS'
-  }
-)
+  )
 
 /**
  * Schema de validação para IDs de usuário

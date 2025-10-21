@@ -116,10 +116,7 @@ export function isValidUrl(url: string): boolean {
  * // 'https://api.com?token=123'
  * ```
  */
-export function sanitizeUrl(
-  url: string,
-  allowedParams?: string[]
-): string {
+export function sanitizeUrl(url: string, allowedParams?: string[]): string {
   try {
     const parsed = new URL(url)
 
