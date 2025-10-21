@@ -1,4 +1,11 @@
-import { useRef, useState, useCallback, useEffect, RefObject, TouchEvent } from 'react'
+import {
+  useRef,
+  useState,
+  useCallback,
+  useEffect,
+  RefObject,
+  TouchEvent
+} from 'react'
 
 interface UsePullToRefreshOptions {
   /** Container que será puxado (ref para o elemento scrollável) */
@@ -47,47 +54,53 @@ export function usePullToRefresh({
   // Calcular progresso (0-1)
   const pullProgress = Math.min(pullDistance / threshold, 1)
 
-  const handleTouchStart = useCallback((e: TouchEvent) => {
-    if (!enabled || isRefreshing) return
+  const handleTouchStart = useCallback(
+    (e: TouchEvent) => {
+      if (!enabled || isRefreshing) return
 
-    const container = containerRef.current
-    if (!container) return
+      const container = containerRef.current
+      if (!container) return
 
-    // Verificar se está no topo do scroll
-    isAtTop.current = container.scrollTop === 0
+      // Verificar se está no topo do scroll
+      isAtTop.current = container.scrollTop === 0
 
-    if (isAtTop.current) {
-      touchStartY.current = e.touches[0].clientY
-      currentTouchY.current = touchStartY.current
-    }
-  }, [enabled, isRefreshing, containerRef])
-
-  const handleTouchMove = useCallback((e: TouchEvent) => {
-    if (!enabled || isRefreshing || !isAtTop.current) return
-
-    const container = containerRef.current
-    if (!container) return
-
-    currentTouchY.current = e.touches[0].clientY
-    const deltaY = currentTouchY.current - touchStartY.current
-
-    // Só ativar pull se estiver puxando para baixo
-    if (deltaY > 0) {
-      setIsPulling(true)
-
-      // Aplicar resistência (rubber band effect)
-      // Quanto mais puxa, mais difícil fica
-      const resistance = 0.5
-      const distance = Math.min(deltaY * resistance, maxPullDistance)
-
-      setPullDistance(distance)
-
-      // Prevenir scroll nativo durante o pull
-      if (distance > 10) {
-        e.preventDefault()
+      if (isAtTop.current) {
+        touchStartY.current = e.touches[0].clientY
+        currentTouchY.current = touchStartY.current
       }
-    }
-  }, [enabled, isRefreshing, containerRef, maxPullDistance])
+    },
+    [enabled, isRefreshing, containerRef]
+  )
+
+  const handleTouchMove = useCallback(
+    (e: TouchEvent) => {
+      if (!enabled || isRefreshing || !isAtTop.current) return
+
+      const container = containerRef.current
+      if (!container) return
+
+      currentTouchY.current = e.touches[0].clientY
+      const deltaY = currentTouchY.current - touchStartY.current
+
+      // Só ativar pull se estiver puxando para baixo
+      if (deltaY > 0) {
+        setIsPulling(true)
+
+        // Aplicar resistência (rubber band effect)
+        // Quanto mais puxa, mais difícil fica
+        const resistance = 0.5
+        const distance = Math.min(deltaY * resistance, maxPullDistance)
+
+        setPullDistance(distance)
+
+        // Prevenir scroll nativo durante o pull
+        if (distance > 10) {
+          e.preventDefault()
+        }
+      }
+    },
+    [enabled, isRefreshing, containerRef, maxPullDistance]
+  )
 
   const handleTouchEnd = useCallback(async () => {
     if (!enabled || isRefreshing || !isPulling) return
@@ -125,16 +138,35 @@ export function usePullToRefresh({
     if (!container || !enabled) return
 
     // Adicionar event listeners
-    container.addEventListener('touchstart', handleTouchStart as unknown as EventListener)
-    container.addEventListener('touchmove', handleTouchMove as unknown as EventListener, {
-      passive: false // Necessário para preventDefault()
-    })
-    container.addEventListener('touchend', handleTouchEnd as unknown as EventListener)
+    container.addEventListener(
+      'touchstart',
+      handleTouchStart as unknown as EventListener
+    )
+    container.addEventListener(
+      'touchmove',
+      handleTouchMove as unknown as EventListener,
+      {
+        passive: false // Necessário para preventDefault()
+      }
+    )
+    container.addEventListener(
+      'touchend',
+      handleTouchEnd as unknown as EventListener
+    )
 
     return () => {
-      container.removeEventListener('touchstart', handleTouchStart as unknown as EventListener)
-      container.removeEventListener('touchmove', handleTouchMove as unknown as EventListener)
-      container.removeEventListener('touchend', handleTouchEnd as unknown as EventListener)
+      container.removeEventListener(
+        'touchstart',
+        handleTouchStart as unknown as EventListener
+      )
+      container.removeEventListener(
+        'touchmove',
+        handleTouchMove as unknown as EventListener
+      )
+      container.removeEventListener(
+        'touchend',
+        handleTouchEnd as unknown as EventListener
+      )
     }
   }, [containerRef, enabled, handleTouchStart, handleTouchMove, handleTouchEnd])
 

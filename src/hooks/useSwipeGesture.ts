@@ -86,7 +86,8 @@ export function useSwipeGesture({
     const velocity = Math.abs(deltaX) / deltaTime
 
     // Determinar se foi um swipe válido
-    const isValidSwipe = Math.abs(deltaX) > threshold || velocity > velocityThreshold
+    const isValidSwipe =
+      Math.abs(deltaX) > threshold || velocity > velocityThreshold
 
     if (isValidSwipe) {
       if (deltaX > 0) {
@@ -103,7 +104,15 @@ export function useSwipeGesture({
     touchStartY.current = 0
     touchStartTime.current = 0
     onDrag?.(0)
-  }, [isDragging, dragOffset, threshold, velocityThreshold, onSwipeLeft, onSwipeRight, onDrag])
+  }, [
+    isDragging,
+    dragOffset,
+    threshold,
+    velocityThreshold,
+    onSwipeLeft,
+    onSwipeRight,
+    onDrag
+  ])
 
   return {
     dragOffset,
