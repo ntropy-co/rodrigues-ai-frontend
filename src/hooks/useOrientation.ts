@@ -44,7 +44,8 @@ export function useOrientation(): UseOrientationReturn {
     return 0
   }
 
-  const [orientation, setOrientation] = useState<OrientationType>(getOrientation)
+  const [orientation, setOrientation] =
+    useState<OrientationType>(getOrientation)
   const [angle, setAngle] = useState<number>(getAngle)
 
   useEffect(() => {
@@ -55,7 +56,10 @@ export function useOrientation(): UseOrientationReturn {
 
     // Listener para Screen Orientation API
     if (window.screen?.orientation) {
-      window.screen.orientation.addEventListener('change', handleOrientationChange)
+      window.screen.orientation.addEventListener(
+        'change',
+        handleOrientationChange
+      )
     }
 
     // Fallback listener para window.matchMedia
@@ -70,7 +74,10 @@ export function useOrientation(): UseOrientationReturn {
 
     return () => {
       if (window.screen?.orientation) {
-        window.screen.orientation.removeEventListener('change', handleOrientationChange)
+        window.screen.orientation.removeEventListener(
+          'change',
+          handleOrientationChange
+        )
       }
       if (mediaQuery.removeEventListener) {
         mediaQuery.removeEventListener('change', handleOrientationChange)

@@ -12,7 +12,12 @@ declare module 'next-pwa' {
     }
     runtimeCaching?: Array<{
       urlPattern: RegExp | string
-      handler: 'CacheFirst' | 'NetworkFirst' | 'StaleWhileRevalidate' | 'NetworkOnly' | 'CacheOnly'
+      handler:
+        | 'CacheFirst'
+        | 'NetworkFirst'
+        | 'StaleWhileRevalidate'
+        | 'NetworkOnly'
+        | 'CacheOnly'
       options?: {
         cacheName?: string
         expiration?: {
