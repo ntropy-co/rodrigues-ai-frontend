@@ -31,7 +31,7 @@ export function Header() {
         <nav className="flex w-10 justify-start">
           <button
             onClick={() => setIsMenuOpen(true)}
-            className="flex h-11 min-h-[44px] w-11 min-w-[44px] items-center justify-center rounded-full transition-colors active:scale-95 hover-hover:bg-muted"
+            className="flex h-11 min-h-[44px] w-11 min-w-[44px] items-center justify-center transition-colors active:scale-95 hover-hover:bg-muted/50"
             aria-label="Abrir menu de navegação"
             aria-expanded={isMenuOpen}
             aria-controls="navigation-sidebar"

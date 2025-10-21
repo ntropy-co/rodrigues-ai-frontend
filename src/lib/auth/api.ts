@@ -21,6 +21,10 @@ const API_BASE_URL = validateApiUrl(
   { allowLocalhost: true } // Permitir localhost para desenvolvimento
 )
 
+// Debug: verificar se a variável de ambiente está sendo lida corretamente
+console.log('[Auth API] NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL)
+console.log('[Auth API] API_BASE_URL:', API_BASE_URL)
+
 /**
  * Login with email and password
  * Uses OAuth2 standard endpoint /login/access-token
@@ -33,7 +37,12 @@ export async function loginApi(
   formData.append('password', credentials.password)
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/login/access-token`, {
+    // Use Next.js API Route as proxy to avoid CORS issues in development
+    const loginUrl = '/api/auth/login'
+    console.log('[loginApi] Attempting fetch to:', loginUrl)
+    console.log('[loginApi] FormData:', formData.toString())
+
+    const response = await fetch(loginUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -41,6 +50,9 @@ export async function loginApi(
       credentials: 'include',
       body: formData
     })
+
+    console.log('[loginApi] Response status:', response.status)
+    console.log('[loginApi] Response ok:', response.ok)
 
     if (!response.ok) {
       // Parse error response
@@ -63,6 +75,13 @@ export async function loginApi(
 
     return response.json()
   } catch (error) {
+    console.error('[loginApi] Caught error:', error)
+    console.error('[loginApi] Error type:', error instanceof TypeError)
+    console.error(
+      '[loginApi] Error message:',
+      error instanceof Error ? error.message : String(error)
+    )
+
     // Handle network errors
     if (error instanceof TypeError && error.message.includes('fetch')) {
       throw new Error(
@@ -79,7 +98,12 @@ export async function loginApi(
  */
 export async function registerApi(data: RegisterRequest): Promise<User> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/auth/register`, {
+    // Use Next.js API Route as proxy to avoid CORS issues in development
+    const registerUrl = '/api/auth/register'
+    console.log('[registerApi] Attempting fetch to:', registerUrl)
+    console.log('[registerApi] Data:', data)
+
+    const response = await fetch(registerUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -88,11 +112,22 @@ export async function registerApi(data: RegisterRequest): Promise<User> {
       body: JSON.stringify(data)
     })
 
+    console.log('[registerApi] Response status:', response.status)
+    console.log('[registerApi] Response ok:', response.ok)
+
     if (!response.ok) {
       const error = await response.json().catch(() => null)
 
+      console.log('[registerApi] Error response:', error)
+
       // Handle specific HTTP status codes
       if (response.status === 400) {
+        // Map common backend error messages to Portuguese
+        if (error?.detail?.toLowerCase().includes('already registered')) {
+          throw new Error(
+            'Este email já está cadastrado. Tente fazer login ou use outro email.'
+          )
+        }
         throw new Error(error?.detail || 'Email já está em uso')
       } else if (response.status === 422) {
         throw new Error('Dados de registro inválidos. Verifique os campos')
@@ -119,13 +154,20 @@ export async function registerApi(data: RegisterRequest): Promise<User> {
  * Get current authenticated user
  */
 export async function getCurrentUserApi(token: string): Promise<User> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/auth/me`, {
+  // Use Next.js API Route as proxy to avoid CORS issues in development
+  const meUrl = '/api/auth/me'
+  console.log('[getCurrentUserApi] Attempting fetch to:', meUrl)
+
+  const response = await fetch(meUrl, {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${token}`
     },
     credentials: 'include'
   })
+
+  console.log('[getCurrentUserApi] Response status:', response.status)
+  console.log('[getCurrentUserApi] Response ok:', response.ok)
 
   if (!response.ok) {
     const error = await response
