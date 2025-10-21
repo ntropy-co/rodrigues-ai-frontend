@@ -9,7 +9,7 @@ export const getPlaygroundAgentsAPI = async (
 ): Promise<ComboboxAgent[]> => {
   const url = APIRoutes.GetPlaygroundAgents(endpoint)
   try {
-    const response = await fetch(url, { method: 'GET' })
+    const response = await fetch(url, { method: 'GET', credentials: 'include' })
     if (!response.ok) {
       toast.error(`Failed to fetch playground agents: ${response.statusText}`)
       return []
@@ -31,7 +31,8 @@ export const getPlaygroundAgentsAPI = async (
 
 export const getPlaygroundStatusAPI = async (base: string): Promise<number> => {
   const response = await fetch(APIRoutes.PlaygroundStatus(base), {
-    method: 'GET'
+    method: 'GET',
+    credentials: 'include'
   })
   return response.status
 }
@@ -48,7 +49,8 @@ export const getAllPlaygroundSessionsAPI = async (
     }
 
     const response = await fetch(url, {
-      method: 'GET'
+      method: 'GET',
+      credentials: 'include'
     })
     if (!response.ok) {
       if (response.status === 404) {
@@ -75,7 +77,8 @@ export const getPlaygroundSessionAPI = async (
   }
 
   const response = await fetch(url, {
-    method: 'GET'
+    method: 'GET',
+    credentials: 'include'
   })
   return response.json()
 }
@@ -88,7 +91,8 @@ export const deletePlaygroundSessionAPI = async (
   const response = await fetch(
     APIRoutes.DeletePlaygroundSession(base, agentId, sessionId),
     {
-      method: 'DELETE'
+      method: 'DELETE',
+      credentials: 'include'
     }
   )
   return response
