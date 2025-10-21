@@ -75,9 +75,13 @@ export default {
   },
   plugins: [
     tailwindcssAnimate,
-    // Custom variant for hover states that only work on devices with fine pointers (not touch)
     plugin(function ({ addVariant }) {
+      // Custom variant for hover states that only work on devices with fine pointers (not touch)
       addVariant('hover-hover', '@media (hover: hover) and (pointer: fine)')
+
+      // Backdrop-blur apenas em desktop (min-width: 768px)
+      // Evita performance ruim de backdrop-filter em mobile
+      addVariant('backdrop-safe', '@media (min-width: 768px)')
     })
   ]
 } satisfies Config

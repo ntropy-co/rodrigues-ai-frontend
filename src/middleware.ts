@@ -79,6 +79,6 @@ export function middleware(request: NextRequest) {
  */
 export const config = {
   matcher: [
-    '/api/:path*'  // Apenas rotas de API internas do Next.js
+    '/api/:path*' // Apenas rotas de API internas do Next.js
   ]
 }

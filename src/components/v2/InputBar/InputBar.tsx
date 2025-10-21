@@ -1,12 +1,30 @@
 'use client'
 
 import { useRef, useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
 import { Send, Plus, Wrench } from 'lucide-react'
 import { useUIConfig } from '@/hooks/useUIConfig'
 import { useDocuments } from '@/hooks/useDocuments'
 import { useKeyboardHeight } from '@/hooks/useKeyboardHeight'
-import { FileUploadModal } from '@/components/v2/FileUpload/FileUploadModal'
 import { FileList } from '@/components/v2/FileUpload/FileList'
+
+// Dynamic import para code splitting - Modal só carrega quando clicado
+// Reduz bundle inicial em ~20KB, pois FileUploadModal raramente é usado
+const FileUploadModal = dynamic(
+  () =>
+    import('@/components/v2/FileUpload/FileUploadModal').then((m) => ({
+      default: m.FileUploadModal
+    })),
+  {
+    ssr: false, // Modal não precisa SSR
+    loading: () => (
+      // Spinner centralizado durante carregamento
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+      </div>
+    )
+  }
+)
 
 interface InputBarProps {
   onSendMessage: (message: string) => void
@@ -106,7 +124,7 @@ export function InputBar({
         )}
 
         {/* Barra principal */}
-        <div className="flex items-end gap-3 rounded-2xl border border-border bg-card/95 p-3 shadow-[0_-4px_16px_rgba(0,0,0,0.12)] backdrop-blur-sm transition-all focus-within:border-gemini-blue focus-within:shadow-xl dark:shadow-[0_-4px_16px_rgba(0,0,0,0.4)]">
+        <div className="flex items-end gap-3 rounded-2xl border border-border bg-card/100 p-3 shadow-[0_-4px_16px_rgba(0,0,0,0.12)] transition-all focus-within:border-gemini-blue focus-within:shadow-xl backdrop-safe:backdrop-blur-sm dark:shadow-[0_-4px_16px_rgba(0,0,0,0.4)]">
           {/* Área de texto - 7/10 */}
           <div className="flex-1">
             <textarea
@@ -132,7 +150,7 @@ export function InputBar({
               <div className="mt-2 flex gap-2">
                 {ui.features.showUploadButton && (
                   <button
-                    className="flex min-h-[44px] items-center gap-1 rounded-full bg-gemini-gray-100 px-4 py-2 text-sm text-gemini-gray-600 transition-all hover-hover:bg-gemini-gray-200 active:scale-95"
+                    className="flex min-h-[44px] items-center gap-1 rounded-full bg-gemini-gray-100 px-4 py-2 text-sm text-gemini-gray-600 transition-all active:scale-95 hover-hover:bg-gemini-gray-200"
                     onClick={() => setShowUploadModal(true)}
                     aria-label="Adicionar arquivo"
                   >
@@ -143,7 +161,7 @@ export function InputBar({
 
                 {ui.features.showToolsButton && (
                   <button
-                    className="flex min-h-[44px] items-center gap-1 rounded-full bg-gemini-gray-100 px-4 py-2 text-sm text-gemini-gray-600 transition-all hover-hover:bg-gemini-gray-200 active:scale-95"
+                    className="flex min-h-[44px] items-center gap-1 rounded-full bg-gemini-gray-100 px-4 py-2 text-sm text-gemini-gray-600 transition-all active:scale-95 hover-hover:bg-gemini-gray-200"
                     onClick={() => console.log('Open tools')}
                     aria-label="Abrir ferramentas"
                   >
@@ -163,7 +181,7 @@ export function InputBar({
               className={`flex h-11 min-h-[44px] w-11 min-w-[44px] items-center justify-center rounded-full transition-all ${
                 disabled || !message.trim()
                   ? 'cursor-not-allowed bg-gemini-gray-300 text-gemini-gray-500'
-                  : 'bg-gemini-blue text-white hover-hover:bg-gemini-blue-hover active:scale-95'
+                  : 'bg-gemini-blue text-white active:scale-95 hover-hover:bg-gemini-blue-hover'
               }`}
               aria-label="Enviar mensagem"
             >

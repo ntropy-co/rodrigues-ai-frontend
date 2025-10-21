@@ -182,7 +182,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
     <>
       {/* Overlay */}
       <div
-        className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+        className="fixed inset-0 z-40 bg-black/95 backdrop-safe:backdrop-blur-sm"
         onClick={onClose}
       />
 
@@ -280,7 +280,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   </div>
 
                   <button
-                    className="flex min-h-[44px] min-w-[44px] flex-shrink-0 items-center justify-center rounded p-2 opacity-0 transition-all hover-hover:bg-destructive/10 hover-hover:text-destructive group-hover-hover:opacity-100"
+                    className="group-hover-hover:opacity-100 flex min-h-[44px] min-w-[44px] flex-shrink-0 items-center justify-center rounded p-2 opacity-0 transition-all hover-hover:bg-destructive/10 hover-hover:text-destructive"
                     onClick={(e) => {
                       e.stopPropagation()
                       handleDeleteClick(session)

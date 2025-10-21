@@ -131,7 +131,7 @@ export function ChatArea({ messages, isStreaming }: ChatAreaProps) {
       {showScrollButton && (
         <button
           onClick={scrollToBottom}
-          className="fixed bottom-24 right-6 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-gemini-blue text-white shadow-lg transition-all hover-hover:bg-gemini-blue-hover hover-hover:shadow-xl active:scale-95 md:bottom-28 md:right-8"
+          className="fixed bottom-24 right-6 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-gemini-blue text-white shadow-lg transition-all active:scale-95 hover-hover:bg-gemini-blue-hover hover-hover:shadow-xl md:bottom-28 md:right-8"
           style={{
             minHeight: `${MIN_TOUCH_TARGET_SIZE}px`,
             minWidth: `${MIN_TOUCH_TARGET_SIZE}px`
