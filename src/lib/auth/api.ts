@@ -32,46 +32,87 @@ export async function loginApi(
   formData.append('username', credentials.username)
   formData.append('password', credentials.password)
 
-  const response = await fetch(`${API_BASE_URL}/api/v1/login/access-token`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    credentials: 'include',
-    body: formData
-  })
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/v1/login/access-token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      credentials: 'include',
+      body: formData
+    })
 
-  if (!response.ok) {
-    const error = await response
-      .json()
-      .catch(() => ({ detail: 'Erro ao fazer login' }))
-    throw new Error(error.detail || 'Credenciais inválidas')
+    if (!response.ok) {
+      // Parse error response
+      const error = await response.json().catch(() => null)
+
+      // Handle specific HTTP status codes
+      if (response.status === 401) {
+        throw new Error('Email ou senha incorretos')
+      } else if (response.status === 422) {
+        throw new Error('Formato de email ou senha inválido')
+      } else if (response.status === 429) {
+        throw new Error('Muitas tentativas. Aguarde alguns minutos')
+      } else if (response.status >= 500) {
+        throw new Error('Erro no servidor. Tente novamente em alguns instantes')
+      }
+
+      // Fallback to error detail from response
+      throw new Error(error?.detail || 'Erro ao fazer login')
+    }
+
+    return response.json()
+  } catch (error) {
+    // Handle network errors
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      throw new Error(
+        'Erro de conexão. Verifique sua internet e tente novamente'
+      )
+    }
+    // Re-throw the original error
+    throw error
   }
-
-  return response.json()
 }
 
 /**
  * Register a new user
  */
 export async function registerApi(data: RegisterRequest): Promise<User> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/auth/register`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    credentials: 'include',
-    body: JSON.stringify(data)
-  })
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/v1/auth/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(data)
+    })
 
-  if (!response.ok) {
-    const error = await response
-      .json()
-      .catch(() => ({ detail: 'Erro ao criar conta' }))
-    throw new Error(error.detail || 'Não foi possível criar a conta')
+    if (!response.ok) {
+      const error = await response.json().catch(() => null)
+
+      // Handle specific HTTP status codes
+      if (response.status === 400) {
+        throw new Error(error?.detail || 'Email já está em uso')
+      } else if (response.status === 422) {
+        throw new Error('Dados de registro inválidos. Verifique os campos')
+      } else if (response.status >= 500) {
+        throw new Error('Erro no servidor. Tente novamente em alguns instantes')
+      }
+
+      throw new Error(error?.detail || 'Não foi possível criar a conta')
+    }
+
+    return response.json()
+  } catch (error) {
+    // Handle network errors
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      throw new Error(
+        'Erro de conexão. Verifique sua internet e tente novamente'
+      )
+    }
+    throw error
   }
-
-  return response.json()
 }
 
 /**

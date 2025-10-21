@@ -7,6 +7,14 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
+
+interface FormErrors {
+  email?: string
+  password?: string
+  fullName?: string
+  confirmPassword?: string
+}
 
 export default function LoginPage() {
   const router = useRouter()
@@ -18,6 +26,7 @@ export default function LoginPage() {
   const [fullName, setFullName] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errors, setErrors] = useState<FormErrors>({})
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -26,24 +35,113 @@ export default function LoginPage() {
     }
   }, [isAuthenticated, isLoading, router])
 
+  // Clear errors when switching modes
+  useEffect(() => {
+    setErrors({})
+    setEmail('')
+    setPassword('')
+    setFullName('')
+    setConfirmPassword('')
+  }, [mode])
+
+  // Validate email in real-time
+  const validateEmail = (value: string): string | undefined => {
+    if (!value) return 'Email é obrigatório'
+    if (value.length < 3) return 'Email muito curto'
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Email inválido'
+    return undefined
+  }
+
+  // Validate password in real-time
+  const validatePassword = (
+    value: string,
+    isRegister = false
+  ): string | undefined => {
+    if (!value) return 'Senha é obrigatória'
+    if (value.length < 8) return 'Senha deve ter no mínimo 8 caracteres'
+    if (isRegister) {
+      if (!/[A-Z]/.test(value)) return 'Senha deve conter letra maiúscula'
+      if (!/[a-z]/.test(value)) return 'Senha deve conter letra minúscula'
+      if (!/[0-9]/.test(value)) return 'Senha deve conter número'
+    }
+    return undefined
+  }
+
+  // Validate full name
+  const validateFullName = (value: string): string | undefined => {
+    if (!value) return 'Nome é obrigatório'
+    if (value.length < 2) return 'Nome muito curto'
+    if (!/^[a-zA-ZÀ-ÿ\s'-]+$/.test(value)) {
+      return 'Nome deve conter apenas letras'
+    }
+    return undefined
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setErrors({})
+
+    // Manual validation before submit
+    const newErrors: FormErrors = {}
+
+    // Validate email
+    const emailError = validateEmail(email)
+    if (emailError) newErrors.email = emailError
+
+    // Validate password
+    const passwordError = validatePassword(password, mode === 'register')
+    if (passwordError) newErrors.password = passwordError
+
+    // Register-specific validations
+    if (mode === 'register') {
+      const fullNameError = validateFullName(fullName)
+      if (fullNameError) newErrors.fullName = fullNameError
+
+      if (password !== confirmPassword) {
+        newErrors.confirmPassword = 'As senhas não coincidem'
+      }
+    }
+
+    // If there are errors, show them and stop
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      toast.error('Por favor, corrija os erros no formulário')
+      return
+    }
+
     setIsSubmitting(true)
 
     try {
       if (mode === 'login') {
         await login(email, password)
+        router.push('/')
       } else {
-        if (password !== confirmPassword) {
-          throw new Error('As senhas não coincidem')
-        }
         await register({ email, password, full_name: fullName || undefined })
+        router.push('/')
       }
-      router.push('/')
     } catch (error) {
+      // Error handling is done in AuthContext with toasts
       console.error('Auth error:', error)
     } finally {
       setIsSubmitting(false)
+    }
+  }
+
+  // Handle email change with validation
+  const handleEmailChange = (value: string) => {
+    setEmail(value)
+    if (errors.email) {
+      const error = validateEmail(value)
+      setErrors((prev) => ({ ...prev, email: error }))
+    }
+  }
+
+  // Handle password change with validation
+  const handlePasswordChange = (value: string) => {
+    setPassword(value)
+    if (errors.password) {
+      const error = validatePassword(value, mode === 'register')
+      setErrors((prev) => ({ ...prev, password: error }))
     }
   }
 
@@ -113,7 +211,7 @@ export default function LoginPage() {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             {mode === 'register' && (
               <div>
                 <label
@@ -127,9 +225,15 @@ export default function LoginPage() {
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="w-full rounded-lg border border-input bg-background px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20"
+                  disabled={isSubmitting}
+                  className={`w-full rounded-lg border ${
+                    errors.fullName ? 'border-red-500' : 'border-input'
+                  } bg-background px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20 disabled:opacity-50`}
                   placeholder="Seu nome completo"
                 />
+                {errors.fullName && (
+                  <p className="mt-1 text-xs text-red-500">{errors.fullName}</p>
+                )}
               </div>
             )}
 
@@ -143,12 +247,18 @@ export default function LoginPage() {
               <input
                 id="email"
                 type="email"
-                required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-lg border border-input bg-background px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20"
+                onChange={(e) => handleEmailChange(e.target.value)}
+                disabled={isSubmitting}
+                className={`w-full rounded-lg border ${
+                  errors.email ? 'border-red-500' : 'border-input'
+                } bg-background px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20 disabled:opacity-50`}
                 placeholder="seu@email.com"
+                autoComplete="email"
               />
+              {errors.email && (
+                <p className="mt-1 text-xs text-red-500">{errors.email}</p>
+              )}
             </div>
 
             <div>
@@ -172,16 +282,23 @@ export default function LoginPage() {
               <input
                 id="password"
                 type="password"
-                required
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                minLength={8}
-                className="w-full rounded-lg border border-input bg-background px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20"
+                onChange={(e) => handlePasswordChange(e.target.value)}
+                disabled={isSubmitting}
+                className={`w-full rounded-lg border ${
+                  errors.password ? 'border-red-500' : 'border-input'
+                } bg-background px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20 disabled:opacity-50`}
                 placeholder="••••••••"
+                autoComplete={
+                  mode === 'login' ? 'current-password' : 'new-password'
+                }
               />
-              {mode === 'register' && (
+              {errors.password && (
+                <p className="mt-1 text-xs text-red-500">{errors.password}</p>
+              )}
+              {mode === 'register' && !errors.password && (
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Mínimo de 8 caracteres
+                  Mínimo 8 caracteres, com maiúscula, minúscula e número
                 </p>
               )}
             </div>
@@ -197,13 +314,20 @@ export default function LoginPage() {
                 <input
                   id="confirmPassword"
                   type="password"
-                  required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  minLength={8}
-                  className="w-full rounded-lg border border-input bg-background px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20"
+                  disabled={isSubmitting}
+                  className={`w-full rounded-lg border ${
+                    errors.confirmPassword ? 'border-red-500' : 'border-input'
+                  } bg-background px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20 disabled:opacity-50`}
                   placeholder="••••••••"
+                  autoComplete="new-password"
                 />
+                {errors.confirmPassword && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {errors.confirmPassword}
+                  </p>
+                )}
               </div>
             )}
 
