@@ -72,18 +72,13 @@ export function middleware(request: NextRequest) {
 
 /**
  * Configuração do matcher para aplicar middleware apenas em rotas específicas
- * Aplicamos em:
- * - /api/* - Todas as rotas de API
+ * Aplicamos SOMENTE em rotas de API internas do Next.js (/api/*)
+ *
+ * IMPORTANTE: Não aplicar em todas as rotas, pois isso interfere com
+ * chamadas fetch() para APIs externas feitas pelo cliente.
  */
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public files (public folder)
-     */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.gif$|.*\\.svg$).*)'
+    '/api/:path*'  // Apenas rotas de API internas do Next.js
   ]
 }
