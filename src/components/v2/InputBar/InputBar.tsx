@@ -6,6 +6,7 @@ import { Send, Plus, Wrench } from 'lucide-react'
 import { useUIConfig } from '@/hooks/useUIConfig'
 import { useDocuments } from '@/hooks/useDocuments'
 import { useKeyboardHeight } from '@/hooks/useKeyboardHeight'
+import { useHaptic } from '@/hooks/useHaptic'
 import { FileList } from '@/components/v2/FileUpload/FileList'
 
 // Dynamic import para code splitting - Modal só carrega quando clicado
@@ -47,6 +48,7 @@ export function InputBar({
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [showUploadModal, setShowUploadModal] = useState(false)
   const keyboardHeight = useKeyboardHeight()
+  const { trigger: triggerHaptic } = useHaptic()
 
   // Document management
   const {
@@ -71,6 +73,7 @@ export function InputBar({
 
   const handleSend = () => {
     if (message.trim() && !disabled) {
+      triggerHaptic('medium')
       onSendMessage(message.trim())
       setMessage('')
     }
@@ -112,7 +115,7 @@ export function InputBar({
         paddingBottom: `calc(1rem + env(safe-area-inset-bottom) + ${keyboardHeight}px)`
       }}
     >
-      <div className="mx-auto max-w-4xl space-y-3 px-4">
+      <div className="mx-auto max-w-4xl space-y-3 px-4 landscape:space-y-2">
         {/* File List */}
         {documents.length > 0 && (
           <FileList
@@ -124,7 +127,7 @@ export function InputBar({
         )}
 
         {/* Barra principal */}
-        <div className="flex items-end gap-3 rounded-2xl border border-border bg-card/100 p-3 shadow-[0_-4px_16px_rgba(0,0,0,0.12)] transition-all focus-within:border-gemini-blue focus-within:shadow-xl backdrop-safe:backdrop-blur-sm dark:shadow-[0_-4px_16px_rgba(0,0,0,0.4)]">
+        <div className="flex items-end gap-3 rounded-2xl border border-border bg-card/100 p-3 shadow-[0_-4px_16px_rgba(0,0,0,0.12)] transition-all focus-within:border-gemini-blue focus-within:shadow-xl landscape:p-2 backdrop-safe:backdrop-blur-sm dark:shadow-[0_-4px_16px_rgba(0,0,0,0.4)]">
           {/* Área de texto - 7/10 */}
           <div className="flex-1">
             <textarea
