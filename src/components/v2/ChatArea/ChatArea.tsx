@@ -57,31 +57,17 @@ export function ChatArea({ messages, isStreaming }: ChatAreaProps) {
                     : 'bg-muted text-foreground'
                 }`}
               >
-                {/* Avatar/Indicador do papel */}
-                <div className="mb-2 flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <div
-                      className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium ${
-                        isUser
-                          ? 'bg-white/20 text-white'
-                          : 'bg-gemini-blue text-white'
-                      }`}
-                    >
-                      {isUser ? 'U' : 'AI'}
-                    </div>
-                    <span className="text-xs opacity-70">
-                      {isUser ? 'Você' : 'Rodrigues AI'}
-                    </span>
-                  </div>
-                  {message.created_at && (
+                {/* Timestamp */}
+                {message.created_at && (
+                  <div className="mb-2 flex justify-end">
                     <time
                       className="text-xs opacity-50"
                       dateTime={formatTimestampISO(message.created_at)}
                     >
                       {formatTimestamp(message.created_at)}
                     </time>
-                  )}
-                </div>
+                  </div>
+                )}
 
                 {/* Conteúdo da mensagem */}
                 <div className="text-sm leading-relaxed">
@@ -131,7 +117,7 @@ export function ChatArea({ messages, isStreaming }: ChatAreaProps) {
                 {/* Copy button - apenas para mensagens da AI com conteúdo */}
                 {isAgent && message.content && (
                   <div className="mt-2 flex justify-end">
-                    <CopyButton content={message.content} />
+                    <CopyButton content={message.content} formatted={true} />
                   </div>
                 )}
               </div>

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Copy, Check } from 'lucide-react'
 import { toast } from 'sonner'
 import { COPY_FEEDBACK_DURATION } from '@/lib/constants'
+import { copyMarkdownAsFormatted } from '@/lib/utils/clipboard'
 
 interface CopyButtonProps {
   /** Conteúdo a ser copiado para o clipboard */
@@ -14,6 +15,8 @@ interface CopyButtonProps {
   successMessage?: string
   /** Mensagem de erro customizada (opcional) */
   errorMessage?: string
+  /** Se true, copia com formatação preservada (markdown → HTML) para Word */
+  formatted?: boolean
 }
 
 /**
@@ -24,13 +27,20 @@ export function CopyButton({
   content,
   className = '',
   successMessage = 'Copiado para a área de transferência',
-  errorMessage = 'Erro ao copiar texto'
+  errorMessage = 'Erro ao copiar texto',
+  formatted = false
 }: CopyButtonProps) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(content)
+      if (formatted) {
+        // Copiar com formatação preservada (markdown → HTML)
+        await copyMarkdownAsFormatted(content)
+      } else {
+        // Copiar apenas texto simples
+        await navigator.clipboard.writeText(content)
+      }
       setCopied(true)
       toast.success(successMessage)
       setTimeout(() => setCopied(false), COPY_FEEDBACK_DURATION)

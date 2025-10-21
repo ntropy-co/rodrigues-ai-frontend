@@ -5,12 +5,7 @@ import { useUIConfig } from '@/hooks/useUIConfig'
 import { useCarouselPagination } from '@/hooks/useCarouselPagination'
 import { getIconComponent, getCategoryColor } from '@/lib/utils/ui'
 import { truncateText } from '@/lib/utils/format'
-import {
-  CATEGORY_BG_COLORS,
-  CATEGORY_LABELS,
-  SUGGESTION_CATEGORIES,
-  MAX_DESCRIPTION_LENGTH
-} from '@/lib/constants'
+import { MAX_DESCRIPTION_LENGTH } from '@/lib/constants'
 
 interface SuggestionCarouselProps {
   onSuggestionClick: (prompt: string) => void
@@ -30,34 +25,6 @@ export function SuggestionCarousel({
 
   return (
     <div className="w-full max-w-4xl">
-      {/* Indicadores de categoria */}
-      <div className="mb-4 flex justify-center gap-4 text-xs">
-        <div className="flex items-center gap-1">
-          <div
-            className={`h-2 w-2 rounded-full ${CATEGORY_BG_COLORS[SUGGESTION_CATEGORIES.BASIC]}`}
-          />
-          <span className="text-gemini-gray-600">
-            {CATEGORY_LABELS[SUGGESTION_CATEGORIES.BASIC]}
-          </span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div
-            className={`h-2 w-2 rounded-full ${CATEGORY_BG_COLORS[SUGGESTION_CATEGORIES.ADVANCED]}`}
-          />
-          <span className="text-gemini-gray-600">
-            {CATEGORY_LABELS[SUGGESTION_CATEGORIES.ADVANCED]}
-          </span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div
-            className={`h-2 w-2 rounded-full ${CATEGORY_BG_COLORS[SUGGESTION_CATEGORIES.EXPERT]}`}
-          />
-          <span className="text-gemini-gray-600">
-            {CATEGORY_LABELS[SUGGESTION_CATEGORIES.EXPERT]}
-          </span>
-        </div>
-      </div>
-
       <div className="relative">
         {/* Botão anterior */}
         <button
