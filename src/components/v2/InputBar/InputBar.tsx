@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from 'react'
 import { Send, Plus, Wrench } from 'lucide-react'
 import { useUIConfig } from '@/hooks/useUIConfig'
 import { useDocuments } from '@/hooks/useDocuments'
+import { useKeyboardHeight } from '@/hooks/useKeyboardHeight'
 import { FileUploadModal } from '@/components/v2/FileUpload/FileUploadModal'
 import { FileList } from '@/components/v2/FileUpload/FileList'
 
@@ -27,6 +28,7 @@ export function InputBar({
   const { ui } = useUIConfig()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [showUploadModal, setShowUploadModal] = useState(false)
+  const keyboardHeight = useKeyboardHeight()
 
   // Document management
   const {
@@ -86,7 +88,12 @@ export function InputBar({
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+    <div
+      className="fixed bottom-0 left-0 right-0 transition-all duration-200 ease-out"
+      style={{
+        paddingBottom: `calc(1rem + env(safe-area-inset-bottom) + ${keyboardHeight}px)`
+      }}
+    >
       <div className="mx-auto max-w-4xl space-y-3 px-4">
         {/* File List */}
         {documents.length > 0 && (

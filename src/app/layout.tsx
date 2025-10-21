@@ -29,6 +29,18 @@ export const metadata: Metadata = {
   title: 'Rodrigues AI - Especialista em Crédito Agro e CPR',
   description:
     'Consulte o Rodrigues AI, especialista em crédito agrícola e CPR (Cédula de Produto Rural). Obtenha orientações especializadas sobre financiamento rural, instrumentos de crédito e mercado agropecuário.',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5, // Permitir zoom para acessibilidade
+    userScalable: true,
+    viewportFit: 'cover' // iOS notch/dynamic island support
+  },
+  appleWebApp: {
+    capable: true,
+    title: 'Rodrigues AI',
+    statusBarStyle: 'black-translucent'
+  },
   icons: {
     icon: [{ url: '/rodrigues-icon.png', sizes: 'any', type: 'image/png' }],
     apple: '/rodrigues-icon.png',
