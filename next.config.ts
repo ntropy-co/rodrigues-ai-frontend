@@ -22,9 +22,11 @@ const nextConfig: NextConfig = {
           "default-src 'self'",
           // Next.js precisa de 'unsafe-eval' e 'unsafe-inline' para funcionar
           "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
-          "style-src 'self' 'unsafe-inline'",
+          // Permitir Google Fonts CSS
+          "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
           "img-src 'self' data: https: blob:",
-          "font-src 'self' data:",
+          // Permitir Google Fonts arquivos de fonte
+          "font-src 'self' data: https://fonts.gstatic.com",
           // Permitir conexões com a API backend
           "connect-src 'self' https://rodrigues-ai-backend-production.up.railway.app https://api.rodriguesagro.com.br",
           "frame-ancestors 'none'",

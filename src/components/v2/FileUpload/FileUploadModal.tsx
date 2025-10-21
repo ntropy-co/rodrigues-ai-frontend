@@ -103,10 +103,13 @@ export function FileUploadModal({
       }
       formData.append('auto_process', 'true')
 
-      // Get API URL from environment or default
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+      // Use Next.js API Route as proxy to avoid CORS issues
+      console.log(
+        '[FileUploadModal] Uploading to proxy:',
+        '/api/documents/upload'
+      )
 
-      const response = await fetch(`${apiUrl}/api/v1/documents/upload`, {
+      const response = await fetch('/api/documents/upload', {
         method: 'POST',
         body: formData
       })

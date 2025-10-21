@@ -1,7 +1,5 @@
 import { toast } from 'sonner'
 
-import { APIRoutes } from './routes'
-
 import { Agent, ComboboxAgent, SessionEntry } from '@/types/playground'
 
 export const getPlaygroundAgentsAPI = async (
@@ -63,15 +61,24 @@ export const getAllPlaygroundSessionsAPI = async (
   userId?: string
 ): Promise<SessionEntry[]> => {
   try {
-    let url = APIRoutes.GetPlaygroundSessions(base, agentId)
+    // Use Next.js API Route as proxy to avoid CORS issues
+    let url = `/api/playground/agents/${agentId}/sessions`
     if (userId) {
       url += `?user_id=${encodeURIComponent(userId)}`
     }
+
+    console.log('[getAllPlaygroundSessionsAPI] Fetching from:', url)
 
     const response = await fetch(url, {
       method: 'GET',
       credentials: 'include'
     })
+
+    console.log(
+      '[getAllPlaygroundSessionsAPI] Response status:',
+      response.status
+    )
+
     if (!response.ok) {
       if (response.status === 404) {
         // Return empty array when storage is not enabled
@@ -80,7 +87,8 @@ export const getAllPlaygroundSessionsAPI = async (
       throw new Error(`Failed to fetch sessions: ${response.statusText}`)
     }
     return response.json()
-  } catch {
+  } catch (error) {
+    console.error('[getAllPlaygroundSessionsAPI] Error:', error)
     return []
   }
 }
@@ -91,15 +99,21 @@ export const getPlaygroundSessionAPI = async (
   sessionId: string,
   userId?: string
 ) => {
-  let url = APIRoutes.GetPlaygroundSession(base, agentId, sessionId)
+  // Use Next.js API Route as proxy to avoid CORS issues
+  let url = `/api/playground/agents/${agentId}/sessions/${sessionId}`
   if (userId) {
     url += `?user_id=${encodeURIComponent(userId)}`
   }
+
+  console.log('[getPlaygroundSessionAPI] Fetching from:', url)
 
   const response = await fetch(url, {
     method: 'GET',
     credentials: 'include'
   })
+
+  console.log('[getPlaygroundSessionAPI] Response status:', response.status)
+
   return response.json()
 }
 
@@ -110,12 +124,17 @@ export const deletePlaygroundSessionAPI = async (
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   userId?: string
 ) => {
-  const response = await fetch(
-    APIRoutes.DeletePlaygroundSession(base, agentId, sessionId),
-    {
-      method: 'DELETE',
-      credentials: 'include'
-    }
-  )
+  // Use Next.js API Route as proxy to avoid CORS issues
+  const url = `/api/playground/agents/${agentId}/sessions/${sessionId}`
+
+  console.log('[deletePlaygroundSessionAPI] Deleting:', url)
+
+  const response = await fetch(url, {
+    method: 'DELETE',
+    credentials: 'include'
+  })
+
+  console.log('[deletePlaygroundSessionAPI] Response status:', response.status)
+
   return response
 }
