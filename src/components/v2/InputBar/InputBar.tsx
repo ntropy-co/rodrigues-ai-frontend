@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from 'react'
 import { Send, Plus, Wrench } from 'lucide-react'
 import { useUIConfig } from '@/hooks/useUIConfig'
 import { useDocuments } from '@/hooks/useDocuments'
+import { useKeyboardHeight } from '@/hooks/useKeyboardHeight'
 import { FileUploadModal } from '@/components/v2/FileUpload/FileUploadModal'
 import { FileList } from '@/components/v2/FileUpload/FileList'
 
@@ -27,6 +28,7 @@ export function InputBar({
   const { ui } = useUIConfig()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [showUploadModal, setShowUploadModal] = useState(false)
+  const keyboardHeight = useKeyboardHeight()
 
   // Document management
   const {
@@ -86,7 +88,12 @@ export function InputBar({
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+    <div
+      className="fixed bottom-0 left-0 right-0 transition-all duration-200 ease-out"
+      style={{
+        paddingBottom: `calc(1rem + env(safe-area-inset-bottom) + ${keyboardHeight}px)`
+      }}
+    >
       <div className="mx-auto max-w-4xl space-y-3 px-4">
         {/* File List */}
         {documents.length > 0 && (
@@ -125,7 +132,7 @@ export function InputBar({
               <div className="mt-2 flex gap-2">
                 {ui.features.showUploadButton && (
                   <button
-                    className="flex min-h-[44px] items-center gap-1 rounded-full bg-gemini-gray-100 px-4 py-2 text-sm text-gemini-gray-600 transition-all hover:bg-gemini-gray-200 active:scale-95"
+                    className="flex min-h-[44px] items-center gap-1 rounded-full bg-gemini-gray-100 px-4 py-2 text-sm text-gemini-gray-600 transition-all hover-hover:bg-gemini-gray-200 active:scale-95"
                     onClick={() => setShowUploadModal(true)}
                     aria-label="Adicionar arquivo"
                   >
@@ -136,7 +143,7 @@ export function InputBar({
 
                 {ui.features.showToolsButton && (
                   <button
-                    className="flex min-h-[44px] items-center gap-1 rounded-full bg-gemini-gray-100 px-4 py-2 text-sm text-gemini-gray-600 transition-all hover:bg-gemini-gray-200 active:scale-95"
+                    className="flex min-h-[44px] items-center gap-1 rounded-full bg-gemini-gray-100 px-4 py-2 text-sm text-gemini-gray-600 transition-all hover-hover:bg-gemini-gray-200 active:scale-95"
                     onClick={() => console.log('Open tools')}
                     aria-label="Abrir ferramentas"
                   >
@@ -156,7 +163,7 @@ export function InputBar({
               className={`flex h-11 min-h-[44px] w-11 min-w-[44px] items-center justify-center rounded-full transition-all ${
                 disabled || !message.trim()
                   ? 'cursor-not-allowed bg-gemini-gray-300 text-gemini-gray-500'
-                  : 'bg-gemini-blue text-white hover:bg-gemini-blue-hover active:scale-95'
+                  : 'bg-gemini-blue text-white hover-hover:bg-gemini-blue-hover active:scale-95'
               }`}
               aria-label="Enviar mensagem"
             >

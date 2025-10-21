@@ -1,5 +1,6 @@
 import type { Config } from 'tailwindcss'
 import tailwindcssAnimate from 'tailwindcss-animate'
+import plugin from 'tailwindcss/plugin'
 
 export default {
   darkMode: ['class'],
@@ -72,5 +73,11 @@ export default {
       }
     }
   },
-  plugins: [tailwindcssAnimate]
+  plugins: [
+    tailwindcssAnimate,
+    // Custom variant for hover states that only work on devices with fine pointers (not touch)
+    plugin(function ({ addVariant }) {
+      addVariant('hover-hover', '@media (hover: hover) and (pointer: fine)')
+    })
+  ]
 } satisfies Config

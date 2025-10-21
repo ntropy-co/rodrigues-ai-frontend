@@ -158,8 +158,9 @@ export function FileUploadModal({
           </h2>
           <button
             onClick={handleClose}
-            className="rounded-lg p-1 transition-colors hover:bg-gemini-gray-100"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 transition-colors hover-hover:bg-gemini-gray-100"
             disabled={uploading}
+            aria-label="Fechar modal"
           >
             <X className="h-5 w-5 text-gemini-gray-600" />
           </button>
@@ -215,7 +216,7 @@ export function FileUploadModal({
               <p className="text-gemini-gray-700">
                 Arraste um arquivo aqui ou{' '}
                 <button
-                  className="font-medium text-gemini-blue hover:underline"
+                  className="font-medium text-gemini-blue hover-hover:underline"
                   onClick={() => fileInputRef.current?.click()}
                 >
                   selecione
@@ -251,7 +252,7 @@ export function FileUploadModal({
         <div className="mt-6 flex gap-3">
           <button
             onClick={handleClose}
-            className="flex-1 rounded-lg border border-gemini-gray-300 px-4 py-2 text-gemini-gray-700 transition-colors hover:bg-gemini-gray-50"
+            className="flex-1 rounded-lg border border-gemini-gray-300 px-4 py-2 text-gemini-gray-700 transition-colors hover-hover:bg-gemini-gray-50"
             disabled={uploading}
           >
             Cancelar
@@ -262,7 +263,7 @@ export function FileUploadModal({
             className={`flex-1 rounded-lg px-4 py-2 font-medium text-white transition-colors ${
               !file || uploading || success
                 ? 'cursor-not-allowed bg-gemini-gray-300'
-                : 'bg-gemini-blue hover:bg-gemini-blue-hover'
+                : 'bg-gemini-blue hover-hover:bg-gemini-blue-hover'
             }`}
           >
             {uploading ? 'Enviando...' : success ? 'Concluído!' : 'Enviar'}
