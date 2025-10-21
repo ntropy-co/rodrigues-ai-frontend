@@ -158,8 +158,9 @@ export function FileUploadModal({
           </h2>
           <button
             onClick={handleClose}
-            className="rounded-lg p-1 transition-colors hover-hover:bg-gemini-gray-100"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 transition-colors hover-hover:bg-gemini-gray-100"
             disabled={uploading}
+            aria-label="Fechar modal"
           >
             <X className="h-5 w-5 text-gemini-gray-600" />
           </button>

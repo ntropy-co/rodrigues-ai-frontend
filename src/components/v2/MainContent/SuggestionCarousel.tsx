@@ -29,7 +29,7 @@ export function SuggestionCarousel({
         {/* Botão anterior */}
         <button
           onClick={prevSlide}
-          className="absolute -left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-md transition-all hover-hover:shadow-lg dark:bg-gray-800"
+          className="absolute -left-4 top-1/2 z-10 flex min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-full bg-white p-2 shadow-md transition-all hover-hover:shadow-lg dark:bg-gray-800"
           aria-label="Página anterior"
         >
           <ChevronLeft className="h-5 w-5 text-gemini-gray-600" />
@@ -38,7 +38,7 @@ export function SuggestionCarousel({
         {/* Botão próximo */}
         <button
           onClick={nextSlide}
-          className="absolute -right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-md transition-all hover-hover:shadow-lg dark:bg-gray-800"
+          className="absolute -right-4 top-1/2 z-10 flex min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-full bg-white p-2 shadow-md transition-all hover-hover:shadow-lg dark:bg-gray-800"
           aria-label="Próxima página"
         >
           <ChevronRight className="h-5 w-5 text-gemini-gray-600" />

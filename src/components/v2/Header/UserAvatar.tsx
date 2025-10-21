@@ -56,7 +56,7 @@ export function UserAvatar() {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-purple-600 font-medium text-white shadow-sm transition-shadow hover-hover:shadow-md"
+        className="flex h-11 min-h-[44px] w-11 min-w-[44px] items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-purple-600 font-medium text-white shadow-sm transition-shadow hover-hover:shadow-md"
         aria-label="Menu do usuário"
         title={user?.full_name || user?.email || 'Usuário'}
       >
@@ -75,7 +75,7 @@ export function UserAvatar() {
                     item.onClick()
                     setIsOpen(false)
                   }}
-                  className={`flex w-full items-center gap-3 px-4 py-2 text-left text-sm transition-colors ${
+                  className={`flex min-h-[44px] w-full items-center gap-3 px-4 py-2 text-left text-sm transition-colors ${
                     item.className || 'text-foreground hover-hover:bg-muted'
                   }`}
                 >

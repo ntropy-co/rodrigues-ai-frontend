@@ -199,7 +199,8 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
             <h2 className="text-lg font-semibold text-foreground">Conversas</h2>
             <button
               onClick={onClose}
-              className="rounded-lg p-2 transition-colors hover-hover:bg-muted"
+              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 transition-colors hover-hover:bg-muted"
+              aria-label="Fechar menu"
             >
               <X className="h-5 w-5 text-muted-foreground" />
             </button>
@@ -279,14 +280,14 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   </div>
 
                   <button
-                    className="flex-shrink-0 rounded p-1 opacity-0 transition-all hover-hover:bg-destructive/10 hover-hover:text-destructive group-hover-hover:opacity-100"
+                    className="flex min-h-[44px] min-w-[44px] flex-shrink-0 items-center justify-center rounded p-2 opacity-0 transition-all hover-hover:bg-destructive/10 hover-hover:text-destructive group-hover-hover:opacity-100"
                     onClick={(e) => {
                       e.stopPropagation()
                       handleDeleteClick(session)
                     }}
                     aria-label="Deletar conversa"
                   >
-                    <Trash2 className="h-3 w-3" />
+                    <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
               ))
