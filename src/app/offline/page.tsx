@@ -27,14 +27,14 @@ export default function OfflinePage() {
         <div className="space-y-3">
           <button
             onClick={() => window.location.reload()}
-            className="w-full rounded-lg bg-primary px-6 py-3 text-primary-foreground transition-colors hover-hover:bg-primary/90 active:scale-95"
+            className="w-full rounded-lg bg-primary px-6 py-3 text-primary-foreground transition-colors active:scale-95 hover-hover:bg-primary/90"
           >
             Tentar novamente
           </button>
 
           <Link
             href="/"
-            className="block w-full rounded-lg border border-border px-6 py-3 text-foreground transition-colors hover-hover:bg-muted active:scale-95"
+            className="block w-full rounded-lg border border-border px-6 py-3 text-foreground transition-colors active:scale-95 hover-hover:bg-muted"
           >
             Voltar ao início
           </Link>
