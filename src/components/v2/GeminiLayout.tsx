@@ -67,7 +67,14 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
     }
 
     loadSession()
-  }, [sessionId, currentSessionId, agentId, messages.length, loadSessionById, router])
+  }, [
+    sessionId,
+    currentSessionId,
+    agentId,
+    messages.length,
+    loadSessionById,
+    router
+  ])
 
   // Verificar se há mensagens para alternar entre MainContent e ChatArea
   useEffect(() => {

@@ -202,7 +202,8 @@ const useAIChatStreamHandler = () => {
               // Navegar apenas se o sessionId mudou (backend criou um novo)
               // Se o sessionId foi criado no frontend e enviado, não navegar novamente
               if (
-                (!previousSessionId || previousSessionId !== chunk.session_id) &&
+                (!previousSessionId ||
+                  previousSessionId !== chunk.session_id) &&
                 chunk.session_id
               ) {
                 router.push(`/chat/${chunk.session_id}`)

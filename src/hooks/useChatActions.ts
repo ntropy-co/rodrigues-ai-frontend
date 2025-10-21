@@ -211,12 +211,7 @@ const useChatActions = () => {
         setIsEndpointLoading(false)
       }
     },
-    [
-      agentId,
-      getSession,
-      setSessionId,
-      setIsEndpointLoading
-    ]
+    [agentId, getSession, setSessionId, setIsEndpointLoading]
   )
 
   return {
