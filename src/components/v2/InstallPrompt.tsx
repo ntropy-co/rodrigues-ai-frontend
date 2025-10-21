@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Download, X } from 'lucide-react'
+import { useHaptic } from '@/hooks/useHaptic'
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>
@@ -12,6 +13,7 @@ export function InstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null)
   const [showPrompt, setShowPrompt] = useState(false)
+  const { trigger: triggerHaptic } = useHaptic()
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -45,11 +47,13 @@ export function InstallPrompt() {
   const handleInstall = async () => {
     if (!deferredPrompt) return
 
+    triggerHaptic('medium')
     deferredPrompt.prompt()
     const { outcome } = await deferredPrompt.userChoice
 
     if (outcome === 'accepted') {
       localStorage.setItem('pwa-installed', 'true')
+      triggerHaptic('success')
     }
 
     setDeferredPrompt(null)
@@ -57,6 +61,7 @@ export function InstallPrompt() {
   }
 
   const handleDismiss = () => {
+    triggerHaptic('light')
     localStorage.setItem('pwa-dismissed', 'true')
     setShowPrompt(false)
   }

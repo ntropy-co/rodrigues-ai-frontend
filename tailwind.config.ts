@@ -70,6 +70,30 @@ export default {
       },
       borderRadius: {
         xl: '10px'
+      },
+      animation: {
+        'slide-up': 'slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'fade-in': 'fadeIn 0.3s ease-out'
+      },
+      keyframes: {
+        slideUp: {
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(20px) scale(0.95)'
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0) scale(1)'
+          }
+        },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' }
+        }
+      },
+      transitionTimingFunction: {
+        spring: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'spring-smooth': 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
       }
     }
   },
@@ -82,6 +106,9 @@ export default {
       // Backdrop-blur apenas em desktop (min-width: 768px)
       // Evita performance ruim de backdrop-filter em mobile
       addVariant('backdrop-safe', '@media (min-width: 768px)')
+
+      // Orientação paisagem (landscape)
+      addVariant('landscape', '@media (orientation: landscape)')
     })
   ]
 } satisfies Config

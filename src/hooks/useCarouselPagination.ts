@@ -45,19 +45,36 @@ export function useCarouselPagination({
     CAROUSEL_ITEMS_PER_VIEW_DESKTOP
   )
 
-  // Detectar viewport e ajustar items por view
+  // Detectar viewport e orientação, ajustar items por view
   useEffect(() => {
     const updateItemsPerView = () => {
-      if (window.innerWidth < CAROUSEL_MOBILE_BREAKPOINT) {
-        setItemsPerView(CAROUSEL_ITEMS_PER_VIEW_MOBILE)
+      const isLandscape = window.matchMedia('(orientation: landscape)').matches
+      const isMobile = window.innerWidth < CAROUSEL_MOBILE_BREAKPOINT
+
+      if (isMobile) {
+        // Mobile: 1 item em portrait, 2 em landscape
+        setItemsPerView(isLandscape ? 2 : CAROUSEL_ITEMS_PER_VIEW_MOBILE)
       } else {
-        setItemsPerView(CAROUSEL_ITEMS_PER_VIEW_DESKTOP)
+        // Desktop: 3 items em portrait, 4 em landscape
+        setItemsPerView(isLandscape ? 4 : CAROUSEL_ITEMS_PER_VIEW_DESKTOP)
       }
     }
 
     updateItemsPerView()
     window.addEventListener('resize', updateItemsPerView)
-    return () => window.removeEventListener('resize', updateItemsPerView)
+
+    // Listener para mudanças de orientação
+    const mediaQuery = window.matchMedia('(orientation: landscape)')
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', updateItemsPerView)
+    }
+
+    return () => {
+      window.removeEventListener('resize', updateItemsPerView)
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener('change', updateItemsPerView)
+      }
+    }
   }, [])
 
   // Calcular valores derivados

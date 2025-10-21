@@ -1,22 +1,26 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useCallback } from 'react'
 import { ArrowDown } from 'lucide-react'
 import { PlaygroundChatMessage } from '@/types/playground'
 import MarkdownRenderer from '@/components/ui/typography/MarkdownRenderer/MarkdownRenderer'
 import { StreamingText } from './StreamingText'
+import { RefreshIndicator } from './RefreshIndicator'
 import { usePlaygroundStore } from '@/store'
 import { CopyButton } from '@/components/ui/CopyButton'
 import { useScrollDetection } from '@/hooks/useScrollDetection'
+import { usePullToRefresh } from '@/hooks/usePullToRefresh'
 import { formatTimestamp, formatTimestampISO } from '@/lib/utils/format'
 import { MESSAGE_ROLES, MIN_TOUCH_TARGET_SIZE } from '@/lib/constants'
 
 interface ChatAreaProps {
   messages: PlaygroundChatMessage[]
   isStreaming: boolean
+  /** Callback opcional para refresh (carregar mais mensagens) */
+  onRefresh?: () => Promise<void> | void
 }
 
-export function ChatArea({ messages, isStreaming }: ChatAreaProps) {
+export function ChatArea({ messages, isStreaming, onRefresh }: ChatAreaProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const isStreamingFromStore = usePlaygroundStore((state) => state.isStreaming)
@@ -24,6 +28,24 @@ export function ChatArea({ messages, isStreaming }: ChatAreaProps) {
   // Hook personalizado para detectar scroll
   const { showScrollButton, scrollToBottom } = useScrollDetection({
     containerRef
+  })
+
+  // Hook de pull-to-refresh
+  const handleRefresh = useCallback(async () => {
+    if (onRefresh) {
+      await onRefresh()
+    } else {
+      // Placeholder - pode ser implementado posteriormente
+      console.log('Pull to refresh - carregar histórico de conversas')
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+    }
+  }, [onRefresh])
+
+  const { pullDistance, isRefreshing, pullProgress } = usePullToRefresh({
+    containerRef,
+    onRefresh: handleRefresh,
+    threshold: 80,
+    enabled: messages.length > 0 // Só ativar se tiver mensagens
   })
 
   // Auto-scroll para a última mensagem
@@ -38,9 +60,16 @@ export function ChatArea({ messages, isStreaming }: ChatAreaProps) {
   return (
     <div
       ref={containerRef}
-      className="relative flex-1 overflow-y-auto px-4 py-6 md:px-6"
+      className="relative flex-1 overflow-y-auto px-4 py-6 md:px-6 landscape:py-3"
     >
-      <div className="mx-auto max-w-4xl space-y-6">
+      {/* Pull to Refresh Indicator */}
+      <RefreshIndicator
+        progress={pullProgress}
+        isRefreshing={isRefreshing}
+        pullDistance={pullDistance}
+      />
+
+      <div className="mx-auto max-w-4xl space-y-6 landscape:space-y-4">
         {messages.map((message, index) => {
           const isUser = message.role === MESSAGE_ROLES.USER
           const isAgent = message.role === MESSAGE_ROLES.AGENT
@@ -48,7 +77,11 @@ export function ChatArea({ messages, isStreaming }: ChatAreaProps) {
           return (
             <div
               key={`${message.created_at}-${index}`}
-              className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
+              className={`flex animate-slide-up ${isUser ? 'justify-end' : 'justify-start'}`}
+              style={{
+                animationDelay: `${Math.min(index * 50, 500)}ms`,
+                animationFillMode: 'backwards'
+              }}
             >
               <div
                 className={`group relative max-w-[85%] rounded-2xl px-4 py-3 ${
@@ -131,7 +164,7 @@ export function ChatArea({ messages, isStreaming }: ChatAreaProps) {
       {showScrollButton && (
         <button
           onClick={scrollToBottom}
-          className="fixed bottom-24 right-6 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-gemini-blue text-white shadow-lg transition-all active:scale-95 hover-hover:bg-gemini-blue-hover hover-hover:shadow-xl md:bottom-28 md:right-8"
+          className="fixed bottom-24 right-6 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-gemini-blue text-white shadow-lg transition-all active:scale-95 hover-hover:bg-gemini-blue-hover hover-hover:shadow-xl md:bottom-28 md:right-8 landscape:bottom-20"
           style={{
             minHeight: `${MIN_TOUCH_TARGET_SIZE}px`,
             minWidth: `${MIN_TOUCH_TARGET_SIZE}px`
