@@ -93,7 +93,7 @@ export function FileList({
               {onDownload && (
                 <button
                   onClick={() => onDownload(doc.id)}
-                  className="rounded-lg p-2 text-gemini-gray-600 transition-colors hover:bg-gemini-gray-100"
+                  className="rounded-lg p-2 text-gemini-gray-600 transition-colors hover-hover:bg-gemini-gray-100"
                   title="Baixar documento"
                 >
                   <Download className="h-4 w-4" />
@@ -103,7 +103,7 @@ export function FileList({
               {onRemove && (
                 <button
                   onClick={() => onRemove(doc.id)}
-                  className="rounded-lg p-2 text-gemini-gray-600 transition-colors hover:bg-red-100 hover:text-red-600"
+                  className="rounded-lg p-2 text-gemini-gray-600 transition-colors hover-hover:bg-red-100 hover-hover:text-red-600"
                   title="Remover documento"
                 >
                   <X className="h-4 w-4" />

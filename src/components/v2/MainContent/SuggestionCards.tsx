@@ -141,19 +141,19 @@ function getCategoryColor(category: SuggestionCard['category']) {
       return {
         bg: 'bg-green-50',
         icon: 'text-green-600',
-        border: 'hover:border-green-300'
+        border: 'hover-hover:border-green-300'
       }
     case 'advanced':
       return {
         bg: 'bg-blue-50',
         icon: 'text-blue-600',
-        border: 'hover:border-blue-300'
+        border: 'hover-hover:border-blue-300'
       }
     case 'expert':
       return {
         bg: 'bg-purple-50',
         icon: 'text-purple-600',
-        border: 'hover:border-purple-300'
+        border: 'hover-hover:border-purple-300'
       }
   }
 }
@@ -172,7 +172,7 @@ export function SuggestionCards({ onSuggestionClick }: SuggestionCardsProps) {
             <button
               key={suggestion.id}
               onClick={() => onSuggestionClick(suggestion.prompt)}
-              className={`flex flex-col items-start rounded-2xl border border-gemini-gray-300 p-4 text-left transition-all ${colors.border} hover:shadow-sm active:scale-[0.98]`}
+              className={`flex flex-col items-start rounded-2xl border border-gemini-gray-300 p-4 text-left transition-all ${colors.border} hover-hover:shadow-sm active:scale-[0.98]`}
             >
               <div
                 className={`mb-3 flex h-10 w-10 items-center justify-center rounded-lg ${colors.bg}`}
@@ -215,7 +215,7 @@ export function SuggestionCards({ onSuggestionClick }: SuggestionCardsProps) {
       <div className="mt-6 text-center">
         <button
           onClick={() => window.location.reload()}
-          className="text-sm text-gemini-blue transition-colors hover:text-gemini-blue-hover"
+          className="text-sm text-gemini-blue transition-colors hover-hover:text-gemini-blue-hover"
         >
           🔄 Ver novas sugestões
         </button>

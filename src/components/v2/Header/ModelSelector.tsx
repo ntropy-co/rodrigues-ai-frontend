@@ -17,7 +17,7 @@ export function ModelSelector() {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1 rounded-full bg-muted px-3 py-1 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/80"
+        className="flex items-center gap-1 rounded-full bg-muted px-3 py-1 text-sm font-medium text-muted-foreground transition-colors hover-hover:bg-muted/80"
       >
         {selectedModel.name}
         <ChevronDown className="h-4 w-4" />

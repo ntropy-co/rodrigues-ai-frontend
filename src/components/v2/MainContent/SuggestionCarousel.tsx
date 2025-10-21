@@ -29,7 +29,7 @@ export function SuggestionCarousel({
         {/* Botão anterior */}
         <button
           onClick={prevSlide}
-          className="absolute -left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-md transition-all hover:shadow-lg dark:bg-gray-800"
+          className="absolute -left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-md transition-all hover-hover:shadow-lg dark:bg-gray-800"
           aria-label="Página anterior"
         >
           <ChevronLeft className="h-5 w-5 text-gemini-gray-600" />
@@ -38,7 +38,7 @@ export function SuggestionCarousel({
         {/* Botão próximo */}
         <button
           onClick={nextSlide}
-          className="absolute -right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-md transition-all hover:shadow-lg dark:bg-gray-800"
+          className="absolute -right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-md transition-all hover-hover:shadow-lg dark:bg-gray-800"
           aria-label="Próxima página"
         >
           <ChevronRight className="h-5 w-5 text-gemini-gray-600" />
@@ -62,7 +62,7 @@ export function SuggestionCarousel({
                 >
                   <button
                     onClick={() => onSuggestionClick(suggestion.prompt)}
-                    className="group flex h-[70px] w-full flex-col items-start justify-between rounded-xl border border-border bg-card p-3 text-left transition-all hover:border-gemini-gray-300 hover:shadow-sm active:scale-[0.98] dark:hover:border-gemini-gray-500"
+                    className="group flex h-[70px] w-full flex-col items-start justify-between rounded-xl border border-border bg-card p-3 text-left transition-all hover-hover:border-gemini-gray-300 hover-hover:shadow-sm active:scale-[0.98] dark:hover-hover:border-gemini-gray-500"
                     aria-label={`Sugestão: ${suggestion.title}`}
                   >
                     {/* Primeira linha: Ícone + Tema */}
@@ -70,7 +70,7 @@ export function SuggestionCarousel({
                       <Icon
                         className={`h-4 w-4 flex-shrink-0 ${getCategoryColor(suggestion.category)}`}
                       />
-                      <h3 className="truncate text-sm font-medium text-card-foreground transition-colors group-hover:text-gemini-blue">
+                      <h3 className="truncate text-sm font-medium text-card-foreground transition-colors group-hover-hover:text-gemini-blue">
                         {suggestion.title}
                       </h3>
                     </div>

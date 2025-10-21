@@ -132,7 +132,7 @@ export function InputBar({
               <div className="mt-2 flex gap-2">
                 {ui.features.showUploadButton && (
                   <button
-                    className="flex min-h-[44px] items-center gap-1 rounded-full bg-gemini-gray-100 px-4 py-2 text-sm text-gemini-gray-600 transition-all hover:bg-gemini-gray-200 active:scale-95"
+                    className="flex min-h-[44px] items-center gap-1 rounded-full bg-gemini-gray-100 px-4 py-2 text-sm text-gemini-gray-600 transition-all hover-hover:bg-gemini-gray-200 active:scale-95"
                     onClick={() => setShowUploadModal(true)}
                     aria-label="Adicionar arquivo"
                   >
@@ -143,7 +143,7 @@ export function InputBar({
 
                 {ui.features.showToolsButton && (
                   <button
-                    className="flex min-h-[44px] items-center gap-1 rounded-full bg-gemini-gray-100 px-4 py-2 text-sm text-gemini-gray-600 transition-all hover:bg-gemini-gray-200 active:scale-95"
+                    className="flex min-h-[44px] items-center gap-1 rounded-full bg-gemini-gray-100 px-4 py-2 text-sm text-gemini-gray-600 transition-all hover-hover:bg-gemini-gray-200 active:scale-95"
                     onClick={() => console.log('Open tools')}
                     aria-label="Abrir ferramentas"
                   >
@@ -163,7 +163,7 @@ export function InputBar({
               className={`flex h-11 min-h-[44px] w-11 min-w-[44px] items-center justify-center rounded-full transition-all ${
                 disabled || !message.trim()
                   ? 'cursor-not-allowed bg-gemini-gray-300 text-gemini-gray-500'
-                  : 'bg-gemini-blue text-white hover:bg-gemini-blue-hover active:scale-95'
+                  : 'bg-gemini-blue text-white hover-hover:bg-gemini-blue-hover active:scale-95'
               }`}
               aria-label="Enviar mensagem"
             >
