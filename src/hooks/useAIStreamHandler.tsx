@@ -108,12 +108,19 @@ const useAIChatStreamHandler = () => {
   )
 
   const handleStreamResponse = useCallback(
-    async (input: string | FormData) => {
+    async (input: string | FormData, files?: File[]) => {
       setIsStreaming(true)
 
       const formData = input instanceof FormData ? input : new FormData()
       if (typeof input === 'string') {
         formData.append('message', input)
+      }
+
+      // Adicionar arquivos ao FormData se fornecidos
+      if (files && files.length > 0) {
+        files.forEach((file) => {
+          formData.append('files', file)
+        })
       }
 
       setMessages((prevMessages) => {

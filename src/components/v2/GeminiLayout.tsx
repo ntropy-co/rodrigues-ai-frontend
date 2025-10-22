@@ -89,7 +89,7 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
     setHasMessages(messages.length > 0)
   }, [messages])
 
-  const handleSendMessage = async (msg: string) => {
+  const handleSendMessage = async (msg: string, files?: File[]) => {
     if (!msg.trim() || isStreaming) return
 
     // Se não há sessionId, criar um novo UUID no frontend antes de enviar
@@ -101,7 +101,7 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
       router.push(`/chat/${newSessionId}`)
     }
 
-    await handleStreamResponse(msg)
+    await handleStreamResponse(msg, files)
     setMessage('')
   }
 

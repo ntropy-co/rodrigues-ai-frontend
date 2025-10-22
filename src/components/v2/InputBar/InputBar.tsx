@@ -8,6 +8,7 @@ import { useDocuments } from '@/hooks/useDocuments'
 import { useKeyboardHeight } from '@/hooks/useKeyboardHeight'
 import { useHaptic } from '@/hooks/useHaptic'
 import { FileList } from '@/components/v2/FileUpload/FileList'
+import { AttachedFiles, type AttachedFile } from './AttachedFiles'
 
 // Dynamic import para code splitting - Modal só carrega quando clicado
 // Reduz bundle inicial em ~20KB, pois FileUploadModal raramente é usado
@@ -28,7 +29,7 @@ const FileUploadModal = dynamic(
 )
 
 interface InputBarProps {
-  onSendMessage: (message: string) => void
+  onSendMessage: (message: string, files?: File[]) => void
   message: string
   setMessage: (message: string) => void
   disabled?: boolean
@@ -47,6 +48,8 @@ export function InputBar({
   const { ui } = useUIConfig()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [showUploadModal, setShowUploadModal] = useState(false)
+  const [showAttachModal, setShowAttachModal] = useState(false)
+  const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([])
   const keyboardHeight = useKeyboardHeight()
   const { trigger: triggerHaptic } = useHaptic()
 
@@ -74,9 +77,23 @@ export function InputBar({
   const handleSend = () => {
     if (message.trim() && !disabled) {
       triggerHaptic('medium')
-      onSendMessage(message.trim())
+      const filesToSend = attachedFiles.map((af) => af.file)
+      onSendMessage(message.trim(), filesToSend.length > 0 ? filesToSend : undefined)
       setMessage('')
+      setAttachedFiles([]) // Limpar arquivos anexados após enviar
     }
+  }
+
+  const handleFilesSelected = (files: File[]) => {
+    const newAttachedFiles: AttachedFile[] = files.map((file) => ({
+      file,
+      id: `${Date.now()}-${Math.random()}`
+    }))
+    setAttachedFiles((prev) => [...prev, ...newAttachedFiles])
+  }
+
+  const handleRemoveAttachedFile = (id: string) => {
+    setAttachedFiles((prev) => prev.filter((f) => f.id !== id))
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -130,6 +147,14 @@ export function InputBar({
         <div className="flex items-end gap-3 rounded-2xl border border-border bg-card/100 p-3 shadow-[0_-4px_16px_rgba(0,0,0,0.12)] transition-all focus-within:border-gemini-blue focus-within:shadow-xl backdrop-safe:backdrop-blur-sm dark:shadow-[0_-4px_16px_rgba(0,0,0,0.4)] landscape:p-2">
           {/* Área de texto - 7/10 */}
           <div className="flex-1">
+            {/* Arquivos anexados */}
+            {attachedFiles.length > 0 && (
+              <AttachedFiles
+                files={attachedFiles}
+                onRemove={handleRemoveAttachedFile}
+              />
+            )}
+
             <textarea
               ref={textareaRef}
               value={message}
@@ -154,7 +179,7 @@ export function InputBar({
                 {ui.features.showUploadButton && (
                   <button
                     className="flex min-h-[44px] items-center gap-1 rounded-full bg-gemini-gray-100 px-4 py-2 text-sm text-gemini-gray-600 transition-all active:scale-95 hover-hover:bg-gemini-gray-200"
-                    onClick={() => setShowUploadModal(true)}
+                    onClick={() => setShowAttachModal(true)}
                     aria-label="Adicionar arquivo"
                   >
                     <Plus className="h-4 w-4" />
@@ -202,13 +227,24 @@ export function InputBar({
         </p>
       </div>
 
-      {/* Upload Modal */}
+      {/* Upload Modal (sistema antigo - upload direto) */}
       <FileUploadModal
         isOpen={showUploadModal}
         onClose={() => setShowUploadModal(false)}
         onUploadComplete={handleUploadComplete}
         userId={userId || 'default-user'}
         sessionId={sessionId}
+        mode="upload"
+      />
+
+      {/* Attach Modal (novo sistema - anexar à mensagem) */}
+      <FileUploadModal
+        isOpen={showAttachModal}
+        onClose={() => setShowAttachModal(false)}
+        onFilesSelected={handleFilesSelected}
+        userId={userId || 'default-user'}
+        sessionId={sessionId}
+        mode="attach"
       />
     </div>
   )
