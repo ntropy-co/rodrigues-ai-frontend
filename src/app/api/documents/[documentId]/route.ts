@@ -4,12 +4,13 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { documentId: string } }
+  { params }: { params: Promise<{ documentId: string }> }
 ) {
   try {
-    const url = `${BACKEND_URL}/api/v1/documents/${params.documentId}`
+    const { documentId } = await params
+    const url = `${BACKEND_URL}/api/v1/documents/${documentId}`
 
-    console.log('[API Proxy] DELETE document:', params.documentId)
+    console.log('[API Proxy] DELETE document:', documentId)
 
     const response = await fetch(url, {
       method: 'DELETE',

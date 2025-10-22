@@ -4,18 +4,19 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { agentId: string; sessionId: string } }
+  { params }: { params: Promise<{ agentId: string; sessionId: string }> }
 ) {
   try {
+    const { agentId, sessionId } = await params
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get('user_id')
 
-    let url = `${BACKEND_URL}/api/v1/playground/agents/${params.agentId}/sessions/${params.sessionId}`
+    let url = `${BACKEND_URL}/api/v1/playground/agents/${agentId}/sessions/${sessionId}`
     if (userId) {
       url += `?user_id=${userId}`
     }
 
-    console.log('[API Proxy] GET session:', params.sessionId)
+    console.log('[API Proxy] GET session:', sessionId)
 
     const response = await fetch(url, {
       method: 'GET',
@@ -46,12 +47,13 @@ export async function GET(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { agentId: string; sessionId: string } }
+  { params }: { params: Promise<{ agentId: string; sessionId: string }> }
 ) {
   try {
-    const url = `${BACKEND_URL}/api/v1/playground/agents/${params.agentId}/sessions/${params.sessionId}`
+    const { agentId, sessionId } = await params
+    const url = `${BACKEND_URL}/api/v1/playground/agents/${agentId}/sessions/${sessionId}`
 
-    console.log('[API Proxy] DELETE session:', params.sessionId)
+    console.log('[API Proxy] DELETE session:', sessionId)
 
     const response = await fetch(url, {
       method: 'DELETE',

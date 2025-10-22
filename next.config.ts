@@ -1,5 +1,5 @@
 import type { NextConfig } from 'next'
-import withPWA from 'next-pwa'
+import withPWA from '@ducanh2912/next-pwa'
 
 const nextConfig: NextConfig = {
   devIndicators: false,
@@ -73,57 +73,10 @@ const nextConfig: NextConfig = {
   }
 }
 
-// Configuração PWA com estratégias de cache
+// Configuração PWA
 const pwaConfig = withPWA({
   dest: 'public',
-  register: true,
-  skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development',
-  // Página offline fallback
-  fallbacks: {
-    document: '/offline'
-  },
-  // Estratégias de cache para diferentes recursos
-  runtimeCaching: [
-    {
-      // Cache de respostas da API com NetworkFirst
-      urlPattern:
-        /^https:\/\/rodrigues-ai-backend-production\.up\.railway\.app\/api\/.*/i,
-      handler: 'NetworkFirst',
-      options: {
-        cacheName: 'api-cache',
-        expiration: {
-          maxEntries: 32,
-          maxAgeSeconds: 24 * 60 * 60 // 24 horas
-        },
-        networkTimeoutSeconds: 10
-      }
-    },
-    {
-      // Cache de imagens com CacheFirst (prioriza cache)
-      urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/i,
-      handler: 'CacheFirst',
-      options: {
-        cacheName: 'image-cache',
-        expiration: {
-          maxEntries: 64,
-          maxAgeSeconds: 30 * 24 * 60 * 60 // 30 dias
-        }
-      }
-    },
-    {
-      // Cache de assets estáticos com StaleWhileRevalidate
-      urlPattern: /\.(?:js|css|woff2)$/i,
-      handler: 'StaleWhileRevalidate',
-      options: {
-        cacheName: 'static-cache',
-        expiration: {
-          maxEntries: 32,
-          maxAgeSeconds: 7 * 24 * 60 * 60 // 7 dias
-        }
-      }
-    }
-  ]
+  disable: process.env.NODE_ENV === 'development'
 })
 
 export default pwaConfig(nextConfig)
