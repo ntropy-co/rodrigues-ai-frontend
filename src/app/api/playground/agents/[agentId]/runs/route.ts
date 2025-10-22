@@ -4,13 +4,14 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { agentId: string } }
+  { params }: { params: Promise<{ agentId: string }> }
 ) {
   try {
+    const { agentId } = await params
     console.log(
       '[API Proxy] POST /api/playground/agents/:agentId/runs - Agent run started'
     )
-    console.log('[API Proxy] Agent ID:', params.agentId)
+    console.log('[API Proxy] Agent ID:', agentId)
 
     // Get the FormData from the request
     const formData = await request.formData()
@@ -27,7 +28,7 @@ export async function POST(
 
     // Forward to backend with streaming
     const response = await fetch(
-      `${BACKEND_URL}/api/v1/playground/agents/${params.agentId}/runs`,
+      `${BACKEND_URL}/api/v1/playground/agents/${agentId}/runs`,
       {
         method: 'POST',
         headers,

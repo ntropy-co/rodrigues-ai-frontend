@@ -4,18 +4,19 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
+    const { userId } = await params
     const { searchParams } = new URL(request.url)
     const sessionId = searchParams.get('session_id')
 
-    let url = `${BACKEND_URL}/api/v1/documents/user/${params.userId}`
+    let url = `${BACKEND_URL}/api/v1/documents/user/${userId}`
     if (sessionId) {
       url += `?session_id=${sessionId}`
     }
 
-    console.log('[API Proxy] GET documents for user:', params.userId)
+    console.log('[API Proxy] GET documents for user:', userId)
 
     const response = await fetch(url, {
       method: 'GET',

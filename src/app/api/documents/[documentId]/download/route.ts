@@ -4,12 +4,13 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { documentId: string } }
+  { params }: { params: Promise<{ documentId: string }> }
 ) {
   try {
-    const url = `${BACKEND_URL}/api/v1/documents/${params.documentId}/download`
+    const { documentId } = await params
+    const url = `${BACKEND_URL}/api/v1/documents/${documentId}/download`
 
-    console.log('[API Proxy] Download document:', params.documentId)
+    console.log('[API Proxy] Download document:', documentId)
 
     const response = await fetch(url, {
       method: 'GET',

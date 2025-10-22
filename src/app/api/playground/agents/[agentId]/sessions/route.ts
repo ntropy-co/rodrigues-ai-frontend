@@ -4,23 +4,19 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { agentId: string } }
+  { params }: { params: Promise<{ agentId: string }> }
 ) {
   try {
+    const { agentId } = await params
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get('user_id')
 
-    let url = `${BACKEND_URL}/api/v1/playground/agents/${params.agentId}/sessions`
+    let url = `${BACKEND_URL}/api/v1/playground/agents/${agentId}/sessions`
     if (userId) {
       url += `?user_id=${userId}`
     }
 
-    console.log(
-      '[API Proxy] GET sessions for agent:',
-      params.agentId,
-      'user:',
-      userId
-    )
+    console.log('[API Proxy] GET sessions for agent:', agentId, 'user:', userId)
 
     const response = await fetch(url, {
       method: 'GET',
