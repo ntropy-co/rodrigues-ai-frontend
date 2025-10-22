@@ -18,6 +18,13 @@ export async function POST(
 
     console.log('[API Proxy] FormData fields:', Array.from(formData.keys()))
 
+    // Check if FormData contains files
+    const hasFiles = Array.from(formData.entries()).some(
+      ([key, value]) => key === 'files' && value instanceof File
+    )
+
+    console.log('[API Proxy] Has files:', hasFiles)
+
     // Get authorization header if present
     const authorization = request.headers.get('authorization')
 
@@ -26,16 +33,20 @@ export async function POST(
       headers['Authorization'] = authorization
     }
 
+    // Determine endpoint based on whether files are present
+    const endpoint = hasFiles
+      ? `${BACKEND_URL}/api/v1/custom-playground/agents/${agentId}/runs/with-files`
+      : `${BACKEND_URL}/api/v1/playground/agents/${agentId}/runs`
+
+    console.log('[API Proxy] Routing to:', endpoint)
+
     // Forward to backend with streaming
-    const response = await fetch(
-      `${BACKEND_URL}/api/v1/playground/agents/${agentId}/runs`,
-      {
-        method: 'POST',
-        headers,
-        body: formData
-        // Don't set Content-Type - let browser set it with boundary
-      }
-    )
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers,
+      body: formData
+      // Don't set Content-Type - let browser set it with boundary
+    })
 
     console.log('[API Proxy] Backend response status:', response.status)
     console.log(
