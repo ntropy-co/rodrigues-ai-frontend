@@ -47,6 +47,14 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
         return
       }
 
+      // Se o sessionId da URL é igual ao do store mas ainda não há mensagens,
+      // significa que acabamos de criar essa sessão localmente (UUID gerado no handleSendMessage)
+      // Não precisa buscar do backend pois a sessão ainda não existe lá
+      if (sessionId === currentSessionId && messages.length === 0) {
+        setIsLoadingSession(false)
+        return
+      }
+
       // Se agentId ainda não está disponível, aguardar
       if (!agentId || agentId === 'no-agents') {
         setIsLoadingSession(true)
