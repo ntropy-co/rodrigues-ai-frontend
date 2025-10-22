@@ -303,7 +303,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
           {/* Footer */}
           <div className="border-t border-border p-4">
             <div className="text-center text-xs text-muted-foreground">
-              Rodrigues AI - Especialista em Crédito Agro e CPR
+              Verity Agro - Especialista em Crédito Agro e CPR
             </div>
           </div>
         </div>

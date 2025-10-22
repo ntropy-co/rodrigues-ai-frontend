@@ -44,7 +44,7 @@ export default function LandingPage() {
               <MessageSquare className="h-5 w-5 text-white" />
             </div>
             <span className="text-xl font-bold text-foreground">
-              Rodrigues AI
+              Verity Agro
             </span>
           </div>
           <div className="flex items-center gap-3">
@@ -113,7 +113,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
             <h2 className="mb-12 text-center text-3xl font-bold text-foreground">
-              Por que escolher o Rodrigues AI?
+              Por que escolher o Verity Agro?
             </h2>
 
             <div className="grid gap-8 md:grid-cols-3">
@@ -201,7 +201,7 @@ export default function LandingPage() {
               Pronto para começar?
             </h2>
             <p className="mb-8 text-lg text-muted-foreground">
-              Crie sua conta gratuitamente e comece a consultar o Rodrigues AI
+              Crie sua conta gratuitamente e comece a consultar o Verity Agro
               agora mesmo.
             </p>
             <Button
@@ -220,7 +220,7 @@ export default function LandingPage() {
       <footer className="border-t border-border py-8">
         <div className="container mx-auto px-4">
           <div className="text-center text-sm text-muted-foreground">
-            <p>&copy; 2025 Rodrigues AI. Consultoria Jurídica Powered by AI.</p>
+            <p>&copy; 2025 Verity Agro. Consultoria Jurídica Powered by AI.</p>
             <p className="mt-2">Especialista em CPR e Crédito Rural</p>
           </div>
         </div>

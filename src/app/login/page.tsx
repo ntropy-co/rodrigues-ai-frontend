@@ -178,7 +178,7 @@ export default function LoginPage() {
                 />
               </svg>
             </div>
-            <h1 className="text-3xl font-bold text-foreground">Rodrigues AI</h1>
+            <h1 className="text-3xl font-bold text-foreground">Verity Agro</h1>
             <p className="mt-2 text-sm text-muted-foreground">
               {mode === 'login'
                 ? 'Consultor Jurídico de Crédito Rural'
