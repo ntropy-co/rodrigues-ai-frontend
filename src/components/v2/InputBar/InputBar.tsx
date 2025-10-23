@@ -9,6 +9,7 @@ import { useKeyboardHeight } from '@/hooks/useKeyboardHeight'
 import { useHaptic } from '@/hooks/useHaptic'
 import { FileList } from '@/components/v2/FileUpload/FileList'
 import { AttachedFiles, type AttachedFile } from './AttachedFiles'
+import { SelectedTool, type SelectedToolData } from '../Tools/SelectedTool'
 
 // Dynamic import para code splitting - Modal só carrega quando clicado
 // Reduz bundle inicial em ~20KB, pois FileUploadModal raramente é usado
@@ -28,8 +29,24 @@ const FileUploadModal = dynamic(
   }
 )
 
+// Dynamic import para ToolsModal
+const ToolsModal = dynamic(
+  () =>
+    import('@/components/v2/Tools/ToolsModal').then((m) => ({
+      default: m.ToolsModal
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+      </div>
+    )
+  }
+)
+
 interface InputBarProps {
-  onSendMessage: (message: string, files?: File[]) => void
+  onSendMessage: (message: string, files?: File[], toolId?: string) => void
   message: string
   setMessage: (message: string) => void
   disabled?: boolean
@@ -49,7 +66,9 @@ export function InputBar({
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [showAttachModal, setShowAttachModal] = useState(false)
+  const [showToolsModal, setShowToolsModal] = useState(false)
   const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([])
+  const [selectedTool, setSelectedTool] = useState<SelectedToolData | null>(null)
   const keyboardHeight = useKeyboardHeight()
   const { trigger: triggerHaptic } = useHaptic()
 
@@ -78,9 +97,18 @@ export function InputBar({
     if (message.trim() && !disabled) {
       triggerHaptic('medium')
       const filesToSend = attachedFiles.map((af) => af.file)
-      onSendMessage(message.trim(), filesToSend.length > 0 ? filesToSend : undefined)
+
+      // Enviar tool_id se há ferramenta selecionada (backend irá adicionar instruções)
+      const toolId = selectedTool?.id
+
+      onSendMessage(
+        message.trim(),
+        filesToSend.length > 0 ? filesToSend : undefined,
+        toolId
+      )
       setMessage('')
       setAttachedFiles([]) // Limpar arquivos anexados após enviar
+      // NÃO limpar selectedTool aqui - manter a ferramenta ativa durante a conversa
     }
   }
 
@@ -94,6 +122,14 @@ export function InputBar({
 
   const handleRemoveAttachedFile = (id: string) => {
     setAttachedFiles((prev) => prev.filter((f) => f.id !== id))
+  }
+
+  const handleToolSelect = (toolId: string, toolName: string) => {
+    setSelectedTool({ id: toolId, name: toolName })
+  }
+
+  const handleRemoveTool = () => {
+    setSelectedTool(null)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -147,6 +183,9 @@ export function InputBar({
         <div className="flex items-end gap-3 rounded-2xl border border-border bg-card/100 p-3 shadow-[0_-4px_16px_rgba(0,0,0,0.12)] transition-all focus-within:border-gemini-blue focus-within:shadow-xl backdrop-safe:backdrop-blur-sm dark:shadow-[0_-4px_16px_rgba(0,0,0,0.4)] landscape:p-2">
           {/* Área de texto - 7/10 */}
           <div className="flex-1">
+            {/* Ferramenta selecionada */}
+            <SelectedTool tool={selectedTool} onRemove={handleRemoveTool} />
+
             {/* Arquivos anexados */}
             {attachedFiles.length > 0 && (
               <AttachedFiles
@@ -190,7 +229,7 @@ export function InputBar({
                 {ui.features.showToolsButton && (
                   <button
                     className="flex min-h-[44px] items-center gap-1 rounded-full bg-gemini-gray-100 px-4 py-2 text-sm text-gemini-gray-600 transition-all active:scale-95 hover-hover:bg-gemini-gray-200"
-                    onClick={() => console.log('Open tools')}
+                    onClick={() => setShowToolsModal(true)}
                     aria-label="Abrir ferramentas"
                   >
                     <Wrench className="h-4 w-4" />
@@ -245,6 +284,13 @@ export function InputBar({
         userId={userId || 'default-user'}
         sessionId={sessionId}
         mode="attach"
+      />
+
+      {/* Tools Modal */}
+      <ToolsModal
+        isOpen={showToolsModal}
+        onClose={() => setShowToolsModal(false)}
+        onToolSelect={handleToolSelect}
       />
     </div>
   )

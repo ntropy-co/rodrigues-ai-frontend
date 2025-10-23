@@ -154,20 +154,17 @@ const useChatActions = () => {
       if (status === 200) {
         setIsEndpointActive(true)
         agents = await getAgents()
-        if (agents.length > 0) {
-          if (!agentId || agentId === 'no-agents') {
-            const firstAgent = agents[0]
-            setAgentId(firstAgent.value)
-            setSelectedModel(firstAgent.model.provider || '')
-          }
+        if (agents.length > 0 && (!agentId || agentId === 'no-agents')) {
+          // Apenas setar agentId na primeira vez (se não estiver setado)
+          const firstAgent = agents[0]
+          setAgentId(firstAgent.value)
+          setSelectedModel(firstAgent.model.provider || '')
         }
       } else {
         setIsEndpointActive(false)
       }
       setAgents(agents)
       return agents
-    } catch {
-      setIsEndpointLoading(false)
     } finally {
       setIsEndpointLoading(false)
     }
@@ -185,12 +182,14 @@ const useChatActions = () => {
   // Função para carregar uma sessão pelo ID
   const loadSessionById = useCallback(
     async (sessionId: string): Promise<boolean> => {
-      if (!agentId || agentId === 'no-agents') {
-        return false
-      }
-
       try {
         setIsEndpointLoading(true)
+
+        // Verificar se agentId está disponível
+        if (!agentId) {
+          toast.error('Agente não configurado')
+          return false
+        }
 
         // Usar getSession do useSessionLoader que faz a transformação correta
         const messages = await getSession(sessionId, agentId)
