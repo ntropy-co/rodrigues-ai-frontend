@@ -27,13 +27,6 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const agentId = usePlaygroundStore((state) => state.agentId)
   const currentSessionId = usePlaygroundStore((state) => state.sessionId)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const playgroundInitialized = usePlaygroundStore((state) => state.playgroundInitialized)
-  const setPlaygroundInitialized = usePlaygroundStore((state) => state.setPlaygroundInitialized)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const playgroundInitializing = usePlaygroundStore((state) => state.playgroundInitializing)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const setPlaygroundInitializing = usePlaygroundStore((state) => state.setPlaygroundInitializing)
   const locallyCreatedSessionIds = usePlaygroundStore((state) => state.locallyCreatedSessionIds)
   const addLocallyCreatedSessionId = usePlaygroundStore((state) => state.addLocallyCreatedSessionId)
 
@@ -44,9 +37,7 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
   useEffect(() => {
     if (!playgroundInitializationStarted) {
       playgroundInitializationStarted = true
-      initializePlayground().finally(() => {
-        setPlaygroundInitialized(true)
-      })
+      initializePlayground()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
