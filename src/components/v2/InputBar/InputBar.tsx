@@ -212,32 +212,30 @@ export function InputBar({
               aria-describedby="message-disclaimer"
             />
 
-            {/* Botões de ação (abaixo do texto quando não há mensagem) */}
-            {!message.trim() && (
-              <div className="mt-2 flex gap-2">
-                {ui.features.showUploadButton && (
-                  <button
-                    className="flex min-h-[44px] items-center gap-1 rounded-full bg-gemini-gray-100 px-4 py-2 text-sm text-gemini-gray-600 transition-all active:scale-95 hover-hover:bg-gemini-gray-200"
-                    onClick={() => setShowAttachModal(true)}
-                    aria-label="Adicionar arquivo"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Arquivo
-                  </button>
-                )}
+            {/* Botões de ação (sempre visíveis) */}
+            <div className="mt-2 flex gap-2">
+              {ui.features.showUploadButton && (
+                <button
+                  className="flex min-h-[44px] items-center gap-1 rounded-full bg-gemini-gray-100 px-4 py-2 text-sm text-gemini-gray-600 transition-all active:scale-95 hover-hover:bg-gemini-gray-200"
+                  onClick={() => setShowAttachModal(true)}
+                  aria-label="Adicionar arquivo"
+                >
+                  <Plus className="h-4 w-4" />
+                  Arquivo
+                </button>
+              )}
 
-                {ui.features.showToolsButton && (
-                  <button
-                    className="flex min-h-[44px] items-center gap-1 rounded-full bg-gemini-gray-100 px-4 py-2 text-sm text-gemini-gray-600 transition-all active:scale-95 hover-hover:bg-gemini-gray-200"
-                    onClick={() => setShowToolsModal(true)}
-                    aria-label="Abrir ferramentas"
-                  >
-                    <Wrench className="h-4 w-4" />
-                    Ferramentas
-                  </button>
-                )}
-              </div>
-            )}
+              {ui.features.showToolsButton && (
+                <button
+                  className="flex min-h-[44px] items-center gap-1 rounded-full bg-gemini-gray-100 px-4 py-2 text-sm text-gemini-gray-600 transition-all active:scale-95 hover-hover:bg-gemini-gray-200"
+                  onClick={() => setShowToolsModal(true)}
+                  aria-label="Abrir ferramentas"
+                >
+                  <Wrench className="h-4 w-4" />
+                  Ferramentas
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Ações principais - 3/10 */}
