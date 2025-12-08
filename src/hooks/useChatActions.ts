@@ -1,5 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { useCallback, useEffect } from 'react'
+import { useCallback } from 'react'
 import { toast } from 'sonner'
 
 import { usePlaygroundStore } from '../store'
@@ -13,7 +12,6 @@ import {
 
 const useChatActions = () => {
   const { chatInputRef } = usePlaygroundStore()
-  const selectedEndpoint = usePlaygroundStore((state) => state.selectedEndpoint)
   const sessionId = usePlaygroundStore((state) => state.sessionId)
   const setSessionId = usePlaygroundStore((state) => state.setSessionId)
   const setMessages = usePlaygroundStore((state) => state.setMessages)
@@ -109,22 +107,22 @@ const useChatActions = () => {
 
   const getStatus = useCallback(async () => {
     try {
-      const status = await getPlaygroundStatusAPI(selectedEndpoint)
+      const status = await getPlaygroundStatusAPI()
       return status
     } catch {
       return 503
     }
-  }, [selectedEndpoint])
+  }, [])
 
   const getAgents = useCallback(async () => {
     try {
-      const agents = await getPlaygroundAgentsAPI(selectedEndpoint)
+      const agents = await getPlaygroundAgentsAPI()
       return agents
     } catch {
       toast.error('Error fetching agents')
       return []
     }
-  }, [selectedEndpoint])
+  }, [])
 
   const clearChat = useCallback(() => {
     setMessages([])

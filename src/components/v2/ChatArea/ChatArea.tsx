@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useCallback } from 'react'
-import { ArrowDown } from 'lucide-react'
+import { ArrowDown, Paperclip } from 'lucide-react'
 import { PlaygroundChatMessage } from '@/types/playground'
 import MarkdownRenderer from '@/components/ui/typography/MarkdownRenderer/MarkdownRenderer'
 import { StreamingText } from './StreamingText'
@@ -153,6 +153,20 @@ export function ChatArea({ messages, isStreaming, onRefresh }: ChatAreaProps) {
                     <CopyButton content={message.content} formatted={true} />
                   </div>
                 )}
+
+                {/* Attachment indicator for user messages */}
+                {isUser &&
+                  message.attachedDocuments &&
+                  message.attachedDocuments.length > 0 && (
+                    <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <Paperclip className="h-3 w-3" />
+                      <span>
+                        {message.attachedDocuments.length === 1
+                          ? message.attachedDocuments[0].filename
+                          : `${message.attachedDocuments.length} documentos anexados`}
+                      </span>
+                    </div>
+                  )}
               </div>
             </div>
           )

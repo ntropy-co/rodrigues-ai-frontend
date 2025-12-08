@@ -19,6 +19,7 @@
 
 # production
 /build
+/dist
 
 # misc
 .DS_Store
@@ -74,3 +75,47 @@ public/workbox-*.js
 public/workbox-*.js.map
 public/worker-*.js
 public/worker-*.js.map
+
+# IDE - Editores de código
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+
+# OS - Arquivos do sistema operacional
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Cache e temporários
+.cache/
+.temp/
+.tmp/
+*.cache
+.eslintcache
+.stylelintcache
+.turbo/
+.parcel-cache/
+
+# Package manager
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+.pnpm-store/
+
+# Storybook
+storybook-static/
+.storybook/build/
+
+# Sentry
+.sentryclirc

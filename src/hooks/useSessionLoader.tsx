@@ -27,7 +27,6 @@ interface SessionResponse {
 
 const useSessionLoader = () => {
   const setMessages = usePlaygroundStore((state) => state.setMessages)
-  const selectedEndpoint = usePlaygroundStore((state) => state.selectedEndpoint)
   const setIsSessionsLoading = usePlaygroundStore(
     (state) => state.setIsSessionsLoading
   )
@@ -43,17 +42,13 @@ const useSessionLoader = () => {
 
   const getSessions = useCallback(
     async (agentId: string) => {
-      if (!agentId || !selectedEndpoint) return
+      if (!agentId) return
       const userId = getCurrentUserId()
       if (!userId) return
 
       try {
         setIsSessionsLoading(true)
-        const sessions = await getAllPlaygroundSessionsAPI(
-          selectedEndpoint,
-          agentId,
-          userId
-        )
+        const sessions = await getAllPlaygroundSessionsAPI(agentId, userId)
         setSessionsData(sessions)
       } catch {
         toast.error('Error loading sessions')
@@ -61,12 +56,12 @@ const useSessionLoader = () => {
         setIsSessionsLoading(false)
       }
     },
-    [selectedEndpoint, setSessionsData, setIsSessionsLoading, getCurrentUserId]
+    [setSessionsData, setIsSessionsLoading, getCurrentUserId]
   )
 
   const getSession = useCallback(
     async (sessionId: string, agentId: string) => {
-      if (!sessionId || !agentId || !selectedEndpoint) {
+      if (!sessionId || !agentId) {
         return null
       }
 
@@ -75,7 +70,6 @@ const useSessionLoader = () => {
 
       try {
         const response = (await getPlaygroundSessionAPI(
-          selectedEndpoint,
           agentId,
           sessionId,
           userId
@@ -168,7 +162,7 @@ const useSessionLoader = () => {
         return null
       }
     },
-    [selectedEndpoint, setMessages, getCurrentUserId]
+    [setMessages, getCurrentUserId]
   )
 
   return { getSession, getSessions }

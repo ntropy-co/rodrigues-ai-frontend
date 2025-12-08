@@ -6,7 +6,8 @@ import { usePlaygroundStore } from '../store'
 import {
   RunEvent,
   RunResponseContent,
-  type RunResponse
+  type RunResponse,
+  type AttachedDocument
 } from '@/types/playground'
 import useAIResponseStream from './useAIResponseStream'
 import { ToolCall } from '@/types/playground'
@@ -108,7 +109,10 @@ const useAIChatStreamHandler = () => {
   )
 
   const handleStreamResponse = useCallback(
-    async (input: string | FormData) => {
+    async (
+      input: string | FormData,
+      attachedDocuments?: AttachedDocument[]
+    ) => {
       setIsStreaming(true)
 
       const formData = input instanceof FormData ? input : new FormData()
@@ -134,7 +138,11 @@ const useAIChatStreamHandler = () => {
       addMessage({
         role: 'user',
         content: formData.get('message') as string,
-        created_at: Math.floor(Date.now() / 1000)
+        created_at: Math.floor(Date.now() / 1000),
+        attachedDocuments:
+          attachedDocuments && attachedDocuments.length > 0
+            ? attachedDocuments
+            : undefined
       })
 
       addMessage({

@@ -1,8 +1,8 @@
 /**
- * Next.js API Route - Register Proxy
+ * Next.js API Route - Forgot Password Proxy
  *
- * This route acts as a proxy to the backend registration API
- * to avoid CORS issues when running locally
+ * This route acts as a proxy to the backend forgot password API
+ * to avoid CORS issues
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -11,11 +11,9 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 export async function POST(request: NextRequest) {
   try {
-    // Parse the request body (JSON for register)
     const body = await request.json()
 
-    // Forward the request to the backend
-    const response = await fetch(`${BACKEND_URL}/api/v1/auth/register`, {
+    const response = await fetch(`${BACKEND_URL}/api/v1/auth/forgot-password`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -23,12 +21,11 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify(body)
     })
 
-    // Get the response data
     const data = await response.json()
 
-    // Return the response with the same status code
     return NextResponse.json(data, { status: response.status })
-  } catch {
+  } catch (error) {
+    console.error('[API Route /api/auth/forgot-password] Error:', error)
     return NextResponse.json(
       { detail: 'Internal server error' },
       { status: 500 }

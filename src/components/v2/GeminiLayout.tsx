@@ -9,6 +9,7 @@ import { ChatArea } from './ChatArea/ChatArea'
 import { usePlaygroundStore } from '@/store'
 import useChatActions from '@/hooks/useChatActions'
 import useAIChatStreamHandler from '@/hooks/useAIStreamHandler'
+import { AttachedDocument } from '@/types/playground'
 
 interface GeminiLayoutProps {
   sessionId?: string
@@ -81,7 +82,10 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
     setHasMessages(messages.length > 0)
   }, [messages])
 
-  const handleSendMessage = async (msg: string) => {
+  const handleSendMessage = async (
+    msg: string,
+    attachedDocuments?: AttachedDocument[]
+  ) => {
     if (!msg.trim() || isStreaming) return
 
     // Se não há sessionId, criar um novo UUID no frontend antes de enviar
@@ -93,7 +97,7 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
       router.push(`/chat/${newSessionId}`)
     }
 
-    await handleStreamResponse(msg)
+    await handleStreamResponse(msg, attachedDocuments)
     setMessage('')
   }
 

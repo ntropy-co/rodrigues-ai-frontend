@@ -1,8 +1,8 @@
 {
   "ui": {
     "branding": {
-      "appName": "Rodrigues AI",
-      "displayModelName": "Rodrigues AI",
+      "appName": "Verity",
+      "displayModelName": "Verity",
       "specialization": "Especialista em Crédito Agro e CPR"
     },
     "features": {
@@ -10,6 +10,7 @@
       "showUploadButton": true,
       "showToolsButton": true,
       "showModelSelector": true,
+      "showSuggestions": false,
       "carouselMode": true,
       "minimalSuggestions": true
     },

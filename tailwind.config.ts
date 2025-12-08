@@ -45,7 +45,7 @@ export default {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))'
         },
-        // Cores customizadas do Rodrigues AI
+        // Cores customizadas do Verity
         primaryAccent: 'hsl(var(--primary-accent))',
         brand: 'hsl(var(--brand))',
         positive: 'hsl(var(--positive))',

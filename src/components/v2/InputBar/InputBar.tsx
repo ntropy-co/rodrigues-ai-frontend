@@ -8,6 +8,7 @@ import { useDocuments } from '@/hooks/useDocuments'
 import { useKeyboardHeight } from '@/hooks/useKeyboardHeight'
 import { useHaptic } from '@/hooks/useHaptic'
 import { FileList } from '@/components/v2/FileUpload/FileList'
+import { AttachedDocument } from '@/types/playground'
 
 // Dynamic import para code splitting - Modal só carrega quando clicado
 // Reduz bundle inicial em ~20KB, pois FileUploadModal raramente é usado
@@ -28,7 +29,10 @@ const FileUploadModal = dynamic(
 )
 
 interface InputBarProps {
-  onSendMessage: (message: string) => void
+  onSendMessage: (
+    message: string,
+    attachedDocuments?: AttachedDocument[]
+  ) => void
   message: string
   setMessage: (message: string) => void
   disabled?: boolean
@@ -74,7 +78,17 @@ export function InputBar({
   const handleSend = () => {
     if (message.trim() && !disabled) {
       triggerHaptic('medium')
-      onSendMessage(message.trim())
+      // Convert documents to AttachedDocument format
+      const attachedDocs: AttachedDocument[] = documents.map((doc) => ({
+        id: doc.id,
+        filename: doc.filename,
+        file_size: doc.file_size,
+        mime_type: doc.mime_type
+      }))
+      onSendMessage(
+        message.trim(),
+        attachedDocs.length > 0 ? attachedDocs : undefined
+      )
       setMessage('')
     }
   }
@@ -136,9 +150,7 @@ export function InputBar({
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={
-                disabled
-                  ? 'Aguarde a resposta...'
-                  : 'Pergunte ao Rodrigues AI...'
+                disabled ? 'Aguarde a resposta...' : 'Pergunte ao Verity...'
               }
               className="w-full resize-none border-0 bg-transparent text-foreground placeholder-muted-foreground focus:outline-none focus:ring-0"
               disabled={disabled}
@@ -198,7 +210,7 @@ export function InputBar({
           id="message-disclaimer"
           className="mt-2 text-center text-xs text-gemini-gray-500"
         >
-          Rodrigues AI pode cometer erros. Verifique informações importantes.
+          Verity pode cometer erros. Verifique informações importantes.
         </p>
       </div>
 

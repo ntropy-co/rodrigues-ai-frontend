@@ -43,7 +43,7 @@ interface ModelMessage {
   }
   name: string | null
   role: string
-  tool_args?: unknown
+  tool_args?: Record<string, string | number | boolean | null>
   tool_call_id: string | null
   tool_calls: Array<{
     function: {
@@ -69,9 +69,17 @@ export interface Agent {
   storage?: boolean
 }
 
+interface DocumentMetadata {
+  title?: string
+  source?: string
+  page?: number
+  score?: number
+  [key: string]: string | number | boolean | undefined
+}
+
 interface MessageContext {
   query: string
-  docs?: Array<Record<string, object>>
+  docs?: Array<DocumentMetadata>
   time?: number
 }
 
@@ -168,6 +176,13 @@ export interface ReasoningMessage {
   }
   created_at?: number
 }
+export interface AttachedDocument {
+  id: string
+  filename: string
+  file_size?: number
+  mime_type?: string
+}
+
 export interface PlaygroundChatMessage {
   role: 'user' | 'agent' | 'system' | 'tool'
   content: string
@@ -183,6 +198,7 @@ export interface PlaygroundChatMessage {
   videos?: VideoData[]
   audio?: AudioData[]
   response_audio?: ResponseAudio
+  attachedDocuments?: AttachedDocument[]
 }
 
 export interface ComboboxAgent {

@@ -14,6 +14,7 @@ interface UIConfig {
       showUploadButton: boolean
       showToolsButton: boolean
       showModelSelector: boolean
+      showSuggestions?: boolean
       carouselMode: boolean
       minimalSuggestions: boolean
     }

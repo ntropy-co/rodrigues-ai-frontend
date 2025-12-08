@@ -145,9 +145,8 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
       try {
         // Importar a API de delete
         const { deletePlaygroundSessionAPI } = await import('@/api/playground')
-        const endpoint = process.env.NEXT_PUBLIC_PLAYGROUND_ENDPOINT || ''
 
-        await deletePlaygroundSessionAPI(endpoint, agentId, sessionToDelete.id)
+        await deletePlaygroundSessionAPI(agentId, sessionToDelete.id)
 
         // Refresh sessions list
         await getSessions(agentId)
@@ -303,7 +302,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
           {/* Footer */}
           <div className="border-t border-border p-4">
             <div className="text-center text-xs text-muted-foreground">
-              Rodrigues AI - Especialista em Crédito Agro e CPR
+              Verity - Especialista em Crédito Agro e CPR
             </div>
           </div>
         </div>

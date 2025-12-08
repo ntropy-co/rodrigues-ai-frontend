@@ -15,11 +15,12 @@ export function MainContent({ onSuggestionClick }: MainContentProps) {
   return (
     <main className="flex flex-1 flex-col items-center justify-center px-4 py-8 md:px-6">
       <Greeting />
-      {ui.features.carouselMode ? (
-        <SuggestionCarousel onSuggestionClick={onSuggestionClick} />
-      ) : (
-        <SuggestionCards onSuggestionClick={onSuggestionClick} />
-      )}
+      {ui.features.showSuggestions !== false &&
+        (ui.features.carouselMode ? (
+          <SuggestionCarousel onSuggestionClick={onSuggestionClick} />
+        ) : (
+          <SuggestionCards onSuggestionClick={onSuggestionClick} />
+        ))}
     </main>
   )
 }

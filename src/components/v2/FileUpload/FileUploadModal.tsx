@@ -192,8 +192,13 @@ export function FileUploadModal({
 
           {/* Content */}
           {file ? (
-            <div className="space-y-2">
-              <p className="font-medium text-gemini-gray-900">{file.name}</p>
+            <div className="w-full space-y-2 overflow-hidden">
+              <p
+                className="max-w-full truncate px-2 font-medium text-gemini-gray-900"
+                title={file.name}
+              >
+                {file.name}
+              </p>
               <p className="text-sm text-gemini-gray-600">
                 {(file.size / 1024 / 1024).toFixed(2)} MB
               </p>
