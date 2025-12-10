@@ -3,8 +3,8 @@ export const APIRoutes = {
     `${PlaygroundApiUrl}/api/v1/playground/agents`,
   AgentRun: (PlaygroundApiUrl: string) =>
     `${PlaygroundApiUrl}/api/v1/playground/agents/{agent_id}/runs`,
-  PlaygroundStatus: (PlaygroundApiUrl: string) =>
-    `${PlaygroundApiUrl}/api/v1/playground/status`,
+  HealthCheck: (PlaygroundApiUrl: string) =>
+    `${PlaygroundApiUrl}/api/v1/health`,
   GetPlaygroundSessions: (PlaygroundApiUrl: string, agentId: string) =>
     `${PlaygroundApiUrl}/api/v1/playground/agents/${agentId}/sessions`,
   GetPlaygroundSession: (
