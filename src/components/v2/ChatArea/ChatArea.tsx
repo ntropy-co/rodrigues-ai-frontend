@@ -155,18 +155,16 @@ export function ChatArea({ messages, isStreaming, onRefresh }: ChatAreaProps) {
                 )}
 
                 {/* Attachment indicator for user messages */}
-                {isUser &&
-                  message.attachedDocuments &&
-                  message.attachedDocuments.length > 0 && (
-                    <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
-                      <Paperclip className="h-3 w-3" />
-                      <span>
-                        {message.attachedDocuments.length === 1
-                          ? message.attachedDocuments[0].filename
-                          : `${message.attachedDocuments.length} documentos anexados`}
-                      </span>
-                    </div>
-                  )}
+                {isUser && message.files && message.files.length > 0 && (
+                  <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <Paperclip className="h-3 w-3" />
+                    <span>
+                      {message.files.length === 1
+                        ? message.files[0].name
+                        : `${message.files.length} arquivos anexados`}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           )
