@@ -56,7 +56,7 @@ export function ToolsModal({ isOpen, onClose, onToolSelect }: ToolsModalProps) {
               <button
                 key={tool.id}
                 onClick={() => handleToolClick(tool.id, tool.name)}
-                className="flex w-full items-start gap-4 rounded-xl border border-gemini-gray-200 bg-gemini-gray-50 p-4 text-left transition-all hover-hover:border-gemini-blue hover-hover:bg-gemini-blue/5 active:scale-[0.98]"
+                className="flex w-full items-start gap-4 rounded-xl border border-gemini-gray-200 bg-gemini-gray-50 p-4 text-left transition-all active:scale-[0.98] hover-hover:border-gemini-blue hover-hover:bg-gemini-blue/5"
               >
                 <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gemini-blue/10">
                   <Icon className="h-5 w-5 text-gemini-blue" />

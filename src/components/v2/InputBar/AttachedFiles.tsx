@@ -29,7 +29,7 @@ export function AttachedFiles({ files, onRemove }: AttachedFilesProps) {
   }
 
   return (
-    <div className="flex flex-wrap gap-2 mb-2">
+    <div className="mb-2 flex flex-wrap gap-2">
       {files.map((attachedFile) => (
         <div
           key={attachedFile.id}
@@ -38,8 +38,8 @@ export function AttachedFiles({ files, onRemove }: AttachedFilesProps) {
           <div className="text-muted-foreground">
             {getFileIcon(attachedFile.file)}
           </div>
-          <div className="flex flex-col min-w-0">
-            <span className="truncate font-medium text-foreground max-w-[150px]">
+          <div className="flex min-w-0 flex-col">
+            <span className="max-w-[150px] truncate font-medium text-foreground">
               {attachedFile.file.name}
             </span>
             <span className="text-xs text-muted-foreground">

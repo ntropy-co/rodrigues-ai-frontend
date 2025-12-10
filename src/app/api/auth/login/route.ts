@@ -14,14 +14,8 @@ export async function POST(request: NextRequest) {
     // Parse the request body
     const body = await request.text()
 
-    console.log(
-      '[API Route /api/auth/login] Proxying to:',
-      `${BACKEND_URL}/api/v1/login/access-token`
-    )
-    console.log('[API Route /api/auth/login] Body:', body)
-
     // Forward the request to the backend
-    const response = await fetch(`${BACKEND_URL}/api/v1/login/access-token`, {
+    const response = await fetch(`${BACKEND_URL}/api/v1/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -29,18 +23,12 @@ export async function POST(request: NextRequest) {
       body: body
     })
 
-    console.log(
-      '[API Route /api/auth/login] Backend response status:',
-      response.status
-    )
-
     // Get the response data
     const data = await response.json()
 
     // Return the response with the same status code
     return NextResponse.json(data, { status: response.status })
-  } catch (error) {
-    console.error('[API Route /api/auth/login] Error:', error)
+  } catch {
     return NextResponse.json(
       { detail: 'Internal server error' },
       { status: 500 }

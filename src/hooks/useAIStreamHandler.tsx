@@ -108,7 +108,12 @@ const useAIChatStreamHandler = () => {
   )
 
   const handleStreamResponse = useCallback(
-    async (input: string | FormData, files?: File[], explicitSessionId?: string | null, toolId?: string) => {
+    async (
+      input: string | FormData,
+      files?: File[],
+      explicitSessionId?: string | null,
+      toolId?: string
+    ) => {
       setIsStreaming(true)
 
       const formData = input instanceof FormData ? input : new FormData()
@@ -147,7 +152,7 @@ const useAIChatStreamHandler = () => {
         role: 'user',
         content: formData.get('message') as string,
         created_at: Math.floor(Date.now() / 1000),
-        files: files?.map(file => ({ name: file.name, size: file.size }))
+        files: files?.map((file) => ({ name: file.name, size: file.size }))
       })
 
       addMessage({
@@ -159,7 +164,8 @@ const useAIChatStreamHandler = () => {
       })
 
       // Usar explicitSessionId se fornecido, senão usar sessionId do store
-      const sessionIdToSend = explicitSessionId !== undefined ? explicitSessionId : sessionId
+      const sessionIdToSend =
+        explicitSessionId !== undefined ? explicitSessionId : sessionId
       let lastContent = ''
       let newSessionId = sessionIdToSend
       let runStartedProcessed = false // Flag para processar apenas o primeiro RunStarted
@@ -183,7 +189,7 @@ const useAIChatStreamHandler = () => {
           onChunk: (chunk: RunResponse) => {
             if (
               (chunk.event === RunEvent.RunStarted ||
-              chunk.event === RunEvent.ReasoningStarted) &&
+                chunk.event === RunEvent.ReasoningStarted) &&
               !runStartedProcessed // Só processar o primeiro RunStarted
             ) {
               runStartedProcessed = true // Marcar como processado

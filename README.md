@@ -1,6 +1,6 @@
-# Rodrigues AI Frontend
+# Verity Frontend
 
-> Modern Next.js 15 frontend for Rodrigues AI - Agricultural credit specialist with AI-powered chat interface
+> Modern Next.js 15 frontend for Verity - Agricultural credit specialist with AI-powered chat interface
 
 ## Quick Start
 
@@ -24,12 +24,6 @@ Visit [http://localhost:3000](http://localhost:3000)
 - **Styling**: Tailwind CSS + shadcn/ui
 - **State**: Zustand
 - **Package Manager**: pnpm
-
-## Documentation
-
-- [Full Documentation](docs/README.md) - Complete setup and deployment guide
-- [Contributing Guide](docs/CONTRIBUTING.md) - How to contribute to this project
-- [Architecture](docs/ARCHITECTURE.md) - Technical architecture and structure
 
 ## Project Structure
 

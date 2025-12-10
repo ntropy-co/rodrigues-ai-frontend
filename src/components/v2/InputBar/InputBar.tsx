@@ -68,7 +68,9 @@ export function InputBar({
   const [showAttachModal, setShowAttachModal] = useState(false)
   const [showToolsModal, setShowToolsModal] = useState(false)
   const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([])
-  const [selectedTool, setSelectedTool] = useState<SelectedToolData | null>(null)
+  const [selectedTool, setSelectedTool] = useState<SelectedToolData | null>(
+    null
+  )
   const keyboardHeight = useKeyboardHeight()
   const { trigger: triggerHaptic } = useHaptic()
 

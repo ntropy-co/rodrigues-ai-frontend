@@ -16,14 +16,10 @@ export async function GET(
       url += `?user_id=${userId}`
     }
 
-    console.log('[API Proxy] GET sessions for agent:', agentId, 'user:', userId)
-
     const response = await fetch(url, {
       method: 'GET',
       credentials: 'include'
     })
-
-    console.log('[API Proxy] Sessions response status:', response.status)
 
     if (!response.ok) {
       if (response.status === 404) {
@@ -31,7 +27,6 @@ export async function GET(
         return NextResponse.json([], { status: 200 })
       }
       const errorText = await response.text()
-      console.error('[API Proxy] Sessions error:', errorText)
       return NextResponse.json(
         { detail: errorText || 'Failed to fetch sessions' },
         { status: response.status }
@@ -39,11 +34,8 @@ export async function GET(
     }
 
     const data = await response.json()
-    console.log('[API Proxy] Successfully fetched', data.length, 'sessions')
-
     return NextResponse.json(data, { status: 200 })
-  } catch (error) {
-    console.error('[API Proxy] Error fetching sessions:', error)
+  } catch {
     return NextResponse.json(
       { detail: 'Internal server error' },
       { status: 500 }

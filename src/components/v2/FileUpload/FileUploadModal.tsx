@@ -312,7 +312,9 @@ export function FileUploadModal({
             accept=".pdf,.docx,.doc,.txt,.jpg,.jpeg,.png"
             multiple={mode === 'attach'}
             onChange={(e) =>
-              e.target.files && e.target.files.length > 0 && handleFileSelect(e.target.files)
+              e.target.files &&
+              e.target.files.length > 0 &&
+              handleFileSelect(e.target.files)
             }
             disabled={uploading}
           />

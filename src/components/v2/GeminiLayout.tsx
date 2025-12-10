@@ -27,8 +27,12 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const agentId = usePlaygroundStore((state) => state.agentId)
   const currentSessionId = usePlaygroundStore((state) => state.sessionId)
-  const locallyCreatedSessionIds = usePlaygroundStore((state) => state.locallyCreatedSessionIds)
-  const addLocallyCreatedSessionId = usePlaygroundStore((state) => state.addLocallyCreatedSessionId)
+  const locallyCreatedSessionIds = usePlaygroundStore(
+    (state) => state.locallyCreatedSessionIds
+  )
+  const addLocallyCreatedSessionId = usePlaygroundStore(
+    (state) => state.addLocallyCreatedSessionId
+  )
 
   const { initializePlayground, loadSessionById } = useChatActions()
   const { handleStreamResponse } = useAIChatStreamHandler()
@@ -78,19 +82,30 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
     }
 
     loadSession()
-  }, [sessionId, currentSessionId, loadSessionById, router, locallyCreatedSessionIds])
+  }, [
+    sessionId,
+    currentSessionId,
+    loadSessionById,
+    router,
+    locallyCreatedSessionIds
+  ])
 
   // Verificar se há mensagens para alternar entre MainContent e ChatArea
   useEffect(() => {
     setHasMessages(messages.length > 0)
   }, [messages])
 
-  const handleSendMessage = async (msg: string, files?: File[], toolId?: string) => {
+  const handleSendMessage = async (
+    msg: string,
+    files?: File[],
+    toolId?: string
+  ) => {
     if (!msg.trim() || isStreaming) return
 
     // IMPORTANTE: Ler sessionId diretamente do store no momento do envio
     // para pegar o valor mais atualizado (pode ter sido setado pelo RunStarted)
-    const { sessionId: currentSessionIdFromStore } = usePlaygroundStore.getState()
+    const { sessionId: currentSessionIdFromStore } =
+      usePlaygroundStore.getState()
 
     // Se não há sessionId, criar um novo UUID no frontend antes de enviar
     let sessionIdToUse = currentSessionIdFromStore
