@@ -63,6 +63,8 @@ interface PlaygroundStore {
   ) => void
   isSessionsLoading: boolean
   setIsSessionsLoading: (isSessionsLoading: boolean) => void
+  locallyCreatedSessionIds: Set<string>
+  addLocallyCreatedSessionId: (sessionId: string) => void
 }
 
 export const usePlaygroundStore = create<PlaygroundStore>()(
@@ -113,7 +115,14 @@ export const usePlaygroundStore = create<PlaygroundStore>()(
         })),
       isSessionsLoading: false,
       setIsSessionsLoading: (isSessionsLoading) =>
-        set(() => ({ isSessionsLoading }))
+        set(() => ({ isSessionsLoading })),
+      locallyCreatedSessionIds: new Set<string>(),
+      addLocallyCreatedSessionId: (sessionId) =>
+        set((state) => ({
+          locallyCreatedSessionIds: new Set(state.locallyCreatedSessionIds).add(
+            sessionId
+          )
+        }))
     }),
     {
       name: 'endpoint-storage',

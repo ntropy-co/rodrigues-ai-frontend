@@ -6,8 +6,7 @@ import { usePlaygroundStore } from '../store'
 import {
   RunEvent,
   RunResponseContent,
-  type RunResponse,
-  type AttachedDocument
+  type RunResponse
 } from '@/types/playground'
 import useAIResponseStream from './useAIResponseStream'
 import { ToolCall } from '@/types/playground'
@@ -111,13 +110,27 @@ const useAIChatStreamHandler = () => {
   const handleStreamResponse = useCallback(
     async (
       input: string | FormData,
-      attachedDocuments?: AttachedDocument[]
+      files?: File[],
+      explicitSessionId?: string | null,
+      toolId?: string
     ) => {
       setIsStreaming(true)
 
       const formData = input instanceof FormData ? input : new FormData()
       if (typeof input === 'string') {
         formData.append('message', input)
+      }
+
+      // Adicionar arquivos ao FormData se fornecidos
+      if (files && files.length > 0) {
+        files.forEach((file) => {
+          formData.append('files', file)
+        })
+      }
+
+      // Adicionar tool_id ao FormData se fornecido
+      if (toolId) {
+        formData.append('tool_id', toolId)
       }
 
       setMessages((prevMessages) => {
@@ -139,10 +152,7 @@ const useAIChatStreamHandler = () => {
         role: 'user',
         content: formData.get('message') as string,
         created_at: Math.floor(Date.now() / 1000),
-        attachedDocuments:
-          attachedDocuments && attachedDocuments.length > 0
-            ? attachedDocuments
-            : undefined
+        files: files?.map((file) => ({ name: file.name, size: file.size }))
       })
 
       addMessage({
@@ -153,26 +163,24 @@ const useAIChatStreamHandler = () => {
         created_at: Math.floor(Date.now() / 1000) + 1
       })
 
+      // Usar explicitSessionId se fornecido, senão usar sessionId do store
+      const sessionIdToSend =
+        explicitSessionId !== undefined ? explicitSessionId : sessionId
       let lastContent = ''
-      let newSessionId = sessionId
+      let newSessionId = sessionIdToSend
+      let runStartedProcessed = false // Flag para processar apenas o primeiro RunStarted
       try {
         if (!agentId) return
 
         // Use Next.js API Route as proxy to avoid CORS issues
         const playgroundRunUrl = `/api/playground/agents/${agentId}/runs`
-        console.log('[useAIStreamHandler] Using proxy URL:', playgroundRunUrl)
 
         formData.append('stream', 'true')
         // Só envia session_id se existir, senão backend cria um novo
-        if (sessionId) {
-          formData.append('session_id', sessionId)
+        if (sessionIdToSend) {
+          formData.append('session_id', sessionIdToSend)
         }
         formData.append('user_id', getCurrentUserId())
-
-        console.log(
-          '[useAIStreamHandler] FormData fields:',
-          Array.from(formData.keys())
-        )
 
         await streamResponse({
           apiUrl: playgroundRunUrl,
@@ -180,9 +188,11 @@ const useAIChatStreamHandler = () => {
           token: token || undefined,
           onChunk: (chunk: RunResponse) => {
             if (
-              chunk.event === RunEvent.RunStarted ||
-              chunk.event === RunEvent.ReasoningStarted
+              (chunk.event === RunEvent.RunStarted ||
+                chunk.event === RunEvent.ReasoningStarted) &&
+              !runStartedProcessed // Só processar o primeiro RunStarted
             ) {
+              runStartedProcessed = true // Marcar como processado
               newSessionId = chunk.session_id as string
 
               // Guardar o sessionId ANTIGO para comparação
@@ -207,12 +217,12 @@ const useAIChatStreamHandler = () => {
                 return [sessionData, ...(prevSessionsData ?? [])]
               })
 
-              // Navegar apenas se o sessionId mudou (backend criou um novo)
-              // Se o sessionId foi criado no frontend e enviado, não navegar novamente
+              // Navegar apenas se o sessionId mudou E não estamos já na URL correta
               if (
                 (!previousSessionId ||
                   previousSessionId !== chunk.session_id) &&
-                chunk.session_id
+                chunk.session_id &&
+                window.location.pathname !== `/chat/${chunk.session_id}`
               ) {
                 router.push(`/chat/${chunk.session_id}`)
               }

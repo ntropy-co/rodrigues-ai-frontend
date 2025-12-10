@@ -1,8 +1,8 @@
 {
   "ui": {
     "branding": {
-      "appName": "Verity",
-      "displayModelName": "Verity",
+      "appName": "Verity Agro",
+      "displayModelName": "Verity Agro",
       "specialization": "Especialista em Crédito Agro e CPR"
     },
     "features": {
@@ -10,7 +10,6 @@
       "showUploadButton": true,
       "showToolsButton": true,
       "showModelSelector": true,
-      "showSuggestions": false,
       "carouselMode": true,
       "minimalSuggestions": true
     },

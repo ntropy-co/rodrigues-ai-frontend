@@ -79,7 +79,9 @@ export function InstallPrompt() {
 
           {/* Conteúdo */}
           <div className="flex-1">
-            <h3 className="font-semibold text-foreground">Instalar Verity</h3>
+            <h3 className="font-semibold text-foreground">
+              Instalar Verity Agro
+            </h3>
             <p className="mt-1 text-sm text-muted-foreground">
               Adicione à sua tela inicial para acesso rápido
             </p>

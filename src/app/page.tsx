@@ -43,7 +43,9 @@ export default function LandingPage() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[hsl(var(--gemini-blue))] to-[hsl(var(--gemini-purple))]">
               <MessageSquare className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-foreground">Verity</span>
+            <span className="text-xl font-bold text-foreground">
+              Verity Agro
+            </span>
           </div>
           <div className="flex items-center gap-3">
             <Button
@@ -111,7 +113,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
             <h2 className="mb-12 text-center text-3xl font-bold text-foreground">
-              Por que escolher o Verity?
+              Por que escolher o Verity Agro?
             </h2>
 
             <div className="grid gap-8 md:grid-cols-3">
@@ -199,8 +201,8 @@ export default function LandingPage() {
               Pronto para começar?
             </h2>
             <p className="mb-8 text-lg text-muted-foreground">
-              Crie sua conta gratuitamente e comece a consultar o Verity agora
-              mesmo.
+              Crie sua conta gratuitamente e comece a consultar o Verity Agro
+              agora mesmo.
             </p>
             <Button
               size="lg"
@@ -218,7 +220,7 @@ export default function LandingPage() {
       <footer className="border-t border-border py-8">
         <div className="container mx-auto px-4">
           <div className="text-center text-sm text-muted-foreground">
-            <p>&copy; 2025 Verity. Consultoria Jurídica Powered by AI.</p>
+            <p>&copy; 2025 Verity Agro. Consultoria Jurídica Powered by AI.</p>
             <p className="mt-2">Especialista em CPR e Crédito Rural</p>
           </div>
         </div>

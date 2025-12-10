@@ -13,9 +13,11 @@ import {
 interface FileUploadModalProps {
   isOpen: boolean
   onClose: () => void
-  onUploadComplete: (documentId: string) => void
+  onUploadComplete?: (documentId: string) => void
+  onFilesSelected?: (files: File[]) => void
   userId: string
   sessionId?: string
+  mode?: 'upload' | 'attach' // 'upload' para sistema antigo, 'attach' para anexar à mensagem
 }
 
 const ALLOWED_TYPES = [
@@ -32,10 +34,12 @@ export function FileUploadModal({
   isOpen,
   onClose,
   onUploadComplete,
+  onFilesSelected,
   userId,
-  sessionId
+  sessionId,
+  mode = 'upload' // Padrão é upload para compatibilidade
 }: FileUploadModalProps) {
-  const [file, setFile] = useState<File | null>(null)
+  const [files, setFiles] = useState<File[]>([]) // Mudou de file para files (array)
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [error, setError] = useState<string | null>(null)
@@ -55,14 +59,26 @@ export function FileUploadModal({
     return null
   }
 
-  const handleFileSelect = (selectedFile: File) => {
-    const validationError = validateFile(selectedFile)
-    if (validationError) {
-      setError(validationError)
-      return
+  const handleFileSelect = (selectedFiles: FileList | File[]) => {
+    const filesToAdd = Array.from(selectedFiles)
+
+    // Validar todos os arquivos
+    for (const file of filesToAdd) {
+      const validationError = validateFile(file)
+      if (validationError) {
+        setError(validationError)
+        return
+      }
     }
 
-    setFile(selectedFile)
+    if (mode === 'attach') {
+      // Modo anexar: adiciona à lista existente
+      setFiles((prev) => [...prev, ...filesToAdd])
+    } else {
+      // Modo upload: substitui (comportamento original, só 1 arquivo)
+      setFiles([filesToAdd[0]])
+    }
+
     setError(null)
     setSuccess(false)
   }
@@ -82,61 +98,75 @@ export function FileUploadModal({
     e.stopPropagation()
     setDragActive(false)
 
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFileSelect(e.dataTransfer.files[0])
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleFileSelect(e.dataTransfer.files)
     }
   }
 
-  const handleUpload = async () => {
-    if (!file) return
+  const handleConfirm = async () => {
+    if (files.length === 0) return
 
-    setUploading(true)
-    setError(null)
-    setUploadProgress(0)
-
-    try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('user_id', userId)
-      if (sessionId) {
-        formData.append('session_id', sessionId)
-      }
-      formData.append('auto_process', 'true')
-
-      // Use Next.js API Route as proxy to avoid CORS issues
-      console.log(
-        '[FileUploadModal] Uploading to proxy:',
-        '/api/documents/upload'
-      )
-
-      const response = await fetch('/api/documents/upload', {
-        method: 'POST',
-        body: formData
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.detail || 'Erro ao fazer upload')
-      }
-
-      const data = await response.json()
-
-      setUploadProgress(100)
-      setSuccess(true)
-
-      // Wait a bit to show success message
-      setTimeout(() => {
-        onUploadComplete(data.id)
-        handleClose()
-      }, 1500)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao fazer upload')
-      setUploading(false)
+    // Modo anexar: apenas retorna os arquivos selecionados
+    if (mode === 'attach' && onFilesSelected) {
+      onFilesSelected(files)
+      handleClose()
+      return
     }
+
+    // Modo upload: faz upload do arquivo (comportamento original)
+    if (mode === 'upload' && onUploadComplete) {
+      setUploading(true)
+      setError(null)
+      setUploadProgress(0)
+
+      try {
+        const formData = new FormData()
+        formData.append('file', files[0]) // No modo upload, só envia o primeiro
+        formData.append('user_id', userId)
+        if (sessionId) {
+          formData.append('session_id', sessionId)
+        }
+        formData.append('auto_process', 'true')
+
+        // Use Next.js API Route as proxy to avoid CORS issues
+        console.log(
+          '[FileUploadModal] Uploading to proxy:',
+          '/api/documents/upload'
+        )
+
+        const response = await fetch('/api/documents/upload', {
+          method: 'POST',
+          body: formData
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.detail || 'Erro ao fazer upload')
+        }
+
+        const data = await response.json()
+
+        setUploadProgress(100)
+        setSuccess(true)
+
+        // Wait a bit to show success message
+        setTimeout(() => {
+          onUploadComplete(data.id)
+          handleClose()
+        }, 1500)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Erro ao fazer upload')
+        setUploading(false)
+      }
+    }
+  }
+
+  const removeFile = (index: number) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index))
   }
 
   const handleClose = () => {
-    setFile(null)
+    setFiles([])
     setError(null)
     setSuccess(false)
     setUploading(false)
@@ -145,7 +175,8 @@ export function FileUploadModal({
   }
 
   const getFileIcon = () => {
-    if (!file) return <Upload className="text-gemini-gray-400 h-12 w-12" />
+    if (files.length === 0)
+      return <Upload className="text-gemini-gray-400 h-12 w-12" />
     if (success) return <CheckCircle className="h-12 w-12 text-green-500" />
     if (error) return <AlertCircle className="h-12 w-12 text-red-500" />
     return <FileText className="h-12 w-12 text-gemini-blue" />
@@ -191,38 +222,74 @@ export function FileUploadModal({
           </div>
 
           {/* Content */}
-          {file ? (
-            <div className="w-full space-y-2 overflow-hidden">
-              <p
-                className="max-w-full truncate px-2 font-medium text-gemini-gray-900"
-                title={file.name}
-              >
-                {file.name}
-              </p>
-              <p className="text-sm text-gemini-gray-600">
-                {(file.size / 1024 / 1024).toFixed(2)} MB
-              </p>
-
-              {uploading && (
-                <div className="mt-4">
-                  <div className="h-2 w-full rounded-full bg-gemini-gray-200">
-                    <div
-                      className="h-2 rounded-full bg-gemini-blue transition-all"
-                      style={{ width: `${uploadProgress}%` }}
-                    />
-                  </div>
-                  <p className="mt-2 text-sm text-gemini-gray-600">
-                    {success
-                      ? 'Processado com sucesso!'
-                      : 'Processando documento...'}
+          {files.length > 0 ? (
+            <div className="space-y-2">
+              {mode === 'attach' && files.length > 1 ? (
+                // Modo anexar com múltiplos arquivos - mostrar lista
+                <div className="space-y-2">
+                  <p className="font-medium text-gemini-gray-900">
+                    {files.length} arquivo{files.length > 1 ? 's' : ''}{' '}
+                    selecionado{files.length > 1 ? 's' : ''}
                   </p>
+                  <div className="max-h-40 space-y-1 overflow-y-auto">
+                    {files.map((file, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between rounded bg-gemini-gray-100 px-2 py-1"
+                      >
+                        <div className="flex-1 truncate text-sm">
+                          {file.name}
+                        </div>
+                        <button
+                          onClick={() => removeFile(index)}
+                          className="ml-2 text-gemini-gray-500 hover:text-red-500"
+                          aria-label={`Remover ${file.name}`}
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    className="text-sm font-medium text-gemini-blue hover-hover:underline"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                  >
+                    + Adicionar mais arquivos
+                  </button>
                 </div>
+              ) : (
+                // Modo upload ou um único arquivo - mostrar detalhes
+                <>
+                  <p className="font-medium text-gemini-gray-900">
+                    {files[0].name}
+                  </p>
+                  <p className="text-sm text-gemini-gray-600">
+                    {(files[0].size / 1024 / 1024).toFixed(2)} MB
+                  </p>
+
+                  {uploading && (
+                    <div className="mt-4">
+                      <div className="h-2 w-full rounded-full bg-gemini-gray-200">
+                        <div
+                          className="h-2 rounded-full bg-gemini-blue transition-all"
+                          style={{ width: `${uploadProgress}%` }}
+                        />
+                      </div>
+                      <p className="mt-2 text-sm text-gemini-gray-600">
+                        {success
+                          ? 'Processado com sucesso!'
+                          : 'Processando documento...'}
+                      </p>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           ) : (
             <div className="space-y-2">
               <p className="text-gemini-gray-700">
-                Arraste um arquivo aqui ou{' '}
+                Arraste {mode === 'attach' ? 'arquivos' : 'um arquivo'} aqui ou{' '}
                 <button
                   className="font-medium text-gemini-blue hover-hover:underline"
                   onClick={() => fileInputRef.current?.click()}
@@ -231,7 +298,8 @@ export function FileUploadModal({
                 </button>
               </p>
               <p className="text-sm text-gemini-gray-500">
-                PDF, DOCX, TXT, JPG, PNG (máx. 10MB)
+                PDF, DOCX, TXT, JPG, PNG (máx. 10MB
+                {mode === 'attach' ? ' cada' : ''})
               </p>
             </div>
           )}
@@ -242,8 +310,11 @@ export function FileUploadModal({
             type="file"
             className="hidden"
             accept=".pdf,.docx,.doc,.txt,.jpg,.jpeg,.png"
+            multiple={mode === 'attach'}
             onChange={(e) =>
-              e.target.files?.[0] && handleFileSelect(e.target.files[0])
+              e.target.files &&
+              e.target.files.length > 0 &&
+              handleFileSelect(e.target.files)
             }
             disabled={uploading}
           />
@@ -266,15 +337,21 @@ export function FileUploadModal({
             Cancelar
           </button>
           <button
-            onClick={handleUpload}
-            disabled={!file || uploading || success}
+            onClick={handleConfirm}
+            disabled={files.length === 0 || uploading || success}
             className={`flex-1 rounded-lg px-4 py-2 font-medium text-white transition-colors ${
-              !file || uploading || success
+              files.length === 0 || uploading || success
                 ? 'cursor-not-allowed bg-gemini-gray-300'
                 : 'bg-gemini-blue hover-hover:bg-gemini-blue-hover'
             }`}
           >
-            {uploading ? 'Enviando...' : success ? 'Concluído!' : 'Enviar'}
+            {uploading
+              ? 'Enviando...'
+              : success
+                ? 'Concluído!'
+                : mode === 'attach'
+                  ? 'OK'
+                  : 'Enviar'}
           </button>
         </div>
       </div>

@@ -9,7 +9,9 @@ import { ChatArea } from './ChatArea/ChatArea'
 import { usePlaygroundStore } from '@/store'
 import useChatActions from '@/hooks/useChatActions'
 import useAIChatStreamHandler from '@/hooks/useAIStreamHandler'
-import { AttachedDocument } from '@/types/playground'
+
+// Flag global para garantir que initializePlayground só execute UMA vez
+let playgroundInitializationStarted = false
 
 interface GeminiLayoutProps {
   sessionId?: string
@@ -22,39 +24,51 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
   const [isLoadingSession, setIsLoadingSession] = useState(false)
   const messages = usePlaygroundStore((state) => state.messages)
   const isStreaming = usePlaygroundStore((state) => state.isStreaming)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const agentId = usePlaygroundStore((state) => state.agentId)
   const currentSessionId = usePlaygroundStore((state) => state.sessionId)
+  const locallyCreatedSessionIds = usePlaygroundStore(
+    (state) => state.locallyCreatedSessionIds
+  )
+  const addLocallyCreatedSessionId = usePlaygroundStore(
+    (state) => state.addLocallyCreatedSessionId
+  )
 
   const { initializePlayground, loadSessionById } = useChatActions()
   const { handleStreamResponse } = useAIChatStreamHandler()
 
-  // Inicializar playground na montagem
+  // Inicializar playground APENAS UMA VEZ (usando flag global)
   useEffect(() => {
-    initializePlayground()
-  }, [initializePlayground])
+    if (!playgroundInitializationStarted) {
+      playgroundInitializationStarted = true
+      initializePlayground()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-  // Carregar sessão se sessionId for fornecido E agentId estiver disponível
+  // Carregar sessão se sessionId for fornecido
   useEffect(() => {
     const loadSession = async () => {
-      // Se não há sessionId na URL, resetar loading
+      // Se não há sessionId na URL, não precisa carregar
       if (!sessionId) {
         setIsLoadingSession(false)
         return
       }
 
-      // Se o sessionId da URL é igual ao do store E há mensagens, não precisa carregar
-      if (sessionId === currentSessionId && messages.length > 0) {
+      // Se essa sessão foi criada localmente, não tentar carregar do backend
+      if (locallyCreatedSessionIds.has(sessionId)) {
         setIsLoadingSession(false)
         return
       }
 
-      // Se agentId ainda não está disponível, aguardar
-      if (!agentId || agentId === 'no-agents') {
-        setIsLoadingSession(true)
+      // Se o sessionId da URL é igual ao do store, não precisa carregar novamente
+      // (já está carregado)
+      if (sessionId === currentSessionId) {
+        setIsLoadingSession(false)
         return
       }
 
-      // Carregar sessão do backend
+      // Carregar sessão do backend apenas se for DIFERENTE da atual
       setIsLoadingSession(true)
 
       const success = await loadSessionById(sessionId)
@@ -71,10 +85,9 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
   }, [
     sessionId,
     currentSessionId,
-    agentId,
-    messages.length,
     loadSessionById,
-    router
+    router,
+    locallyCreatedSessionIds
   ])
 
   // Verificar se há mensagens para alternar entre MainContent e ChatArea
@@ -84,20 +97,30 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
 
   const handleSendMessage = async (
     msg: string,
-    attachedDocuments?: AttachedDocument[]
+    files?: File[],
+    toolId?: string
   ) => {
     if (!msg.trim() || isStreaming) return
 
+    // IMPORTANTE: Ler sessionId diretamente do store no momento do envio
+    // para pegar o valor mais atualizado (pode ter sido setado pelo RunStarted)
+    const { sessionId: currentSessionIdFromStore } =
+      usePlaygroundStore.getState()
+
     // Se não há sessionId, criar um novo UUID no frontend antes de enviar
-    if (!currentSessionId) {
+    let sessionIdToUse = currentSessionIdFromStore
+    if (!currentSessionIdFromStore) {
       const newSessionId = crypto.randomUUID()
       const { setSessionId } = usePlaygroundStore.getState()
       setSessionId(newSessionId)
+      // Marcar como criado localmente para NÃO tentar carregar do backend
+      addLocallyCreatedSessionId(newSessionId)
       // Navegar imediatamente para a URL com o novo sessionId
       router.push(`/chat/${newSessionId}`)
+      sessionIdToUse = newSessionId
     }
 
-    await handleStreamResponse(msg, attachedDocuments)
+    await handleStreamResponse(msg, files, sessionIdToUse, toolId)
     setMessage('')
   }
 
