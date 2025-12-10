@@ -9,6 +9,7 @@ import { ChatArea } from './ChatArea/ChatArea'
 import { usePlaygroundStore } from '@/store'
 import useChatActions from '@/hooks/useChatActions'
 import useAIChatStreamHandler from '@/hooks/useAIStreamHandler'
+import { useAuth } from '@/contexts/AuthContext'
 
 // Flag global para garantir que initializePlayground só execute UMA vez
 let playgroundInitializationStarted = false
@@ -19,6 +20,7 @@ interface GeminiLayoutProps {
 
 export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
   const router = useRouter()
+  const { user } = useAuth()
   const [message, setMessage] = useState('')
   const [hasMessages, setHasMessages] = useState(false)
   const [isLoadingSession, setIsLoadingSession] = useState(false)
@@ -155,6 +157,8 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
         message={message}
         setMessage={setMessage}
         disabled={isStreaming || isLoadingSession}
+        userId={user?.id}
+        sessionId={currentSessionId || undefined}
       />
     </div>
   )
