@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     const body = await request.text()
 
     // Forward the request to the backend
-    const response = await fetch(`${BACKEND_URL}/api/v1/login/access-token`, {
+    const response = await fetch(`${BACKEND_URL}/api/v1/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
