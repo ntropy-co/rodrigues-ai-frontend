@@ -56,7 +56,7 @@ export function UserAvatar() {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex h-11 min-h-[44px] w-11 min-w-[44px] items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-purple-600 font-medium text-white shadow-sm transition-shadow hover-hover:shadow-md"
+        className="flex h-11 min-h-[44px] w-11 min-w-[44px] items-center justify-center rounded-full bg-verde-900 font-medium text-white shadow-sm transition-all hover:bg-verde-800 hover-hover:shadow-md"
         aria-label="Menu do usuário"
         title={user?.full_name || user?.email || 'Usuário'}
       >

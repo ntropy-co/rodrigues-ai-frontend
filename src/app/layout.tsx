@@ -1,5 +1,11 @@
 import type { Metadata, Viewport } from 'next'
-import { DM_Mono, Geist, Inter } from 'next/font/google'
+import {
+  DM_Mono,
+  Geist,
+  Inter,
+  Playfair_Display,
+  Crimson_Pro
+} from 'next/font/google'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/components/providers/theme-provider'
@@ -9,7 +15,21 @@ import './globals.css'
 
 const inter = Inter({
   variable: '--font-inter',
+  weight: ['300', '400', '500', '600', '700', '800'],
+  subsets: ['latin'],
+  display: 'swap'
+})
+
+const playfair = Playfair_Display({
+  variable: '--font-playfair',
   weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+  display: 'swap'
+})
+
+const crimson = Crimson_Pro({
+  variable: '--font-crimson',
+  weight: ['200', '300', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
   display: 'swap'
 })
@@ -60,7 +80,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${geistSans.variable} ${dmMono.variable} font-sans antialiased`}
+        className={`${inter.variable} ${playfair.variable} ${crimson.variable} ${geistSans.variable} ${dmMono.variable} font-sans antialiased`}
       >
         <ThemeProvider
           attribute="class"

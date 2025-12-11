@@ -2,15 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import {
-  X,
-  MessageSquare,
-  Trash2,
-  Plus,
-  AlertTriangle,
-  Search,
-  Loader2
-} from 'lucide-react'
+import { X, Trash2, Plus, AlertTriangle, Search, Loader2 } from 'lucide-react'
 import { usePlaygroundStore } from '@/store'
 import { useSessions } from '@/hooks/useSessions'
 import {
@@ -204,7 +196,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
         <div className="flex h-full flex-col">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border p-4">
-            <h2 className="text-lg font-semibold text-foreground">Conversas</h2>
+            <h2 className="text-lg font-semibold text-foreground">Histórico</h2>
             <button
               onClick={onClose}
               className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 transition-colors hover-hover:bg-muted"
@@ -214,103 +206,105 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
             </button>
           </div>
 
-          {/* Nova Conversa */}
-          <div className="border-b border-border p-4">
+          {/* Nova Análise (Enterprise) */}
+          <div className="border-b border-gray-200 p-4 dark:border-gray-800">
             <button
               onClick={handleNewConversation}
-              className="flex w-full items-center gap-3 rounded-lg border border-dashed border-border p-3 transition-colors hover-hover:bg-muted"
+              className="flex w-full items-center justify-start gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-50 hover:text-gray-900 dark:border-gray-700 dark:bg-transparent dark:text-gray-100 dark:hover:bg-gray-800"
             >
-              <Plus className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">
-                Nova Conversa
-              </span>
+              <Plus className="h-4 w-4" />
+              Nova Análise
             </button>
           </div>
 
           {/* Search */}
-          <div className="border-b border-border p-4">
+          <div className="border-b border-gray-200 p-4 dark:border-gray-800">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Buscar conversas..."
+                placeholder="Buscar análises..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-lg border border-input bg-background py-2 pl-9 pr-3 text-sm placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20"
-                aria-label="Buscar conversas"
+                className="w-full rounded-md border border-gray-200 bg-gray-50 py-1.5 pl-9 pr-3 text-xs text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 placeholder:dark:text-gray-600"
+                aria-label="Buscar análises"
               />
             </div>
           </div>
 
-          {/* Lista de Conversas */}
-          <div className="flex-1 space-y-2 overflow-y-auto p-4">
+          {/* Lista de Conversas (Professional History) */}
+          <div className="flex-1 overflow-y-auto">
             {isLoadingSessions || sessionsApiLoading ? (
               <div className="flex flex-col items-center justify-center p-4 text-center">
-                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                <div className="mt-2 text-sm text-muted-foreground">
-                  Carregando conversas...
+                <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+                <div className="mt-2 text-xs text-gray-400">
+                  Carregando análises...
                 </div>
               </div>
             ) : filteredSessions.length === 0 ? (
-              <div className="flex flex-col items-center justify-center p-4 text-center">
-                <div className="text-sm text-muted-foreground">
+              // Empty state
+              <div className="flex flex-col items-center justify-center p-8 text-center">
+                <div className="text-xs text-gray-400">
                   {searchQuery
-                    ? 'Nenhuma conversa encontrada'
-                    : 'Nenhuma conversa anterior'}
+                    ? 'Nenhuma análise encontrada'
+                    : 'Histórico vazio'}
                 </div>
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="mt-2 text-xs text-gemini-blue hover-hover:underline"
-                  >
-                    Limpar busca
-                  </button>
-                )}
               </div>
             ) : (
-              filteredSessions.map((session) => (
-                <div
-                  key={session.id}
-                  onClick={() => handleSessionClick(session.id)}
-                  className={`group flex cursor-pointer items-start gap-3 rounded-lg p-3 transition-colors hover-hover:bg-muted ${
-                    sessionId === session.id ? 'bg-muted' : ''
-                  }`}
-                >
-                  <div className="mt-1 flex-shrink-0">
-                    <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                  </div>
-
-                  <div className="min-w-0 flex-1">
-                    <h3 className="truncate text-sm font-medium text-foreground">
-                      {session.title}
-                    </h3>
-                    <p className="mt-1 truncate text-xs text-muted-foreground">
-                      {session.lastMessage}
-                    </p>
-                    <span className="mt-1 block text-xs text-muted-foreground">
-                      {session.timestamp}
-                    </span>
-                  </div>
-
-                  <button
-                    className="group-hover-hover:opacity-100 flex min-h-[44px] min-w-[44px] flex-shrink-0 items-center justify-center rounded p-2 opacity-0 transition-all hover-hover:bg-destructive/10 hover-hover:text-destructive"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleDeleteClick(session)
-                    }}
-                    aria-label="Deletar conversa"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
+              <div className="p-2">
+                {/* Time section header */}
+                <div className="px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+                  Esta Semana
                 </div>
-              ))
+
+                {filteredSessions.map((session) => (
+                  <div
+                    key={session.id}
+                    onClick={() => handleSessionClick(session.id)}
+                    className={`group mb-0.5 flex cursor-pointer items-center justify-between rounded-md px-3 py-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 ${
+                      sessionId === session.id
+                        ? 'bg-gray-100 dark:bg-gray-800'
+                        : ''
+                    }`}
+                  >
+                    <div className="min-w-0 flex-1 pr-2">
+                      <h3
+                        className={`truncate text-sm ${
+                          sessionId === session.id
+                            ? 'font-medium text-gray-900 dark:text-gray-100'
+                            : 'text-gray-700 dark:text-gray-300'
+                        }`}
+                      >
+                        {session.title}
+                      </h3>
+                      <div className="mt-0.5 flex items-center gap-2">
+                        <span className="text-[10px] text-gray-400">
+                          {session.timestamp}
+                        </span>
+                        {/* Status badge simulado para dar tom enterprise */}
+                        {/* <span className="inline-block h-1.5 w-1.5 rounded-full bg-green-500"></span> */}
+                      </div>
+                    </div>
+
+                    <button
+                      className="p-1 opacity-0 transition-opacity hover:text-red-600 group-hover:opacity-100"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleDeleteClick(session)
+                      }}
+                    >
+                      <Trash2 className="h-3.5 w-3.5 text-gray-400 hover:text-red-500" />
+                    </button>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
 
           {/* Footer */}
           <div className="border-t border-border p-4">
             <div className="text-center text-xs text-muted-foreground">
-              Verity Agro - Especialista em Crédito Agro e CPR
+              Verity Agro — Análise de CPR e Crédito Rural
             </div>
           </div>
         </div>

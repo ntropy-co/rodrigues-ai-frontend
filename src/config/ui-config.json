@@ -3,14 +3,14 @@
     "branding": {
       "appName": "Verity Agro",
       "displayModelName": "Verity Agro",
-      "specialization": "Especialista em Crédito Agro e CPR"
+      "specialization": "Análise de CPR e Crédito Rural"
     },
     "features": {
       "showProButton": false,
       "showUploadButton": true,
       "showToolsButton": true,
-      "showModelSelector": true,
-      "carouselMode": true,
+      "showModelSelector": false,
+      "carouselMode": false,
       "minimalSuggestions": true
     },
     "layout": {
@@ -23,107 +23,75 @@
       }
     },
     "theme": {
-      "primaryColor": "gemini-blue",
-      "accentColor": "green-600",
-      "greetingColor": "gemini-blue"
+      "primaryColor": "primary",
+      "accentColor": "accent",
+      "greetingColor": "foreground"
     }
   },
   "suggestions": [
     {
-      "id": "cpr-fisica-introducao",
-      "title": "O que é CPR Física?",
-      "description": "Entenda os conceitos básicos",
+      "id": "analisar-cpr-fisica",
+      "title": "Analisar CPR Física",
+      "description": "Avaliação completa de documentação",
       "icon": "FileText",
-      "prompt": "Preciso entender o que é uma CPR Física e como ela funciona. Quais são suas principais características?",
-      "category": "basic"
+      "prompt": "Preciso analisar uma CPR Física. Quais são os critérios de avaliação e documentação necessária?",
+      "category": "analysis"
     },
     {
-      "id": "cpr-financeira-introducao",
-      "title": "CPR Financeira vs Física",
-      "description": "Diferenças fundamentais",
-      "icon": "CreditCard",
-      "prompt": "Qual a diferença entre CPR Física e CPR Financeira? Quando usar cada uma?",
-      "category": "basic"
-    },
-    {
-      "id": "garantias-cpr",
-      "title": "Garantias necessárias",
-      "description": "Tipos e documentação",
+      "id": "avaliar-garantias",
+      "title": "Avaliar Garantias",
+      "description": "Análise de ativos e colaterais",
       "icon": "Shield",
-      "prompt": "Quais garantias são aceitas para uma operação de CPR? Como estruturar adequadamente?",
-      "category": "basic"
+      "prompt": "Quais garantias são aceitas para operações de CPR e como avaliar sua adequação?",
+      "category": "analysis"
     },
     {
-      "id": "financiamento-custeio",
-      "title": "Financiamento de custeio",
-      "description": "Planejamento de safra",
-      "icon": "DollarSign",
-      "prompt": "Como estruturar um financiamento de custeio agrícola? Quais os prazos e condições típicas?",
-      "category": "basic"
-    },
-    {
-      "id": "calculo-preco-cpr",
-      "title": "Cálculo de preço CPR",
-      "description": "Metodologia de precificação",
+      "id": "calcular-precificacao",
+      "title": "Calcular Precificação",
+      "description": "Metodologia de cálculo de preço",
       "icon": "Calculator",
-      "prompt": "Como calcular o preço justo de uma CPR considerando taxa de juros, prazo e volatilidade do mercado?",
-      "category": "advanced"
+      "prompt": "Como calcular o preço justo de uma CPR considerando taxa de juros, prazo e volatilidade?",
+      "category": "calculation"
     },
     {
-      "id": "analise-risco-rural",
-      "title": "Análise de risco rural",
-      "description": "Avaliação de viabilidade",
-      "icon": "AlertTriangle",
+      "id": "analise-risco",
+      "title": "Análise de Risco",
+      "description": "Avaliação de viabilidade creditícia",
+      "icon": "AlertCircle",
       "prompt": "Como fazer uma análise completa de risco para crédito rural? Quais variáveis considerar?",
-      "category": "advanced"
+      "category": "analysis"
     },
     {
       "id": "compliance-bacen",
-      "title": "Compliance BACEN",
-      "description": "Regulamentação vigente",
+      "title": "Compliance Regulatório",
+      "description": "Normas BACEN e legislação vigente",
       "icon": "FileCheck",
       "prompt": "Quais as principais normas do BACEN para operações de crédito rural? Como garantir compliance?",
-      "category": "advanced"
+      "category": "compliance"
     },
     {
-      "id": "avalista-fiador",
-      "title": "Avalista vs Fiador",
-      "description": "Responsabilidades legais",
-      "icon": "Users",
-      "prompt": "Qual a diferença jurídica entre avalista e fiador em operações de CPR? Quando usar cada um?",
-      "category": "advanced"
+      "id": "estruturacao-operacao",
+      "title": "Estruturação de Operação",
+      "description": "Montagem de operações complexas",
+      "icon": "Scale",
+      "prompt": "Como estruturar uma operação de CPR com múltiplas garantias e cessão de direitos?",
+      "category": "structuring"
     },
     {
-      "id": "liquidacao-cpr-inadimplencia",
-      "title": "Inadimplência em CPR",
-      "description": "Estratégias de cobrança",
-      "icon": "AlertCircle",
-      "prompt": "Como proceder em caso de inadimplência de CPR? Quais os mecanismos de cobrança e execução?",
-      "category": "expert"
-    },
-    {
-      "id": "estruturacao-complexa",
-      "title": "Estruturação complexa",
-      "description": "Operações sofisticadas",
-      "icon": "Settings",
-      "prompt": "Como estruturar uma operação de CPR com múltiplas garantias e cessão de direitos? Quais cuidados contratuais?",
-      "category": "expert"
-    },
-    {
-      "id": "mercado-futuro-hedge",
-      "title": "Hedge com futuros",
-      "description": "Proteção de preços",
+      "id": "hedge-mercado-futuro",
+      "title": "Estratégias de Hedge",
+      "description": "Proteção de preços com derivativos",
       "icon": "TrendingUp",
-      "prompt": "Como usar o mercado futuro para fazer hedge em operações de CPR? Qual a correlação com preços spot?",
-      "category": "expert"
+      "prompt": "Como usar o mercado futuro para fazer hedge em operações de CPR?",
+      "category": "risk"
     },
     {
       "id": "due-diligence-rural",
-      "title": "Due diligence rural",
-      "description": "Checklist completo",
+      "title": "Due Diligence Rural",
+      "description": "Checklist de verificação completo",
       "icon": "Search",
-      "prompt": "Qual o checklist completo para due diligence em propriedades rurais? Como verificar a capacidade produtiva?",
-      "category": "expert"
+      "prompt": "Qual o checklist completo para due diligence em propriedades rurais?",
+      "category": "analysis"
     }
   ]
 }

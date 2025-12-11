@@ -1,230 +1,246 @@
 /**
- * Authentication API functions
- * Handles all HTTP requests to the backend auth endpoints
+ * Authentication API Client
+ * Centralized API calls for authentication operations
  */
 
 import type {
   AuthResponse,
-  ForgotPasswordRequest,
   LoginRequest,
-  MessageResponse,
-  RegisterRequest,
-  ResetPasswordRequest,
-  TokenValidation,
-  User
-} from '@/types/auth'
+  SignupRequest,
+  PasswordResetRequest,
+  NewPasswordRequest,
+  InviteValidationResponse,
+  RefreshTokenRequest,
+  RefreshTokenResponse,
+  AuthApiClient
+} from '@/types/auth-api'
+import { AuthError, mapApiError, isNetworkError } from './errors'
+import { getToken, getRefreshToken } from './storage'
+
+// ============================================================================
+// CONFIGURATION
+// ============================================================================
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api'
+
+const AUTH_ENDPOINTS = {
+  LOGIN: '/auth/login',
+  SIGNUP: '/auth/signup',
+  LOGOUT: '/auth/logout',
+  REFRESH: '/auth/refresh',
+  VALIDATE_INVITE: '/auth/invite/validate',
+  PASSWORD_RESET_REQUEST: '/auth/password/reset-request',
+  PASSWORD_RESET: '/auth/password/reset'
+} as const
+
+// ============================================================================
+// FETCH WRAPPER
+// ============================================================================
+
+interface FetchOptions extends RequestInit {
+  authenticated?: boolean
+}
+
+async function authFetch<T>(
+  endpoint: string,
+  options: FetchOptions = {}
+): Promise<T> {
+  const { authenticated = false, ...fetchOptions } = options
+
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+    ...fetchOptions.headers
+  }
+
+  // Add auth header if authenticated request
+  if (authenticated) {
+    const token = getToken()
+    if (token) {
+      ;(headers as Record<string, string>)['Authorization'] = `Bearer ${token}`
+    }
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      ...fetchOptions,
+      headers
+    })
+
+    // Handle no-content responses
+    if (response.status === 204) {
+      return {} as T
+    }
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw mapApiError({
+        code: data.code,
+        message: data.message,
+        status: response.status,
+        details: data.details
+      })
+    }
+
+    return data as T
+  } catch (error) {
+    if (error instanceof AuthError) {
+      throw error
+    }
+
+    if (isNetworkError(error)) {
+      throw new AuthError('network_error')
+    }
+
+    throw new AuthError('unknown_error', (error as Error).message)
+  }
+}
+
+// ============================================================================
+// API CLIENT IMPLEMENTATION
+// ============================================================================
 
 /**
  * Login with email and password
- * Uses OAuth2 standard endpoint /login/access-token
  */
-export async function loginApi(
-  credentials: LoginRequest
-): Promise<AuthResponse> {
-  const formData = new URLSearchParams()
-  formData.append('username', credentials.username)
-  formData.append('password', credentials.password)
-
-  try {
-    const loginUrl = '/api/auth/login'
-
-    const response = await fetch(loginUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      credentials: 'include',
-      body: formData
-    })
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => null)
-
-      if (response.status === 401) {
-        throw new Error('Email ou senha incorretos')
-      } else if (response.status === 422) {
-        throw new Error('Formato de email ou senha inválido')
-      } else if (response.status === 429) {
-        throw new Error('Muitas tentativas. Aguarde alguns minutos')
-      } else if (response.status >= 500) {
-        throw new Error('Erro no servidor. Tente novamente em alguns instantes')
-      }
-
-      throw new Error(error?.detail || 'Erro ao fazer login')
-    }
-
-    return response.json()
-  } catch (error) {
-    if (error instanceof TypeError && error.message.includes('fetch')) {
-      throw new Error(
-        'Erro de conexão. Verifique sua internet e tente novamente'
-      )
-    }
-    throw error
-  }
-}
-
-/**
- * Register a new user
- */
-export async function registerApi(data: RegisterRequest): Promise<User> {
-  try {
-    const registerUrl = '/api/auth/register'
-
-    const response = await fetch(registerUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include',
-      body: JSON.stringify(data)
-    })
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => null)
-
-      if (response.status === 400) {
-        if (error?.detail?.toLowerCase().includes('already registered')) {
-          throw new Error(
-            'Este email já está cadastrado. Tente fazer login ou use outro email.'
-          )
-        }
-        throw new Error(error?.detail || 'Email já está em uso')
-      } else if (response.status === 422) {
-        throw new Error('Dados de registro inválidos. Verifique os campos')
-      } else if (response.status >= 500) {
-        throw new Error('Erro no servidor. Tente novamente em alguns instantes')
-      }
-
-      throw new Error(error?.detail || 'Não foi possível criar a conta')
-    }
-
-    return response.json()
-  } catch (error) {
-    if (error instanceof TypeError && error.message.includes('fetch')) {
-      throw new Error(
-        'Erro de conexão. Verifique sua internet e tente novamente'
-      )
-    }
-    throw error
-  }
-}
-
-/**
- * Get current authenticated user
- */
-export async function getCurrentUserApi(token: string): Promise<User> {
-  const meUrl = '/api/auth/me'
-
-  const response = await fetch(meUrl, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${token}`
-    },
-    credentials: 'include'
-  })
-
-  if (!response.ok) {
-    const error = await response
-      .json()
-      .catch(() => ({ detail: 'Erro ao buscar usuário' }))
-    throw new Error(error.detail || 'Não foi possível obter dados do usuário')
-  }
-
-  return response.json()
-}
-
-/**
- * Logout (client-side token removal, server just returns success)
- */
-export async function logoutApi(token: string): Promise<MessageResponse> {
-  const logoutUrl = '/api/auth/logout'
-
-  const response = await fetch(logoutUrl, {
+export async function login(data: LoginRequest): Promise<AuthResponse> {
+  return authFetch<AuthResponse>(AUTH_ENDPOINTS.LOGIN, {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`
-    },
-    credentials: 'include'
+    body: JSON.stringify(data)
   })
+}
 
-  if (!response.ok) {
-    const error = await response
-      .json()
-      .catch(() => ({ message: 'Erro ao fazer logout' }))
-    throw new Error(error.message || 'Não foi possível fazer logout')
+/**
+ * Register new user with invite token
+ */
+export async function signup(data: SignupRequest): Promise<AuthResponse> {
+  return authFetch<AuthResponse>(AUTH_ENDPOINTS.SIGNUP, {
+    method: 'POST',
+    body: JSON.stringify(data)
+  })
+}
+
+/**
+ * Logout and invalidate session
+ */
+export async function logout(): Promise<void> {
+  try {
+    await authFetch<void>(AUTH_ENDPOINTS.LOGOUT, {
+      method: 'POST',
+      authenticated: true
+    })
+  } catch (error) {
+    // Ignore logout errors - we'll clear local state anyway
+    console.warn('Logout API call failed:', error)
   }
+}
 
-  return response.json()
+/**
+ * Validate invite token
+ */
+export async function validateInvite(
+  token: string
+): Promise<InviteValidationResponse> {
+  return authFetch<InviteValidationResponse>(
+    `${AUTH_ENDPOINTS.VALIDATE_INVITE}?token=${encodeURIComponent(token)}`,
+    { method: 'GET' }
+  )
 }
 
 /**
  * Request password reset email
  */
-export async function forgotPasswordApi(
-  data: ForgotPasswordRequest
-): Promise<MessageResponse> {
-  const response = await fetch('/api/auth/forgot-password', {
+export async function requestPasswordReset(
+  data: PasswordResetRequest
+): Promise<{ success: boolean; message: string }> {
+  return authFetch(AUTH_ENDPOINTS.PASSWORD_RESET_REQUEST, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    credentials: 'include',
     body: JSON.stringify(data)
   })
-
-  if (!response.ok) {
-    const error = await response
-      .json()
-      .catch(() => ({ message: 'Erro ao solicitar reset de senha' }))
-    throw new Error(
-      error.message || 'Não foi possível solicitar reset de senha'
-    )
-  }
-
-  return response.json()
 }
 
 /**
  * Reset password with token
  */
-export async function resetPasswordApi(
-  data: ResetPasswordRequest
-): Promise<MessageResponse> {
-  const response = await fetch('/api/auth/reset-password', {
+export async function resetPassword(
+  data: NewPasswordRequest
+): Promise<{ success: boolean; message: string }> {
+  return authFetch(AUTH_ENDPOINTS.PASSWORD_RESET, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    credentials: 'include',
     body: JSON.stringify(data)
   })
-
-  if (!response.ok) {
-    const error = await response
-      .json()
-      .catch(() => ({ message: 'Erro ao redefinir senha' }))
-    throw new Error(error.message || 'Não foi possível redefinir a senha')
-  }
-
-  return response.json()
 }
 
 /**
- * Validate password reset token
- * Backend uses GET /api/v1/auth/verify-reset-token/{token}
+ * Refresh authentication token
  */
-export async function validateResetTokenApi(
-  token: string
-): Promise<TokenValidation> {
-  const response = await fetch(`/api/auth/verify-reset-token/${token}`, {
-    method: 'GET',
-    credentials: 'include'
-  })
+export async function refreshToken(
+  data?: RefreshTokenRequest
+): Promise<RefreshTokenResponse> {
+  const token = data?.refreshToken || getRefreshToken()
 
-  if (!response.ok) {
-    return { valid: false }
+  if (!token) {
+    throw new AuthError('session_expired')
   }
 
-  return response.json()
+  return authFetch<RefreshTokenResponse>(AUTH_ENDPOINTS.REFRESH, {
+    method: 'POST',
+    body: JSON.stringify({ refreshToken: token })
+  })
 }
+
+// ============================================================================
+// COMPLETE API CLIENT OBJECT
+// ============================================================================
+
+export const authApi: AuthApiClient = {
+  login,
+  signup,
+  logout,
+  validateInvite,
+  requestPasswordReset,
+  resetPassword,
+  refreshToken,
+  // Admin endpoints would be implemented here
+  createInvite: async () => {
+    throw new Error('Not implemented')
+  },
+  revokeInvite: async () => {
+    throw new Error('Not implemented')
+  },
+  listInvites: async () => {
+    throw new Error('Not implemented')
+  }
+}
+
+// ============================================================================
+// BACKWARDS COMPATIBILITY ALIASES (for AuthContext imports)
+// ============================================================================
+
+/** @deprecated Use `login` instead */
+export const loginApi = login
+
+/** @deprecated Use `logout` instead */
+export const logoutApi = logout
+
+/** @deprecated Use `signup` instead */
+export const registerApi = signup
+
+/**
+ * Get current user data
+ */
+export async function getCurrentUserApi(
+  token: string
+): Promise<{ id: string; email: string; name: string; role: string }> {
+  return authFetch<{ id: string; email: string; name: string; role: string }>(
+    '/auth/me',
+    {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  )
+}
+
+export default authApi

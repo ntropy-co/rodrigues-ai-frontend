@@ -9,6 +9,19 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
+/**
+ * Validates if a string is a valid UUID v4
+ */
+function isValidUUID(str: string | null | undefined): boolean {
+  if (!str || typeof str !== 'string') return false
+  const trimmed = str.trim()
+  if (!trimmed) return false
+  // UUID v4 regex pattern
+  const uuidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+  return uuidRegex.test(trimmed)
+}
+
 // Handle CORS preflight requests
 export async function OPTIONS() {
   return new NextResponse(null, {
@@ -44,6 +57,29 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Validate session_id format if provided
+    // Accept: valid UUID, null, undefined, empty string (treated as null)
+    let sanitizedSessionId: string | null = null
+
+    if (session_id !== null && session_id !== undefined && session_id !== '') {
+      // session_id was provided, validate it
+      if (!isValidUUID(session_id)) {
+        console.warn(
+          '[API Route /api/chat] Invalid session_id format:',
+          session_id
+        )
+        return NextResponse.json(
+          {
+            detail:
+              'Formato de sessão inválido. Por favor, inicie uma nova conversa.'
+          },
+          { status: 400 }
+        )
+      }
+      // Sanitize: trim whitespace
+      sanitizedSessionId = String(session_id).trim()
+    }
+
     // Forward the request to the backend (trailing slash required by FastAPI)
     const response = await fetch(`${BACKEND_URL}/api/v1/chat/`, {
       method: 'POST',
@@ -53,7 +89,7 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         message,
-        session_id: session_id || null
+        session_id: sanitizedSessionId
       })
     })
 
