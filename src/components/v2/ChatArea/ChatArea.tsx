@@ -143,7 +143,7 @@ export function ChatArea({ messages, isStreaming, onRefresh }: ChatAreaProps) {
                 {/* Error state */}
                 {message.streamingError && (
                   <div className="mt-2 text-xs text-red-400">
-                    ⚠️ Erro no streaming da resposta
+                    ⚠️ Erro ao enviar mensagem
                   </div>
                 )}
 

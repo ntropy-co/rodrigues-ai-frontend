@@ -57,11 +57,28 @@ export async function POST(request: NextRequest) {
       })
     })
 
+    // Handle error responses from backend
+    if (!response.ok) {
+      let errorDetail = 'Erro ao processar mensagem'
+      try {
+        const errorData = await response.json()
+        errorDetail = errorData.detail || errorDetail
+      } catch {
+        // Backend returned non-JSON (e.g., HTML error page)
+        errorDetail = `Backend error: ${response.status} ${response.statusText}`
+      }
+      console.error('[API Route /api/chat] Backend error:', errorDetail)
+      return NextResponse.json(
+        { detail: errorDetail },
+        { status: response.status }
+      )
+    }
+
     // Get the response data
     const data = await response.json()
 
-    // Return the response with the same status code
-    return NextResponse.json(data, { status: response.status })
+    // Return the response
+    return NextResponse.json(data, { status: 200 })
   } catch (error) {
     console.error('[API Route /api/chat] Error:', error)
     return NextResponse.json(

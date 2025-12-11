@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 import useChatActions from '@/hooks/useChatActions'
 import { usePlaygroundStore } from '../store'
@@ -165,9 +166,10 @@ const useAIChatStreamHandler = () => {
         })
       } catch (error) {
         updateMessagesWithErrorState()
-        setStreamingErrorMessage(
+        const errorMessage =
           error instanceof Error ? error.message : String(error)
-        )
+        setStreamingErrorMessage(errorMessage)
+        toast.error(errorMessage)
       } finally {
         focusChatInput()
         setIsStreaming(false)
