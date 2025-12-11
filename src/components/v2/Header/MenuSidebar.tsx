@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   X,
@@ -8,10 +8,11 @@ import {
   Trash2,
   Plus,
   AlertTriangle,
-  Search
+  Search,
+  Loader2
 } from 'lucide-react'
 import { usePlaygroundStore } from '@/store'
-import useChatActions from '@/hooks/useChatActions'
+import { useSessions } from '@/hooks/useSessions'
 import {
   Dialog,
   DialogContent,
@@ -45,16 +46,26 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
     null
   )
   const [searchQuery, setSearchQuery] = useState('')
+  const [isLoadingSessions, setIsLoadingSessions] = useState(false)
 
-  const sessionsData = usePlaygroundStore((state) => state.sessionsData)
   const setSessionsData = usePlaygroundStore((state) => state.setSessionsData)
 
-  const { createNewSession } = useChatActions()
+  const {
+    fetchSessions,
+    createSession,
+    deleteSession,
+    loading: sessionsApiLoading
+  } = useSessions()
 
-  // Converter sessionsData para o formato local
-  useEffect(() => {
-    if (sessionsData) {
-      const convertedSessions = sessionsData.map((session) => ({
+  // Fetch sessions from API on mount and when sidebar opens
+  const loadSessions = useCallback(async () => {
+    setIsLoadingSessions(true)
+    try {
+      const sessionsFromApi = await fetchSessions()
+      // Update store with sessions
+      setSessionsData(sessionsFromApi)
+      // Convert to local format
+      const convertedSessions = sessionsFromApi.map((session) => ({
         id: session.session_id,
         title: session.title || 'Nova Conversa',
         lastMessage: session.title || '',
@@ -63,10 +74,19 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
         )
       }))
       setSessions(convertedSessions)
-    } else {
-      setSessions([])
+    } catch (error) {
+      console.error('[MenuSidebar] Error loading sessions:', error)
+    } finally {
+      setIsLoadingSessions(false)
     }
-  }, [sessionsData])
+  }, [fetchSessions, setSessionsData])
+
+  // Load sessions when sidebar opens
+  useEffect(() => {
+    if (isOpen) {
+      loadSessions()
+    }
+  }, [isOpen, loadSessions])
 
   const handleSessionClick = async (sessionIdToLoad: string) => {
     if (sessionIdToLoad !== sessionId) {
@@ -79,12 +99,37 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
     }
   }
 
-  const handleNewConversation = () => {
-    // Clear current messages and navigate to new conversation
-    setMessages([])
-    createNewSession()
-    // Navigate to /chat (new conversation)
-    router.push('/chat')
+  const handleNewConversation = async () => {
+    // Create session via API
+    const newSession = await createSession()
+
+    if (newSession) {
+      // Clear current messages and set new session ID
+      setMessages([])
+      setSessionId(newSession.session_id)
+
+      // Add to local sessions list
+      setSessions((prev) => [
+        {
+          id: newSession.session_id,
+          title: newSession.title || 'Nova Conversa',
+          lastMessage: '',
+          timestamp: new Date(newSession.created_at * 1000).toLocaleDateString(
+            'pt-BR'
+          )
+        },
+        ...prev
+      ])
+
+      // Navigate to new session
+      router.push(`/chat/${newSession.session_id}`)
+    } else {
+      // Fallback: just clear and navigate to /chat
+      setMessages([])
+      setSessionId(null)
+      router.push('/chat')
+    }
+
     onClose()
   }
 
@@ -95,16 +140,26 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
 
   const handleConfirmDelete = async () => {
     if (sessionToDelete) {
-      // Remove session from local store (no backend API for sessions)
-      setSessionsData(
-        (prevSessions) =>
-          prevSessions?.filter((s) => s.session_id !== sessionToDelete.id) ??
-          null
-      )
+      // Delete session via API
+      const success = await deleteSession(sessionToDelete.id)
 
-      // If deleted session is current, create a new one
-      if (sessionId === sessionToDelete.id) {
-        handleNewConversation()
+      if (success) {
+        // Remove from local state
+        setSessions((prev) => prev.filter((s) => s.id !== sessionToDelete.id))
+
+        // Update store
+        setSessionsData(
+          (prevSessions) =>
+            prevSessions?.filter((s) => s.session_id !== sessionToDelete.id) ??
+            null
+        )
+
+        // If deleted session is current, navigate to new chat
+        if (sessionId === sessionToDelete.id) {
+          setMessages([])
+          setSessionId(null)
+          router.push('/chat')
+        }
       }
 
       setDeleteDialogOpen(false)
@@ -189,7 +244,14 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
 
           {/* Lista de Conversas */}
           <div className="flex-1 space-y-2 overflow-y-auto p-4">
-            {filteredSessions.length === 0 ? (
+            {isLoadingSessions || sessionsApiLoading ? (
+              <div className="flex flex-col items-center justify-center p-4 text-center">
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                <div className="mt-2 text-sm text-muted-foreground">
+                  Carregando conversas...
+                </div>
+              </div>
+            ) : filteredSessions.length === 0 ? (
               <div className="flex flex-col items-center justify-center p-4 text-center">
                 <div className="text-sm text-muted-foreground">
                   {searchQuery
