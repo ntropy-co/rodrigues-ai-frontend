@@ -25,12 +25,12 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api'
 
 const AUTH_ENDPOINTS = {
   LOGIN: '/auth/login',
-  SIGNUP: '/auth/signup',
+  SIGNUP: '/auth/register',
   LOGOUT: '/auth/logout',
   REFRESH: '/auth/refresh',
   VALIDATE_INVITE: '/auth/invite/validate',
-  PASSWORD_RESET_REQUEST: '/auth/password/reset-request',
-  PASSWORD_RESET: '/auth/password/reset'
+  PASSWORD_RESET_REQUEST: '/auth/forgot-password',
+  PASSWORD_RESET: '/auth/reset-password'
 } as const
 
 // ============================================================================
