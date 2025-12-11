@@ -33,9 +33,6 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
   const locallyCreatedSessionIds = usePlaygroundStore(
     (state) => state.locallyCreatedSessionIds
   )
-  const addLocallyCreatedSessionId = usePlaygroundStore(
-    (state) => state.addLocallyCreatedSessionId
-  )
 
   const { initializePlayground, loadSessionById } = useChatActions()
   const { handleStreamResponse } = useAIChatStreamHandler()
@@ -110,18 +107,10 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
     const { sessionId: currentSessionIdFromStore } =
       usePlaygroundStore.getState()
 
-    // Se não há sessionId, criar um novo UUID no frontend antes de enviar
-    let sessionIdToUse = currentSessionIdFromStore
-    if (!currentSessionIdFromStore) {
-      const newSessionId = crypto.randomUUID()
-      const { setSessionId } = usePlaygroundStore.getState()
-      setSessionId(newSessionId)
-      // Marcar como criado localmente para NÃO tentar carregar do backend
-      addLocallyCreatedSessionId(newSessionId)
-      // Navegar imediatamente para a URL com o novo sessionId
-      router.push(`/chat/${newSessionId}`)
-      sessionIdToUse = newSessionId
-    }
+    // Se não há sessionId, enviar null - o backend criará uma nova sessão
+    // e retornará o session_id na resposta (formato s_xxx)
+    // A navegação para /chat/{session_id} acontece após receber a resposta
+    const sessionIdToUse = currentSessionIdFromStore || null
 
     await handleStreamResponse(msg, files, sessionIdToUse, toolId)
     setMessage('')

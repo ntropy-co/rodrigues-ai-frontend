@@ -10,16 +10,17 @@ import { NextRequest, NextResponse } from 'next/server'
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 /**
- * Validates if a string is a valid UUID v4
+ * Validates if a string is a valid session ID (s_xxx format from backend)
+ * Accepts: null, undefined, empty string (backend will create new session)
+ * Accepts: strings starting with "s_" (existing session from backend)
  */
-function isValidUUID(str: string | null | undefined): boolean {
-  if (!str || typeof str !== 'string') return false
+function isValidSessionId(str: string | null | undefined): boolean {
+  // null/undefined/empty is valid - backend will create a new session
+  if (!str || typeof str !== 'string') return true
   const trimmed = str.trim()
-  if (!trimmed) return false
-  // UUID v4 regex pattern
-  const uuidRegex =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-  return uuidRegex.test(trimmed)
+  if (!trimmed) return true
+  // Session IDs from backend start with "s_" prefix
+  return trimmed.startsWith('s_') && trimmed.length > 3
 }
 
 // Handle CORS preflight requests
@@ -58,12 +59,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate session_id format if provided
-    // Accept: valid UUID, null, undefined, empty string (treated as null)
+    // Accept: null, undefined, empty string (backend will create new session)
+    // Accept: strings starting with "s_" (existing session from backend)
     let sanitizedSessionId: string | null = null
 
     if (session_id !== null && session_id !== undefined && session_id !== '') {
       // session_id was provided, validate it
-      if (!isValidUUID(session_id)) {
+      if (!isValidSessionId(session_id)) {
         console.warn(
           '[API Route /api/chat] Invalid session_id format:',
           session_id

@@ -21,7 +21,8 @@ interface ChatResponse {
 const useAIChatStreamHandler = () => {
   const router = useRouter()
   const setMessages = usePlaygroundStore((state) => state.setMessages)
-  const { addMessage, focusChatInput } = useChatActions()
+  const { addMessage, focusChatInput, saveSessionIdToStorage } =
+    useChatActions()
   const sessionId = usePlaygroundStore((state) => state.sessionId)
   const setSessionId = usePlaygroundStore((state) => state.setSessionId)
   const setStreamingErrorMessage = usePlaygroundStore(
@@ -136,6 +137,7 @@ const useAIChatStreamHandler = () => {
         // Update session ID if backend returned a new one
         if (data.session_id && data.session_id !== sessionId) {
           setSessionId(data.session_id)
+          saveSessionIdToStorage(data.session_id)
           addLocallyCreatedSessionId(data.session_id)
 
           // Add to sessions list
@@ -207,6 +209,7 @@ const useAIChatStreamHandler = () => {
       setStreamingErrorMessage,
       setIsStreaming,
       focusChatInput,
+      saveSessionIdToStorage,
       setSessionsData,
       sessionId,
       setSessionId,
