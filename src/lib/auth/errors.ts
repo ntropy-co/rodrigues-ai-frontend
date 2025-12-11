@@ -124,7 +124,7 @@ export function mapStatusToErrorCode(status: number): AuthErrorCode {
     case 400:
       return 'invalid_credentials'
     case 401:
-      return 'session_expired'
+      return 'invalid_credentials' // Wrong password or email - not session expired
     case 403:
       return 'account_suspended'
     case 404:

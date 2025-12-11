@@ -76,7 +76,7 @@ async function authFetch<T>(
     if (!response.ok) {
       throw mapApiError({
         code: data.code,
-        message: data.message,
+        message: data.message || data.detail, // Backend uses 'detail' for error messages
         status: response.status,
         details: data.details
       })
