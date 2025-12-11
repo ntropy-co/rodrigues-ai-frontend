@@ -25,6 +25,10 @@ const ALLOWED_TYPES = [
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   'application/msword',
   'text/plain',
+  'text/markdown',
+  'text/csv',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/vnd.ms-excel',
   'image/jpeg',
   'image/png'
 ]
@@ -51,7 +55,7 @@ export function FileUploadModal({
 
   const validateFile = (selectedFile: File): string | null => {
     if (!ALLOWED_TYPES.includes(selectedFile.type)) {
-      return 'Tipo de arquivo não permitido. Use PDF, DOCX, TXT ou imagens (JPG, PNG)'
+      return 'Tipo de arquivo não permitido. Use PDF, DOC, TXT, MD, CSV, XLS ou imagens (JPG, PNG)'
     }
     if (selectedFile.size > MAX_SIZE) {
       return `Arquivo muito grande (${(selectedFile.size / 1024 / 1024).toFixed(2)}MB). Máximo: 10MB`
@@ -298,7 +302,7 @@ export function FileUploadModal({
                 </button>
               </p>
               <p className="text-sm text-gemini-gray-500">
-                PDF, DOCX, TXT, JPG, PNG (máx. 10MB
+                PDF, DOC, TXT, MD, CSV, XLS, JPG, PNG (máx. 10MB
                 {mode === 'attach' ? ' cada' : ''})
               </p>
             </div>
@@ -309,7 +313,7 @@ export function FileUploadModal({
             ref={fileInputRef}
             type="file"
             className="hidden"
-            accept=".pdf,.docx,.doc,.txt,.jpg,.jpeg,.png"
+            accept=".pdf,.docx,.doc,.txt,.md,.csv,.xlsx,.xls,.jpg,.jpeg,.png"
             multiple={mode === 'attach'}
             onChange={(e) =>
               e.target.files &&

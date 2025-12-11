@@ -212,17 +212,14 @@ export async function resetPasswordApi(
 
 /**
  * Validate password reset token
+ * Backend uses GET /api/v1/auth/verify-reset-token/{token}
  */
 export async function validateResetTokenApi(
   token: string
 ): Promise<TokenValidation> {
-  const response = await fetch('/api/auth/validate-reset-token', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    credentials: 'include',
-    body: JSON.stringify({ token })
+  const response = await fetch(`/api/auth/verify-reset-token/${token}`, {
+    method: 'GET',
+    credentials: 'include'
   })
 
   if (!response.ok) {
