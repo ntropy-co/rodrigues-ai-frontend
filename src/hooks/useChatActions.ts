@@ -6,7 +6,6 @@ import { type PlaygroundChatMessage } from '@/types/playground'
 
 const useChatActions = () => {
   const { chatInputRef } = usePlaygroundStore()
-  const sessionId = usePlaygroundStore((state) => state.sessionId)
   const setSessionId = usePlaygroundStore((state) => state.setSessionId)
   const setMessages = usePlaygroundStore((state) => state.setMessages)
   const setIsEndpointActive = usePlaygroundStore(
@@ -16,41 +15,29 @@ const useChatActions = () => {
     (state) => state.setIsEndpointLoading
   )
 
-  // Função para gerar um novo session ID (UUID v4)
-  const generateSessionId = useCallback(() => {
-    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-      return crypto.randomUUID()
-    }
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      const r = (Math.random() * 16) | 0
-      const v = c === 'x' ? r : (r & 0x3) | 0x8
-      return v.toString(16)
-    })
-  }, [])
-
-  // Função para salvar session ID no localStorage
-  const saveSessionIdToStorage = useCallback((sessionId: string) => {
+  // Função para salvar session ID no localStorage (usado quando backend retorna session_id)
+  const saveSessionIdToStorage = useCallback((sessionIdToSave: string) => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('rodrigues_current_session_id', sessionId)
+      localStorage.setItem('rodrigues_current_session_id', sessionIdToSave)
     }
   }, [])
 
-  // Função para criar uma nova sessão automaticamente
+  // Função para garantir que sessão existe - agora apenas verifica
+  // O backend cria a sessão automaticamente na primeira mensagem
   const ensureSessionExists = useCallback(() => {
-    if (!sessionId) {
-      const newSessionId = generateSessionId()
-      setSessionId(newSessionId)
-      saveSessionIdToStorage(newSessionId)
-    }
-  }, [sessionId, setSessionId, generateSessionId, saveSessionIdToStorage])
+    // No-op: backend creates session on first message and returns session_id
+    // The session_id will be saved when we receive the response
+  }, [])
 
-  // Função para criar uma nova sessão (sempre nova)
+  // Função para criar uma nova sessão - limpa sessão atual
+  // O backend criará nova sessão na próxima mensagem
   const createNewSession = useCallback(() => {
-    const newSessionId = generateSessionId()
-    setSessionId(newSessionId)
-    saveSessionIdToStorage(newSessionId)
-    return newSessionId
-  }, [generateSessionId, setSessionId, saveSessionIdToStorage])
+    setSessionId(null)
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('rodrigues_current_session_id')
+    }
+    return null
+  }, [setSessionId])
 
   const clearChat = useCallback(() => {
     setMessages([])
@@ -118,7 +105,8 @@ const useChatActions = () => {
     initializePlayground,
     ensureSessionExists,
     createNewSession,
-    loadSessionById
+    loadSessionById,
+    saveSessionIdToStorage
   }
 }
 
