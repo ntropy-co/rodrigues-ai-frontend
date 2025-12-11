@@ -11,7 +11,6 @@ import {
   Search
 } from 'lucide-react'
 import { usePlaygroundStore } from '@/store'
-import useSessionLoader from '@/hooks/useSessionLoader'
 import useChatActions from '@/hooks/useChatActions'
 import {
   Dialog,
@@ -22,7 +21,6 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { SessionSkeletonList } from './SessionSkeleton'
 
 interface ChatSession {
   id: string
@@ -39,64 +37,19 @@ interface MenuSidebarProps {
 export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
   const router = useRouter()
   const [sessions, setSessions] = useState<ChatSession[]>([])
-  const agentId = usePlaygroundStore((state) => state.agentId)
   const sessionId = usePlaygroundStore((state) => state.sessionId)
   const setSessionId = usePlaygroundStore((state) => state.setSessionId)
+  const setMessages = usePlaygroundStore((state) => state.setMessages)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [sessionToDelete, setSessionToDelete] = useState<ChatSession | null>(
     null
   )
-  const [isLoadingSessions, setIsLoadingSessions] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
   const sessionsData = usePlaygroundStore((state) => state.sessionsData)
+  const setSessionsData = usePlaygroundStore((state) => state.setSessionsData)
 
-  const { getSession, getSessions } = useSessionLoader()
   const { createNewSession } = useChatActions()
-
-  // Carregar sessões quando o agente mudar
-  useEffect(() => {
-    const loadSessions = async () => {
-      if (agentId && agentId !== 'no-agents') {
-        setIsLoadingSessions(true)
-        try {
-          await getSessions(agentId)
-        } finally {
-          setIsLoadingSessions(false)
-        }
-      }
-    }
-    loadSessions()
-  }, [agentId, getSessions])
-
-  // Atualizar lista de conversas periodicamente quando o sidebar estiver aberto
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null
-
-    if (isOpen && agentId && agentId !== 'no-agents') {
-      // Atualizar imediatamente quando abrir
-      const loadSessions = async () => {
-        setIsLoadingSessions(true)
-        try {
-          await getSessions(agentId)
-        } finally {
-          setIsLoadingSessions(false)
-        }
-      }
-      loadSessions()
-
-      // Configurar atualização a cada 5 segundos (reduzido de 3 para melhor performance)
-      interval = setInterval(() => {
-        getSessions(agentId) // Sem loading para não piscar
-      }, 5000)
-    }
-
-    return () => {
-      if (interval) {
-        clearInterval(interval)
-      }
-    }
-  }, [isOpen, agentId, getSessions])
 
   // Converter sessionsData para o formato local
   useEffect(() => {
@@ -116,21 +69,21 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
   }, [sessionsData])
 
   const handleSessionClick = async (sessionIdToLoad: string) => {
-    if (agentId && sessionIdToLoad !== sessionId) {
+    if (sessionIdToLoad !== sessionId) {
       setSessionId(sessionIdToLoad)
-      await getSession(sessionIdToLoad, agentId)
-      // Navegar para a URL da sessão
+      // Clear messages - they will be loaded from the conversation
+      setMessages([])
+      // Navigate to session URL
       router.push(`/chat/${sessionIdToLoad}`)
       onClose()
     }
   }
 
   const handleNewConversation = () => {
-    // Limpar mensagens atuais e navegar para nova conversa
-    const { setMessages } = usePlaygroundStore.getState()
+    // Clear current messages and navigate to new conversation
     setMessages([])
     createNewSession()
-    // Navegar para /chat (nova conversa)
+    // Navigate to /chat (new conversation)
     router.push('/chat')
     onClose()
   }
@@ -141,26 +94,21 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
   }
 
   const handleConfirmDelete = async () => {
-    if (sessionToDelete && agentId) {
-      try {
-        // Importar a API de delete
-        const { deletePlaygroundSessionAPI } = await import('@/api/playground')
+    if (sessionToDelete) {
+      // Remove session from local store (no backend API for sessions)
+      setSessionsData(
+        (prevSessions) =>
+          prevSessions?.filter((s) => s.session_id !== sessionToDelete.id) ??
+          null
+      )
 
-        await deletePlaygroundSessionAPI(agentId, sessionToDelete.id)
-
-        // Refresh sessions list
-        await getSessions(agentId)
-
-        // Se a sessão deletada for a atual, criar uma nova
-        if (sessionId === sessionToDelete.id) {
-          handleNewConversation()
-        }
-      } catch (error) {
-        console.error('Error deleting session:', error)
-      } finally {
-        setDeleteDialogOpen(false)
-        setSessionToDelete(null)
+      // If deleted session is current, create a new one
+      if (sessionId === sessionToDelete.id) {
+        handleNewConversation()
       }
+
+      setDeleteDialogOpen(false)
+      setSessionToDelete(null)
     }
   }
 
@@ -169,7 +117,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
     setSessionToDelete(null)
   }
 
-  // Filtrar sessões baseado na busca
+  // Filter sessions based on search
   const filteredSessions = useMemo(() => {
     if (!searchQuery.trim()) return sessions
 
@@ -241,9 +189,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
 
           {/* Lista de Conversas */}
           <div className="flex-1 space-y-2 overflow-y-auto p-4">
-            {isLoadingSessions ? (
-              <SessionSkeletonList />
-            ) : filteredSessions.length === 0 ? (
+            {filteredSessions.length === 0 ? (
               <div className="flex flex-col items-center justify-center p-4 text-center">
                 <div className="text-sm text-muted-foreground">
                   {searchQuery
