@@ -21,7 +21,9 @@ import { getToken, getRefreshToken } from './storage'
 // CONFIGURATION
 // ============================================================================
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api'
+// Always use internal Next.js API routes as proxy to backend
+// This ensures proper request/response format conversion
+const API_BASE_URL = '/api'
 
 const AUTH_ENDPOINTS = {
   LOGIN: '/auth/login',
