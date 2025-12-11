@@ -2,13 +2,7 @@ import { useCallback } from 'react'
 import { toast } from 'sonner'
 
 import { usePlaygroundStore } from '../store'
-import useSessionLoader from './useSessionLoader'
-
-import { ComboboxAgent, type PlaygroundChatMessage } from '@/types/playground'
-import {
-  getPlaygroundAgentsAPI,
-  getPlaygroundStatusAPI
-} from '@/api/playground'
+import { type PlaygroundChatMessage } from '@/types/playground'
 
 const useChatActions = () => {
   const { chatInputRef } = usePlaygroundStore()
@@ -21,57 +15,18 @@ const useChatActions = () => {
   const setIsEndpointLoading = usePlaygroundStore(
     (state) => state.setIsEndpointLoading
   )
-  const setAgents = usePlaygroundStore((state) => state.setAgents)
-  const setSelectedModel = usePlaygroundStore((state) => state.setSelectedModel)
-  const agentId = usePlaygroundStore((state) => state.agentId)
-  const setAgentId = usePlaygroundStore((state) => state.setAgentId)
-
-  // Usar o hook useSessionLoader
-  const { getSession } = useSessionLoader()
-
-  // Função para gerar um novo user ID (UUID)
-  const generateUserId = useCallback(() => {
-    return `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-  }, [])
 
   // Função para gerar um novo session ID (UUID v4)
   const generateSessionId = useCallback(() => {
-    // Use crypto.randomUUID() if available, otherwise fallback
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {
       return crypto.randomUUID()
     }
-    // Fallback UUID v4 generation
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
       const r = (Math.random() * 16) | 0
       const v = c === 'x' ? r : (r & 0x3) | 0x8
       return v.toString(16)
     })
   }, [])
-
-  // Função para salvar user ID no localStorage
-  const saveUserIdToStorage = useCallback((userId: string) => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('rodrigues_user_id', userId)
-    }
-  }, [])
-
-  // Função para carregar user ID do localStorage
-  const loadUserIdFromStorage = useCallback(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('rodrigues_user_id')
-    }
-    return null
-  }, [])
-
-  // Função para garantir que existe um user ID
-  const ensureUserIdExists = useCallback(() => {
-    let userId = loadUserIdFromStorage()
-    if (!userId) {
-      userId = generateUserId()
-      saveUserIdToStorage(userId)
-    }
-    return userId
-  }, [loadUserIdFromStorage, generateUserId, saveUserIdToStorage])
 
   // Função para salvar session ID no localStorage
   const saveSessionIdToStorage = useCallback((sessionId: string) => {
@@ -97,36 +52,8 @@ const useChatActions = () => {
     return newSessionId
   }, [generateSessionId, setSessionId, saveSessionIdToStorage])
 
-  // Função para obter o user ID atual
-  const getCurrentUserId = useCallback(() => {
-    return ensureUserIdExists()
-  }, [ensureUserIdExists])
-
-  // NÃO criar sessão automaticamente - deixar backend criar na primeira mensagem
-  // useEffect REMOVIDO: estava criando sessionId antes de enviar a mensagem
-
-  const getStatus = useCallback(async () => {
-    try {
-      const status = await getPlaygroundStatusAPI()
-      return status
-    } catch {
-      return 503
-    }
-  }, [])
-
-  const getAgents = useCallback(async () => {
-    try {
-      const agents = await getPlaygroundAgentsAPI()
-      return agents
-    } catch {
-      toast.error('Error fetching agents')
-      return []
-    }
-  }, [])
-
   const clearChat = useCallback(() => {
     setMessages([])
-    // Limpar session ID - nova sessão será criada ao enviar primeira mensagem
     setSessionId(null)
   }, [setMessages, setSessionId])
 
@@ -144,62 +71,35 @@ const useChatActions = () => {
     [setMessages]
   )
 
+  // Initialize playground - check if backend is available
   const initializePlayground = useCallback(async () => {
     setIsEndpointLoading(true)
     try {
-      const status = await getStatus()
-      let agents: ComboboxAgent[] = []
-      if (status === 200) {
-        setIsEndpointActive(true)
-        agents = await getAgents()
-        if (agents.length > 0 && (!agentId || agentId === 'no-agents')) {
-          // Apenas setar agentId na primeira vez (se não estiver setado)
-          const firstAgent = agents[0]
-          setAgentId(firstAgent.value)
-          setSelectedModel(firstAgent.model.provider || '')
-        }
-      } else {
-        setIsEndpointActive(false)
+      // Check backend health using the status endpoint (which calls /api/v1/health)
+      const response = await fetch('/api/playground/status')
+      const isActive = response.ok
+
+      setIsEndpointActive(isActive)
+
+      if (!isActive) {
+        toast.error('Backend não disponível')
       }
-      setAgents(agents)
-      return agents
+    } catch {
+      setIsEndpointActive(false)
+      toast.error('Erro ao conectar com o backend')
     } finally {
       setIsEndpointLoading(false)
     }
-  }, [
-    getStatus,
-    getAgents,
-    setIsEndpointActive,
-    setIsEndpointLoading,
-    setAgents,
-    setAgentId,
-    setSelectedModel,
-    agentId
-  ])
+  }, [setIsEndpointActive, setIsEndpointLoading])
 
-  // Função para carregar uma sessão pelo ID
+  // Load session by ID - sessions are now managed by the backend via session_id
   const loadSessionById = useCallback(
-    async (sessionId: string): Promise<boolean> => {
+    async (sessionIdToLoad: string): Promise<boolean> => {
       try {
         setIsEndpointLoading(true)
-
-        // Verificar se agentId está disponível
-        if (!agentId) {
-          toast.error('Agente não configurado')
-          return false
-        }
-
-        // Usar getSession do useSessionLoader que faz a transformação correta
-        const messages = await getSession(sessionId, agentId)
-
-        if (messages && messages.length > 0) {
-          setSessionId(sessionId)
-          return true
-        }
-
-        // Se não há mensagens, considerar como erro
-        toast.error('Sessão não encontrada ou vazia')
-        return false
+        // Just set the session ID - messages will come from chat responses
+        setSessionId(sessionIdToLoad)
+        return true
       } catch (error) {
         console.error('Error loading session:', error)
         toast.error('Falha ao carregar a conversa')
@@ -208,18 +108,16 @@ const useChatActions = () => {
         setIsEndpointLoading(false)
       }
     },
-    [agentId, getSession, setSessionId, setIsEndpointLoading]
+    [setSessionId, setIsEndpointLoading]
   )
 
   return {
     clearChat,
     addMessage,
-    getAgents,
     focusChatInput,
     initializePlayground,
     ensureSessionExists,
     createNewSession,
-    getCurrentUserId,
     loadSessionById
   }
 }

@@ -33,8 +33,14 @@ export function useDocuments(userId: string, sessionId?: string) {
       }
 
       const data = await response.json()
-      console.log('[useDocuments] Fetched', data.length, 'documents')
-      setDocuments(data)
+      // Backend returns { documents: [...], count: N }
+      const docs = data.documents || []
+      console.log(
+        '[useDocuments] Fetched',
+        data.count ?? docs.length,
+        'documents'
+      )
+      setDocuments(docs)
     } catch (err) {
       console.error('[useDocuments] Error:', err)
       setError(err instanceof Error ? err.message : 'Erro desconhecido')
