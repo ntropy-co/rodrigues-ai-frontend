@@ -1,120 +1,77 @@
 'use client'
 
 import {
-  DollarSign,
-  Target,
   FileText,
-  Calendar,
   Scale,
-  AlertTriangle,
-  Clock,
-  TrendingUp
+  Calculator,
+  Shield,
+  TrendingUp,
+  AlertCircle
 } from 'lucide-react'
 
-interface SuggestionCard {
+/**
+ * Quick action card for enterprise CPR analysis workflow.
+ * Renamed from "suggestion" to "action" for professional context.
+ */
+interface QuickAction {
   id: string
   title: string
   description: string
   icon: React.ComponentType<{ className?: string }>
   prompt: string
-  category: 'basic' | 'advanced' | 'expert'
 }
 
-const allSuggestions: SuggestionCard[] = [
-  // Sugestões Básicas
+/**
+ * Professional quick actions for CPR and rural credit analysis.
+ * Uses direct, action-oriented language instead of questions.
+ */
+const quickActions: QuickAction[] = [
   {
-    id: 'cpr-basics',
-    title: 'CPR Básica',
-    description: 'Entenda o que é uma Cédula de Produto Rural',
+    id: 'analisar-cpr-fisica',
+    title: 'Analisar CPR Física',
+    description: 'Upload e análise detalhada de documento',
     icon: FileText,
     prompt:
-      'O que é uma CPR e quais são as principais diferenças entre CPR Física e CPR Financeira?',
-    category: 'basic'
+      'Preciso analisar uma CPR Física. Quais são os critérios de avaliação e documentação necessária?'
   },
   {
-    id: 'credit-options',
-    title: 'Opções de Crédito',
-    description: 'Conheça as linhas de crédito disponíveis',
-    icon: DollarSign,
-    prompt:
-      'Que opções de crédito rural você recomenda para financiar minha próxima safra?',
-    category: 'basic'
-  },
-  {
-    id: 'garantias',
-    title: 'Garantias',
-    description: 'Tipos de garantias aceitas no crédito rural',
+    id: 'comparar-garantias',
+    title: 'Comparar Garantias',
+    description: 'Análise comparativa de colaterais',
     icon: Scale,
     prompt:
-      'Quais tipos de garantias são aceitas para operações de CPR e crédito rural?',
-    category: 'basic'
+      'Quais garantias são aceitas para operações de CPR e como avaliar sua adequação?'
   },
   {
-    id: 'documentation',
-    title: 'Documentação',
-    description: 'Documentos necessários para CPR',
-    icon: Calendar,
+    id: 'verificar-compliance',
+    title: 'Verificar Compliance',
+    description: 'Validação regulatória e normativa',
+    icon: Shield,
     prompt:
-      'Quais documentos preciso para emitir uma CPR? Existe algum prazo específico?',
-    category: 'basic'
+      'Quais as principais normas do BACEN para operações de crédito rural? Como garantir compliance?'
   },
-
-  // Sugestões Avançadas
   {
-    id: 'cpr-execution',
-    title: 'Liquidação de CPR',
-    description: 'Processos e prazos para liquidação',
-    icon: Clock,
+    id: 'calcular-precificacao',
+    title: 'Calcular Precificação',
+    description: 'Metodologia de cálculo de preço',
+    icon: Calculator,
     prompt:
-      'Como funciona o processo de liquidação de uma CPR Física? Quais são os prazos e penalidades em caso de inadimplência?',
-    category: 'advanced'
+      'Como calcular o preço justo de uma CPR considerando taxa de juros, prazo e volatilidade?'
   },
   {
-    id: 'tax-benefits',
-    title: 'Benefícios Fiscais',
-    description: 'Vantagens tributárias do crédito rural',
-    icon: TrendingUp,
-    prompt:
-      'Quais são os principais benefícios fiscais ao utilizar CPR em comparação com outras formas de financiamento rural?',
-    category: 'advanced'
-  },
-  {
-    id: 'risk-assessment',
+    id: 'analise-risco',
     title: 'Análise de Risco',
-    description: 'Avaliação de riscos em operações rurais',
-    icon: AlertTriangle,
+    description: 'Avaliação de viabilidade creditícia',
+    icon: AlertCircle,
     prompt:
-      'Como é feita a análise de risco para aprovação de crédito rural? Quais fatores são considerados prioritários?',
-    category: 'advanced'
+      'Como fazer uma análise completa de risco para crédito rural? Quais variáveis considerar?'
   },
   {
-    id: 'market-prices',
-    title: 'Precificação',
-    description: 'Como definir preços em CPR',
-    icon: Target,
-    prompt:
-      'Como devo precificar minha CPR considerando as oscilações do mercado? Existe alguma estratégia de hedge recomendada?',
-    category: 'advanced'
-  },
-
-  // Sugestões Expert
-  {
-    id: 'legal-framework',
-    title: 'Marco Legal',
-    description: 'Legislação avançada sobre CPR',
-    icon: Scale,
-    prompt:
-      'Explique as principais mudanças trazidas pela Lei 14.421/22 (Nova Lei do Agro) e como ela impacta as operações de CPR existentes.',
-    category: 'expert'
-  },
-  {
-    id: 'complex-structures',
-    title: 'Estruturas Complexas',
-    description: 'Operações estruturadas com CPR',
-    icon: FileText,
-    prompt:
-      'Como estruturar uma operação de CPR com garantia fidejussória envolvendo múltiplas safras e diferentes culturas? Quais os riscos jurídicos?',
-    category: 'expert'
+    id: 'hedge-mercado-futuro',
+    title: 'Estratégias de Hedge',
+    description: 'Proteção de preços com derivativos',
+    icon: TrendingUp,
+    prompt: 'Como usar o mercado futuro para fazer hedge em operações de CPR?'
   }
 ]
 
@@ -122,103 +79,45 @@ interface SuggestionCardsProps {
   onSuggestionClick: (prompt: string) => void
 }
 
-function getRandomSuggestions(): SuggestionCard[] {
-  // Pega sempre 1 básica, 2 avançadas e 1 expert
-  const basic = allSuggestions.filter((s) => s.category === 'basic')
-  const advanced = allSuggestions.filter((s) => s.category === 'advanced')
-  const expert = allSuggestions.filter((s) => s.category === 'expert')
-
-  const randomBasic = basic[Math.floor(Math.random() * basic.length)]
-  const randomAdvanced = advanced.sort(() => 0.5 - Math.random()).slice(0, 2)
-  const randomExpert = expert[Math.floor(Math.random() * expert.length)]
-
-  return [randomBasic, ...randomAdvanced, randomExpert]
-}
-
-function getCategoryColor(category: SuggestionCard['category']) {
-  switch (category) {
-    case 'basic':
-      return {
-        bg: 'bg-green-50',
-        icon: 'text-green-600',
-        border: 'hover-hover:border-green-300'
-      }
-    case 'advanced':
-      return {
-        bg: 'bg-blue-50',
-        icon: 'text-blue-600',
-        border: 'hover-hover:border-blue-300'
-      }
-    case 'expert':
-      return {
-        bg: 'bg-purple-50',
-        icon: 'text-purple-600',
-        border: 'hover-hover:border-purple-300'
-      }
-  }
-}
-
+/**
+ * Displays professional quick action cards for CPR analysis workflows.
+ * Strict Enterprise Finance design: White cards, subtle borders, monochromatic.
+ */
 export function SuggestionCards({ onSuggestionClick }: SuggestionCardsProps) {
-  const suggestions = getRandomSuggestions()
+  // Display top 6 actions in a 3-column grid
+  const displayedActions = quickActions.slice(0, 6)
 
   return (
-    <div className="w-full max-w-4xl">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {suggestions.map((suggestion) => {
-          const Icon = suggestion.icon
-          const colors = getCategoryColor(suggestion.category)
+    <div className="w-full max-w-5xl">
+      {/* Section header */}
+      <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        Ações Rápidas
+      </h2>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {displayedActions.map((action) => {
+          const Icon = action.icon
 
           return (
             <button
-              key={suggestion.id}
-              onClick={() => onSuggestionClick(suggestion.prompt)}
-              className={`flex flex-col items-start rounded-2xl border border-gemini-gray-300 p-4 text-left transition-all ${colors.border} active:scale-[0.98] hover-hover:shadow-sm`}
+              key={action.id}
+              onClick={() => onSuggestionClick(action.prompt)}
+              className="group flex flex-col items-start rounded-lg border border-gray-200 bg-white p-5 text-left transition-all hover:border-gray-300 hover:shadow-sm active:bg-gray-50 dark:border-gray-800 dark:bg-card dark:hover:border-gray-700"
             >
-              <div
-                className={`mb-3 flex h-10 w-10 items-center justify-center rounded-lg ${colors.bg}`}
-              >
-                <Icon className={`h-5 w-5 ${colors.icon}`} />
+              <div className="mb-4 flex h-8 w-8 items-center justify-center rounded bg-gray-100 text-gray-600 group-hover:bg-gray-200 group-hover:text-gray-900 dark:bg-gray-800 dark:text-gray-400 dark:group-hover:bg-gray-700 dark:group-hover:text-gray-100">
+                <Icon className="h-4 w-4" />
               </div>
 
-              <h3 className="mb-2 font-medium text-gemini-gray-900">
-                {suggestion.title}
+              <h3 className="mb-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+                {action.title}
               </h3>
 
-              <p className="text-sm leading-relaxed text-gemini-gray-600">
-                {suggestion.description}
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {action.description}
               </p>
-
-              {/* Badge da categoria */}
-              <div className="mt-2">
-                <span
-                  className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${
-                    suggestion.category === 'basic'
-                      ? 'bg-green-100 text-green-700'
-                      : suggestion.category === 'advanced'
-                        ? 'bg-blue-100 text-blue-700'
-                        : 'bg-purple-100 text-purple-700'
-                  }`}
-                >
-                  {suggestion.category === 'basic'
-                    ? 'Básico'
-                    : suggestion.category === 'advanced'
-                      ? 'Avançado'
-                      : 'Expert'}
-                </span>
-              </div>
             </button>
           )
         })}
-      </div>
-
-      {/* Botão para novas sugestões */}
-      <div className="mt-6 text-center">
-        <button
-          onClick={() => window.location.reload()}
-          className="text-sm text-gemini-blue transition-colors hover-hover:text-gemini-blue-hover"
-        >
-          🔄 Ver novas sugestões
-        </button>
       </div>
     </div>
   )

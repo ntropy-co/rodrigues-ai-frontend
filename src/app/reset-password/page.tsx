@@ -7,7 +7,7 @@ import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { resetPasswordApi } from '@/lib/auth/api'
+import { resetPassword } from '@/lib/auth/api'
 import { toast } from 'sonner'
 
 function ResetPasswordContent() {
@@ -36,7 +36,7 @@ function ResetPasswordContent() {
     setIsSubmitting(true)
 
     try {
-      const response = await resetPasswordApi({ token, new_password: password })
+      const response = await resetPassword({ token, password })
       setIsSuccess(true)
       toast.success(response.message)
 

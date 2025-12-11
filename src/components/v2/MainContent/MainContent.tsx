@@ -1,26 +1,16 @@
-'use client'
-
 import { Greeting } from './Greeting'
-import { SuggestionCards } from './SuggestionCards'
-import { SuggestionCarousel } from './SuggestionCarousel'
-import { useUIConfig } from '@/hooks/useUIConfig'
 
 interface MainContentProps {
-  onSuggestionClick: (suggestion: string) => void
+  onSuggestionClick?: (suggestion: string) => void
 }
 
-export function MainContent({ onSuggestionClick }: MainContentProps) {
-  const { ui } = useUIConfig()
-
+export function MainContent({
+  onSuggestionClick: _onSuggestionClick
+}: MainContentProps) {
+  void _onSuggestionClick // kept for interface compatibility
   return (
-    <main className="flex flex-1 flex-col items-center justify-center px-4 py-8 md:px-6">
+    <main className="flex flex-1 flex-col justify-center px-4 py-8 md:px-12 lg:px-24">
       <Greeting />
-      {ui.features.showSuggestions !== false &&
-        (ui.features.carouselMode ? (
-          <SuggestionCarousel onSuggestionClick={onSuggestionClick} />
-        ) : (
-          <SuggestionCards onSuggestionClick={onSuggestionClick} />
-        ))}
     </main>
   )
 }

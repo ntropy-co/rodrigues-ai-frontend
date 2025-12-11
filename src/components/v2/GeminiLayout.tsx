@@ -6,6 +6,7 @@ import { Header } from './Header/Header'
 import { MainContent } from './MainContent/MainContent'
 import { InputBar } from './InputBar/InputBar'
 import { ChatArea } from './ChatArea/ChatArea'
+import { FilesSidebar } from './FilesSidebar'
 import { usePlaygroundStore } from '@/store'
 import useChatActions from '@/hooks/useChatActions'
 import useAIChatStreamHandler from '@/hooks/useAIStreamHandler'
@@ -132,34 +133,52 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
   }
 
   return (
-    <div className="flex h-screen w-screen flex-col bg-background pb-20 md:pb-24">
-      {/* Header - 8-10% da altura da tela */}
+    <div className="flex h-screen w-screen flex-col bg-verde-50 dark:bg-background">
+      {/* Header - Fixed at top */}
       <Header />
 
-      {/* Main Content ou Chat Area - Flexível */}
-      {isLoadingSession ? (
-        // Loading state - aguardando carregamento da sessão
-        <div className="flex flex-1 items-center justify-center">
-          <div className="text-center">
-            <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-            <p className="text-muted-foreground">Carregando conversa...</p>
+      {/* Main Container - Flex Row to accommodate Sidebar */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left/Center Column - Chat & Input */}
+        <div className="relative flex flex-1 flex-col overflow-hidden">
+          {/* Content Area - Scrollable */}
+          <div className="flex-1 overflow-y-auto">
+            {isLoadingSession ? (
+              // Loading state
+              <div className="flex h-full items-center justify-center">
+                <div className="text-center">
+                  <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-verde-900 border-t-transparent"></div>
+                  <p className="text-verde-700">Carregando conversa...</p>
+                </div>
+              </div>
+            ) : hasMessages ? (
+              // Adjust ChatArea to not have its own scroll if needed,
+              // but typically ChatArea handles its own scrolling.
+              // We might need to ensure ChatArea takes full height.
+              <ChatArea messages={messages} isStreaming={isStreaming} />
+            ) : (
+              <MainContent onSuggestionClick={handleSuggestionClick} />
+            )}
+            {/* Spacer for InputBar height to prevent content being hidden behind floating input */}
+            <div className="h-32 md:h-40" />
+          </div>
+
+          {/* Floating Input Bar - Positioned at bottom */}
+          <div className="z-10 w-full">
+            <InputBar
+              onSendMessage={handleSendMessage}
+              message={message}
+              setMessage={setMessage}
+              disabled={isStreaming || isLoadingSession}
+              userId={user?.id}
+              sessionId={currentSessionId || undefined}
+            />
           </div>
         </div>
-      ) : hasMessages ? (
-        <ChatArea messages={messages} isStreaming={isStreaming} />
-      ) : (
-        <MainContent onSuggestionClick={handleSuggestionClick} />
-      )}
 
-      {/* Input Bar - 10-15% da altura da tela */}
-      <InputBar
-        onSendMessage={handleSendMessage}
-        message={message}
-        setMessage={setMessage}
-        disabled={isStreaming || isLoadingSession}
-        userId={user?.id}
-        sessionId={currentSessionId || undefined}
-      />
+        {/* Right Sidebar - Files */}
+        <FilesSidebar conversationId={currentSessionId || null} />
+      </div>
     </div>
   )
 }

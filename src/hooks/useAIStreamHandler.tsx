@@ -120,8 +120,15 @@ const useAIChatStreamHandler = () => {
         })
 
         if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.detail || 'Erro ao enviar mensagem')
+          let errorMessage = 'Erro ao enviar mensagem'
+          try {
+            const errorData = await response.json()
+            errorMessage = errorData.detail || errorMessage
+          } catch {
+            // Response is not JSON (e.g., HTML error page)
+            errorMessage = `Erro ${response.status}: ${response.statusText}`
+          }
+          throw new Error(errorMessage)
         }
 
         const data: ChatResponse = await response.json()
@@ -167,8 +174,25 @@ const useAIChatStreamHandler = () => {
         })
       } catch (error) {
         updateMessagesWithErrorState()
-        const errorMessage =
+        let errorMessage =
           error instanceof Error ? error.message : String(error)
+
+        // Handle specific error types with better messages
+        if (
+          errorMessage.toLowerCase().includes('sessão') ||
+          errorMessage.toLowerCase().includes('session')
+        ) {
+          errorMessage =
+            'Sessão inválida ou expirada. Por favor, inicie uma nova conversa.'
+          // Clear the invalid session
+          setSessionId(null)
+        } else if (errorMessage.includes('401')) {
+          errorMessage = 'Sua sessão expirou. Por favor, faça login novamente.'
+        } else if (errorMessage.includes('500')) {
+          errorMessage =
+            'Erro interno do servidor. Tente novamente em alguns instantes.'
+        }
+
         setStreamingErrorMessage(errorMessage)
         toast.error(errorMessage)
       } finally {

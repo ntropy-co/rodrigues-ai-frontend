@@ -1,8 +1,6 @@
-'use client'
-
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
-import { Menu } from 'lucide-react'
+import { Menu, Hexagon } from 'lucide-react'
 // import { ModelSelector } from './ModelSelector'
 import { UserAvatar } from './UserAvatar'
 import { useUIConfig } from '@/hooks/useUIConfig'
@@ -21,53 +19,49 @@ export function Header() {
   const { ui } = useUIConfig()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
+  // Timestamp simulado de "última análise" para dar contexto profissional
+  const lastAnalysisTime = 'há 2 horas'
+
   return (
     <>
       <header
-        className="flex h-16 w-full items-center justify-between px-4 py-2 md:h-20 md:px-6"
+        className="flex h-16 w-full items-center justify-between border-b border-verde-200 bg-verde-50 px-6 py-4 dark:border-gray-800 dark:bg-card"
         role="banner"
       >
-        {/* Menu - 1/10 */}
-        <nav className="flex w-10 justify-start">
+        {/* Left Section: Logo & Brand */}
+        <div className="flex items-center gap-4">
           <button
             onClick={() => setIsMenuOpen(true)}
-            className="flex h-11 min-h-[44px] w-11 min-w-[44px] items-center justify-center transition-colors active:scale-95 hover-hover:bg-muted/50"
-            aria-label="Abrir menu de navegação"
-            aria-expanded={isMenuOpen}
-            aria-controls="navigation-sidebar"
+            className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+            aria-label="Abrir menu"
           >
-            <Menu className="h-6 w-6 text-muted-foreground" />
+            <Menu className="h-5 w-5" />
           </button>
-        </nav>
 
-        {/* Logo - 3/10 */}
-        <div className="flex flex-col items-center">
-          <h1 className="text-lg font-medium text-foreground md:text-xl">
-            {ui.branding.appName}
-          </h1>
-          {/* Temporariamente desabilitado - será implementado futuramente */}
-          {/* {ui.features.showModelSelector && <ModelSelector />} */}
+          <div className="flex items-center gap-3 border-l border-verde-200 pl-4 dark:border-gray-700">
+            <div className="flex items-center justify-center rounded bg-verde-900 p-1 dark:bg-gray-100">
+              <Hexagon
+                className="h-4 w-4 text-white dark:text-gray-900"
+                strokeWidth={3}
+              />
+            </div>
+            <span className="text-sm font-medium text-verde-900 dark:text-gray-300">
+              {ui.branding.appName}
+            </span>
+          </div>
         </div>
 
-        {/* Spacer - 5/10 (flexível) */}
-        <div className="flex-1" aria-hidden="true" />
-
-        {/* Actions - 1/10 */}
-        <div className="flex w-10 justify-center">
-          {ui.features.showProButton && (
-            <button
-              className="rounded-full bg-gradient-to-r from-gemini-blue to-gemini-purple px-3 py-1 text-sm font-medium text-white transition-all hover-hover:from-gemini-blue-hover hover-hover:to-gemini-purple"
-              aria-label="Upgrade para versão PRO"
-            >
-              PRO
-            </button>
-          )}
-        </div>
-
-        {/* Avatar - 1/10 */}
-        <div className="flex w-10 justify-end">
+        {/* Right Section: Context & User */}
+        <nav className="flex items-center gap-6">
+          <span className="hidden text-xs text-gray-500 md:inline-block">
+            Última análise: {lastAnalysisTime}
+          </span>
+          <div
+            className="h-4 w-px bg-gray-200 dark:bg-gray-800"
+            aria-hidden="true"
+          />
           <UserAvatar />
-        </div>
+        </nav>
       </header>
 
       {/* Menu Sidebar */}

@@ -1,31 +1,26 @@
-'use client'
+import { motion } from 'framer-motion'
+import { useGreeting } from '@/hooks/useGreeting'
 
-import { useState, useEffect } from 'react'
-
+/**
+ * Noble presentation greeting component.
+ * Uses time-based dynamic greeting with sophisticated typography.
+ */
 export function Greeting() {
-  const [greeting, setGreeting] = useState('')
-
-  const getGreetingMessage = () => {
-    const hour = new Date().getHours()
-
-    if (hour >= 0 && hour < 6) return 'Boa madrugada'
-    if (hour >= 6 && hour < 12) return 'Bom dia'
-    if (hour >= 12 && hour < 18) return 'Boa tarde'
-    return 'Boa noite'
-  }
-
-  useEffect(() => {
-    setGreeting(getGreetingMessage())
-  }, [])
+  const { greeting, subtext } = useGreeting()
 
   return (
-    <div className="mb-12 text-center">
-      <h1 className="text-3xl font-normal text-gemini-blue md:text-4xl lg:text-5xl">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
+      className="flex w-full flex-col items-start justify-center px-2 py-6 md:px-0 md:py-10"
+    >
+      <h1 className="mb-3 font-display text-4xl font-semibold tracking-tight text-verde-950 md:text-5xl lg:text-6xl">
         {greeting}
       </h1>
-      <p className="mt-2 text-lg text-gemini-gray-600 md:text-xl">
-        Como posso ajudar com suas questões de crédito rural e CPR hoje?
+      <p className="max-w-xl text-lg font-light text-verde-700 md:text-xl">
+        {subtext}
       </p>
-    </div>
+    </motion.div>
   )
 }
