@@ -163,7 +163,7 @@ export function MessageInput3D() {
         transition={{ delay: 0.5, duration: 0.8 }}
         className="mt-4 text-center text-xs text-verde-600"
       >
-        Rodrigues AI pode cometer erros. Verifique informações importantes.
+        Verity Agro pode cometer erros. Verifique informações importantes.
       </motion.p>
     </div>
   )

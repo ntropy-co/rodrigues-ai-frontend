@@ -10,6 +10,7 @@ import {
   getFileIcon
 } from '@/lib/utils/file-utils'
 import { cn } from '@/lib/utils'
+import type { ChatFile } from '@/types/chat-files'
 
 interface FilesSidebarProps {
   conversationId: string | null
@@ -167,7 +168,7 @@ function FileItem({
   onDownload,
   isGenerated
 }: {
-  file: unknown
+  file: ChatFile
   onDownload: () => void
   isGenerated?: boolean
 }) {
@@ -203,7 +204,7 @@ function FileItem({
         </div>
         <p className="mt-0.5 truncate text-xs text-verde-600">
           {formatFileSize(file.fileSize)} ·{' '}
-          {formatRelativeTime(new Date(file.uploadedAt || file.generatedAt))}
+          {formatRelativeTime(file.generatedAt ?? file.uploadedAt)}
         </p>
       </div>
 

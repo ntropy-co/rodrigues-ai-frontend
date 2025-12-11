@@ -285,7 +285,7 @@ export function InputBar({
           className="mt-3 text-center"
         >
           <p className="text-xs font-medium text-verde-600/70">
-            Rodrigues AI pode cometer erros. Verifique informações importantes.
+            Verity Agro pode cometer erros. Verifique informações importantes.
           </p>
         </motion.div>
       </div>

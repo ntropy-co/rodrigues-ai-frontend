@@ -11,7 +11,7 @@ import {
   useState
 } from 'react'
 import { toast } from 'sonner'
-import type { AuthContextType, RegisterRequest, User } from '@/types/auth'
+import type { RegisterRequest } from '@/types/auth'
 import {
   getCurrentUserApi,
   loginApi,
@@ -26,10 +26,30 @@ import {
   RATE_LIMIT_CONFIGS
 } from '@/lib/utils/rate-limiter'
 
+// Simplified user type for context (matches API /auth/me response)
+interface ContextUser {
+  id: string
+  email: string
+  name: string
+  role: string
+}
+
+// Context type matching the simplified user
+interface AuthContextType {
+  user: ContextUser | null
+  token: string | null
+  isLoading: boolean
+  isAuthenticated: boolean
+  login: (email: string, password: string) => Promise<void>
+  register: (data: RegisterRequest) => Promise<void>
+  logout: () => void
+  refetchUser: () => Promise<void>
+}
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<ContextUser | null>(null)
   const [token, setToken] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -71,17 +91,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       // Validação de input com Zod
-      const validatedData = loginSchema.parse({ username: email, password })
+      loginSchema.parse({ username: email, password })
 
-      const authResponse = await loginApi(validatedData)
-      const { access_token } = authResponse
+      const authResponse = await loginApi({ email, password })
+      const { token: accessToken } = authResponse
 
       // Save token in secure cookie
-      setAuthToken(access_token)
-      setToken(access_token)
+      setAuthToken(accessToken)
+      setToken(accessToken)
 
       // Fetch user data
-      const userData = await getCurrentUserApi(access_token)
+      const userData = await getCurrentUserApi(accessToken)
       setUser(userData)
 
       // Reset rate limiter on successful login
@@ -118,7 +138,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Nota: validação do RegisterRequest pode ser feita no componente de formulário
         // com confirmPassword antes de chamar esta função
-        await registerApi(data)
+        await registerApi({
+          inviteToken: data.inviteToken || '',
+          email: data.email,
+          password: data.password,
+          name: data.name
+        })
 
         // Reset rate limiter on successful registration
         registerRateLimiter.reset('register')
@@ -140,14 +165,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   )
 
   const logout = useCallback(() => {
-    if (token) {
-      logoutApi(token).catch(console.error)
-    }
+    logoutApi().catch(console.error)
     removeAuthToken()
     setToken(null)
     setUser(null)
     toast.success('Logout realizado com sucesso!')
-  }, [token])
+  }, [])
 
   const refetchUser = useCallback(async () => {
     if (!token) return

@@ -87,7 +87,9 @@ function SignupContent() {
         {
           email: values.email,
           password: values.password,
-          name: values.name
+          name: values.name,
+          confirmPassword: values.confirmPassword,
+          acceptTerms: values.acceptTerms
         },
         inviteToken
       )
@@ -185,9 +187,9 @@ function SignupContent() {
       <AnimatePresence>
         {authError && (
           <motion.div
-            initial={{ opacity: 0, height: 0, mb: 0 }}
-            animate={{ opacity: 1, height: 'auto', mb: 24 }}
-            exit={{ opacity: 0, height: 0, mb: 0 }}
+            initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+            animate={{ opacity: 1, height: 'auto', marginBottom: 24 }}
+            exit={{ opacity: 0, height: 0, marginBottom: 0 }}
             className="overflow-hidden"
           >
             <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4">

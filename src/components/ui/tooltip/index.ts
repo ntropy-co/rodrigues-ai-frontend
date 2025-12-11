@@ -1,4 +1,3 @@
 export * from './tooltip'
 export { default as CustomTooltip } from './CustomTooltip'
-
-export default Tooltip
+export { Tooltip as default } from './tooltip'

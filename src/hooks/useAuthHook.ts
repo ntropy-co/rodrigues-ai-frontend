@@ -15,6 +15,7 @@ import {
   recordFailedAttempt,
   isRateLimited
 } from '@/lib/utils/auth-validators'
+import { handleError, getErrorMessage } from '@/lib/auth/errors'
 
 // ============================================================================
 // HOOK STATE
@@ -136,7 +137,7 @@ export function useAuth(): UseAuthReturn {
           error: null,
           isInitialized: true
         })
-      } catch {
+      } catch (error) {
         // Record failed attempt for rate limiting
         recordFailedAttempt()
 
@@ -162,7 +163,7 @@ export function useAuth(): UseAuthReturn {
     try {
       // Call API to invalidate session server-side
       await authApi.logout()
-    } catch {
+    } catch (error) {
       // Ignore logout API errors
       console.warn('Logout API error:', error)
     } finally {
@@ -214,7 +215,7 @@ export function useAuth(): UseAuthReturn {
           error: null,
           isInitialized: true
         })
-      } catch {
+      } catch (error) {
         const authError = handleError(error)
         setState((prev) => ({
           ...prev,
@@ -238,7 +239,7 @@ export function useAuth(): UseAuthReturn {
       try {
         await authApi.requestPasswordReset({ email })
         setState((prev) => ({ ...prev, isLoading: false }))
-      } catch {
+      } catch (error) {
         const authError = handleError(error)
         setState((prev) => ({
           ...prev,
@@ -258,7 +259,7 @@ export function useAuth(): UseAuthReturn {
       try {
         await authApi.resetPassword({ token, password: newPassword })
         setState((prev) => ({ ...prev, isLoading: false }))
-      } catch {
+      } catch (error) {
         const authError = handleError(error)
         setState((prev) => ({
           ...prev,

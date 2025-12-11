@@ -191,3 +191,33 @@ export const AUTH_ROUTES = {
 } as const
 
 export type AuthRoute = (typeof AUTH_ROUTES)[keyof typeof AUTH_ROUTES]
+
+// ============================================================================
+// BACKWARDS COMPATIBILITY ALIASES
+// ============================================================================
+
+/**
+ * Legacy AuthContext type for backwards compatibility
+ * @deprecated Use AuthContextValue instead
+ */
+export interface AuthContextType {
+  user: User | null
+  token: string | null
+  isLoading: boolean
+  isAuthenticated: boolean
+  login: (email: string, password: string) => Promise<void>
+  register: (data: RegisterRequest) => Promise<void>
+  logout: () => void
+  refetchUser: () => Promise<void>
+}
+
+/**
+ * Legacy register request type
+ * @deprecated Use SignupData instead
+ */
+export interface RegisterRequest {
+  email: string
+  password: string
+  name: string
+  inviteToken?: string
+}

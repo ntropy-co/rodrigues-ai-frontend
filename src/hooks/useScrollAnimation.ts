@@ -24,7 +24,7 @@ export function useScrollAnimation(options: UseScrollAnimationOptions = {}) {
   const isInView = useInView(ref, {
     once,
     amount,
-    margin
+    margin: margin as `${number}px ${number}px ${number}px ${number}px`
   })
 
   return { ref, isInView }

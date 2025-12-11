@@ -15,7 +15,7 @@ export function UserAvatar() {
 
   // Função para extrair a primeira letra do nome do usuário
   const getInitial = (): string => {
-    return getInitialLetter(user?.full_name, user?.email)
+    return getInitialLetter(user?.name, user?.email)
   }
 
   // Função de logout com redirect
@@ -58,7 +58,7 @@ export function UserAvatar() {
         onClick={() => setIsOpen(!isOpen)}
         className="flex h-11 min-h-[44px] w-11 min-w-[44px] items-center justify-center rounded-full bg-verde-900 font-medium text-white shadow-sm transition-all hover:bg-verde-800 hover-hover:shadow-md"
         aria-label="Menu do usuário"
-        title={user?.full_name || user?.email || 'Usuário'}
+        title={user?.name || user?.email || 'Usuário'}
       >
         {getInitial()}
       </button>

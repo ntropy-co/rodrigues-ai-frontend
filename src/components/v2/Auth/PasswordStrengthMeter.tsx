@@ -8,6 +8,19 @@ interface PasswordStrengthMeterProps {
   strength: 'weak' | 'medium' | 'strong'
 }
 
+function getPasswordStrengthColor(
+  strength: 'weak' | 'medium' | 'strong'
+): string {
+  switch (strength) {
+    case 'weak':
+      return 'text-red-500'
+    case 'medium':
+      return 'text-yellow-500'
+    case 'strong':
+      return 'text-green-500'
+  }
+}
+
 export function PasswordStrengthMeter({
   strength
 }: PasswordStrengthMeterProps) {

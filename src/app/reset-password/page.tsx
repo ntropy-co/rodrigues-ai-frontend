@@ -36,7 +36,7 @@ function ResetPasswordContent() {
     setIsSubmitting(true)
 
     try {
-      const response = await resetPassword({ token, newPassword: password })
+      const response = await resetPassword({ token, password })
       setIsSuccess(true)
       toast.success(response.message)
 
