@@ -26,7 +26,20 @@ export async function POST(request: NextRequest) {
     // Get the response data
     const data = await response.json()
 
-    // Return the response with the same status code
+    // Map backend response to frontend expected format
+    // Backend returns: { access_token, token_type }
+    // Frontend expects: { token }
+    if (response.ok && data.access_token) {
+      return NextResponse.json(
+        {
+          ...data,
+          token: data.access_token
+        },
+        { status: response.status }
+      )
+    }
+
+    // Return error response as-is
     return NextResponse.json(data, { status: response.status })
   } catch {
     return NextResponse.json(

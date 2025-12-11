@@ -32,7 +32,22 @@ export async function GET(request: NextRequest) {
     // Get the response data
     const data = await response.json()
 
-    // Return the response with the same status code
+    // Map backend response to frontend expected format
+    // Backend returns: { id, email, full_name, is_active, is_superuser, created_at, organization_id }
+    // Frontend expects: { id, email, name, role }
+    if (response.ok) {
+      return NextResponse.json(
+        {
+          id: data.id,
+          email: data.email,
+          name: data.full_name || '',
+          role: data.is_superuser ? 'admin' : 'user'
+        },
+        { status: response.status }
+      )
+    }
+
+    // Return error response as-is
     return NextResponse.json(data, { status: response.status })
   } catch {
     return NextResponse.json(
