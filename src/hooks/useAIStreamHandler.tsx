@@ -48,7 +48,7 @@ const useAIChatStreamHandler = () => {
   const handleStreamResponse = useCallback(
     async (
       input: string | FormData,
-      _files?: File[],
+      files?: File[],
       explicitSessionId?: string | null,
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       _toolId?: string
@@ -81,11 +81,12 @@ const useAIChatStreamHandler = () => {
         return prevMessages
       })
 
-      // Add user message
+      // Add user message with attached files
       addMessage({
         role: 'user',
         content: message,
-        created_at: Math.floor(Date.now() / 1000)
+        created_at: Math.floor(Date.now() / 1000),
+        files: files?.map((f) => ({ name: f.name, size: f.size }))
       })
 
       // Add placeholder for agent response
