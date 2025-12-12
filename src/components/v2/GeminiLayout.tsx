@@ -58,7 +58,8 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
     (state) => state.locallyCreatedSessionIds
   )
 
-  const { initializePlayground, loadSessionById } = useChatActions()
+  const { initializePlayground, loadSessionById, clearChat } = useChatActions()
+
   const { handleStreamResponse } = useAIChatStreamHandler()
 
   // Inicializar playground APENAS UMA VEZ
@@ -133,6 +134,7 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
   }
 
   const handleNewConversation = () => {
+    clearChat()
     router.push('/chat')
   }
 
