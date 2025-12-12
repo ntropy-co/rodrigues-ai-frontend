@@ -1,6 +1,7 @@
 import type { Config } from 'tailwindcss'
 import tailwindcssAnimate from 'tailwindcss-animate'
 import plugin from 'tailwindcss/plugin'
+import typography from '@tailwindcss/typography'
 
 export default {
   darkMode: ['class'],
@@ -12,154 +13,173 @@ export default {
   theme: {
     extend: {
       colors: {
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
+        // Standard Shadcn/Radix aliases mapped to Verity Palette
+        border: '#E8F3ED', // verde-100
+        input: '#D1E7DD', // verde-200
+        ring: '#5A7A6B', // verde-600
+        background: '#F5F9F7', // bg-primary
+        foreground: '#1A3A2E', // text-primary
+
         primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))'
+          DEFAULT: '#2D5A45', // verde-900
+          foreground: '#FFFFFF'
         },
         secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))'
+          DEFAULT: '#E8F3ED', // verde-100
+          foreground: '#1A3A2E' // verde-950
         },
         destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))'
+          DEFAULT: '#C53030',
+          foreground: '#FFFFFF'
         },
         muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))'
+          DEFAULT: '#F0F8F4', // verde-50
+          foreground: '#5A7A6B' // verde-600
         },
         accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))'
+          DEFAULT: '#E8F3ED', // verde-100
+          foreground: '#1A3A2E'
         },
         popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))'
+          DEFAULT: '#FFFFFF',
+          foreground: '#1A3A2E'
         },
         card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))'
+          DEFAULT: '#FFFFFF',
+          foreground: '#1A3A2E'
         },
-        // Cores enterprise Verity Agro - Noble Green Palette
+
+        // Semantic Layers (Claude-Inspired)
+        'bg-primary': '#F5F9F7', // verde-50 aquecido
+        surface: '#FFFFFF', // Branco puro
+
+        // Verde spectrum (950 → 50) - Verity Agro Monochromatic
         verde: {
-          50: 'hsl(var(--verde-50))',
-          100: 'hsl(var(--verde-100))',
-          200: 'hsl(var(--verde-200))',
-          300: 'hsl(var(--verde-300))',
-          400: 'hsl(var(--verde-400))',
-          500: 'hsl(var(--verde-500))',
-          600: 'hsl(var(--verde-600))',
-          700: 'hsl(var(--verde-700))',
-          800: 'hsl(var(--verde-800))',
-          900: 'hsl(var(--verde-900))',
-          950: 'hsl(var(--verde-950))'
+          950: '#1A3A2E', // Text primary (mais escuro)
+          900: '#2D5A45', // Accent/CTA
+          800: '#3A6B54', // Hover CTA
+          700: '#478063', // Accent light
+          600: '#5A7A6B', // Text secondary
+          500: '#6D8D7D', // Medium
+          400: '#8BA89B', // Text tertiary
+          300: '#9DC4B0', // Border medium
+          200: '#D1E7DD', // Border
+          100: '#E8F3ED', // Border light
+          50: '#F5F9F7' // Background
         },
+
+        // Ouro (apenas para R$)
         ouro: {
-          100: 'hsl(var(--ouro-100))',
-          600: 'hsl(var(--ouro-600))',
-          900: 'hsl(var(--ouro-900))'
+          600: '#C9922A',
+          500: '#D4A034',
+          400: '#E0B14E'
         },
-        bege: 'hsl(var(--bege))',
-        enterprise: {
-          green: 'hsl(var(--enterprise-green))',
-          'green-hover': 'hsl(var(--enterprise-green-hover))',
-          gold: 'hsl(var(--enterprise-gold))',
-          'gold-hover': 'hsl(var(--enterprise-gold-hover))'
+
+        // Feedback colors
+        error: {
+          600: '#C53030',
+          500: '#E53E3E',
+          400: '#FC8181'
         },
-        // Cinzas neutros enterprise
-        neutral: {
-          50: 'hsl(var(--neutral-50))',
-          100: 'hsl(var(--neutral-100))',
-          200: 'hsl(var(--neutral-200))',
-          300: 'hsl(var(--neutral-300))',
-          500: 'hsl(var(--neutral-500))',
-          600: 'hsl(var(--neutral-600))',
-          700: 'hsl(var(--neutral-700))',
-          900: 'hsl(var(--neutral-900))'
-        },
-        // Backward compatibility aliases (mapeia para enterprise)
-        'gemini-blue': 'hsl(var(--enterprise-green))',
-        'gemini-blue-hover': 'hsl(var(--enterprise-green-hover))',
-        'gemini-purple': 'hsl(var(--enterprise-gold))',
-        'gemini-gray-50': 'hsl(var(--neutral-50))',
-        'gemini-gray-100': 'hsl(var(--neutral-100))',
-        'gemini-gray-200': 'hsl(var(--neutral-200))',
-        'gemini-gray-300': 'hsl(var(--neutral-300))',
-        'gemini-gray-500': 'hsl(var(--neutral-500))',
-        'gemini-gray-600': 'hsl(var(--neutral-600))',
-        'gemini-gray-700': 'hsl(var(--neutral-700))',
-        'gemini-gray-900': 'hsl(var(--neutral-900))'
+
+        // Shortcuts (aliases)
+        branco: '#FFFFFF'
       },
+
+      // Typography
       fontFamily: {
+        display: ['var(--font-crimson)', 'serif'],
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
-        display: ['var(--font-crimson)', 'Georgia', 'serif'],
-        serif: ['var(--font-crimson)', 'Georgia', 'serif'],
+        mono: ['Fira Code', 'monospace'],
+        // Legacy aliases
         inter: 'var(--font-inter)',
-        playfair: 'var(--font-playfair)',
-        crimson: 'var(--font-crimson)',
-        geist: 'var(--font-geist-sans)',
-        dmmono: 'var(--font-dm-mono)'
+        crimson: 'var(--font-crimson)'
       },
+
       fontSize: {
-        'display-2xl': [
-          '4.5rem',
-          { lineHeight: '1.1', letterSpacing: '-0.02em' }
-        ],
-        'display-xl': [
-          '3.75rem',
-          { lineHeight: '1.1', letterSpacing: '-0.02em' }
-        ],
-        'display-lg': [
-          '3rem',
-          { lineHeight: '1.15', letterSpacing: '-0.01em' }
-        ],
-        display: ['2.25rem', { lineHeight: '1.2', letterSpacing: '-0.01em' }]
+        // Display sizes
+        '6xl': ['3.75rem', { lineHeight: '1', letterSpacing: '-0.02em' }], // 60px
+        '5xl': ['3rem', { lineHeight: '1.1', letterSpacing: '-0.015em' }], // 48px
+        '4xl': ['2.25rem', { lineHeight: '1.2', letterSpacing: '-0.01em' }], // 36px
+        '3xl': ['1.875rem', { lineHeight: '1.3', letterSpacing: '-0.01em' }], // 30px
+        '2xl': ['1.5rem', { lineHeight: '1.4', letterSpacing: '-0.005em' }], // 24px
+        xl: ['1.25rem', { lineHeight: '1.5' }], // 20px
+
+        // Body sizes
+        lg: ['1rem', { lineHeight: '1.5' }], // 16px
+        base: ['0.875rem', { lineHeight: '1.5' }], // 14px
+        sm: ['0.8125rem', { lineHeight: '1.5' }], // 13px
+        xs: ['0.75rem', { lineHeight: '1.5' }] // 12px
       },
+
+      // Shadows (verde em vez de preto)
+      boxShadow: {
+        sm: '0 1px 2px 0 rgba(45, 90, 69, 0.05)',
+        DEFAULT:
+          '0 1px 3px 0 rgba(45, 90, 69, 0.08), 0 1px 2px -1px rgba(45, 90, 69, 0.08)',
+        md: '0 4px 6px -1px rgba(45, 90, 69, 0.08), 0 2px 4px -2px rgba(45, 90, 69, 0.08)',
+        lg: '0 10px 15px -3px rgba(45, 90, 69, 0.12), 0 4px 6px -4px rgba(45, 90, 69, 0.08)',
+        xl: '0 20px 25px -5px rgba(45, 90, 69, 0.12), 0 8px 10px -6px rgba(45, 90, 69, 0.08)',
+        '2xl': '0 25px 50px -12px rgba(45, 90, 69, 0.20)',
+
+        // Custom shadows (input 3D)
+        input:
+          '0 1px 2px rgba(45, 90, 69, 0.06), 0 4px 12px rgba(45, 90, 69, 0.10), 0 16px 32px rgba(45, 90, 69, 0.14)',
+        'input-focus':
+          '0 2px 4px rgba(45, 90, 69, 0.08), 0 8px 16px rgba(45, 90, 69, 0.12), 0 20px 40px rgba(45, 90, 69, 0.16)'
+      },
+
+      // Border radius (Claude-style)
       borderRadius: {
-        xl: '10px'
+        sm: '0.5rem', // 8px
+        DEFAULT: '0.75rem', // 12px
+        md: '0.875rem', // 14px
+        lg: '1rem', // 16px
+        xl: '1.25rem', // 20px
+        '2xl': '1.5rem', // 24px
+        '3xl': '2rem' // 32px
       },
-      animation: {
-        'slide-up': 'slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
-        'fade-in': 'fadeIn 0.3s ease-out'
+
+      // Spacing (sistema 4px)
+      spacing: {
+        '18': '4.5rem', // 72px
+        '22': '5.5rem' // 88px
       },
+
+      // Animation durations
+      transitionDuration: {
+        '400': '400ms'
+      },
+
+      // Custom animations
       keyframes: {
-        slideUp: {
-          '0%': {
-            opacity: '0',
-            transform: 'translateY(20px) scale(0.95)'
-          },
-          '100%': {
-            opacity: '1',
-            transform: 'translateY(0) scale(1)'
-          }
+        float: {
+          '0%, 100%': { transform: 'translateY(-4px)' },
+          '50%': { transform: 'translateY(4px)' }
         },
-        fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' }
+        shimmer: {
+          '0%': { transform: 'translateX(-200%) skewX(-20deg)' },
+          '100%': { transform: 'translateX(200%) skewX(-20deg)' }
+        },
+        'pulse-soft': {
+          '0%, 100%': { opacity: '0.5', transform: 'scale(1)' },
+          '50%': { opacity: '1', transform: 'scale(1.3)' }
         }
       },
-      transitionTimingFunction: {
-        spring: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
-        'spring-smooth': 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+      animation: {
+        float: 'float 4s cubic-bezier(0.4, 0, 0.2, 1) infinite',
+        shimmer: 'shimmer 3s linear infinite',
+        'pulse-soft': 'pulse-soft 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite'
       }
     }
   },
+
   plugins: [
     tailwindcssAnimate,
+    typography,
     plugin(function ({ addVariant }) {
-      // Custom variant for hover states that only work on devices with fine pointers (not touch)
       addVariant('hover-hover', '@media (hover: hover) and (pointer: fine)')
-
-      // Backdrop-blur apenas em desktop (min-width: 768px)
-      // Evita performance ruim de backdrop-filter em mobile
       addVariant('backdrop-safe', '@media (min-width: 768px)')
-
-      // Orientação paisagem (landscape)
       addVariant('landscape', '@media (orientation: landscape)')
     })
   ]

@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Paperclip, Sparkles, Send } from 'lucide-react'
+import { Paperclip, ArrowUp } from 'lucide-react'
 import { Input } from '@/components/ui/input' // Assuming this exists or using standard input
 
 export function MessageInput3D() {
@@ -91,18 +91,6 @@ export function MessageInput3D() {
               <Paperclip className="h-5 w-5" />
             </motion.button>
 
-            <motion.button
-              whileHover={{
-                scale: 1.05,
-                rotateZ: -2,
-                transition: { duration: 0.2 }
-              }}
-              whileTap={{ scale: 0.95 }}
-              className="rounded-lg p-2.5 text-verde-700 transition-colors hover:bg-verde-50 hover:text-verde-900"
-            >
-              <Sparkles className="h-5 w-5" />
-            </motion.button>
-
             {/* Botão de envio com profundidade extra */}
             <motion.button
               whileHover={{
@@ -111,22 +99,22 @@ export function MessageInput3D() {
                 transition: { duration: 0.2 }
               }}
               whileTap={{ scale: 0.95, y: 0 }}
-              className="relative rounded-lg bg-gradient-to-br from-verde-900 to-verde-800 p-2.5 text-white hover:from-verde-800 hover:to-verde-900"
+              className="relative rounded-xl bg-gradient-to-br from-verde-900 to-verde-800 p-2.5 text-white hover:from-verde-800 hover:to-verde-900"
               style={{
                 transformStyle: 'preserve-3d',
                 boxShadow: `
                   0 2px 4px rgba(45, 90, 69, 0.2),
                   0 4px 8px rgba(45, 90, 69, 0.15),
-                  inset 0 -2px 4px rgba(0, 0, 0, 0.1),
+                  inset 0 -2px 4px rgba(45, 90, 69, 0.1),
                   inset 0 1px 1px rgba(255, 255, 255, 0.2)
                 `
               }}
             >
-              <Send className="h-5 w-5" />
+              <ArrowUp className="h-5 w-5" />
 
               {/* Brilho interno */}
               <div
-                className="absolute inset-0 rounded-lg bg-gradient-to-t from-transparent to-white/10"
+                className="absolute inset-0 rounded-xl bg-gradient-to-t from-transparent to-white/10"
                 style={{
                   transform: 'translateZ(1px)'
                 }}

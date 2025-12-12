@@ -1,17 +1,17 @@
 'use client'
 
-import { useEffect, useRef, useCallback } from 'react'
-import { ArrowDown, Paperclip } from 'lucide-react'
+import { useEffect, useRef, useCallback, useState } from 'react'
+import { ArrowDown } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { PlaygroundChatMessage } from '@/types/playground'
-import MarkdownRenderer from '@/components/ui/typography/MarkdownRenderer/MarkdownRenderer'
-import { StreamingText } from './StreamingText'
 import { RefreshIndicator } from './RefreshIndicator'
-import { usePlaygroundStore } from '@/store'
-import { CopyButton } from '@/components/ui/CopyButton'
-import { useScrollDetection } from '@/hooks/useScrollDetection'
+import { EmptyState } from './EmptyState'
+import { MessageBubble } from './MessageBubble'
+import { TypingIndicator } from './TypingIndicator'
 import { usePullToRefresh } from '@/hooks/usePullToRefresh'
-import { formatTimestamp, formatTimestampISO } from '@/lib/utils/format'
-import { MESSAGE_ROLES, MIN_TOUCH_TARGET_SIZE } from '@/lib/constants'
+import { MESSAGE_ROLES } from '@/lib/constants'
+import { getAuthToken } from '@/lib/auth/cookies'
+import { toast } from 'sonner'
 
 interface ChatAreaProps {
   messages: PlaygroundChatMessage[]
@@ -21,22 +21,40 @@ interface ChatAreaProps {
 }
 
 export function ChatArea({ messages, isStreaming, onRefresh }: ChatAreaProps) {
-  const messagesEndRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const isStreamingFromStore = usePlaygroundStore((state) => state.isStreaming)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [showScrollButton, setShowScrollButton] = useState(false)
 
-  // Hook personalizado para detectar scroll
-  const { showScrollButton, scrollToBottom } = useScrollDetection({
-    containerRef
-  })
+  // Auto-scroll para última mensagem
+  useEffect(() => {
+    if (messages.length > 0) {
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'end'
+        })
+      }, 100)
+    }
+  }, [messages, isStreaming])
+
+  // Scroll button visibility
+  const handleScroll = useCallback(() => {
+    if (!containerRef.current) return
+    const { scrollTop, scrollHeight, clientHeight } = containerRef.current
+    const isNotAtBottom = scrollHeight - scrollTop - clientHeight > 200
+    setShowScrollButton(isNotAtBottom)
+  }, [])
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+  }
 
   // Hook de pull-to-refresh
   const handleRefresh = useCallback(async () => {
     if (onRefresh) {
       await onRefresh()
     } else {
-      // Placeholder - pode ser implementado posteriormente
-      console.log('Pull to refresh - carregar histórico de conversas')
+      // Placeholder
       await new Promise((resolve) => setTimeout(resolve, 1000))
     }
   }, [onRefresh])
@@ -45,147 +63,121 @@ export function ChatArea({ messages, isStreaming, onRefresh }: ChatAreaProps) {
     containerRef,
     onRefresh: handleRefresh,
     threshold: 80,
-    enabled: messages.length > 0 // Só ativar se tiver mensagens
+    enabled: messages.length > 0
   })
 
-  // Auto-scroll para a última mensagem
+  // Efeito para scroll listener
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+    const container = containerRef.current
+    if (container) {
+      container.addEventListener('scroll', handleScroll)
+      return () => container.removeEventListener('scroll', handleScroll)
+    }
+  }, [handleScroll])
 
-  if (messages.length === 0) {
-    return null
-  }
+  const handleFeedback = useCallback(
+    async (messageId: string, type: 'up' | 'down') => {
+      const feedbackType = type === 'up' ? 'like' : 'dislike'
+
+      try {
+        const token = getAuthToken()
+        if (!token) return
+
+        await fetch(`/api/chat/${messageId}/feedback`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ feedback: feedbackType })
+        })
+        toast.success('Obrigado pelo feedback!')
+      } catch (error) {
+        console.error('Error sending feedback:', error)
+        toast.error('Erro ao enviar feedback')
+      }
+    },
+    []
+  )
 
   return (
     <div
       ref={containerRef}
       className="relative flex-1 overflow-y-auto px-4 py-6 md:px-6 landscape:py-3"
     >
-      {/* Pull to Refresh Indicator */}
       <RefreshIndicator
         progress={pullProgress}
         isRefreshing={isRefreshing}
         pullDistance={pullDistance}
       />
 
-      <div className="mx-auto max-w-4xl space-y-6 landscape:space-y-4">
-        {messages.map((message, index) => {
-          const isUser = message.role === MESSAGE_ROLES.USER
-          const isAgent = message.role === MESSAGE_ROLES.AGENT
-
-          return (
-            <div
-              key={`${message.created_at}-${index}`}
-              className={`flex animate-slide-up ${isUser ? 'justify-end' : 'justify-start'}`}
-              style={{
-                animationDelay: `${Math.min(index * 50, 500)}ms`,
-                animationFillMode: 'backwards'
-              }}
+      <div className="mx-auto flex min-h-full max-w-4xl flex-col justify-end">
+        <AnimatePresence mode="wait">
+          {messages.length === 0 ? (
+            <motion.div
+              key="empty"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="flex flex-1 flex-col justify-center"
             >
-              <div
-                className={`group relative max-w-[85%] rounded-2xl px-4 py-3 ${
-                  isUser
-                    ? 'bg-gemini-blue text-white'
-                    : 'bg-muted text-foreground'
-                }`}
-              >
-                {/* Timestamp */}
-                {message.created_at && (
-                  <div className="mb-2 flex justify-end">
-                    <time
-                      className="text-xs opacity-50"
-                      dateTime={formatTimestampISO(message.created_at)}
-                    >
-                      {formatTimestamp(message.created_at)}
-                    </time>
-                  </div>
+              <EmptyState variant="uploads" />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="messages"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-6 pb-4 landscape:space-y-4"
+            >
+              {messages.map((message, index) => (
+                <MessageBubble
+                  key={`${message.created_at}-${index}`}
+                  message={message}
+                  isStreaming={isStreaming}
+                  isLast={index === messages.length - 1}
+                  onFeedback={handleFeedback}
+                />
+              ))}
+
+              {/* Typing Indicator for Loading State */}
+              {isStreaming &&
+                messages[messages.length - 1]?.role === MESSAGE_ROLES.USER && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                  >
+                    <TypingIndicator />
+                  </motion.div>
                 )}
 
-                {/* Conteúdo da mensagem */}
-                <div className="text-sm leading-relaxed">
-                  {message.content ? (
-                    isAgent ? (
-                      // Se estiver streaming e for a última mensagem, usar StreamingText
-                      isStreamingFromStore && index === messages.length - 1 ? (
-                        <StreamingText
-                          text={message.content}
-                          speed={80}
-                          renderMarkdown={true}
-                          className=""
-                        />
-                      ) : (
-                        <MarkdownRenderer classname="prose-sm prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ol:my-1 prose-hr:my-2 prose-hr:border-muted-foreground/20 max-w-none w-full [&_hr~p]:text-xs [&_hr~p]:opacity-70 [&_hr~p_strong]:text-xs [&_hr~p_strong]:font-medium">
-                          {message.content}
-                        </MarkdownRenderer>
-                      )
-                    ) : (
-                      <div>{message.content}</div>
-                    )
-                  ) : isStreaming && index === messages.length - 1 ? (
-                    <div className="flex items-center justify-start">
-                      <div className="relative">
-                        <div className="h-6 w-6 animate-spin rounded-full border-2 border-transparent border-r-gemini-purple border-t-gemini-blue"></div>
-                        <div
-                          className="absolute left-1 top-1 h-4 w-4 animate-spin rounded-full border-2 border-transparent border-r-gemini-blue border-t-gemini-purple"
-                          style={{
-                            animationDirection: 'reverse',
-                            animationDuration: '1s'
-                          }}
-                        ></div>
-                      </div>
-                    </div>
-                  ) : (
-                    'Processando...'
-                  )}
-                </div>
-
-                {/* Error state */}
-                {message.streamingError && (
-                  <div className="mt-2 text-xs text-red-400">
-                    ⚠️ Erro ao enviar mensagem
-                  </div>
-                )}
-
-                {/* Copy button - apenas para mensagens da AI com conteúdo */}
-                {isAgent && message.content && (
-                  <div className="mt-2 flex justify-end">
-                    <CopyButton content={message.content} formatted={true} />
-                  </div>
-                )}
-
-                {/* Attachment indicator for user messages */}
-                {isUser && message.files && message.files.length > 0 && (
-                  <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <Paperclip className="h-3 w-3" />
-                    <span>
-                      {message.files.length === 1
-                        ? message.files[0].name
-                        : `${message.files.length} arquivos anexados`}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-          )
-        })}
-        <div ref={messagesEndRef} />
+              <div ref={messagesEndRef} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Scroll to Bottom Button */}
-      {showScrollButton && (
-        <button
-          onClick={scrollToBottom}
-          className="fixed bottom-24 right-6 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-gemini-blue text-white shadow-lg transition-all active:scale-95 hover-hover:bg-gemini-blue-hover hover-hover:shadow-xl md:bottom-28 md:right-8 landscape:bottom-20"
-          style={{
-            minHeight: `${MIN_TOUCH_TARGET_SIZE}px`,
-            minWidth: `${MIN_TOUCH_TARGET_SIZE}px`
-          }}
-          aria-label="Rolar para baixo"
-        >
-          <ArrowDown className="h-5 w-5" />
-        </button>
-      )}
+      <AnimatePresence>
+        {showScrollButton && (
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={scrollToBottom}
+            className="fixed bottom-24 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-verde-900 text-white shadow-lg shadow-verde-900/20 hover:bg-verde-800 md:bottom-28 md:right-8 landscape:bottom-20"
+            aria-label="Rolar para baixo"
+          >
+            <ArrowDown className="h-5 w-5" />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

@@ -1,8 +1,6 @@
 'use client'
 
 import React from 'react'
-import { motion } from 'framer-motion'
-import { Sprout } from 'lucide-react'
 
 interface AuthLayoutProps {
   children: React.ReactNode
@@ -10,7 +8,7 @@ interface AuthLayoutProps {
 
 export function AuthLayout({ children }: AuthLayoutProps) {
   return (
-    <div className="flex min-h-screen animate-fade-in">
+    <div className="animate-fade-in flex min-h-screen">
       {/* Lado Esquerdo - Branding & Informação */}
       <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-gradient-to-br from-verde-900 via-verde-800 to-verde-900 p-12 lg:flex">
         {/* Pattern de fundo sutil */}
@@ -29,19 +27,8 @@ export function AuthLayout({ children }: AuthLayoutProps) {
         {/* Header com logo */}
         <div className="relative z-10">
           <div className="mb-8 flex items-center gap-3">
-            <motion.div
-              animate={{ y: [0, -5, 0] }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: 'easeInOut'
-              }}
-              className="bg-branco/10 flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 shadow-lg backdrop-blur-sm"
-            >
-              <Sprout className="text-branco h-6 w-6" />
-            </motion.div>
             <div>
-              <h1 className="text-branco font-display text-2xl font-semibold tracking-tight">
+              <h1 className="font-display text-2xl font-semibold tracking-tight text-branco">
                 Verity Agro
               </h1>
               <p className="text-sm font-light tracking-wide text-verde-100">
@@ -53,7 +40,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
 
         {/* Conteúdo central - Value proposition */}
         <div className="relative z-10 max-w-lg">
-          <h2 className="text-branco mb-6 font-display text-4xl font-semibold leading-tight lg:text-5xl">
+          <h2 className="mb-6 font-display text-4xl font-semibold leading-tight text-branco lg:text-5xl">
             Análise de crédito rural com inteligência artificial
           </h2>
           <p className="mb-8 text-lg font-light leading-relaxed text-verde-100">
@@ -62,23 +49,6 @@ export function AuthLayout({ children }: AuthLayoutProps) {
           </p>
 
           {/* Social proof */}
-          <div className="flex items-center gap-6">
-            <div>
-              <p className="text-branco font-display text-3xl font-bold">70+</p>
-              <p className="text-[10px] text-sm uppercase tracking-widest text-verde-200">
-                Empresas confiando
-              </p>
-            </div>
-            <div className="bg-branco/20 h-12 w-px" />
-            <div>
-              <p className="text-branco font-display text-3xl font-bold">
-                R$ 2B+
-              </p>
-              <p className="text-[10px] text-sm uppercase tracking-widest text-verde-200">
-                Em CPRs analisadas
-              </p>
-            </div>
-          </div>
         </div>
 
         {/* Footer */}
@@ -90,7 +60,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
       </div>
 
       {/* Lado Direito - Conteúdo Dinâmico */}
-      <div className="relative flex flex-1 items-center justify-center bg-bege p-4 lg:p-8">
+      <div className="bg-bege relative flex flex-1 items-center justify-center p-4 lg:p-8">
         <div className="w-full max-w-md">
           {children}
 

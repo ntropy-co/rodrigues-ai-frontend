@@ -12,7 +12,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import type { SignupData } from '@/types/auth'
 import type { AuthResponse } from '@/types/auth-api'
 import * as authApi from '@/lib/auth/api'
-import { setAuthToken, getAuthToken, removeAuthToken } from '@/lib/auth/cookies'
+import { setAuthToken, removeAuthToken, getAuthToken } from '@/lib/auth/cookies'
 import {
   clearRateLimitState,
   recordFailedAttempt,

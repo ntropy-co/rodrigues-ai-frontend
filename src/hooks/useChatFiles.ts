@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import type {
   ChatFile,
   FileUploadProgress,
   ChatFilesListResponse
 } from '@/types/chat-files'
 import { getFileCategory, getFileExtension } from '@/lib/utils/file-utils'
+import { getAuthToken } from '@/lib/auth/cookies'
 
 // ============================================================================
 // Types
@@ -62,6 +63,10 @@ export function useChatFiles(
   const [error, setError] = useState<string | null>(null)
   const [uploadProgress, setUploadProgress] = useState<FileUploadProgress[]>([])
 
+  // Refs for cleanup
+  const abortControllerRef = useRef<AbortController | null>(null)
+  const timeoutsRef = useRef<Set<NodeJS.Timeout>>(new Set())
+
   // Derived state: filtered files
   const uploadedFiles = useMemo(
     () => files.filter((f) => f.type === 'upload'),
@@ -82,25 +87,51 @@ export function useChatFiles(
       return
     }
 
+    // Cancel any pending request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+    }
+
+    // Create new AbortController for this request
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
     setIsLoading(true)
     setError(null)
 
     try {
+      // Use relative path for proxy
       const url = new URL('/api/documents/conversation', window.location.origin)
       url.searchParams.append('conversation_id', conversationId)
       if (userId) {
         url.searchParams.append('user_id', userId)
       }
 
-      const response = await fetch(url.toString())
+      const token = getAuthToken()
+      const headers: HeadersInit = {}
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+
+      const response = await fetch(url.toString(), {
+        headers,
+        signal: controller.signal
+      })
 
       if (!response.ok) {
-        throw new Error('Erro ao carregar arquivos')
+        const errorText = await response.text().catch(() => 'Unknown error')
+        throw new Error(
+          `Erro ao carregar arquivos: ${response.status} ${errorText}`
+        )
       }
 
       const data: ChatFilesListResponse = await response.json()
       setFiles(data.files || [])
     } catch (err) {
+      // Ignore abort errors
+      if (err instanceof Error && err.name === 'AbortError') {
+        return
+      }
       console.error('[useChatFiles] Fetch error:', err)
       setError(err instanceof Error ? err.message : 'Erro desconhecido')
     } finally {
@@ -155,8 +186,15 @@ export function useChatFiles(
           )
         )
 
+        const token = getAuthToken()
+        const headers: HeadersInit = {}
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`
+        }
+
         const response = await fetch('/api/documents/upload', {
           method: 'POST',
+          headers,
           body: formData
         })
 
@@ -200,12 +238,14 @@ export function useChatFiles(
           )
         )
 
-        // Remove from progress after delay
-        setTimeout(() => {
+        // Remove from progress after delay (with cleanup tracking)
+        const timeoutId = setTimeout(() => {
           setUploadProgress((prev) =>
             prev.filter((p) => p.uploadId !== uploadId)
           )
+          timeoutsRef.current.delete(timeoutId)
         }, 2000)
+        timeoutsRef.current.add(timeoutId)
 
         return newFile
       } catch (err) {
@@ -235,8 +275,10 @@ export function useChatFiles(
   // -------------------------------------------------------------------------
   const removeFile = useCallback(async (fileId: string) => {
     try {
+      const token = getAuthToken()
       const response = await fetch(`/api/documents/${fileId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined
       })
 
       if (!response.ok) {
@@ -256,7 +298,10 @@ export function useChatFiles(
   // -------------------------------------------------------------------------
   const downloadFile = useCallback(async (fileId: string) => {
     try {
-      const response = await fetch(`/api/documents/${fileId}/download`)
+      const token = getAuthToken()
+      const response = await fetch(`/api/documents/${fileId}/download`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined
+      })
 
       if (!response.ok) {
         throw new Error('Erro ao baixar arquivo')
@@ -303,6 +348,26 @@ export function useChatFiles(
       setFiles([])
     }
   }, [conversationId, fetchFiles])
+
+  // Cleanup on unmount
+  useEffect(() => {
+    // Copy refs to local variables to avoid stale refs in cleanup
+    const controller = abortControllerRef.current
+    const timeouts = timeoutsRef.current
+
+    return () => {
+      // Cancel any pending fetch requests
+      if (controller) {
+        controller.abort()
+      }
+
+      // Clear all pending timeouts
+      timeouts.forEach((timeoutId) => {
+        clearTimeout(timeoutId)
+      })
+      timeouts.clear()
+    }
+  }, [])
 
   // -------------------------------------------------------------------------
   // Return

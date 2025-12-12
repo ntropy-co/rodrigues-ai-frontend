@@ -26,7 +26,10 @@ export const easings = {
   decelerate: [0, 0, 0.2, 1] as const,
 
   /** Accelerate - slow start, fast end */
-  accelerate: [0.4, 0, 1, 1] as const
+  accelerate: [0.4, 0, 1, 1] as const,
+
+  /** Floating movement - continuous and smooth */
+  float: [0.4, 0, 0.2, 1] as const
 } as const
 
 // ============================================================================

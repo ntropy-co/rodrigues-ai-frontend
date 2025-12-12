@@ -9,6 +9,7 @@ interface BackendSession {
   id: string
   user_id: string
   title: string | null
+  project_id?: string | null
   is_active: boolean
   created_at: string
   updated_at: string
@@ -21,6 +22,7 @@ function mapToSessionEntry(session: BackendSession): SessionEntry {
   return {
     session_id: session.id,
     title: session.title || 'Nova Conversa',
+    project_id: session.project_id,
     created_at: Math.floor(new Date(session.created_at).getTime() / 1000)
   }
 }
@@ -30,39 +32,49 @@ export function useSessions() {
   const [error, setError] = useState<string | null>(null)
   const { token } = useAuth()
 
-  const fetchSessions = useCallback(async (): Promise<SessionEntry[]> => {
-    if (!token) {
-      return []
-    }
-
-    setLoading(true)
-    setError(null)
-
-    try {
-      const response = await fetch('/api/sessions', {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-
-      if (!response.ok) {
-        throw new Error('Erro ao carregar sessões')
+  const fetchSessions = useCallback(
+    async (projectId?: string | null): Promise<SessionEntry[]> => {
+      if (!token) {
+        return []
       }
 
-      const data: BackendSession[] = await response.json()
-      return data.map(mapToSessionEntry)
-    } catch (err) {
-      console.error('[useSessions] Error fetching sessions:', err)
-      setError(err instanceof Error ? err.message : 'Erro desconhecido')
-      return []
-    } finally {
-      setLoading(false)
-    }
-  }, [token])
+      setLoading(true)
+      setError(null)
+
+      try {
+        const url = projectId
+          ? `/api/sessions?project_id=${projectId}`
+          : '/api/sessions'
+
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+
+        if (!response.ok) {
+          throw new Error('Erro ao carregar sessões')
+        }
+
+        const data: BackendSession[] = await response.json()
+        return data.map(mapToSessionEntry)
+      } catch (err) {
+        console.error('[useSessions] Error fetching sessions:', err)
+        setError(err instanceof Error ? err.message : 'Erro desconhecido')
+        return []
+      } finally {
+        setLoading(false)
+      }
+    },
+    [token]
+  )
 
   const createSession = useCallback(
-    async (title?: string): Promise<SessionEntry | null> => {
+    async (
+      title?: string,
+      projectId?: string
+    ): Promise<SessionEntry | null> => {
       if (!token) {
         return null
       }
@@ -77,7 +89,10 @@ export function useSessions() {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`
           },
-          body: title ? JSON.stringify({ title }) : undefined
+          body: JSON.stringify({
+            title: title,
+            project_id: projectId
+          })
         })
 
         if (!response.ok) {

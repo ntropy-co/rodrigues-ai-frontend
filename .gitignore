@@ -108,9 +108,6 @@ Desktop.ini
 .parcel-cache/
 
 # Package manager
-package-lock.json
-pnpm-lock.yaml
-yarn.lock
 .pnpm-store/
 
 # Storybook
@@ -119,3 +116,6 @@ storybook-static/
 
 # Sentry
 .sentryclirc
+
+# Agent
+.claude/

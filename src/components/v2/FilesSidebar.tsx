@@ -1,5 +1,6 @@
 'use client'
 
+import { memo, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { useFilesSidebarStore } from '@/stores/filesSidebarStore'
 import { useChatFiles } from '@/hooks/useChatFiles'
@@ -14,6 +15,16 @@ import type { ChatFile } from '@/types/chat-files'
 
 interface FilesSidebarProps {
   conversationId: string | null
+  isOpen?: boolean
+  overlay?: boolean
+  onClose?: () => void
+}
+
+const sidebarSpring = {
+  type: 'spring' as const,
+  stiffness: 300,
+  damping: 30,
+  mass: 1
 }
 
 const container = {
@@ -31,24 +42,29 @@ const item = {
   show: { opacity: 1, x: 0 }
 }
 
-export function FilesSidebar({ conversationId }: FilesSidebarProps) {
-  const { isOpen, close } = useFilesSidebarStore()
+export function FilesSidebar({
+  conversationId,
+  isOpen = true,
+  overlay = false,
+  onClose
+}: FilesSidebarProps) {
+  const { close: storeClose } = useFilesSidebarStore()
   const { uploadedFiles, generatedFiles, downloadFile } =
     useChatFiles(conversationId)
 
-  if (!isOpen) return null
+  const handleClose = onClose || storeClose
 
-  return (
-    <aside className="animate-slide-in-right fixed inset-y-0 right-0 z-40 flex w-80 flex-col border-l border-verde-200 bg-verde-50 pt-16 shadow-xl transition-all duration-300 md:static md:pt-0 md:shadow-none">
+  const sidebarContent = (
+    <div className="flex h-full w-[320px] flex-col">
       {/* Header */}
-      <div className="flex flex-col border-b border-verde-200 p-4">
+      <div className="flex flex-col border-b border-verde-100 p-4">
         <div className="mb-1 flex items-center justify-between">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-verde-950">
+          <h3 className="font-display text-lg font-semibold text-verde-950">
             Arquivos
           </h3>
           <button
-            onClick={close}
-            className="rounded-full p-1 text-verde-700 transition-colors hover:bg-verde-100 hover:text-verde-900"
+            onClick={handleClose}
+            className="rounded-full p-1.5 text-verde-600 transition-colors hover:bg-verde-100 hover:text-verde-900"
           >
             <X className="h-4 w-4" />
           </button>
@@ -82,11 +98,7 @@ export function FilesSidebar({ conversationId }: FilesSidebarProps) {
               />
             ) : (
               uploadedFiles.map((file) => (
-                <FileItem
-                  key={file.id}
-                  file={file}
-                  onDownload={() => downloadFile(file.id)}
-                />
+                <FileItem key={file.id} file={file} onDownload={downloadFile} />
               ))
             )}
           </motion.div>
@@ -119,7 +131,7 @@ export function FilesSidebar({ conversationId }: FilesSidebarProps) {
                 <FileItem
                   key={file.id}
                   file={file}
-                  onDownload={() => downloadFile(file.id)}
+                  onDownload={downloadFile}
                   isGenerated
                 />
               ))
@@ -129,16 +141,54 @@ export function FilesSidebar({ conversationId }: FilesSidebarProps) {
       </div>
 
       {/* Footer */}
-      <div className="border-t border-verde-200 bg-verde-50/50 p-4 backdrop-blur-sm">
+      <div className="border-t border-verde-100 bg-white p-4">
         <button
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-verde-300 bg-white px-4 py-2 text-sm font-medium text-verde-900 shadow-sm transition-all hover:bg-verde-50 hover:text-verde-950 hover:shadow-md active:scale-95 disabled:opacity-50 disabled:hover:shadow-sm disabled:active:scale-100"
+          className="flex w-full items-center justify-center gap-2 rounded-xl border border-verde-200 bg-verde-50 px-4 py-2.5 text-sm font-medium text-verde-900 shadow-sm transition-all hover:bg-verde-100 hover:shadow-md active:scale-95 disabled:opacity-50"
           disabled={uploadedFiles.length === 0 && generatedFiles.length === 0}
         >
           <Download className="h-4 w-4" />
           Baixar todos
         </button>
       </div>
-    </aside>
+    </div>
+  )
+
+  if (overlay) {
+    return (
+      <>
+        {/* Backdrop */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          onClick={handleClose}
+          className="fixed inset-0 z-40 bg-verde-950/20 backdrop-blur-sm"
+        />
+
+        {/* Sidebar */}
+        <motion.aside
+          initial={{ x: 320, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: 320, opacity: 0 }}
+          transition={sidebarSpring}
+          className="fixed right-0 top-0 z-50 h-screen w-[320px] border-l border-verde-100 bg-white"
+        >
+          {sidebarContent}
+        </motion.aside>
+      </>
+    )
+  }
+
+  return (
+    <motion.aside
+      initial={false}
+      animate={{ width: isOpen ? 320 : 0 }}
+      transition={sidebarSpring}
+      className="relative flex-shrink-0 overflow-hidden border-l border-verde-100 bg-white"
+    >
+      {sidebarContent}
+    </motion.aside>
   )
 }
 
@@ -163,21 +213,25 @@ function EmptyState({
   )
 }
 
-function FileItem({
+const FileItem = memo(function FileItem({
   file,
   onDownload,
   isGenerated
 }: {
   file: ChatFile
-  onDownload: () => void
+  onDownload: (fileId: string) => void
   isGenerated?: boolean
 }) {
   const Icon = getFileIcon(file.fileExtension)
 
+  const handleClick = useCallback(() => {
+    onDownload(file.id)
+  }, [onDownload, file.id])
+
   return (
     <motion.button
       variants={item}
-      onClick={onDownload}
+      onClick={handleClick}
       className="group flex w-full items-start gap-3 rounded-lg border border-transparent p-2.5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-verde-200 hover:bg-white hover:shadow-md"
     >
       <div
@@ -197,7 +251,7 @@ function FileItem({
             {file.fileName}
           </p>
           {isGenerated && (
-            <span className="text-ouro-700 flex-shrink-0 rounded bg-ouro-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+            <span className="text-ouro-700 bg-ouro-100 flex-shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
               Novo
             </span>
           )}
@@ -213,4 +267,4 @@ function FileItem({
       </div>
     </motion.button>
   )
-}
+})

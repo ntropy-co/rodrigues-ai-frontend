@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { useShallow } from 'zustand/react/shallow'
 
 import useChatActions from '@/hooks/useChatActions'
 import { usePlaygroundStore } from '../store'
@@ -12,6 +13,7 @@ import { useAuth } from '@/contexts/AuthContext'
 interface ChatResponse {
   text: string
   session_id: string
+  message_id?: string
 }
 
 /**
@@ -20,19 +22,30 @@ interface ChatResponse {
  */
 const useAIChatStreamHandler = () => {
   const router = useRouter()
-  const setMessages = usePlaygroundStore((state) => state.setMessages)
+
+  // Consolidated Zustand selectors with shallow equality to prevent unnecessary re-renders
+  const {
+    setMessages,
+    sessionId,
+    setSessionId,
+    setStreamingErrorMessage,
+    setIsStreaming,
+    setSessionsData,
+    addLocallyCreatedSessionId
+  } = usePlaygroundStore(
+    useShallow((state) => ({
+      setMessages: state.setMessages,
+      sessionId: state.sessionId,
+      setSessionId: state.setSessionId,
+      setStreamingErrorMessage: state.setStreamingErrorMessage,
+      setIsStreaming: state.setIsStreaming,
+      setSessionsData: state.setSessionsData,
+      addLocallyCreatedSessionId: state.addLocallyCreatedSessionId
+    }))
+  )
+
   const { addMessage, focusChatInput, saveSessionIdToStorage } =
     useChatActions()
-  const sessionId = usePlaygroundStore((state) => state.sessionId)
-  const setSessionId = usePlaygroundStore((state) => state.setSessionId)
-  const setStreamingErrorMessage = usePlaygroundStore(
-    (state) => state.setStreamingErrorMessage
-  )
-  const setIsStreaming = usePlaygroundStore((state) => state.setIsStreaming)
-  const setSessionsData = usePlaygroundStore((state) => state.setSessionsData)
-  const addLocallyCreatedSessionId = usePlaygroundStore(
-    (state) => state.addLocallyCreatedSessionId
-  )
   const { token } = useAuth()
 
   const updateMessagesWithErrorState = useCallback(() => {
@@ -170,6 +183,7 @@ const useAIChatStreamHandler = () => {
           const lastMessage = newMessages[newMessages.length - 1]
           if (lastMessage && lastMessage.role === 'agent') {
             lastMessage.content = data.text
+            lastMessage.id = data.message_id
             lastMessage.created_at = Math.floor(Date.now() / 1000)
           }
           return newMessages

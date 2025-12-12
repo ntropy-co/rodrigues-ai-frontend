@@ -171,7 +171,9 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    background-color: #F5F9F7; /* verde-50 */
+    color: var(--foreground);
+    /* @apply bg-background text-foreground; */
   }
 }
 
@@ -196,4 +198,81 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+}
+
+/* Markdown content styling */
+.markdown-content {
+  @apply text-verde-950 leading-relaxed;
+}
+
+/* Listas ordenadas (numeradas) */
+.markdown-content ol {
+  @apply list-none space-y-2 ml-0 pl-0 mb-3;
+  counter-reset: list-counter;
+}
+
+.markdown-content ol li {
+  @apply flex items-start gap-3;
+  counter-increment: list-counter;
+}
+
+.markdown-content ol li::before {
+  content: counter(list-counter) ".";
+  @apply inline-flex items-center justify-center
+         w-6 h-6 
+         bg-verde-100 
+         text-verde-900 
+         rounded-md 
+         font-medium text-sm
+         flex-shrink-0
+         mt-0.5;
+}
+
+/* Listas não-ordenadas (bullets) */
+.markdown-content ul {
+  @apply list-none space-y-1 ml-0 pl-0 mb-3;
+}
+
+.markdown-content ul li {
+  @apply flex items-start gap-2;
+}
+
+.markdown-content ul li::before {
+  content: "•";
+  @apply text-verde-600 mt-1.5 flex-shrink-0;
+}
+
+/* Paragraphs */
+.markdown-content p {
+  @apply mb-3 last:mb-0;
+}
+
+/* Bold */
+.markdown-content strong {
+  @apply font-semibold text-verde-950;
+}
+
+/* Inline code */
+.markdown-content code {
+  @apply px-1.5 py-0.5 
+         bg-verde-100 
+         text-verde-900 
+         rounded 
+         font-mono text-sm;
+}
+
+/* Code blocks */
+.markdown-content pre {
+  @apply bg-verde-950 
+         text-verde-50 
+         p-4 rounded-xl 
+         overflow-x-auto 
+         my-3
+         font-mono text-sm;
+}
+
+.markdown-content pre code {
+  @apply bg-transparent 
+         text-verde-50 
+         p-0;
 }

@@ -4,7 +4,7 @@ import React, { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { Eye, EyeOff, Loader2, AlertCircle, Sprout } from 'lucide-react'
+import { Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useAuthForm } from '@/hooks/useAuthForm'
 import { Button } from '@/components/ui/button'
@@ -106,9 +106,6 @@ function LoginContent() {
           className="relative z-10"
         >
           <div className="mb-8 flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/10 backdrop-blur-sm">
-              <Sprout className="h-6 w-6 text-white" />
-            </div>
             <div>
               <h1 className="font-display text-2xl font-semibold tracking-tight text-white">
                 Verity Agro
@@ -141,34 +138,6 @@ function LoginContent() {
             Decisões mais rápidas e seguras para operações de CPR, com
             conformidade regulatória garantida.
           </motion.p>
-
-          {/* Stats */}
-          <motion.div
-            variants={staggerItem}
-            className="flex items-center gap-6"
-          >
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.3 }}
-            >
-              <p className="font-sans text-3xl font-bold text-white">70+</p>
-              <p className="font-sans text-sm font-light text-verde-200">
-                Empresas confiando
-              </p>
-            </motion.div>
-
-            <div className="h-12 w-px bg-white/20" />
-
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.3 }}
-            >
-              <p className="font-sans text-3xl font-bold text-white">R$ 2B+</p>
-              <p className="font-sans text-sm font-light text-verde-200">
-                Em CPRs analisadas
-              </p>
-            </motion.div>
-          </motion.div>
         </motion.div>
 
         {/* Footer */}
@@ -177,16 +146,11 @@ function LoginContent() {
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: durations.slow }}
           className="relative z-10"
-        >
-          <p className="font-sans text-sm font-light leading-relaxed text-verde-200">
-            Plataforma enterprise desenvolvida para instituições financeiras e
-            originadores de crédito rural.
-          </p>
-        </motion.div>
+        ></motion.div>
       </motion.div>
 
       {/* Lado Direito - Formulário */}
-      <div className="flex flex-1 items-center justify-center bg-bege p-8">
+      <div className="bg-bege flex flex-1 items-center justify-center p-8">
         <motion.div
           initial="hidden"
           animate="visible"
@@ -404,7 +368,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-bege">
+        <div className="bg-bege flex min-h-screen items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-verde-900" />
         </div>
       }

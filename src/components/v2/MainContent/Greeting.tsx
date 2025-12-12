@@ -13,7 +13,7 @@ export function Greeting() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
-      className="flex w-full flex-col items-start justify-center px-2 py-6 md:px-0 md:py-10"
+      className="flex w-full flex-col items-center justify-center px-2 py-6 text-center md:px-0 md:py-10"
     >
       <h1 className="mb-3 font-display text-4xl font-semibold tracking-tight text-verde-950 md:text-5xl lg:text-6xl">
         {greeting}
