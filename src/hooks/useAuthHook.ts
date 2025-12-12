@@ -3,13 +3,16 @@
 /**
  * useAuth Hook
  * Main authentication hook for Verity Agro B2B Platform
+ *
+ * IMPORTANTE: Este hook usa COOKIES para armazenamento de tokens (mais seguro)
+ * em vez de localStorage/sessionStorage.
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import type { AuthState, SignupData } from '@/types/auth'
+import type { SignupData } from '@/types/auth'
 import type { AuthResponse } from '@/types/auth-api'
 import * as authApi from '@/lib/auth/api'
-import * as storage from '@/lib/auth/storage'
+import { setAuthToken, getAuthToken, removeAuthToken } from '@/lib/auth/cookies'
 import {
   clearRateLimitState,
   recordFailedAttempt,
@@ -18,37 +21,40 @@ import {
 import { handleError, getErrorMessage } from '@/lib/auth/errors'
 
 // ============================================================================
-// HOOK STATE
+// TIPOS
 // ============================================================================
 
-interface UseAuthState extends AuthState {
-  // Additional UI states
+interface ContextUser {
+  id: string
+  email: string
+  name: string
+  role: string
+}
+
+interface UseAuthState {
+  user: ContextUser | null
+  isAuthenticated: boolean
+  isLoading: boolean
+  error: string | null
   isInitialized: boolean
 }
 
 interface UseAuthReturn extends UseAuthState {
-  // Actions
-  login: (
-    email: string,
-    password: string,
-    rememberMe?: boolean
-  ) => Promise<void>
+  login: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
   signup: (data: SignupData, inviteToken: string) => Promise<void>
   requestPasswordReset: (email: string) => Promise<void>
   resetPassword: (token: string, newPassword: string) => Promise<void>
-  refreshSession: () => Promise<void>
   clearError: () => void
 }
 
 // ============================================================================
-// HOOK IMPLEMENTATION
+// IMPLEMENTAÇÃO DO HOOK
 // ============================================================================
 
 export function useAuth(): UseAuthReturn {
   const [state, setState] = useState<UseAuthState>({
     user: null,
-    organization: null,
     isAuthenticated: false,
     isLoading: true,
     error: null,
@@ -56,39 +62,48 @@ export function useAuth(): UseAuthReturn {
   })
 
   // ============================================================================
-  // INITIALIZATION
+  // INICIALIZAÇÃO - Verifica token existente no cookie
   // ============================================================================
 
   useEffect(() => {
-    const initializeAuth = () => {
+    const initializeAuth = async () => {
       try {
-        const storedState = storage.getStoredAuthState()
+        const token = getAuthToken()
 
+        if (token) {
+          // Token existe, buscar dados do usuário
+          const userData = await authApi.getCurrentUserApi(token)
+          setState({
+            user: userData,
+            isAuthenticated: true,
+            isLoading: false,
+            error: null,
+            isInitialized: true
+          })
+        } else {
+          // Sem token
+          setState({
+            user: null,
+            isAuthenticated: false,
+            isLoading: false,
+            error: null,
+            isInitialized: true
+          })
+        }
+      } catch {
+        // Token inválido ou expirado
+        removeAuthToken()
         setState({
-          user: storedState.user,
-          organization: storedState.organization,
-          isAuthenticated: storedState.isAuthenticated,
+          user: null,
+          isAuthenticated: false,
           isLoading: false,
           error: null,
           isInitialized: true
         })
-
-        // If session exists but is about to expire, try to refresh
-        if (storedState.isAuthenticated && storage.isTokenExpired()) {
-          // Token expired, try refresh
-          refreshSession()
-        }
-      } catch {
-        setState((prev) => ({
-          ...prev,
-          isLoading: false,
-          isInitialized: true
-        }))
       }
     }
 
     initializeAuth()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // ============================================================================
@@ -96,17 +111,13 @@ export function useAuth(): UseAuthReturn {
   // ============================================================================
 
   const login = useCallback(
-    async (
-      email: string,
-      password: string,
-      rememberMe: boolean = false
-    ): Promise<void> => {
-      // Check rate limiting
+    async (email: string, password: string): Promise<void> => {
+      // Verificar rate limiting
       const rateLimitStatus = isRateLimited()
       if (rateLimitStatus.limited) {
         setState((prev) => ({
           ...prev,
-          error: rateLimitStatus.message || 'Rate limited'
+          error: rateLimitStatus.message || 'Muitas tentativas. Aguarde.'
         }))
         return
       }
@@ -116,29 +127,21 @@ export function useAuth(): UseAuthReturn {
       try {
         const response: AuthResponse = await authApi.login({ email, password })
 
-        // Persist auth state
-        storage.persistAuthState(
-          response.token,
-          response.user,
-          response.organization,
-          response.expiresAt,
-          response.refreshToken,
-          rememberMe
-        )
+        // Salvar token no cookie seguro
+        setAuthToken(response.token)
 
-        // Clear rate limit on success
+        // Limpar rate limit após sucesso
         clearRateLimitState()
 
         setState({
           user: response.user,
-          organization: response.organization,
           isAuthenticated: true,
           isLoading: false,
           error: null,
           isInitialized: true
         })
       } catch (error) {
-        // Record failed attempt for rate limiting
+        // Registrar tentativa falha para rate limiting
         recordFailedAttempt()
 
         const authError = handleError(error)
@@ -161,18 +164,14 @@ export function useAuth(): UseAuthReturn {
     setState((prev) => ({ ...prev, isLoading: true }))
 
     try {
-      // Call API to invalidate session server-side
       await authApi.logout()
     } catch (error) {
-      // Ignore logout API errors
-      console.warn('Logout API error:', error)
+      console.warn('Erro ao fazer logout na API:', error)
     } finally {
-      // Always clear local state
-      storage.clearAllAuthData()
-
+      // Sempre limpar estado local
+      removeAuthToken()
       setState({
         user: null,
-        organization: null,
         isAuthenticated: false,
         isLoading: false,
         error: null,
@@ -197,19 +196,11 @@ export function useAuth(): UseAuthReturn {
           name: data.name
         })
 
-        // Persist auth state
-        storage.persistAuthState(
-          response.token,
-          response.user,
-          response.organization,
-          response.expiresAt,
-          response.refreshToken,
-          true // Always remember for new signups
-        )
+        // Salvar token no cookie
+        setAuthToken(response.token)
 
         setState({
           user: response.user,
-          organization: response.organization,
           isAuthenticated: true,
           isLoading: false,
           error: null,
@@ -229,7 +220,7 @@ export function useAuth(): UseAuthReturn {
   )
 
   // ============================================================================
-  // PASSWORD RESET
+  // RECUPERAÇÃO DE SENHA
   // ============================================================================
 
   const requestPasswordReset = useCallback(
@@ -273,35 +264,7 @@ export function useAuth(): UseAuthReturn {
   )
 
   // ============================================================================
-  // SESSION REFRESH
-  // ============================================================================
-
-  const refreshSession = useCallback(async (): Promise<void> => {
-    try {
-      const response = await authApi.refreshToken()
-
-      // Update token in storage
-      storage.setToken(
-        response.token,
-        !!localStorage.getItem('verity_remember_me')
-      )
-      storage.setTokenExpiry(response.expiresAt)
-    } catch {
-      // Refresh failed, clear session
-      storage.clearAllAuthData()
-      setState({
-        user: null,
-        organization: null,
-        isAuthenticated: false,
-        isLoading: false,
-        error: null,
-        isInitialized: true
-      })
-    }
-  }, [])
-
-  // ============================================================================
-  // CLEAR ERROR
+  // LIMPAR ERRO
   // ============================================================================
 
   const clearError = useCallback(() => {
@@ -309,7 +272,7 @@ export function useAuth(): UseAuthReturn {
   }, [])
 
   // ============================================================================
-  // RETURN
+  // RETORNO
   // ============================================================================
 
   return useMemo(
@@ -320,7 +283,6 @@ export function useAuth(): UseAuthReturn {
       signup,
       requestPasswordReset,
       resetPassword,
-      refreshSession,
       clearError
     }),
     [
@@ -330,7 +292,6 @@ export function useAuth(): UseAuthReturn {
       signup,
       requestPasswordReset,
       resetPassword,
-      refreshSession,
       clearError
     ]
   )

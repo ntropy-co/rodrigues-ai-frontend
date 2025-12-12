@@ -4,16 +4,7 @@ import withPWA from '@ducanh2912/next-pwa'
 const nextConfig: NextConfig = {
   devIndicators: false,
 
-  // Ignorar erros de lint/ts durante build para permitir deploy
-  // TODO: Corrigir erros de lint em arquivos de auth em PR separado
-  eslint: {
-    ignoreDuringBuilds: true
-  },
-  typescript: {
-    ignoreBuildErrors: true
-  },
-
-  // Headers de segurança
+  // Security headers
   async headers() {
     const securityHeaders = [
       {

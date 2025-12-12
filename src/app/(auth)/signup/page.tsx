@@ -13,7 +13,7 @@ import {
   ArrowRight,
   Info
 } from 'lucide-react'
-import { useAuth } from '@/hooks/useAuthHook'
+import { useAuth } from '@/contexts/AuthContext'
 import { useAuthForm } from '@/hooks/useAuthForm'
 import { useInviteValidation } from '@/hooks/useInviteValidation'
 import { validatePassword } from '@/lib/utils/auth-validators'
@@ -50,7 +50,7 @@ function SignupContent() {
   const searchParams = useSearchParams()
   const inviteToken = searchParams.get('token')
 
-  const { signup, error: authError } = useAuth()
+  const { register } = useAuth()
   const {
     invite,
     organization,
@@ -60,6 +60,7 @@ function SignupContent() {
   } = useInviteValidation(inviteToken)
 
   const [showPassword, setShowPassword] = useState(false)
+  const [authError, setAuthError] = useState<string | null>(null)
 
   const {
     values,
@@ -83,18 +84,17 @@ function SignupContent() {
     if (!inviteToken) return
 
     try {
-      await signup(
-        {
-          email: values.email,
-          password: values.password,
-          name: values.name,
-          confirmPassword: values.confirmPassword,
-          acceptTerms: values.acceptTerms
-        },
+      setAuthError(null)
+      await register({
+        email: values.email,
+        password: values.password,
+        name: values.name,
         inviteToken
-      )
+      })
       router.push('/chat')
     } catch (err) {
+      const message = err instanceof Error ? err.message : 'Erro ao criar conta'
+      setAuthError(message)
       console.error('Signup failed', err)
     }
   }

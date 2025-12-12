@@ -87,7 +87,7 @@ export function withAuth<P extends object>(
 
       // Check role if required
       if (!isLoading && isAuthenticated && requiredRole && user) {
-        if (!hasMinimumRole(user.role, requiredRole)) {
+        if (!hasMinimumRole(user.role as UserRole, requiredRole)) {
           // User doesn't have required role - redirect to unauthorized or dashboard
           router.push('/unauthorized')
         }
@@ -105,7 +105,11 @@ export function withAuth<P extends object>(
     }
 
     // Check role
-    if (requiredRole && user && !hasMinimumRole(user.role, requiredRole)) {
+    if (
+      requiredRole &&
+      user &&
+      !hasMinimumRole(user.role as UserRole, requiredRole)
+    ) {
       return <AuthLoadingScreen />
     }
 
@@ -210,7 +214,11 @@ export function AuthGuard({
     return <>{fallback}</>
   }
 
-  if (requiredRole && user && !hasMinimumRole(user.role, requiredRole)) {
+  if (
+    requiredRole &&
+    user &&
+    !hasMinimumRole(user.role as UserRole, requiredRole)
+  ) {
     return <>{fallback}</>
   }
 
@@ -241,7 +249,7 @@ export function RoleGuard({
     return <>{fallback}</>
   }
 
-  if (!hasMinimumRole(user.role, requiredRole)) {
+  if (!hasMinimumRole(user.role as UserRole, requiredRole)) {
     return <>{fallback}</>
   }
 

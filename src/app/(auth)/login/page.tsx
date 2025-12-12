@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Eye, EyeOff, Loader2, AlertCircle, Sprout } from 'lucide-react'
-import { useAuth } from '@/hooks/useAuthHook'
+import { useAuth } from '@/contexts/AuthContext'
 import { useAuthForm } from '@/hooks/useAuthForm'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -22,8 +22,9 @@ import {
 function LoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { login, error: authError } = useAuth()
+  const { login } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
+  const [authError, setAuthError] = useState<string | null>(null)
   const redirect = searchParams.get('redirect') || '/chat'
   const shouldReduceMotion = useReducedMotion()
 
@@ -39,9 +40,12 @@ function LoginContent() {
 
   const onSubmit = async () => {
     try {
-      await login(values.email, values.password, values.rememberMe)
+      setAuthError(null)
+      await login(values.email, values.password)
       router.push(redirect)
     } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Erro ao fazer login'
+      setAuthError(message)
       console.error('Login failed', err)
     }
   }
