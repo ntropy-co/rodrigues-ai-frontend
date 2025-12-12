@@ -77,7 +77,7 @@ export function SuggestionCarousel({
           className="absolute -left-4 top-1/2 z-10 flex min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-full bg-white p-2 shadow-md transition-all hover-hover:shadow-lg dark:bg-gray-800"
           aria-label="Página anterior"
         >
-          <ChevronLeft className="h-5 w-5 text-gemini-gray-600" />
+          <ChevronLeft className="text-gemini-gray-600 h-5 w-5" />
         </button>
 
         {/* Botão próximo */}
@@ -86,13 +86,13 @@ export function SuggestionCarousel({
           className="absolute -right-4 top-1/2 z-10 flex min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-full bg-white p-2 shadow-md transition-all hover-hover:shadow-lg dark:bg-gray-800"
           aria-label="Próxima página"
         >
-          <ChevronRight className="h-5 w-5 text-gemini-gray-600" />
+          <ChevronRight className="text-gemini-gray-600 h-5 w-5" />
         </button>
 
         {/* Container do carrossel */}
         <div className="overflow-hidden" {...handlers}>
           <div
-            className="duration-[600ms] flex transition-transform ease-spring-smooth"
+            className="ease-spring-smooth flex transition-transform duration-500"
             style={{
               transform: `translate3d(calc(-${currentPage * 100}% + ${swipeDragOffset}px), 0, 0)`,
               transition: swipeDragOffset !== 0 ? 'none' : undefined
@@ -108,7 +108,7 @@ export function SuggestionCarousel({
                 >
                   <button
                     onClick={() => handleSuggestionClick(suggestion.prompt)}
-                    className="group flex h-[70px] w-full flex-col items-start justify-between rounded-xl border border-border bg-card p-3 text-left transition-all active:scale-[0.98] hover-hover:border-gemini-gray-300 hover-hover:shadow-sm dark:hover-hover:border-gemini-gray-500"
+                    className="hover-hover:border-gemini-gray-300 dark:hover-hover:border-gemini-gray-500 group flex h-[70px] w-full flex-col items-start justify-between rounded-xl border border-border bg-card p-3 text-left transition-all active:scale-[0.98] hover-hover:shadow-sm"
                     aria-label={`Sugestão: ${suggestion.title}`}
                   >
                     {/* Primeira linha: Ícone + Tema */}

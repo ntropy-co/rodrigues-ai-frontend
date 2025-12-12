@@ -164,17 +164,17 @@ function SignupContent() {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="mb-6 rounded-lg border border-ouro-600/20 bg-ouro-100/50 p-4"
+          className="bg-ouro-100/50 mb-6 rounded-lg border border-ouro-600/20 p-4"
         >
           <div className="flex items-start gap-3">
             <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-ouro-600/10">
-              <Mail className="h-5 w-5 text-ouro-900" />
+              <Mail className="text-ouro-900 h-5 w-5" />
             </div>
             <div>
-              <p className="mb-0.5 text-sm font-medium text-ouro-900">
+              <p className="text-ouro-900 mb-0.5 text-sm font-medium">
                 Convite de {organization.name}
               </p>
-              <p className="text-xs text-ouro-900/70">
+              <p className="text-ouro-900/70 text-xs">
                 Você foi convidado como{' '}
                 <span className="font-semibold">{invite?.role}</span>.
               </p>

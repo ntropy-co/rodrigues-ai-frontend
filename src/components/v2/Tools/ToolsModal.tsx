@@ -36,15 +36,15 @@ export function ToolsModal({ isOpen, onClose, onToolSelect }: ToolsModalProps) {
       <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
         {/* Header */}
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gemini-gray-900">
+          <h2 className="text-gemini-gray-900 text-xl font-semibold">
             Ferramentas
           </h2>
           <button
             onClick={onClose}
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 transition-colors hover-hover:bg-gemini-gray-100"
+            className="hover-hover:bg-gemini-gray-100 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 transition-colors"
             aria-label="Fechar modal"
           >
-            <X className="h-5 w-5 text-gemini-gray-600" />
+            <X className="text-gemini-gray-600 h-5 w-5" />
           </button>
         </div>
 
@@ -56,16 +56,16 @@ export function ToolsModal({ isOpen, onClose, onToolSelect }: ToolsModalProps) {
               <button
                 key={tool.id}
                 onClick={() => handleToolClick(tool.id, tool.name)}
-                className="flex w-full items-start gap-4 rounded-xl border border-gemini-gray-200 bg-gemini-gray-50 p-4 text-left transition-all active:scale-[0.98] hover-hover:border-gemini-blue hover-hover:bg-gemini-blue/5"
+                className="border-gemini-gray-200 bg-gemini-gray-50 hover-hover:border-gemini-blue hover-hover:bg-gemini-blue/5 flex w-full items-start gap-4 rounded-xl border p-4 text-left transition-all active:scale-[0.98]"
               >
-                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gemini-blue/10">
-                  <Icon className="h-5 w-5 text-gemini-blue" />
+                <div className="bg-gemini-blue/10 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg">
+                  <Icon className="text-gemini-blue h-5 w-5" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-medium text-gemini-gray-900">
+                  <h3 className="text-gemini-gray-900 font-medium">
                     {tool.name}
                   </h3>
-                  <p className="text-sm text-gemini-gray-600">
+                  <p className="text-gemini-gray-600 text-sm">
                     {tool.description}
                   </p>
                 </div>
@@ -78,7 +78,7 @@ export function ToolsModal({ isOpen, onClose, onToolSelect }: ToolsModalProps) {
         <div className="mt-6 flex justify-end">
           <button
             onClick={onClose}
-            className="rounded-lg border border-gemini-gray-300 px-4 py-2 text-gemini-gray-700 transition-colors hover-hover:bg-gemini-gray-50"
+            className="border-gemini-gray-300 text-gemini-gray-700 hover-hover:bg-gemini-gray-50 rounded-lg border px-4 py-2 transition-colors"
           >
             Cancelar
           </button>
