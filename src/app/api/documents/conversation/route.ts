@@ -33,16 +33,16 @@ export async function GET(request: NextRequest) {
     }
 
     // Forward the request to the backend
-    const response = await fetch(
-      `${BACKEND_URL}/api/v1/documents/conversation?conversation_id=${encodeURIComponent(conversationId)}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: authorization
-        }
+    const targetUrl = `${BACKEND_URL}/api/v1/documents/conversation?conversation_id=${encodeURIComponent(conversationId)}`
+    console.log('[Proxy] Fetching documents from:', targetUrl)
+
+    const response = await fetch(targetUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authorization
       }
-    )
+    })
 
     // Handle error responses from backend
     if (!response.ok) {
@@ -71,8 +71,13 @@ export async function GET(request: NextRequest) {
     // Get the response data
     const data = await response.json()
 
-    // Return the response
-    return NextResponse.json(data, { status: 200 })
+    // Return the response with cache headers
+    return NextResponse.json(data, {
+      status: 200,
+      headers: {
+        'Cache-Control': 'private, max-age=30, stale-while-revalidate=60'
+      }
+    })
   } catch (error) {
     console.error('[API Route /api/documents/conversation] Error:', error)
     return NextResponse.json(

@@ -169,6 +169,8 @@ export interface ReasoningMessage {
   created_at?: number
 }
 export interface PlaygroundChatMessage {
+  id?: string
+  feedback?: 'like' | 'dislike' | null
   role: 'user' | 'agent' | 'system' | 'tool'
   content: string
   streamingError?: boolean
@@ -183,7 +185,7 @@ export interface PlaygroundChatMessage {
   videos?: VideoData[]
   audio?: AudioData[]
   response_audio?: ResponseAudio
-  files?: Array<{ name: string; size: number }>
+  files?: Array<{ name: string; size: number; type?: string }>
 }
 
 export interface ComboboxAgent {
@@ -233,6 +235,7 @@ export interface Reference {
 export interface SessionEntry {
   session_id: string
   title: string
+  project_id?: string | null
   created_at: number
 }
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
+import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { X, Trash2, Plus, AlertTriangle, Search, Loader2 } from 'lucide-react'
 import { usePlaygroundStore } from '@/store'
@@ -206,15 +207,17 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
             </button>
           </div>
 
-          {/* Nova Análise (Enterprise) */}
+          {/* Nova Conversa (Enterprise) */}
           <div className="border-b border-gray-200 p-4 dark:border-gray-800">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={handleNewConversation}
-              className="flex w-full items-center justify-start gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-50 hover:text-gray-900 dark:border-gray-700 dark:bg-transparent dark:text-gray-100 dark:hover:bg-gray-800"
+              className="flex w-full items-center gap-2 rounded-lg bg-verde-600 px-3 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-verde-700"
             >
               <Plus className="h-4 w-4" />
-              Nova Análise
-            </button>
+              Nova Conversa
+            </motion.button>
           </div>
 
           {/* Search */}

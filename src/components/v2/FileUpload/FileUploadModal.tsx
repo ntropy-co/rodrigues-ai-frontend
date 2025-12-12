@@ -183,7 +183,7 @@ export function FileUploadModal({
       return <Upload className="text-gemini-gray-400 h-12 w-12" />
     if (success) return <CheckCircle className="h-12 w-12 text-green-500" />
     if (error) return <AlertCircle className="h-12 w-12 text-red-500" />
-    return <FileText className="h-12 w-12 text-gemini-blue" />
+    return <FileText className="text-gemini-blue h-12 w-12" />
   }
 
   return (
@@ -191,16 +191,16 @@ export function FileUploadModal({
       <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
         {/* Header */}
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gemini-gray-900">
+          <h2 className="text-gemini-gray-900 text-xl font-semibold">
             Upload de Documento
           </h2>
           <button
             onClick={handleClose}
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 transition-colors hover-hover:bg-gemini-gray-100"
+            className="hover-hover:bg-gemini-gray-100 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 transition-colors"
             disabled={uploading}
             aria-label="Fechar modal"
           >
-            <X className="h-5 w-5 text-gemini-gray-600" />
+            <X className="text-gemini-gray-600 h-5 w-5" />
           </button>
         </div>
 
@@ -219,7 +219,7 @@ export function FileUploadModal({
           {/* Icon */}
           <div className="mb-4 flex justify-center">
             {uploading ? (
-              <Loader2 className="h-12 w-12 animate-spin text-gemini-blue" />
+              <Loader2 className="text-gemini-blue h-12 w-12 animate-spin" />
             ) : (
               getFileIcon()
             )}
@@ -231,7 +231,7 @@ export function FileUploadModal({
               {mode === 'attach' && files.length > 1 ? (
                 // Modo anexar com múltiplos arquivos - mostrar lista
                 <div className="space-y-2">
-                  <p className="font-medium text-gemini-gray-900">
+                  <p className="text-gemini-gray-900 font-medium">
                     {files.length} arquivo{files.length > 1 ? 's' : ''}{' '}
                     selecionado{files.length > 1 ? 's' : ''}
                   </p>
@@ -239,14 +239,14 @@ export function FileUploadModal({
                     {files.map((file, index) => (
                       <div
                         key={index}
-                        className="flex items-center justify-between rounded bg-gemini-gray-100 px-2 py-1"
+                        className="bg-gemini-gray-100 flex items-center justify-between rounded px-2 py-1"
                       >
                         <div className="flex-1 truncate text-sm">
                           {file.name}
                         </div>
                         <button
                           onClick={() => removeFile(index)}
-                          className="ml-2 text-gemini-gray-500 hover:text-red-500"
+                          className="text-gemini-gray-500 ml-2 hover:text-red-500"
                           aria-label={`Remover ${file.name}`}
                         >
                           <X className="h-4 w-4" />
@@ -255,7 +255,7 @@ export function FileUploadModal({
                     ))}
                   </div>
                   <button
-                    className="text-sm font-medium text-gemini-blue hover-hover:underline"
+                    className="text-gemini-blue text-sm font-medium hover-hover:underline"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={uploading}
                   >
@@ -265,22 +265,22 @@ export function FileUploadModal({
               ) : (
                 // Modo upload ou um único arquivo - mostrar detalhes
                 <>
-                  <p className="font-medium text-gemini-gray-900">
+                  <p className="text-gemini-gray-900 font-medium">
                     {files[0].name}
                   </p>
-                  <p className="text-sm text-gemini-gray-600">
+                  <p className="text-gemini-gray-600 text-sm">
                     {(files[0].size / 1024 / 1024).toFixed(2)} MB
                   </p>
 
                   {uploading && (
                     <div className="mt-4">
-                      <div className="h-2 w-full rounded-full bg-gemini-gray-200">
+                      <div className="bg-gemini-gray-200 h-2 w-full rounded-full">
                         <div
-                          className="h-2 rounded-full bg-gemini-blue transition-all"
+                          className="bg-gemini-blue h-2 rounded-full transition-all"
                           style={{ width: `${uploadProgress}%` }}
                         />
                       </div>
-                      <p className="mt-2 text-sm text-gemini-gray-600">
+                      <p className="text-gemini-gray-600 mt-2 text-sm">
                         {success
                           ? 'Processado com sucesso!'
                           : 'Processando documento...'}
@@ -295,13 +295,13 @@ export function FileUploadModal({
               <p className="text-gemini-gray-700">
                 Arraste {mode === 'attach' ? 'arquivos' : 'um arquivo'} aqui ou{' '}
                 <button
-                  className="font-medium text-gemini-blue hover-hover:underline"
+                  className="text-gemini-blue font-medium hover-hover:underline"
                   onClick={() => fileInputRef.current?.click()}
                 >
                   selecione
                 </button>
               </p>
-              <p className="text-sm text-gemini-gray-500">
+              <p className="text-gemini-gray-500 text-sm">
                 PDF, DOC, TXT, MD, CSV, XLS, JPG, PNG (máx. 10MB
                 {mode === 'attach' ? ' cada' : ''})
               </p>
@@ -335,7 +335,7 @@ export function FileUploadModal({
         <div className="mt-6 flex gap-3">
           <button
             onClick={handleClose}
-            className="flex-1 rounded-lg border border-gemini-gray-300 px-4 py-2 text-gemini-gray-700 transition-colors hover-hover:bg-gemini-gray-50"
+            className="border-gemini-gray-300 text-gemini-gray-700 hover-hover:bg-gemini-gray-50 flex-1 rounded-lg border px-4 py-2 transition-colors"
             disabled={uploading}
           >
             Cancelar
@@ -345,7 +345,7 @@ export function FileUploadModal({
             disabled={files.length === 0 || uploading || success}
             className={`flex-1 rounded-lg px-4 py-2 font-medium text-white transition-colors ${
               files.length === 0 || uploading || success
-                ? 'cursor-not-allowed bg-gemini-gray-300'
+                ? 'bg-gemini-gray-300 cursor-not-allowed'
                 : 'bg-gemini-blue hover-hover:bg-gemini-blue-hover'
             }`}
           >

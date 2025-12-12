@@ -53,7 +53,7 @@ export function FileList({
 
   return (
     <div className="space-y-2">
-      <p className="text-xs font-medium text-gemini-gray-600">
+      <p className="text-gemini-gray-600 text-xs font-medium">
         Documentos anexados ({documents.length})
       </p>
 
@@ -61,21 +61,21 @@ export function FileList({
         {documents.map((doc) => (
           <div
             key={doc.id}
-            className="flex items-center gap-3 rounded-lg border border-gemini-gray-200 bg-white p-3 shadow-sm"
+            className="border-gemini-gray-200 flex items-center gap-3 rounded-lg border bg-white p-3 shadow-sm"
           >
             {/* Icon */}
             <div className="flex-shrink-0">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gemini-blue/10">
-                <FileText className="h-5 w-5 text-gemini-blue" />
+              <div className="bg-gemini-blue/10 flex h-10 w-10 items-center justify-center rounded-lg">
+                <FileText className="text-gemini-blue h-5 w-5" />
               </div>
             </div>
 
             {/* Info */}
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-gemini-gray-900">
+              <p className="text-gemini-gray-900 truncate text-sm font-medium">
                 {doc.filename}
               </p>
-              <div className="mt-1 flex items-center gap-2 text-xs text-gemini-gray-500">
+              <div className="text-gemini-gray-500 mt-1 flex items-center gap-2 text-xs">
                 <span>{getFileTypeLabel(doc.mime_type)}</span>
                 <span>•</span>
                 <span>{formatFileSize(doc.file_size)}</span>
@@ -93,7 +93,7 @@ export function FileList({
               {onDownload && (
                 <button
                   onClick={() => onDownload(doc.id)}
-                  className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 text-gemini-gray-600 transition-colors hover-hover:bg-gemini-gray-100"
+                  className="text-gemini-gray-600 hover-hover:bg-gemini-gray-100 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 transition-colors"
                   aria-label="Baixar documento"
                 >
                   <Download className="h-4 w-4" />
@@ -103,7 +103,7 @@ export function FileList({
               {onRemove && (
                 <button
                   onClick={() => onRemove(doc.id)}
-                  className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 text-gemini-gray-600 transition-colors hover-hover:bg-red-100 hover-hover:text-red-600"
+                  className="text-gemini-gray-600 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 transition-colors hover-hover:bg-red-100 hover-hover:text-red-600"
                   aria-label="Remover documento"
                 >
                   <X className="h-4 w-4" />

@@ -1,65 +1,108 @@
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
-import { Menu, Hexagon } from 'lucide-react'
-// import { ModelSelector } from './ModelSelector'
+import { Menu, Hexagon, FolderOpen, MessageSquare } from 'lucide-react'
 import { UserAvatar } from './UserAvatar'
 import { useUIConfig } from '@/hooks/useUIConfig'
 
 // Dynamic import para code splitting - Sidebar só carrega quando menu é aberto
-// Reduz bundle inicial em ~15KB
 const MenuSidebar = dynamic(
   () => import('./MenuSidebar').then((m) => ({ default: m.MenuSidebar })),
   {
-    ssr: false, // Sidebar não precisa SSR
-    loading: () => null // Sem loading state, sidebar aparece instantaneamente
+    ssr: false,
+    loading: () => null
   }
 )
 
-export function Header() {
+interface HeaderProps {
+  onToggleConversations?: () => void
+  onToggleFiles?: () => void
+  isConversationsOpen?: boolean
+  isFilesOpen?: boolean
+}
+
+export function Header({
+  onToggleConversations,
+  onToggleFiles,
+  isConversationsOpen = true,
+  isFilesOpen = true
+}: HeaderProps) {
   const { ui } = useUIConfig()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-  // Timestamp simulado de "última análise" para dar contexto profissional
   const lastAnalysisTime = 'há 2 horas'
 
   return (
     <>
       <header
-        className="flex h-16 w-full items-center justify-between border-b border-verde-200 bg-verde-50 px-6 py-4 dark:border-gray-800 dark:bg-card"
+        className="flex h-14 w-full items-center justify-between border-b border-verde-100 bg-white px-4 dark:border-gray-800 dark:bg-card"
         role="banner"
       >
-        {/* Left Section: Logo & Brand */}
-        <div className="flex items-center gap-4">
+        {/* Left Section: Toggles & Logo */}
+        <div className="flex items-center gap-2">
+          {/* Menu Button */}
           <button
             onClick={() => setIsMenuOpen(true)}
-            className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-verde-600 transition-colors hover:bg-verde-50 hover:text-verde-900"
             aria-label="Abrir menu"
           >
             <Menu className="h-5 w-5" />
           </button>
 
-          <div className="flex items-center gap-3 border-l border-verde-200 pl-4 dark:border-gray-700">
-            <div className="flex items-center justify-center rounded bg-verde-900 p-1 dark:bg-gray-100">
-              <Hexagon
-                className="h-4 w-4 text-white dark:text-gray-900"
-                strokeWidth={3}
-              />
+          {/* Conversations Toggle */}
+          {onToggleConversations && (
+            <button
+              onClick={onToggleConversations}
+              className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors ${
+                isConversationsOpen
+                  ? 'bg-verde-100 text-verde-900'
+                  : 'text-verde-600 hover:bg-verde-50 hover:text-verde-900'
+              }`}
+              aria-label={
+                isConversationsOpen ? 'Fechar conversas' : 'Abrir conversas'
+              }
+              title="Conversas"
+            >
+              <MessageSquare className="h-5 w-5" />
+            </button>
+          )}
+
+          {/* Divider */}
+          <div className="mx-2 h-6 w-px bg-verde-200" aria-hidden="true" />
+
+          {/* Logo */}
+          <div className="flex items-center gap-2.5">
+            <div className="flex items-center justify-center rounded-lg bg-verde-900 p-1.5">
+              <Hexagon className="h-4 w-4 text-white" strokeWidth={2.5} />
             </div>
-            <span className="text-sm font-medium text-verde-900 dark:text-gray-300">
+            <span className="font-display text-base font-semibold text-verde-950">
               {ui.branding.appName}
             </span>
           </div>
         </div>
 
-        {/* Right Section: Context & User */}
-        <nav className="flex items-center gap-6">
-          <span className="hidden text-xs text-gray-500 md:inline-block">
+        {/* Right Section: Context, Files Toggle & User */}
+        <nav className="flex items-center gap-3">
+          <span className="hidden text-xs text-verde-600 md:inline-block">
             Última análise: {lastAnalysisTime}
           </span>
-          <div
-            className="h-4 w-px bg-gray-200 dark:bg-gray-800"
-            aria-hidden="true"
-          />
+
+          {/* Files Toggle */}
+          {onToggleFiles && (
+            <button
+              onClick={onToggleFiles}
+              className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors ${
+                isFilesOpen
+                  ? 'bg-verde-100 text-verde-900'
+                  : 'text-verde-600 hover:bg-verde-50 hover:text-verde-900'
+              }`}
+              aria-label={isFilesOpen ? 'Fechar arquivos' : 'Abrir arquivos'}
+              title="Arquivos"
+            >
+              <FolderOpen className="h-5 w-5" />
+            </button>
+          )}
+
+          <div className="h-6 w-px bg-verde-200" aria-hidden="true" />
           <UserAvatar />
         </nav>
       </header>

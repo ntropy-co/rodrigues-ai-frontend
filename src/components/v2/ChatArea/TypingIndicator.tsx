@@ -1,22 +1,37 @@
-'use client'
+import { motion } from 'framer-motion'
+import { easings } from '@/lib/animations/easings'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 
 export function TypingIndicator() {
+  const prefersReducedMotion = useReducedMotion()
+
   return (
-    <div className="flex items-center gap-1">
-      <span className="text-sm text-muted-foreground">Pensando</span>
-      <div className="flex gap-1">
-        <div
-          className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground"
-          style={{ animationDelay: '0ms' }}
-        ></div>
-        <div
-          className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground"
-          style={{ animationDelay: '150ms' }}
-        ></div>
-        <div
-          className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground"
-          style={{ animationDelay: '300ms' }}
-        ></div>
+    <div className="flex w-full justify-start py-2">
+      <div className="flex items-center gap-1.5 rounded-2xl rounded-tl-sm border-2 border-verde-100 bg-white px-4 py-3 shadow-[0_2px_8px_rgba(45,90,69,0.08)]">
+        {[0, 1, 2].map((dot) => (
+          <motion.div
+            key={dot}
+            className="h-1.5 w-1.5 rounded-full bg-verde-600"
+            animate={
+              prefersReducedMotion
+                ? { opacity: 0.7 }
+                : { scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }
+            }
+            transition={
+              prefersReducedMotion
+                ? { duration: 0 }
+                : {
+                    duration: 1.2,
+                    repeat: Infinity,
+                    delay: dot * 0.15,
+                    ease: easings.float
+                  }
+            }
+            style={{
+              willChange: prefersReducedMotion ? 'auto' : 'transform, opacity'
+            }}
+          />
+        ))}
       </div>
     </div>
   )

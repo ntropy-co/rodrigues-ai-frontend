@@ -1,0 +1,575 @@
+'use client'
+
+import { useState, useEffect, useCallback, memo } from 'react'
+import { motion } from 'framer-motion'
+import {
+  Search,
+  Plus,
+  MessageSquare,
+  ChevronLeft,
+  Loader2,
+  SquarePen,
+  LayoutGrid
+} from 'lucide-react'
+import { ProjectDialog } from './ProjectDialog'
+import { Avatar } from './Avatar'
+import { cn } from '@/lib/utils'
+import { useSessions } from '@/hooks/useSessions'
+import { useProjects, type Project } from '@/hooks/useProjects'
+import { formatRelativeTime } from '@/lib/utils/time'
+import type { SessionEntry } from '@/types/playground'
+// Spring animation config (Claude-inspired)
+const sidebarSpring = {
+  type: 'spring' as const,
+  stiffness: 300,
+  damping: 30,
+  mass: 1
+}
+
+interface ConversationsSidebarProps {
+  isOpen?: boolean
+  overlay?: boolean
+  onToggle?: () => void
+  activeConversationId?: string | null
+  onSelectConversation?: (id: string) => void
+  onNewConversation?: () => void
+}
+
+export function ConversationsSidebar({
+  isOpen = true,
+  overlay = false,
+  onToggle,
+  activeConversationId,
+  onSelectConversation,
+  onNewConversation
+}: ConversationsSidebarProps) {
+  const [searchQuery, setSearchQuery] = useState('')
+  const [sessions, setSessions] = useState<SessionEntry[]>([])
+  const [projects, setProjects] = useState<Project[]>([])
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
+    null
+  )
+  const [isProjectDialogOpen, setIsProjectDialogOpen] = useState(false)
+  const {
+    fetchSessions,
+    createSession,
+    updateSession,
+    loading: sessionsLoading
+  } = useSessions()
+  const {
+    fetchProjects,
+    createProject,
+    updateProject,
+    loading: projectsLoading
+  } = useProjects()
+
+  // Fetch projects on mount
+  useEffect(() => {
+    fetchProjects().then(setProjects)
+  }, [fetchProjects])
+
+  // Fetch sessions when selectedProjectId changes
+  useEffect(() => {
+    fetchSessions(selectedProjectId).then(setSessions)
+  }, [fetchSessions, selectedProjectId])
+
+  // Memoized handlers to prevent re-renders of child components
+  const handleUpdateProject = useCallback(
+    async (id: string, data: { title?: string }) => {
+      await updateProject(id, data)
+      fetchProjects().then(setProjects)
+    },
+    [updateProject, fetchProjects]
+  )
+
+  const handleCreateProject = useCallback(
+    async (data: { title: string }) => {
+      await createProject(data)
+      fetchProjects().then(setProjects)
+    },
+    [createProject, fetchProjects]
+  )
+
+  const handleOpenProjectDialog = useCallback(() => {
+    setIsProjectDialogOpen(true)
+  }, [])
+
+  const handleNewAnalysis = useCallback(async () => {
+    if (selectedProjectId) {
+      const newSession = await createSession(undefined, selectedProjectId)
+      if (newSession && onSelectConversation) {
+        onSelectConversation(newSession.session_id)
+        // Update list
+        fetchSessions(selectedProjectId).then(setSessions)
+        if (onToggle) onToggle()
+      }
+    } else {
+      onNewConversation?.()
+    }
+  }, [
+    selectedProjectId,
+    createSession,
+    onSelectConversation,
+    fetchSessions,
+    onToggle,
+    onNewConversation
+  ])
+
+  if (overlay) {
+    return (
+      <>
+        {/* Backdrop */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          onClick={onToggle}
+          className="fixed inset-0 z-40 bg-verde-950/20 backdrop-blur-sm"
+        />
+
+        {/* Sidebar */}
+        <motion.aside
+          initial={{ x: -280, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: -280, opacity: 0 }}
+          transition={sidebarSpring}
+          className="fixed left-0 top-0 z-50 flex h-screen w-[280px] flex-col border-r border-verde-100 bg-white"
+        >
+          <SidebarContent
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            onToggle={onToggle}
+            onNewConversation={handleNewAnalysis}
+            activeConversationId={activeConversationId}
+            onSelectConversation={(id) => {
+              onSelectConversation?.(id)
+              onToggle?.()
+            }}
+            showCloseButton={true}
+            sessions={sessions}
+            projects={projects}
+            selectedProjectId={selectedProjectId}
+            onSelectProject={setSelectedProjectId}
+            sessionsLoading={sessionsLoading}
+            projectsLoading={projectsLoading}
+            onUpdateSession={updateSession}
+            onUpdateProject={handleUpdateProject}
+            onOpenProjectDialog={handleOpenProjectDialog}
+          />
+        </motion.aside>
+
+        {/* Project Dialog */}
+        <ProjectDialog
+          open={isProjectDialogOpen}
+          onOpenChange={setIsProjectDialogOpen}
+          onSubmit={handleCreateProject}
+        />
+      </>
+    )
+  }
+
+  return (
+    <motion.aside
+      initial={false}
+      animate={{ width: isOpen ? 280 : 0 }}
+      transition={sidebarSpring}
+      className="relative flex-shrink-0 overflow-hidden border-r border-verde-100 bg-white"
+    >
+      <div className="flex h-full w-[280px] flex-col">
+        <SidebarContent
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          onToggle={onToggle}
+          onNewConversation={handleNewAnalysis}
+          activeConversationId={activeConversationId}
+          onSelectConversation={onSelectConversation}
+          showCloseButton={false}
+          sessions={sessions}
+          projects={projects}
+          selectedProjectId={selectedProjectId}
+          onSelectProject={setSelectedProjectId}
+          sessionsLoading={sessionsLoading}
+          projectsLoading={projectsLoading}
+          onUpdateSession={updateSession}
+          onUpdateProject={handleUpdateProject}
+          onOpenProjectDialog={handleOpenProjectDialog}
+        />
+
+        {/* Project Dialog */}
+        <ProjectDialog
+          open={isProjectDialogOpen}
+          onOpenChange={setIsProjectDialogOpen}
+          onSubmit={handleCreateProject}
+        />
+      </div>
+    </motion.aside>
+  )
+}
+
+// Inner content component to avoid duplication
+function SidebarContent({
+  searchQuery,
+  setSearchQuery,
+  onToggle,
+  onNewConversation,
+  activeConversationId,
+  onSelectConversation,
+  showCloseButton,
+  sessions,
+  projects,
+  selectedProjectId,
+  onSelectProject,
+  sessionsLoading,
+  projectsLoading,
+  onUpdateSession,
+  onUpdateProject,
+  onOpenProjectDialog
+}: {
+  searchQuery: string
+  setSearchQuery: (q: string) => void
+  onToggle?: () => void
+  onNewConversation?: () => void
+  activeConversationId?: string | null
+  onSelectConversation?: (id: string) => void
+  showCloseButton: boolean
+  sessions: SessionEntry[]
+  projects: Project[]
+  selectedProjectId: string | null
+  onSelectProject: (id: string | null) => void
+  sessionsLoading: boolean
+  projectsLoading: boolean
+  onUpdateSession: (id: string, data: { title?: string }) => Promise<unknown>
+  onUpdateProject: (id: string, data: { title?: string }) => Promise<unknown>
+  onOpenProjectDialog: () => void
+}) {
+  return (
+    <>
+      {/* Header Area: Search + New Analysis */}
+      <div className="flex flex-col gap-3 border-b border-verde-100 bg-white/50 p-4 backdrop-blur-sm">
+        {/* Search Bar */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-verde-500" />
+          <input
+            type="text"
+            placeholder="Buscar"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full rounded-lg border border-verde-200 bg-verde-50/50 px-4 py-2 pl-10 text-sm text-verde-950 transition-all duration-200 placeholder:text-verde-500 focus:border-verde-600 focus:outline-none focus:ring-0 focus:ring-verde-600/15"
+          />
+        </div>
+
+        {/* New Analysis Button */}
+        <div className="flex items-center gap-2">
+          <motion.button
+            whileHover={{
+              scale: 1.02,
+              y: -1,
+              boxShadow: '0 8px 20px rgba(45, 90, 69, 0.30)'
+            }}
+            whileTap={{ scale: 0.98 }}
+            onClick={onNewConversation}
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-gradient-to-br from-verde-900 to-verde-800 px-4 py-2.5 text-sm font-medium text-white shadow-md shadow-verde-900/20 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <Plus className="h-4 w-4" />
+            Nova Conversa
+          </motion.button>
+
+          {showCloseButton && (
+            <button
+              onClick={onToggle}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-verde-200 text-verde-600 transition-colors hover:bg-verde-50 hover:text-verde-900"
+              aria-label="Fechar sidebar"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto px-3 pb-4 pt-4">
+        {/* Projetos Section */}
+        <div className="mb-6">
+          <h3 className="mb-2 px-2 font-display text-lg font-semibold text-verde-950">
+            Projetos
+          </h3>
+          {projectsLoading ? (
+            <div className="flex items-center justify-center py-4">
+              <Loader2 className="h-4 w-4 animate-spin text-verde-600" />
+            </div>
+          ) : projects.length === 0 ? (
+            <div className="px-3 py-2 text-center">
+              <p className="text-sm text-verde-500">Nenhum projeto ainda</p>
+            </div>
+          ) : (
+            <div className="space-y-1">
+              {/* Header de "Todas as Conversas" (para limpar seleção) */}
+              <button
+                onClick={() => onSelectProject(null)}
+                className={cn(
+                  'mb-1 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors',
+                  !selectedProjectId
+                    ? 'bg-verde-100 font-medium text-verde-900'
+                    : 'text-verde-600 hover:bg-verde-50'
+                )}
+              >
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg">
+                  <LayoutGrid className="h-4 w-4" />
+                </div>
+                <span className="text-sm">Todas as Conversas</span>
+              </button>
+
+              {projects.map((project) => (
+                <ConversationCard
+                  key={project.id}
+                  id={project.id}
+                  title={project.title}
+                  timestamp={formatRelativeTime(new Date(project.created_at))}
+                  isActive={selectedProjectId === project.id}
+                  onClick={() =>
+                    onSelectProject(
+                      selectedProjectId === project.id ? null : project.id
+                    )
+                  }
+                  onUpdateTitle={(newTitle) =>
+                    onUpdateProject(project.id, { title: newTitle })
+                  }
+                />
+              ))}
+            </div>
+          )}
+          <motion.button
+            whileHover={{ scale: 1.01, x: 2 }}
+            onClick={onOpenProjectDialog}
+            className="flex w-full items-center gap-3 rounded-lg border border-transparent px-3 py-2 text-left text-verde-600 hover:bg-verde-50 hover:text-verde-800"
+          >
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg">
+              <Plus className="h-4 w-4" />
+            </div>
+            <span className="text-sm font-medium">Novo Projeto</span>
+          </motion.button>
+        </div>
+
+        {/* Conversas Section */}
+        <div>
+          <h3 className="mb-2 flex items-center gap-2 px-2 font-display text-lg font-semibold text-verde-950">
+            Conversas
+            {selectedProjectId && (
+              <span className="rounded-full bg-verde-100 px-2 py-0.5 text-xs font-normal text-verde-500">
+                Filtrado
+              </span>
+            )}
+          </h3>
+
+          {sessionsLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-5 w-5 animate-spin text-verde-600" />
+            </div>
+          ) : sessions.length === 0 ? (
+            <div className="px-3 py-4 text-center">
+              <MessageSquare className="mx-auto h-8 w-8 text-verde-300" />
+              <p className="mt-2 text-sm text-verde-500">
+                Nenhuma conversa ainda
+              </p>
+              <p className="text-xs text-verde-400">Inicie uma nova análise</p>
+            </div>
+          ) : (
+            <div className="space-y-1">
+              {sessions.map((session) => (
+                <ConversationCard
+                  key={session.session_id}
+                  id={session.session_id}
+                  title={session.title}
+                  timestamp={formatRelativeTime(session.created_at)}
+                  isActive={activeConversationId === session.session_id}
+                  onClick={() => onSelectConversation?.(session.session_id)}
+                  onUpdateTitle={(newTitle) =>
+                    onUpdateSession(session.session_id, { title: newTitle })
+                  }
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </>
+  )
+}
+
+interface ConversationCardProps {
+  id: string
+  title: string
+  timestamp: string
+  projectEmail?: string
+  preview?: string
+  isActive?: boolean
+  unreadCount?: number
+  onClick?: () => void
+  onUpdateTitle?: (title: string) => void
+}
+
+const ConversationCard = memo(function ConversationCard({
+  title,
+  timestamp,
+  projectEmail,
+  preview,
+  isActive = false,
+  unreadCount = 0,
+  onClick,
+  onUpdateTitle
+}: ConversationCardProps) {
+  const [isEditing, setIsEditing] = useState(false)
+  const [editTitle, setEditTitle] = useState(title)
+
+  // Update editTitle when title prop changes
+  useEffect(() => {
+    setEditTitle(title)
+  }, [title])
+
+  const handleSave = useCallback(
+    async (e?: React.FormEvent) => {
+      e?.preventDefault()
+      e?.stopPropagation()
+
+      if (editTitle.trim() && editTitle !== title) {
+        await onUpdateTitle?.(editTitle)
+      }
+      setIsEditing(false)
+    },
+    [editTitle, title, onUpdateTitle]
+  )
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        handleSave()
+      } else if (e.key === 'Escape') {
+        setEditTitle(title)
+        setIsEditing(false)
+        e.stopPropagation()
+      }
+    },
+    [handleSave, title]
+  )
+
+  const handleInputClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+  }, [])
+
+  return (
+    <motion.div
+      role="button"
+      tabIndex={0}
+      onClick={onClick}
+      onKeyDown={(e) => {
+        if (!isEditing && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault()
+          onClick?.()
+        }
+      }}
+      whileHover={{
+        scale: 1.01,
+        backgroundColor: isActive
+          ? 'rgba(232, 243, 237, 1)'
+          : 'rgba(232, 243, 237, 0.5)'
+      }}
+      whileTap={{ scale: 0.99 }}
+      className={cn(
+        'group relative flex w-full cursor-pointer items-start gap-3 rounded-lg border-l-[3px] px-3 py-2.5 text-left outline-none transition-all duration-200',
+        isActive
+          ? 'border-verde-600 bg-verde-100 font-medium'
+          : 'border-transparent bg-transparent hover:border-verde-200'
+      )}
+    >
+      {/* Avatar mini */}
+      <Avatar
+        email={projectEmail || title}
+        size="sm"
+        className="mt-0.5 flex-shrink-0"
+      />
+
+      {/* Conteúdo */}
+      <div className="min-w-0 flex-1">
+        {/* Título + Badge */}
+        <div className="mb-0.5 flex h-6 items-center gap-2">
+          {isEditing ? (
+            <input
+              autoFocus
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
+              onBlur={() => handleSave()}
+              onKeyDown={handleKeyDown}
+              onClick={handleInputClick}
+              className="h-6 w-full rounded border border-verde-300 bg-white px-1 text-sm text-verde-950 focus:border-verde-500 focus:outline-none"
+            />
+          ) : (
+            <>
+              <p
+                className={cn(
+                  'flex-1 truncate text-sm',
+                  isActive
+                    ? 'font-semibold text-verde-950'
+                    : 'font-medium text-verde-900'
+                )}
+              >
+                {title}
+              </p>
+
+              {/* Edit Icon on Hover */}
+              {onUpdateTitle && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setIsEditing(true)
+                  }}
+                  className="rounded p-1 text-verde-600 opacity-0 transition-opacity hover:bg-verde-200 group-hover:opacity-100"
+                  title="Renomear"
+                >
+                  <SquarePen className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </>
+          )}
+
+          {/* Unread badge (only show when not editing) */}
+          {!isEditing && unreadCount > 0 && (
+            <span className="inline-flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-verde-600 text-xs font-semibold text-white">
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </span>
+          )}
+        </div>
+
+        {/* Preview (se houver) */}
+        {preview && (
+          <p className="mb-1 truncate text-xs font-light text-verde-600">
+            {preview}
+          </p>
+        )}
+
+        {/* Timestamp */}
+        <p className="text-xs font-light text-verde-500">{timestamp}</p>
+      </div>
+    </motion.div>
+  )
+})
+
+// Collapse Toggle Button (for when sidebar is collapsed)
+export function ConversationsSidebarToggle({
+  onClick
+}: {
+  onClick: () => void
+}) {
+  return (
+    <motion.button
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -10 }}
+      onClick={onClick}
+      className="absolute left-4 top-20 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-verde-200 bg-white text-verde-700 shadow-md transition-colors hover:bg-verde-50 hover:text-verde-900"
+      aria-label="Abrir conversas"
+    >
+      <MessageSquare className="h-5 w-5" />
+    </motion.button>
+  )
+}

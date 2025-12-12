@@ -90,7 +90,7 @@ export function StreamingText({
           {displayedText}
         </MarkdownRenderer>
         {isStreaming && (
-          <span className="ml-1 inline-block h-4 w-2 animate-pulse bg-gemini-blue"></span>
+          <span className="bg-gemini-blue ml-1 inline-block h-4 w-2 animate-pulse"></span>
         )}
       </div>
     )
@@ -100,7 +100,7 @@ export function StreamingText({
     <span className={className}>
       {displayedText}
       {isStreaming && (
-        <span className="ml-1 inline-block h-4 w-2 animate-pulse bg-gemini-blue"></span>
+        <span className="bg-gemini-blue ml-1 inline-block h-4 w-2 animate-pulse"></span>
       )}
     </span>
   )

@@ -1,9 +1,9 @@
 /**
- * Next.js API Route - Sessions Proxy
+ * Next.js API Route - Projects Proxy
  *
- * Proxies to backend session endpoints:
- * - GET /api/v1/sessions/ - List user sessions
- * - POST /api/v1/sessions/ - Create new session
+ * Proxies to backend project endpoints:
+ * - GET /api/v1/projects/ - List user projects
+ * - POST /api/v1/projects/ - Create new project
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -11,7 +11,7 @@ import { NextRequest, NextResponse } from 'next/server'
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 /**
- * GET - List all sessions for the current user
+ * GET - List all projects for the current user
  */
 export async function GET(request: NextRequest) {
   try {
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     const limit = searchParams.get('limit') || '100'
 
     const response = await fetch(
-      `${BACKEND_URL}/api/v1/sessions/?skip=${skip}&limit=${limit}`,
+      `${BACKEND_URL}/api/v1/projects/?skip=${skip}&limit=${limit}`,
       {
         method: 'GET',
         headers: {
@@ -43,20 +43,20 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(data, {
       status: response.status,
       headers: {
-        'Cache-Control': 'private, max-age=30, stale-while-revalidate=60'
+        'Cache-Control': 'private, max-age=60, stale-while-revalidate=120'
       }
     })
   } catch (error) {
-    console.error('[API Route /api/sessions] GET Error:', error)
+    console.error('[API Route /api/projects] GET Error:', error)
     return NextResponse.json(
-      { detail: 'Failed to fetch sessions' },
+      { detail: 'Failed to fetch projects' },
       { status: 500 }
     )
   }
 }
 
 /**
- * POST - Create a new session
+ * POST - Create a new project
  */
 export async function POST(request: NextRequest) {
   try {
@@ -66,30 +66,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ detail: 'Unauthorized' }, { status: 401 })
     }
 
-    // Body is optional - can create session with defaults
-    let body = null
-    try {
-      body = await request.json()
-    } catch {
-      // Empty body is valid
-    }
+    const body = await request.json()
 
-    const response = await fetch(`${BACKEND_URL}/api/v1/sessions/`, {
+    const response = await fetch(`${BACKEND_URL}/api/v1/projects/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: authorization
       },
-      body: body ? JSON.stringify(body) : undefined
+      body: JSON.stringify(body)
     })
 
     const data = await response.json()
 
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
-    console.error('[API Route /api/sessions] POST Error:', error)
+    console.error('[API Route /api/projects] POST Error:', error)
     return NextResponse.json(
-      { detail: 'Failed to create session' },
+      { detail: 'Failed to create project' },
       { status: 500 }
     )
   }

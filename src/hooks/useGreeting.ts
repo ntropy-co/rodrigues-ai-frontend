@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect, useRef } from 'react'
 
 /**
  * Período do dia para personalização contextual
@@ -30,11 +30,11 @@ interface PeriodConfig {
 const PERIOD_CONFIG: Record<DayPeriod, PeriodConfig> = {
   dawn: {
     greeting: 'Boa madrugada',
-    subtext: 'Trabalhando até tarde? Posso ajudar com suas análises.'
+    subtext: 'Trabalhando até tarde? Estou aqui para ajudar com suas análises.'
   },
   morning: {
     greeting: 'Bom dia',
-    subtext: 'Como posso ajudar com suas análises hoje?'
+    subtext: 'Como posso ajudar com suas análises de CPR hoje?'
   },
   afternoon: {
     greeting: 'Boa tarde',
@@ -42,7 +42,7 @@ const PERIOD_CONFIG: Record<DayPeriod, PeriodConfig> = {
   },
   evening: {
     greeting: 'Boa noite',
-    subtext: 'Vamos revisar suas operações?'
+    subtext: 'Vamos revisar suas operações de crédito rural?'
   }
 }
 
@@ -72,12 +72,20 @@ function getPeriodFromHour(hour: number): DayPeriod {
 export function useGreeting(): GreetingResult {
   // Estado para forçar re-render quando hora muda
   const [currentHour, setCurrentHour] = useState(() => new Date().getHours())
+  // Ref to track current hour without causing effect re-runs
+  const hourRef = useRef(currentHour)
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    hourRef.current = currentHour
+  }, [currentHour])
 
   // Efeito que verifica mudança de hora a cada minuto
+  // Sem dependências para não recriar o interval
   useEffect(() => {
     const checkHour = () => {
       const newHour = new Date().getHours()
-      if (newHour !== currentHour) {
+      if (newHour !== hourRef.current) {
         setCurrentHour(newHour)
       }
     }
@@ -86,7 +94,7 @@ export function useGreeting(): GreetingResult {
     const interval = setInterval(checkHour, 60000)
 
     return () => clearInterval(interval)
-  }, [currentHour])
+  }, [])
 
   // Memoriza o resultado para evitar recálculos desnecessários
   const result = useMemo<GreetingResult>(() => {

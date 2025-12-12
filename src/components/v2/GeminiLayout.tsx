@@ -2,12 +2,16 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Header } from './Header/Header'
+import { AnimatePresence } from 'framer-motion'
+import { ChatHeader } from './Header/ChatHeader'
 import { MainContent } from './MainContent/MainContent'
 import { InputBar } from './InputBar/InputBar'
 import { ChatArea } from './ChatArea/ChatArea'
 import { FilesSidebar } from './FilesSidebar'
+import { ConversationsSidebar } from './ConversationsSidebar'
 import { usePlaygroundStore } from '@/store'
+import { useLayoutStore } from '@/stores/layoutStore'
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 import useChatActions from '@/hooks/useChatActions'
 import useAIChatStreamHandler from '@/hooks/useAIStreamHandler'
 import { useAuth } from '@/contexts/AuthContext'
@@ -25,10 +29,30 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
   const [message, setMessage] = useState('')
   const [hasMessages, setHasMessages] = useState(false)
   const [isLoadingSession, setIsLoadingSession] = useState(false)
+
+  // Responsive layout hook
+  useResponsiveLayout()
+
+  // Layout store
+  const {
+    conversationsSidebar,
+    filesSidebar,
+    isMobile,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toggleConversationsSidebar: _toggleConversationsSidebar,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toggleFilesSidebar: _toggleFilesSidebar,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    openConversationsSidebar: _openConversationsSidebar,
+    closeConversationsSidebar,
+    closeFilesSidebar
+  } = useLayoutStore()
+
+  const isConversationsOpen = conversationsSidebar === 'open'
+  const isFilesOpen = filesSidebar === 'open'
+
   const messages = usePlaygroundStore((state) => state.messages)
   const isStreaming = usePlaygroundStore((state) => state.isStreaming)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const agentId = usePlaygroundStore((state) => state.agentId)
   const currentSessionId = usePlaygroundStore((state) => state.sessionId)
   const locallyCreatedSessionIds = usePlaygroundStore(
     (state) => state.locallyCreatedSessionIds
@@ -37,7 +61,7 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
   const { initializePlayground, loadSessionById } = useChatActions()
   const { handleStreamResponse } = useAIChatStreamHandler()
 
-  // Inicializar playground APENAS UMA VEZ (usando flag global)
+  // Inicializar playground APENAS UMA VEZ
   useEffect(() => {
     if (!playgroundInitializationStarted) {
       playgroundInitializationStarted = true
@@ -49,33 +73,25 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
   // Carregar sessão se sessionId for fornecido
   useEffect(() => {
     const loadSession = async () => {
-      // Se não há sessionId na URL, não precisa carregar
       if (!sessionId) {
         setIsLoadingSession(false)
         return
       }
 
-      // Se essa sessão foi criada localmente, não tentar carregar do backend
       if (locallyCreatedSessionIds.has(sessionId)) {
         setIsLoadingSession(false)
         return
       }
 
-      // Se o sessionId da URL é igual ao do store, não precisa carregar novamente
-      // (já está carregado)
       if (sessionId === currentSessionId) {
         setIsLoadingSession(false)
         return
       }
 
-      // Carregar sessão do backend apenas se for DIFERENTE da atual
       setIsLoadingSession(true)
-
       const success = await loadSessionById(sessionId)
-
       setIsLoadingSession(false)
 
-      // Se falhou ao carregar, redirecionar para /chat
       if (!success) {
         router.push('/chat')
       }
@@ -90,7 +106,7 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
     locallyCreatedSessionIds
   ])
 
-  // Verificar se há mensagens para alternar entre MainContent e ChatArea
+  // Verificar se há mensagens
   useEffect(() => {
     setHasMessages(messages.length > 0)
   }, [messages])
@@ -102,14 +118,9 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
   ) => {
     if (!msg.trim() || isStreaming) return
 
-    // IMPORTANTE: Ler sessionId diretamente do store no momento do envio
-    // para pegar o valor mais atualizado (pode ter sido setado pelo RunStarted)
     const { sessionId: currentSessionIdFromStore } =
       usePlaygroundStore.getState()
 
-    // Se não há sessionId, enviar null - o backend criará uma nova sessão
-    // e retornará o session_id na resposta (formato s_xxx)
-    // A navegação para /chat/{session_id} acontece após receber a resposta
     const sessionIdToUse = currentSessionIdFromStore || null
 
     await handleStreamResponse(msg, files, sessionIdToUse, toolId)
@@ -121,19 +132,54 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
     handleSendMessage(suggestion)
   }
 
+  const handleNewConversation = () => {
+    router.push('/chat')
+  }
+
+  const handleSelectConversation = (id: string) => {
+    router.push(`/chat/${id}`)
+  }
+
   return (
     <div className="flex h-screen w-screen flex-col bg-verde-50 dark:bg-background">
-      {/* Header - Fixed at top */}
-      <Header />
+      {/* Header */}
+      <ChatHeader />
 
-      {/* Main Container - Flex Row to accommodate Sidebar */}
+      {/* Main Container - 3-Column Layout */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Left/Center Column - Chat & Input */}
-        <div className="relative flex flex-1 flex-col overflow-hidden">
-          {/* Content Area - Scrollable */}
+        {/* Left Sidebar - Conversations */}
+        <ConversationsSidebar
+          isOpen={isConversationsOpen && !isMobile}
+          onToggle={closeConversationsSidebar}
+          activeConversationId={currentSessionId}
+          onSelectConversation={handleSelectConversation}
+          onNewConversation={handleNewConversation}
+        />
+
+        {/* Mobile Overlay for Conversations */}
+        <AnimatePresence>
+          {isMobile && isConversationsOpen && (
+            <ConversationsSidebar
+              isOpen={true}
+              overlay={true}
+              onToggle={closeConversationsSidebar}
+              activeConversationId={currentSessionId}
+              onSelectConversation={(id) => {
+                handleSelectConversation(id)
+                closeConversationsSidebar()
+              }}
+              onNewConversation={() => {
+                handleNewConversation()
+                closeConversationsSidebar()
+              }}
+            />
+          )}
+        </AnimatePresence>
+
+        {/* Center Column - Chat & Input */}
+        <div className="relative flex flex-1 flex-col overflow-hidden bg-verde-50">
           <div className="flex-1 overflow-y-auto">
             {isLoadingSession ? (
-              // Loading state
               <div className="flex h-full items-center justify-center">
                 <div className="text-center">
                   <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-verde-900 border-t-transparent"></div>
@@ -141,18 +187,14 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
                 </div>
               </div>
             ) : hasMessages ? (
-              // Adjust ChatArea to not have its own scroll if needed,
-              // but typically ChatArea handles its own scrolling.
-              // We might need to ensure ChatArea takes full height.
               <ChatArea messages={messages} isStreaming={isStreaming} />
             ) : (
               <MainContent onSuggestionClick={handleSuggestionClick} />
             )}
-            {/* Spacer for InputBar height to prevent content being hidden behind floating input */}
             <div className="h-32 md:h-40" />
           </div>
 
-          {/* Floating Input Bar - Positioned at bottom */}
+          {/* Floating Input Bar */}
           <div className="z-10 w-full">
             <InputBar
               onSendMessage={handleSendMessage}
@@ -166,7 +208,23 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
         </div>
 
         {/* Right Sidebar - Files */}
-        <FilesSidebar conversationId={currentSessionId || null} />
+        <FilesSidebar
+          conversationId={currentSessionId || null}
+          isOpen={isFilesOpen && !isMobile}
+          onClose={closeFilesSidebar}
+        />
+
+        {/* Mobile Overlay for Files */}
+        <AnimatePresence>
+          {isMobile && isFilesOpen && (
+            <FilesSidebar
+              conversationId={currentSessionId || null}
+              isOpen={true}
+              overlay={true}
+              onClose={closeFilesSidebar}
+            />
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )
