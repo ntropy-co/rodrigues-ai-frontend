@@ -1,0 +1,95 @@
+/**
+ * Next.js API Route - Documents by Conversation
+ *
+ * This route fetches documents associated with a specific conversation/session
+ * Requires authenticated user (Bearer token)
+ */
+
+import { NextRequest, NextResponse } from 'next/server'
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+
+export async function GET(request: NextRequest) {
+  try {
+    // Get the Authorization header from the request
+    const authorization = request.headers.get('authorization')
+
+    if (!authorization) {
+      return NextResponse.json(
+        { detail: 'Authorization header required' },
+        { status: 401 }
+      )
+    }
+
+    // Get conversation_id from query params
+    const { searchParams } = new URL(request.url)
+    const conversationId = searchParams.get('conversation_id')
+
+    if (!conversationId) {
+      return NextResponse.json(
+        { detail: 'conversation_id is required' },
+        { status: 400 }
+      )
+    }
+
+    // Forward the request to the backend
+    const response = await fetch(
+      `${BACKEND_URL}/api/v1/documents/conversation?conversation_id=${encodeURIComponent(conversationId)}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: authorization
+        }
+      }
+    )
+
+    // Handle error responses from backend
+    if (!response.ok) {
+      // If backend doesn't have this endpoint, return empty array
+      if (response.status === 404) {
+        return NextResponse.json({ documents: [] }, { status: 200 })
+      }
+
+      let errorDetail = 'Erro ao carregar documentos'
+      try {
+        const errorData = await response.json()
+        errorDetail = errorData.detail || errorDetail
+      } catch {
+        errorDetail = `Backend error: ${response.status} ${response.statusText}`
+      }
+      console.error(
+        '[API Route /api/documents/conversation] Backend error:',
+        errorDetail
+      )
+      return NextResponse.json(
+        { detail: errorDetail },
+        { status: response.status }
+      )
+    }
+
+    // Get the response data
+    const data = await response.json()
+
+    // Return the response
+    return NextResponse.json(data, { status: 200 })
+  } catch (error) {
+    console.error('[API Route /api/documents/conversation] Error:', error)
+    return NextResponse.json(
+      { detail: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}
+
+// Handle OPTIONS for CORS
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+    }
+  })
+}
