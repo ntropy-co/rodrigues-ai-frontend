@@ -1,8 +1,21 @@
 /**
- * Next.js API Route - Forgot Password Proxy
+ * BFF (Next.js API Route) — Forgot Password
  *
- * This route acts as a proxy to the backend forgot password API
- * to avoid CORS issues
+ * Solicita e-mail de redefinição de senha.
+ * This route proxies the request to the backend, which handles email sending.
+ *
+ * Frontend:
+ * - `POST /api/auth/forgot-password`
+ *
+ * Backend:
+ * - `POST ${BACKEND_URL}/api/v1/auth/forgot-password`
+ *
+ * Auth:
+ * - Público
+ *
+ * Observação importante:
+ * - O backend retorna uma mensagem genérica mesmo quando o e-mail não existe
+ *   (anti-enumeração).
  */
 
 import { NextRequest, NextResponse } from 'next/server'
