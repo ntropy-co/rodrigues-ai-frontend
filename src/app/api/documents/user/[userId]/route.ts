@@ -10,7 +10,7 @@
  * - `GET ${BACKEND_URL}/api/v1/documents/user/{userId}?session_id=...`
  *
  * Auth:
- * - Atualmente não exige token no backend (mas pode ser endurecido no futuro).
+ * - Obrigatório: `Authorization: Bearer <token>`
  *
  * Response esperado (backend):
  * - `{ documents: [...], count: number }`
@@ -28,6 +28,16 @@ export async function GET(
   { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
+    // Get the Authorization header from the request
+    const authorization = request.headers.get('authorization')
+
+    if (!authorization) {
+      return NextResponse.json(
+        { detail: 'Authorization header required' },
+        { status: 401 }
+      )
+    }
+
     const { userId } = await params
     const { searchParams } = new URL(request.url)
     const sessionId = searchParams.get('session_id')
@@ -39,7 +49,9 @@ export async function GET(
 
     const response = await fetch(backendUrl.toString(), {
       method: 'GET',
-      credentials: 'include'
+      headers: {
+        Authorization: authorization
+      }
     })
 
     console.log('[API Proxy] Documents response status:', response.status)

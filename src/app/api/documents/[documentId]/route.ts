@@ -10,7 +10,7 @@
  * - `DELETE ${BACKEND_URL}/api/v1/documents/{documentId}`
  *
  * Auth:
- * - Atualmente não exige token no backend (mas pode ser endurecido no futuro).
+ * - Obrigatório: `Authorization: Bearer <token>`
  *
  * Chamadores:
  * - `src/hooks/useChatFiles.ts`, `src/hooks/useDocuments.ts`
@@ -25,6 +25,15 @@ export async function DELETE(
   { params }: { params: Promise<{ documentId: string }> }
 ) {
   try {
+    const authorization = request.headers.get('authorization')
+
+    if (!authorization) {
+      return NextResponse.json(
+        { detail: 'Authorization header required' },
+        { status: 401 }
+      )
+    }
+
     const { documentId } = await params
     const url = `${BACKEND_URL}/api/v1/documents/${documentId}`
 
@@ -32,7 +41,9 @@ export async function DELETE(
 
     const response = await fetch(url, {
       method: 'DELETE',
-      credentials: 'include'
+      headers: {
+        Authorization: authorization
+      }
     })
 
     console.log('[API Proxy] Delete response status:', response.status)
