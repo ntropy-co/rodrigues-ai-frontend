@@ -1,3 +1,21 @@
+/**
+ * BFF (Next.js API Route) — Document Download
+ *
+ * Faz download (stream) de um documento.
+ *
+ * Frontend:
+ * - `GET /api/documents/:documentId/download`
+ *
+ * Backend:
+ * - `GET ${BACKEND_URL}/api/v1/documents/{documentId}/download`
+ *
+ * Auth:
+ * - Atualmente não exige token no backend (mas pode ser endurecido no futuro).
+ *
+ * Chamadores:
+ * - `src/hooks/useChatFiles.ts`, `src/hooks/useDocuments.ts`
+ */
+
 import { NextRequest, NextResponse } from 'next/server'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'

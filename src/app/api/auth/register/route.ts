@@ -1,8 +1,23 @@
 /**
- * Next.js API Route - Register Proxy
+ * BFF (Next.js API Route) — Register
  *
- * This route acts as a proxy to the backend registration API
- * to avoid CORS issues when running locally
+ * Registra um novo usuário no backend e retorna um token.
+ *
+ * Frontend:
+ * - `POST /api/auth/register`
+ *
+ * Backend:
+ * - `POST ${BACKEND_URL}/api/v1/auth/register`
+ *
+ * Auth:
+ * - Público
+ *
+ * Transformações de contrato:
+ * - Frontend envia: `{ email, password, name, inviteToken? }`
+ * - Backend espera: `{ email, password, full_name }`
+ *
+ * Chamadores:
+ * - `src/lib/auth/api.ts`, `src/contexts/AuthContext.tsx`, `src/hooks/useAuthHook.ts`
  */
 
 import { NextRequest, NextResponse } from 'next/server'

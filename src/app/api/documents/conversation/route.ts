@@ -1,8 +1,23 @@
 /**
- * Next.js API Route - Documents by Conversation
+ * BFF (Next.js API Route) — Documents by Conversation/Session
  *
- * This route fetches documents associated with a specific conversation/session
- * Requires authenticated user (Bearer token)
+ * Busca documentos associados a uma sessão (o backend chama de `conversation_id`,
+ * mas na prática é o mesmo `session_id`).
+ *
+ * Frontend:
+ * - `GET /api/documents/conversation?conversation_id=<session_id>`
+ *
+ * Backend:
+ * - `GET ${BACKEND_URL}/api/v1/documents/conversation?conversation_id=...`
+ *
+ * Auth:
+ * - Obrigatório no BFF: `Authorization: Bearer <token>`
+ *
+ * Response esperado (backend):
+ * - `{ files: [...], count: number }`
+ *
+ * Chamadores:
+ * - `src/hooks/useChatFiles.ts`
  */
 
 import { NextRequest, NextResponse } from 'next/server'

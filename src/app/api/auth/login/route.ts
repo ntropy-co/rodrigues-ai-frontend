@@ -1,8 +1,26 @@
 /**
- * Next.js API Route - Login Proxy
+ * BFF (Next.js API Route) — Login
  *
- * This route acts as a proxy to the backend authentication API
- * to avoid CORS issues when running locally
+ * Rota pública usada pelo frontend para obter um JWT (access_token).
+ *
+ * Frontend:
+ * - `POST /api/auth/login`
+ *
+ * Backend:
+ * - `POST ${BACKEND_URL}/api/v1/auth/login` (OAuth2PasswordRequestForm)
+ * - `GET  ${BACKEND_URL}/api/v1/auth/me` (buscar dados do usuário após login)
+ *
+ * Transformações de contrato:
+ * - Frontend envia JSON: `{ email, password }`
+ * - Backend espera `application/x-www-form-urlencoded`: `{ username=email, password }`
+ * - Frontend recebe: `{ token, user, organization, expiresAt }`
+ *   onde `token` é o `access_token` do backend.
+ *
+ * Auth:
+ * - Público (retorna Bearer token para uso nas próximas requisições)
+ *
+ * Chamadores:
+ * - `src/lib/auth/api.ts`, `src/contexts/AuthContext.tsx`, `src/hooks/useAuthHook.ts`
  */
 
 import { NextRequest, NextResponse } from 'next/server'

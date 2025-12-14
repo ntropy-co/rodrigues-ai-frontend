@@ -1,9 +1,22 @@
 /**
- * Next.js API Route - Projects Proxy
+ * BFF (Next.js API Route) — Projects
  *
- * Proxies to backend project endpoints:
- * - GET /api/v1/projects/ - List user projects
- * - POST /api/v1/projects/ - Create new project
+ * Lista/cria projetos no backend.
+ *
+ * Frontend:
+ * - `GET  /api/projects` (query: `skip`, `limit`)
+ * - `POST /api/projects`
+ * - (por id) `GET/PATCH/DELETE /api/projects/:projectId` (ver `src/app/api/projects/[projectId]/route.ts`)
+ *
+ * Backend:
+ * - `GET  ${BACKEND_URL}/api/v1/projects/`
+ * - `POST ${BACKEND_URL}/api/v1/projects/`
+ *
+ * Auth:
+ * - Obrigatório: `Authorization: Bearer <token>`
+ *
+ * Chamadores:
+ * - `src/hooks/useProjects.ts`
  */
 
 import { NextRequest, NextResponse } from 'next/server'

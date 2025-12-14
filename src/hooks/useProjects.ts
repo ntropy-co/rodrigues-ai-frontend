@@ -116,11 +116,8 @@ export function useProjects() {
       setError(null)
 
       try {
-        const response = await fetch(`/api/projects?id=${id}`, {
-          method: 'PATCH', // Assumes backend supports PATCH /api/projects?id=... or /api/projects/[id]
-          // Wait, the backend route I created earlier was PATCH /api/v1/projects/{project_id}
-          // The frontend proxy /api/projects probably needs to handle [id].
-          // Actually, let's look at the proxy route first.
+        const response = await fetch(`/api/projects/${id}`, {
+          method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`

@@ -18,8 +18,8 @@ const nextConfig: NextConfig = {
           "img-src 'self' data: https: blob:",
           // Permitir Google Fonts arquivos de fonte
           "font-src 'self' data: https://fonts.gstatic.com",
-          // Permitir conexões com a API backend
-          "connect-src 'self' https://rodrigues-ai-backend-production.up.railway.app https://api.rodriguesagro.com.br",
+          // Permitir conexões com a API backend, Sentry e PostHog
+          "connect-src 'self' https://rodrigues-ai-backend-production.up.railway.app https://api.rodriguesagro.com.br https://*.ingest.sentry.io https://*.sentry.io https://us.i.posthog.com https://us.posthog.com",
           "frame-ancestors 'none'",
           "base-uri 'self'",
           "form-action 'self'"

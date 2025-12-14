@@ -1,8 +1,22 @@
 /**
- * Next.js API Route - Logout Proxy
+ * BFF (Next.js API Route) — Logout
  *
- * This route acts as a proxy to the backend logout API
- * to avoid CORS issues when running in development or production
+ * Faz logout no backend (se aplicável) e permite o frontend limpar o token.
+ *
+ * Importante: no backend atual, JWT é stateless; logout é essencialmente
+ * client-side (remover token). Mesmo assim, mantemos o endpoint por consistência.
+ *
+ * Frontend:
+ * - `POST /api/auth/logout`
+ *
+ * Backend:
+ * - `POST ${BACKEND_URL}/api/v1/auth/logout`
+ *
+ * Auth:
+ * - Obrigatório no BFF: `Authorization: Bearer <token>`
+ *
+ * Chamadores:
+ * - `src/lib/auth/api.ts`, `src/contexts/AuthContext.tsx`, `src/hooks/useAuthHook.ts`
  */
 
 import { NextRequest, NextResponse } from 'next/server'

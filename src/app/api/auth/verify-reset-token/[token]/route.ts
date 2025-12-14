@@ -1,10 +1,19 @@
 /**
- * Next.js API Route - Verify Reset Token Proxy
+ * BFF (Next.js API Route) — Verify Reset Token
  *
- * This route acts as a proxy to the backend verify reset token API
- * to avoid CORS issues
+ * Verifica se um token de redefinição de senha é válido.
  *
- * Backend expects: GET /api/v1/auth/verify-reset-token/{token}
+ * Frontend:
+ * - `GET /api/auth/verify-reset-token/:token`
+ *
+ * Backend:
+ * - `GET ${BACKEND_URL}/api/v1/auth/verify-reset-token/{token}`
+ *
+ * Auth:
+ * - Público
+ *
+ * Chamadores:
+ * - (opcional) pode ser usado pela tela de reset antes de exibir o formulário.
  */
 
 import { NextRequest, NextResponse } from 'next/server'
