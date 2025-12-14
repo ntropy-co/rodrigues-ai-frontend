@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { UserDocument } from '@/components/v2/FileUpload/FileList'
+import { getAuthToken } from '@/lib/auth/cookies'
 
 export function useDocuments(userId: string, sessionId?: string) {
   const [documents, setDocuments] = useState<UserDocument[]>([])
@@ -24,7 +25,13 @@ export function useDocuments(userId: string, sessionId?: string) {
 
       console.log('[useDocuments] Fetching documents from:', url.toString())
 
-      const response = await fetch(url.toString())
+      const token = getAuthToken()
+      const headers: HeadersInit = {}
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+
+      const response = await fetch(url.toString(), { headers })
 
       console.log('[useDocuments] Response status:', response.status)
 
@@ -54,8 +61,15 @@ export function useDocuments(userId: string, sessionId?: string) {
       // Use Next.js API Route as proxy to avoid CORS issues
       console.log('[useDocuments] Deleting document:', documentId)
 
+      const token = getAuthToken()
+      const headers: HeadersInit = {}
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+
       const response = await fetch(`/api/documents/${documentId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers
       })
 
       console.log('[useDocuments] Delete response status:', response.status)
@@ -77,7 +91,15 @@ export function useDocuments(userId: string, sessionId?: string) {
       // Use Next.js API Route as proxy to avoid CORS issues
       console.log('[useDocuments] Downloading document:', documentId)
 
-      const response = await fetch(`/api/documents/${documentId}/download`)
+      const token = getAuthToken()
+      const headers: HeadersInit = {}
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+
+      const response = await fetch(`/api/documents/${documentId}/download`, {
+        headers
+      })
 
       console.log('[useDocuments] Download response status:', response.status)
 

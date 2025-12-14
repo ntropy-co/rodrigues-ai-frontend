@@ -10,7 +10,7 @@
  * - `GET ${BACKEND_URL}/api/v1/documents/{documentId}/download`
  *
  * Auth:
- * - Atualmente não exige token no backend (mas pode ser endurecido no futuro).
+ * - Obrigatório: `Authorization: Bearer <token>`
  *
  * Chamadores:
  * - `src/hooks/useChatFiles.ts`, `src/hooks/useDocuments.ts`
@@ -25,6 +25,15 @@ export async function GET(
   { params }: { params: Promise<{ documentId: string }> }
 ) {
   try {
+    const authorization = request.headers.get('authorization')
+
+    if (!authorization) {
+      return NextResponse.json(
+        { detail: 'Authorization header required' },
+        { status: 401 }
+      )
+    }
+
     const { documentId } = await params
     const url = `${BACKEND_URL}/api/v1/documents/${documentId}/download`
 
@@ -32,7 +41,9 @@ export async function GET(
 
     const response = await fetch(url, {
       method: 'GET',
-      credentials: 'include'
+      headers: {
+        Authorization: authorization
+      }
     })
 
     console.log('[API Proxy] Download response status:', response.status)
