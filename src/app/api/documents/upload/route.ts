@@ -10,8 +10,7 @@
  * - `POST ${BACKEND_URL}/api/v1/documents/upload`
  *
  * Auth:
- * - Atualmente não exige token no backend, mas este proxy existe para padronizar
- *   o contrato e evitar CORS.
+ * - Obrigatório: `Authorization: Bearer <token>`
  *
  * Chamadores:
  * - `src/hooks/useChatFiles.ts`, `src/components/v2/FileUpload/FileUploadModal.tsx`
@@ -23,6 +22,16 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 export async function POST(request: NextRequest) {
   try {
+    // Get the Authorization header from the request
+    const authorization = request.headers.get('authorization')
+
+    if (!authorization) {
+      return NextResponse.json(
+        { detail: 'Authorization header required' },
+        { status: 401 }
+      )
+    }
+
     console.log(
       '[API Proxy] POST /api/documents/upload - Uploading file to backend'
     )
@@ -32,9 +41,12 @@ export async function POST(request: NextRequest) {
 
     console.log('[API Proxy] FormData fields:', Array.from(formData.keys()))
 
-    // Forward to backend
+    // Forward to backend with Authorization header
     const response = await fetch(`${BACKEND_URL}/api/v1/documents/upload`, {
       method: 'POST',
+      headers: {
+        Authorization: authorization
+      },
       body: formData
       // Don't set Content-Type header - let the browser set it with boundary
     })
