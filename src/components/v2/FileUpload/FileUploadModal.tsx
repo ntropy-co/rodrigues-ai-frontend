@@ -9,6 +9,7 @@ import {
   CheckCircle,
   AlertCircle
 } from 'lucide-react'
+import { getAuthToken } from '@/lib/auth/cookies'
 
 interface FileUploadModalProps {
   isOpen: boolean
@@ -138,8 +139,15 @@ export function FileUploadModal({
           '/api/documents/upload'
         )
 
+        const token = getAuthToken()
+        const headers: HeadersInit = {}
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`
+        }
+
         const response = await fetch('/api/documents/upload', {
           method: 'POST',
+          headers,
           body: formData
         })
 
