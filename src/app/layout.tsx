@@ -10,6 +10,7 @@ import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import { AuthProvider } from '@/contexts/AuthContext'
+import { PostHogProvider } from '@/components/providers/PostHogProvider'
 import { InstallPrompt } from '@/components/v2/InstallPrompt'
 import './globals.css'
 
@@ -88,11 +89,13 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange={false}
         >
-          <AuthProvider>
-            <NuqsAdapter>{children}</NuqsAdapter>
-            <Toaster />
-            <InstallPrompt />
-          </AuthProvider>
+          <PostHogProvider>
+            <AuthProvider>
+              <NuqsAdapter>{children}</NuqsAdapter>
+              <Toaster />
+              <InstallPrompt />
+            </AuthProvider>
+          </PostHogProvider>
         </ThemeProvider>
       </body>
     </html>

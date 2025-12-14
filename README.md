@@ -42,6 +42,10 @@ src/
 └── types/           # TypeScript types
 ```
 
+## Documentation
+
+- API + Next.js proxy (BFF) documentation backlog: `docs/api-backlog.md`
+
 ## Scripts
 
 ```bash

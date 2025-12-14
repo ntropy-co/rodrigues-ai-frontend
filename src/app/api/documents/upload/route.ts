@@ -1,3 +1,22 @@
+/**
+ * BFF (Next.js API Route) — Document Upload
+ *
+ * Faz upload de arquivos para o backend (multipart/form-data).
+ *
+ * Frontend:
+ * - `POST /api/documents/upload`
+ *
+ * Backend:
+ * - `POST ${BACKEND_URL}/api/v1/documents/upload`
+ *
+ * Auth:
+ * - Atualmente não exige token no backend, mas este proxy existe para padronizar
+ *   o contrato e evitar CORS.
+ *
+ * Chamadores:
+ * - `src/hooks/useChatFiles.ts`, `src/components/v2/FileUpload/FileUploadModal.tsx`
+ */
+
 import { NextRequest, NextResponse } from 'next/server'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'

@@ -1,8 +1,26 @@
 /**
- * Next.js API Route - Chat Proxy
+ * BFF (Next.js API Route) — Chat
  *
- * This route acts as a proxy to the backend chat API (Dialogflow)
- * Requires authenticated user (Bearer token)
+ * Encaminha mensagens para o backend (`/api/v1/chat/`) e retorna a resposta do agente.
+ *
+ * Frontend:
+ * - `POST /api/chat`
+ *
+ * Backend:
+ * - `POST ${BACKEND_URL}/api/v1/chat/` (slash final é importante no FastAPI)
+ *
+ * Auth:
+ * - Obrigatório: `Authorization: Bearer <token>`
+ *
+ * Regras importantes:
+ * - `session_id` é opcional. Se ausente/vazio, o backend cria uma nova sessão.
+ * - Quando presente, precisa ter prefixo `s_` (ex.: `s_<uuidhex>`).
+ *
+ * CORS:
+ * - Implementa `OPTIONS` para preflight.
+ *
+ * Chamadores:
+ * - `src/hooks/useAIStreamHandler.tsx`
  */
 
 import { NextRequest, NextResponse } from 'next/server'

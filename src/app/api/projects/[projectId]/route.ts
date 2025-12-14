@@ -1,45 +1,42 @@
 /**
- * BFF (Next.js API Route) — Session by ID
+ * BFF (Next.js API Route) — Project by ID
  *
- * Obtém/atualiza/remove uma sessão específica.
+ * Obtém/atualiza/remove um projeto específico.
  *
  * Frontend:
- * - `GET    /api/sessions/:sessionId`
- * - `PATCH  /api/sessions/:sessionId`
- * - `DELETE /api/sessions/:sessionId`
+ * - `GET    /api/projects/:projectId`
+ * - `PATCH  /api/projects/:projectId`
+ * - `DELETE /api/projects/:projectId`
  *
  * Backend:
- * - `GET    ${BACKEND_URL}/api/v1/sessions/{sessionId}`
- * - `PATCH  ${BACKEND_URL}/api/v1/sessions/{sessionId}`
- * - `DELETE ${BACKEND_URL}/api/v1/sessions/{sessionId}`
+ * - `GET    ${BACKEND_URL}/api/v1/projects/{projectId}`
+ * - `PATCH  ${BACKEND_URL}/api/v1/projects/{projectId}`
+ * - `DELETE ${BACKEND_URL}/api/v1/projects/{projectId}`
  *
  * Auth:
  * - Obrigatório: `Authorization: Bearer <token>`
  *
  * Chamadores:
- * - `src/hooks/useSessions.ts`
+ * - `src/hooks/useProjects.ts`
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
-type RouteParams = { params: Promise<{ sessionId: string }> }
+type RouteParams = { params: Promise<{ projectId: string }> }
 
-/**
- * GET - Get a session by ID
- */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     const authorization = request.headers.get('authorization')
-    const { sessionId } = await params
+    const { projectId } = await params
 
     if (!authorization) {
       return NextResponse.json({ detail: 'Unauthorized' }, { status: 401 })
     }
 
     const response = await fetch(
-      `${BACKEND_URL}/api/v1/sessions/${sessionId}`,
+      `${BACKEND_URL}/api/v1/projects/${projectId}`,
       {
         method: 'GET',
         headers: {
@@ -50,24 +47,20 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     )
 
     const data = await response.json()
-
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
-    console.error('[API Route /api/sessions/[sessionId]] GET Error:', error)
+    console.error('[API Route /api/projects/[projectId]] GET Error:', error)
     return NextResponse.json(
-      { detail: 'Failed to fetch session' },
+      { detail: 'Failed to fetch project' },
       { status: 500 }
     )
   }
 }
 
-/**
- * PATCH - Update a session
- */
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
   try {
     const authorization = request.headers.get('authorization')
-    const { sessionId } = await params
+    const { projectId } = await params
 
     if (!authorization) {
       return NextResponse.json({ detail: 'Unauthorized' }, { status: 401 })
@@ -76,7 +69,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     const body = await request.json()
 
     const response = await fetch(
-      `${BACKEND_URL}/api/v1/sessions/${sessionId}`,
+      `${BACKEND_URL}/api/v1/projects/${projectId}`,
       {
         method: 'PATCH',
         headers: {
@@ -88,31 +81,27 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     )
 
     const data = await response.json()
-
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
-    console.error('[API Route /api/sessions/[sessionId]] PATCH Error:', error)
+    console.error('[API Route /api/projects/[projectId]] PATCH Error:', error)
     return NextResponse.json(
-      { detail: 'Failed to update session' },
+      { detail: 'Failed to update project' },
       { status: 500 }
     )
   }
 }
 
-/**
- * DELETE - Delete a session
- */
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
     const authorization = request.headers.get('authorization')
-    const { sessionId } = await params
+    const { projectId } = await params
 
     if (!authorization) {
       return NextResponse.json({ detail: 'Unauthorized' }, { status: 401 })
     }
 
     const response = await fetch(
-      `${BACKEND_URL}/api/v1/sessions/${sessionId}`,
+      `${BACKEND_URL}/api/v1/projects/${projectId}`,
       {
         method: 'DELETE',
         headers: {
@@ -121,18 +110,16 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       }
     )
 
-    // DELETE returns 204 No Content on success
     if (response.status === 204) {
       return new NextResponse(null, { status: 204 })
     }
 
     const data = await response.json()
-
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
-    console.error('[API Route /api/sessions/[sessionId]] DELETE Error:', error)
+    console.error('[API Route /api/projects/[projectId]] DELETE Error:', error)
     return NextResponse.json(
-      { detail: 'Failed to delete session' },
+      { detail: 'Failed to delete project' },
       { status: 500 }
     )
   }

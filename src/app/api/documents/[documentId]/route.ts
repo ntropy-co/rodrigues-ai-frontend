@@ -1,3 +1,21 @@
+/**
+ * BFF (Next.js API Route) — Document Delete
+ *
+ * Remove um documento (por `documentId`/`file_id`).
+ *
+ * Frontend:
+ * - `DELETE /api/documents/:documentId`
+ *
+ * Backend:
+ * - `DELETE ${BACKEND_URL}/api/v1/documents/{documentId}`
+ *
+ * Auth:
+ * - Atualmente não exige token no backend (mas pode ser endurecido no futuro).
+ *
+ * Chamadores:
+ * - `src/hooks/useChatFiles.ts`, `src/hooks/useDocuments.ts`
+ */
+
 import { NextRequest, NextResponse } from 'next/server'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'

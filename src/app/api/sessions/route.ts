@@ -1,9 +1,24 @@
 /**
- * Next.js API Route - Sessions Proxy
+ * BFF (Next.js API Route) — Sessions
  *
- * Proxies to backend session endpoints:
- * - GET /api/v1/sessions/ - List user sessions
- * - POST /api/v1/sessions/ - Create new session
+ * Lista/cria sessões no backend.
+ *
+ * Frontend:
+ * - `GET  /api/sessions` (query: `skip`, `limit`, `project_id?`)
+ * - `POST /api/sessions`
+ *
+ * Backend:
+ * - `GET  ${BACKEND_URL}/api/v1/sessions/`
+ * - `POST ${BACKEND_URL}/api/v1/sessions/`
+ *
+ * Auth:
+ * - Obrigatório: `Authorization: Bearer <token>`
+ *
+ * Cache:
+ * - GET retorna com `Cache-Control` curto (private).
+ *
+ * Chamadores:
+ * - `src/hooks/useSessions.ts`
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -25,17 +40,20 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const skip = searchParams.get('skip') || '0'
     const limit = searchParams.get('limit') || '100'
+    const projectId = searchParams.get('project_id')
 
-    const response = await fetch(
-      `${BACKEND_URL}/api/v1/sessions/?skip=${skip}&limit=${limit}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: authorization
-        }
+    const backendUrl = new URL(`${BACKEND_URL}/api/v1/sessions/`)
+    backendUrl.searchParams.set('skip', skip)
+    backendUrl.searchParams.set('limit', limit)
+    if (projectId) backendUrl.searchParams.set('project_id', projectId)
+
+    const response = await fetch(backendUrl.toString(), {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authorization
       }
-    )
+    })
 
     const data = await response.json()
 

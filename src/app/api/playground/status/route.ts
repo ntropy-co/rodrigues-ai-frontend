@@ -1,8 +1,16 @@
 /**
- * Next.js API Route - Backend Health Check Proxy
+ * BFF (Next.js API Route) — Backend Health Check
  *
- * This route acts as a proxy to the backend health check API
- * to verify if the backend is running and accessible
+ * Usado pelo frontend para verificar se o backend está acessível.
+ *
+ * Frontend:
+ * - `GET /api/playground/status`
+ *
+ * Backend:
+ * - `GET ${BACKEND_URL}/api/v1/health`
+ *
+ * Chamadores:
+ * - `src/api/playground.ts`, `src/hooks/useChatActions.ts`
  */
 
 import { NextResponse } from 'next/server'

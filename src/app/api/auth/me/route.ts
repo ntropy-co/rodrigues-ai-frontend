@@ -1,8 +1,23 @@
 /**
- * Next.js API Route - Get Current User Proxy
+ * BFF (Next.js API Route) — Current User
  *
- * This route acts as a proxy to the backend user API
- * to avoid CORS issues when running locally
+ * Retorna o usuário atual (perfil) a partir do Bearer token.
+ *
+ * Frontend:
+ * - `GET /api/auth/me`
+ *
+ * Backend:
+ * - `GET ${BACKEND_URL}/api/v1/auth/me`
+ *
+ * Auth:
+ * - Obrigatório: `Authorization: Bearer <token>`
+ *
+ * Transformações de contrato:
+ * - Backend (ex.): `{ id, email, full_name, is_superuser, ... }`
+ * - Frontend: `{ id, email, name, role }`
+ *
+ * Chamadores:
+ * - `src/lib/auth/api.ts`, `src/contexts/AuthContext.tsx`, `src/hooks/useAuthHook.ts`
  */
 
 import { NextRequest, NextResponse } from 'next/server'

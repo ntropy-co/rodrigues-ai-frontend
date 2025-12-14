@@ -1,8 +1,26 @@
 /**
- * Next.js API Route - Chat Feedback Proxy
+ * BFF (Next.js API Route) — Chat Feedback
  *
- * This route proxies feedback requests to the backend
- * Endpoint: POST /api/chat/[messageId]/feedback
+ * Envia feedback (like/dislike/none) para uma mensagem específica.
+ *
+ * Frontend:
+ * - `POST /api/chat/:messageId/feedback`
+ *
+ * Backend:
+ * - `POST ${BACKEND_URL}/api/v1/chat/{messageId}/feedback`
+ *
+ * Auth:
+ * - Obrigatório: `Authorization: Bearer <token>`
+ *
+ * Validações no BFF:
+ * - `messageId` deve ser UUID
+ * - `feedback` ∈ { "like", "dislike", "none" }
+ *
+ * CORS:
+ * - Implementa `OPTIONS` para preflight.
+ *
+ * Chamadores:
+ * - `src/components/v2/ChatArea/ChatArea.tsx`
  */
 
 import { NextRequest, NextResponse } from 'next/server'

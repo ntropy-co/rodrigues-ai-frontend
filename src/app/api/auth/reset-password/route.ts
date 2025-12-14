@@ -1,8 +1,23 @@
 /**
- * Next.js API Route - Reset Password Proxy
+ * BFF (Next.js API Route) — Reset Password
  *
- * This route acts as a proxy to the backend reset password API
- * to avoid CORS issues
+ * Redefine a senha usando um token de reset enviado por e-mail.
+ *
+ * Frontend:
+ * - `POST /api/auth/reset-password`
+ *
+ * Backend:
+ * - `POST ${BACKEND_URL}/api/v1/auth/reset-password`
+ *
+ * Auth:
+ * - Público (o token de reset substitui a sessão)
+ *
+ * Transformações de contrato:
+ * - Frontend envia: `{ token, password }`
+ * - Backend espera: `{ token, new_password }`
+ *
+ * Chamadores:
+ * - `src/lib/auth/api.ts`, `src/hooks/useAuthHook.ts`, `src/app/(auth)/reset-password/page.tsx`
  */
 
 import { NextRequest, NextResponse } from 'next/server'
