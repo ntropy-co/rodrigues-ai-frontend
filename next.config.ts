@@ -1,5 +1,6 @@
 import type { NextConfig } from 'next'
 import withPWA from '@ducanh2912/next-pwa'
+import { withSentryConfig } from '@sentry/nextjs'
 
 const nextConfig: NextConfig = {
   devIndicators: false,
@@ -152,4 +153,25 @@ const pwaConfig = withPWA({
   }
 })
 
-export default pwaConfig(nextConfig)
+// Sentry configuration for source maps upload
+const sentryOptions = {
+  // Organization and project slugs from Sentry
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+
+  // Auth token for uploading source maps
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+
+  // Suppress logs unless in CI
+  silent: !process.env.CI,
+
+  // Hide source maps from browser devtools in production
+  hideSourceMaps: true,
+
+  // Bundle size optimizations
+  bundleSizeOptimizations: {
+    excludeDebugStatements: true
+  }
+}
+
+export default withSentryConfig(pwaConfig(nextConfig), sentryOptions)
