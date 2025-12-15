@@ -6,6 +6,7 @@ import { useShallow } from 'zustand/react/shallow'
 import useChatActions from '@/hooks/useChatActions'
 import { usePlaygroundStore } from '../store'
 import { useAuth } from '@/contexts/AuthContext'
+import { trackEvent } from '@/components/providers/PostHogProvider'
 
 /**
  * Chat response from backend
@@ -146,6 +147,15 @@ const useAIChatStreamHandler = () => {
         }
 
         const data: ChatResponse = await response.json()
+
+        // Track chat message event
+        trackEvent('chat_message_sent', {
+          session_id: data.session_id,
+          message_length: message.trim().length,
+          has_files: files && files.length > 0,
+          file_count: files?.length || 0,
+          is_new_session: data.session_id !== sessionId
+        })
 
         // Update session ID if backend returned a new one
         if (data.session_id && data.session_id !== sessionId) {

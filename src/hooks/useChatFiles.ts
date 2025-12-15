@@ -8,6 +8,7 @@ import type {
 } from '@/types/chat-files'
 import { getFileCategory, getFileExtension } from '@/lib/utils/file-utils'
 import { getAuthToken } from '@/lib/auth/cookies'
+import { trackEvent } from '@/components/providers/PostHogProvider'
 
 // ============================================================================
 // Types
@@ -237,6 +238,16 @@ export function useChatFiles(
               : p
           )
         )
+
+        // Track document upload event
+        trackEvent('document_uploaded', {
+          document_id: newFile.id,
+          file_name: newFile.fileName,
+          file_size: newFile.fileSize,
+          file_type: newFile.mimeType,
+          file_category: newFile.fileCategory,
+          conversation_id: conversationId
+        })
 
         // Remove from progress after delay (with cleanup tracking)
         const timeoutId = setTimeout(() => {
