@@ -25,6 +25,7 @@ import {
   registerRateLimiter,
   RATE_LIMIT_CONFIGS
 } from '@/lib/utils/rate-limiter'
+import { trackEvent } from '@/components/providers/PostHogProvider'
 
 // Simplified user type for context (matches API /auth/me response)
 interface ContextUser {
@@ -107,6 +108,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Reset rate limiter on successful login
       loginRateLimiter.reset('login')
 
+      // Track login event
+      trackEvent('user_logged_in', {
+        method: 'email',
+        user_id: userData.id
+      })
+
       toast.success('Login realizado com sucesso!')
     } catch (error) {
       const message =
@@ -147,6 +154,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Reset rate limiter on successful registration
         registerRateLimiter.reset('register')
+
+        // Track signup event
+        trackEvent('user_signed_up', {
+          method: 'email'
+        })
 
         // Auto login after register
         await login(data.email, data.password)

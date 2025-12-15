@@ -10,6 +10,7 @@ import {
   AlertCircle
 } from 'lucide-react'
 import { getAuthToken } from '@/lib/auth/cookies'
+import { trackEvent } from '@/components/providers/PostHogProvider'
 
 interface FileUploadModalProps {
   isOpen: boolean
@@ -160,6 +161,16 @@ export function FileUploadModal({
 
         setUploadProgress(100)
         setSuccess(true)
+
+        // Track document upload event
+        trackEvent('document_uploaded', {
+          document_id: data.id,
+          file_name: files[0].name,
+          file_size: files[0].size,
+          file_type: files[0].type,
+          session_id: sessionId,
+          user_id: userId
+        })
 
         // Wait a bit to show success message
         setTimeout(() => {
