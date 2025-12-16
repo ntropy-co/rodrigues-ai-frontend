@@ -78,6 +78,14 @@ export function ConversationsSidebar({
   }, [fetchSessions, selectedProjectId])
 
   // Memoized handlers to prevent re-renders of child components
+  const handleUpdateSession = useCallback(
+    async (id: string, data: { title?: string }) => {
+      await updateSession(id, data)
+      fetchSessions(selectedProjectId).then(setSessions)
+    },
+    [updateSession, fetchSessions, selectedProjectId]
+  )
+
   const handleUpdateProject = useCallback(
     async (id: string, data: { title?: string }) => {
       await updateProject(id, data)
@@ -157,7 +165,7 @@ export function ConversationsSidebar({
             onSelectProject={setSelectedProjectId}
             sessionsLoading={sessionsLoading}
             projectsLoading={projectsLoading}
-            onUpdateSession={updateSession}
+            onUpdateSession={handleUpdateSession}
             onUpdateProject={handleUpdateProject}
             onDeleteSession={async (id) => {
               await deleteSession(id)
@@ -203,7 +211,7 @@ export function ConversationsSidebar({
           onSelectProject={setSelectedProjectId}
           sessionsLoading={sessionsLoading}
           projectsLoading={projectsLoading}
-          onUpdateSession={updateSession}
+          onUpdateSession={handleUpdateSession}
           onUpdateProject={handleUpdateProject}
           onDeleteSession={async (id) => {
             await deleteSession(id)
