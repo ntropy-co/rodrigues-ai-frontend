@@ -9,7 +9,8 @@ import {
   ChevronLeft,
   Loader2,
   SquarePen,
-  LayoutGrid
+  LayoutGrid,
+  Trash2
 } from 'lucide-react'
 import { ProjectDialog } from './ProjectDialog'
 import { Avatar } from './Avatar'
@@ -18,6 +19,7 @@ import { useSessions } from '@/hooks/useSessions'
 import { useProjects, type Project } from '@/hooks/useProjects'
 import { formatRelativeTime } from '@/lib/utils/time'
 import type { SessionEntry } from '@/types/playground'
+import { trackConversationSelected } from '@/lib/analytics'
 // Spring animation config (Claude-inspired)
 const sidebarSpring = {
   type: 'spring' as const,
@@ -54,12 +56,14 @@ export function ConversationsSidebar({
     fetchSessions,
     createSession,
     updateSession,
+    deleteSession,
     loading: sessionsLoading
   } = useSessions()
   const {
     fetchProjects,
     createProject,
     updateProject,
+    deleteProject,
     loading: projectsLoading
   } = useProjects()
 
@@ -155,6 +159,14 @@ export function ConversationsSidebar({
             projectsLoading={projectsLoading}
             onUpdateSession={updateSession}
             onUpdateProject={handleUpdateProject}
+            onDeleteSession={async (id) => {
+              await deleteSession(id)
+              fetchSessions(selectedProjectId).then(setSessions)
+            }}
+            onDeleteProject={async (id) => {
+              await deleteProject(id)
+              fetchProjects().then(setProjects)
+            }}
             onOpenProjectDialog={handleOpenProjectDialog}
           />
         </motion.aside>
@@ -193,6 +205,14 @@ export function ConversationsSidebar({
           projectsLoading={projectsLoading}
           onUpdateSession={updateSession}
           onUpdateProject={handleUpdateProject}
+          onDeleteSession={async (id) => {
+            await deleteSession(id)
+            fetchSessions(selectedProjectId).then(setSessions)
+          }}
+          onDeleteProject={async (id) => {
+            await deleteProject(id)
+            fetchProjects().then(setProjects)
+          }}
           onOpenProjectDialog={handleOpenProjectDialog}
         />
 
@@ -224,6 +244,8 @@ function SidebarContent({
   projectsLoading,
   onUpdateSession,
   onUpdateProject,
+  onDeleteSession,
+  onDeleteProject,
   onOpenProjectDialog
 }: {
   searchQuery: string
@@ -241,6 +263,8 @@ function SidebarContent({
   projectsLoading: boolean
   onUpdateSession: (id: string, data: { title?: string }) => Promise<unknown>
   onUpdateProject: (id: string, data: { title?: string }) => Promise<unknown>
+  onDeleteSession: (id: string) => Promise<void>
+  onDeleteProject: (id: string) => Promise<void>
   onOpenProjectDialog: () => void
 }) {
   return (
@@ -335,6 +359,7 @@ function SidebarContent({
                   onUpdateTitle={(newTitle) =>
                     onUpdateProject(project.id, { title: newTitle })
                   }
+                  onDelete={() => onDeleteProject(project.id)}
                 />
               ))}
             </div>
@@ -383,10 +408,14 @@ function SidebarContent({
                   title={session.title}
                   timestamp={formatRelativeTime(session.created_at)}
                   isActive={activeConversationId === session.session_id}
-                  onClick={() => onSelectConversation?.(session.session_id)}
+                  onClick={() => {
+                    trackConversationSelected(session.session_id, 'sidebar')
+                    onSelectConversation?.(session.session_id)
+                  }}
                   onUpdateTitle={(newTitle) =>
                     onUpdateSession(session.session_id, { title: newTitle })
                   }
+                  onDelete={() => onDeleteSession(session.session_id)}
                 />
               ))}
             </div>
@@ -407,6 +436,7 @@ interface ConversationCardProps {
   unreadCount?: number
   onClick?: () => void
   onUpdateTitle?: (title: string) => void
+  onDelete?: () => void
 }
 
 const ConversationCard = memo(function ConversationCard({
@@ -417,7 +447,8 @@ const ConversationCard = memo(function ConversationCard({
   isActive = false,
   unreadCount = 0,
   onClick,
-  onUpdateTitle
+  onUpdateTitle,
+  onDelete
 }: ConversationCardProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editTitle, setEditTitle] = useState(title)
@@ -527,6 +558,22 @@ const ConversationCard = memo(function ConversationCard({
                   title="Renomear"
                 >
                   <SquarePen className="h-3.5 w-3.5" />
+                </button>
+              )}
+
+              {/* Delete Icon on Hover */}
+              {onDelete && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    if (confirm('Tem certeza que deseja excluir?')) {
+                      onDelete()
+                    }
+                  }}
+                  className="rounded p-1 text-red-500 opacity-0 transition-opacity hover:bg-red-100 group-hover:opacity-100"
+                  title="Excluir"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
                 </button>
               )}
             </>

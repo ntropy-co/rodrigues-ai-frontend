@@ -31,7 +31,7 @@ import {
   registerRateLimiter,
   RATE_LIMIT_CONFIGS
 } from '@/lib/utils/rate-limiter'
-import { trackEvent } from '@/components/providers/PostHogProvider'
+import { identify, trackLogin, trackSignup, trackLogout } from '@/lib/analytics'
 
 // Simplified user type for context (matches API /auth/me response)
 interface ContextUser {
@@ -118,11 +118,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Reset rate limiter on successful login
       loginRateLimiter.reset('login')
 
-      // Track login event
-      trackEvent('user_logged_in', {
-        method: 'email',
-        user_id: userData.id
+      // Identify user in analytics
+      identify(userData.id, {
+        email: userData.email,
+        name: userData.name,
+        role: userData.role
       })
+
+      // Track login event
+      trackLogin(userData.id, 'email')
 
       toast.success('Login realizado com sucesso!')
     } catch (error) {
@@ -166,9 +170,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         registerRateLimiter.reset('register')
 
         // Track signup event
-        trackEvent('user_signed_up', {
-          method: 'email'
-        })
+        trackSignup('email')
 
         // Auto login after register
         await login(data.email, data.password)
@@ -187,6 +189,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   )
 
   const logout = useCallback(() => {
+    // Track logout and reset analytics identity
+    trackLogout()
+
     logoutApi().catch(console.error)
     removeAuthToken()
     removeRefreshToken()

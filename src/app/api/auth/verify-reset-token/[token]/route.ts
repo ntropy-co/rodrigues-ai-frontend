@@ -28,7 +28,7 @@ export async function GET(
     const { token } = await params
 
     const response = await fetch(
-      `${BACKEND_URL}/api/v1/auth/verify-reset-token/${token}`,
+      `${BACKEND_URL}/api/v1/auth/verify-reset-token/${encodeURIComponent(token)}`,
       {
         method: 'GET',
         headers: {

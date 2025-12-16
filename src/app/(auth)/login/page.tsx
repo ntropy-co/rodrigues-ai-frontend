@@ -19,13 +19,28 @@ import {
   durations
 } from '@/lib/animations'
 
+function getSafeRedirectPath(value: string | null): string | null {
+  if (!value) return null
+  if (!value.startsWith('/')) return null
+  if (value.startsWith('//')) return null
+  if (value.includes('\\')) return null
+
+  try {
+    const url = new URL(value, 'http://localhost')
+    if (url.origin !== 'http://localhost') return null
+    return `${url.pathname}${url.search}${url.hash}`
+  } catch {
+    return null
+  }
+}
+
 function LoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { login } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
-  const redirect = searchParams.get('redirect') || '/chat'
+  const redirect = getSafeRedirectPath(searchParams.get('redirect')) || '/chat'
   const shouldReduceMotion = useReducedMotion()
 
   const {

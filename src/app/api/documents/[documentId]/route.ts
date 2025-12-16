@@ -35,7 +35,7 @@ export async function DELETE(
     }
 
     const { documentId } = await params
-    const url = `${BACKEND_URL}/api/v1/documents/${documentId}`
+    const url = `${BACKEND_URL}/api/v1/documents/${encodeURIComponent(documentId)}`
 
     console.log('[API Proxy] DELETE document:', documentId)
 
@@ -49,13 +49,34 @@ export async function DELETE(
     console.log('[API Proxy] Delete response status:', response.status)
 
     if (!response.ok) {
-      const errorData = await response.json()
+      const contentType = response.headers.get('content-type') || ''
+      const errorData = contentType.includes('application/json')
+        ? await response
+            .json()
+            .catch(() => ({ detail: 'Request failed (invalid JSON response)' }))
+        : {
+            detail:
+              (await response.text().catch(() => '')) ||
+              'Request failed (non-JSON response)'
+          }
+
       console.error('[API Proxy] Delete error:', errorData)
       return NextResponse.json(errorData, { status: response.status })
     }
 
-    const data = await response.json()
-    return NextResponse.json(data, { status: 200 })
+    if (response.status === 204) {
+      return new NextResponse(null, { status: 204 })
+    }
+
+    const contentType = response.headers.get('content-type') || ''
+    if (contentType.includes('application/json')) {
+      const data = await response.json().catch(() => null)
+      if (data !== null) {
+        return NextResponse.json(data, { status: response.status })
+      }
+    }
+
+    return new NextResponse(null, { status: response.status })
   } catch (error) {
     console.error('[API Proxy] Error deleting document:', error)
     return NextResponse.json(

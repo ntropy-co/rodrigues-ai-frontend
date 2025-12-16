@@ -44,10 +44,19 @@ export function middleware(request: NextRequest) {
 
       // Se há origin header, validar que corresponde ao host
       if (origin) {
-        const originHost = new URL(origin).host
+        let originHost: string
+        try {
+          originHost = new URL(origin).host
+        } catch (error) {
+          console.warn(
+            `[Security] Invalid Origin header blocked: origin=${origin}, host=${host}`,
+            error
+          )
+          return new NextResponse('CSRF validation failed', { status: 403 })
+        }
 
         // Validar que a requisição vem do mesmo host
-        if (originHost !== host) {
+        if (!host || originHost !== host) {
           console.warn(
             `[Security] CSRF attempt blocked: origin=${originHost}, host=${host}`
           )
