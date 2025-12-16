@@ -12,7 +12,13 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import type { SignupData } from '@/types/auth'
 import type { AuthResponse } from '@/types/auth-api'
 import * as authApi from '@/lib/auth/api'
-import { setAuthToken, removeAuthToken, getAuthToken } from '@/lib/auth/cookies'
+import {
+  setAuthToken,
+  removeAuthToken,
+  getAuthToken,
+  setRefreshToken,
+  removeRefreshToken
+} from '@/lib/auth/cookies'
 import {
   clearRateLimitState,
   recordFailedAttempt,
@@ -93,6 +99,7 @@ export function useAuth(): UseAuthReturn {
       } catch {
         // Token inválido ou expirado
         removeAuthToken()
+        removeRefreshToken()
         setState({
           user: null,
           isAuthenticated: false,
@@ -129,6 +136,9 @@ export function useAuth(): UseAuthReturn {
 
         // Salvar token no cookie seguro
         setAuthToken(response.token)
+        if (response.refreshToken) {
+          setRefreshToken(response.refreshToken)
+        }
 
         // Limpar rate limit após sucesso
         clearRateLimitState()
@@ -170,6 +180,7 @@ export function useAuth(): UseAuthReturn {
     } finally {
       // Sempre limpar estado local
       removeAuthToken()
+      removeRefreshToken()
       setState({
         user: null,
         isAuthenticated: false,
@@ -198,6 +209,9 @@ export function useAuth(): UseAuthReturn {
 
         // Salvar token no cookie
         setAuthToken(response.token)
+        if (response.refreshToken) {
+          setRefreshToken(response.refreshToken)
+        }
 
         setState({
           user: response.user,

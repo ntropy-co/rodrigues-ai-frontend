@@ -18,7 +18,13 @@ import {
   logoutApi,
   registerApi
 } from '@/lib/auth/api'
-import { getAuthToken, setAuthToken, removeAuthToken } from '@/lib/auth/cookies'
+import {
+  getAuthToken,
+  setAuthToken,
+  removeAuthToken,
+  setRefreshToken,
+  removeRefreshToken
+} from '@/lib/auth/cookies'
 import { loginSchema } from '@/lib/auth/validations'
 import {
   loginRateLimiter,
@@ -67,6 +73,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch (error) {
         console.error('Failed to load user:', error)
         removeAuthToken()
+        removeRefreshToken()
         setToken(null)
       } finally {
         setIsLoading(false)
@@ -99,6 +106,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Save token in secure cookie
       setAuthToken(accessToken)
+      if (authResponse.refreshToken) {
+        setRefreshToken(authResponse.refreshToken)
+      }
       setToken(accessToken)
 
       // Fetch user data
@@ -184,6 +194,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     logoutApi().catch(console.error)
     removeAuthToken()
+    removeRefreshToken()
     setToken(null)
     setUser(null)
     toast.success('Logout realizado com sucesso!')
