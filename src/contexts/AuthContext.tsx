@@ -17,15 +17,15 @@ import {
   loginApi,
   logoutApi,
   registerApi
-	} from '@/lib/auth/api'
-	import {
-	  getAuthToken,
-	  setAuthToken,
-	  removeAuthToken,
-	  setRefreshToken,
-	  removeRefreshToken
-	} from '@/lib/auth/cookies'
-	import { loginSchema } from '@/lib/auth/validations'
+} from '@/lib/auth/api'
+import {
+  getAuthToken,
+  setAuthToken,
+  removeAuthToken,
+  setRefreshToken,
+  removeRefreshToken
+} from '@/lib/auth/cookies'
+import { loginSchema } from '@/lib/auth/validations'
 import {
   loginRateLimiter,
   registerRateLimiter,
@@ -70,15 +70,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const userData = await getCurrentUserApi(storedToken)
           setUser(userData)
         }
-	    } catch (error) {
-	      console.error('Failed to load user:', error)
-	      removeAuthToken()
-	      removeRefreshToken()
-	      setToken(null)
-	    } finally {
-	      setIsLoading(false)
-	    }
-	  }
+      } catch (error) {
+        console.error('Failed to load user:', error)
+        removeAuthToken()
+        removeRefreshToken()
+        setToken(null)
+      } finally {
+        setIsLoading(false)
+      }
+    }
 
     loadAuth()
   }, [])
@@ -102,14 +102,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       loginSchema.parse({ username: email, password })
 
       const authResponse = await loginApi({ email, password })
-	      const { token: accessToken } = authResponse
-	
-	      // Save token in secure cookie
-	      setAuthToken(accessToken)
-	      if (authResponse.refreshToken) {
-	        setRefreshToken(authResponse.refreshToken)
-	      }
-	      setToken(accessToken)
+      const { token: accessToken } = authResponse
+
+      // Save token in secure cookie
+      setAuthToken(accessToken)
+      if (authResponse.refreshToken) {
+        setRefreshToken(authResponse.refreshToken)
+      }
+      setToken(accessToken)
 
       // Fetch user data
       const userData = await getCurrentUserApi(accessToken)
@@ -186,14 +186,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [login]
   )
 
-	  const logout = useCallback(() => {
-	    logoutApi().catch(console.error)
-	    removeAuthToken()
-	    removeRefreshToken()
-	    setToken(null)
-	    setUser(null)
-	    toast.success('Logout realizado com sucesso!')
-	  }, [])
+  const logout = useCallback(() => {
+    logoutApi().catch(console.error)
+    removeAuthToken()
+    removeRefreshToken()
+    setToken(null)
+    setUser(null)
+    toast.success('Logout realizado com sucesso!')
+  }, [])
 
   const refetchUser = useCallback(async () => {
     if (!token) return
