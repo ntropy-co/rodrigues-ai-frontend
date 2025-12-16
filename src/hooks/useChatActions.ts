@@ -3,6 +3,7 @@ import { toast } from 'sonner'
 
 import { usePlaygroundStore } from '../store'
 import { type PlaygroundChatMessage } from '@/types/playground'
+import { useAuth } from '@/contexts/AuthContext'
 
 const useChatActions = () => {
   const { chatInputRef } = usePlaygroundStore()
@@ -14,6 +15,7 @@ const useChatActions = () => {
   const setIsEndpointLoading = usePlaygroundStore(
     (state) => state.setIsEndpointLoading
   )
+  const { token } = useAuth()
 
   // Função para salvar session ID no localStorage (usado quando backend retorna session_id)
   const saveSessionIdToStorage = useCallback((sessionIdToSave: string) => {
@@ -79,13 +81,55 @@ const useChatActions = () => {
     }
   }, [setIsEndpointActive, setIsEndpointLoading])
 
-  // Load session by ID - sessions are now managed by the backend via session_id
+  // Fetch chat history from backend
+  const fetchChatHistory = useCallback(
+    async (sessionId: string): Promise<PlaygroundChatMessage[]> => {
+      if (!token) {
+        console.warn('No auth token available for fetching chat history')
+        return []
+      }
+
+      try {
+        const response = await fetch(`/api/chat/history/${sessionId}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}))
+          console.error('Failed to fetch chat history:', errorData)
+          return []
+        }
+
+        const data = await response.json()
+        return data.messages || []
+      } catch (error) {
+        console.error('Error fetching chat history:', error)
+        return []
+      }
+    },
+    [token]
+  )
+
+  // Load session by ID - fetches chat history and sets messages
   const loadSessionById = useCallback(
     async (sessionIdToLoad: string): Promise<boolean> => {
       try {
         setIsEndpointLoading(true)
-        // Just set the session ID - messages will come from chat responses
+
+        // Set the session ID
         setSessionId(sessionIdToLoad)
+
+        // Fetch chat history from backend
+        const messages = await fetchChatHistory(sessionIdToLoad)
+
+        // Set messages in store
+        if (messages.length > 0) {
+          setMessages(messages)
+        }
+
         return true
       } catch (error) {
         console.error('Error loading session:', error)
@@ -95,7 +139,7 @@ const useChatActions = () => {
         setIsEndpointLoading(false)
       }
     },
-    [setSessionId, setIsEndpointLoading]
+    [setSessionId, setIsEndpointLoading, fetchChatHistory, setMessages]
   )
 
   return {
