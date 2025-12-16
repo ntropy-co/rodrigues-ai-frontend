@@ -15,6 +15,7 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { trackConversationSelected } from '@/lib/analytics'
 
 interface ChatSession {
   id: string
@@ -83,6 +84,9 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
 
   const handleSessionClick = async (sessionIdToLoad: string) => {
     if (sessionIdToLoad !== sessionId) {
+      // Track conversation selection
+      trackConversationSelected(sessionIdToLoad, 'sidebar')
+
       setSessionId(sessionIdToLoad)
       // Clear messages - they will be loaded from the conversation
       setMessages([])

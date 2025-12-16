@@ -142,11 +142,43 @@ export function useProjects() {
     [token]
   )
 
+  const deleteProject = useCallback(
+    async (id: string): Promise<boolean> => {
+      if (!token) return false
+
+      setLoading(true)
+      setError(null)
+
+      try {
+        const response = await fetch(`/api/projects/${id}`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+
+        if (!response.ok && response.status !== 204) {
+          throw new Error('Erro ao deletar projeto')
+        }
+
+        return true
+      } catch (err) {
+        console.error('[useProjects] Error deleting project:', err)
+        setError(err instanceof Error ? err.message : 'Erro desconhecido')
+        return false
+      } finally {
+        setLoading(false)
+      }
+    },
+    [token]
+  )
+
   return {
     loading,
     error,
     fetchProjects,
     createProject,
-    updateProject
+    updateProject,
+    deleteProject
   }
 }

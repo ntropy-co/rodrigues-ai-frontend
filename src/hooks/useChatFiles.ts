@@ -8,7 +8,7 @@ import type {
 } from '@/types/chat-files'
 import { getFileCategory, getFileExtension } from '@/lib/utils/file-utils'
 import { getAuthToken } from '@/lib/auth/cookies'
-import { trackEvent } from '@/components/providers/PostHogProvider'
+import { trackDocumentUpload, trackDocumentDownload } from '@/lib/analytics'
 
 // ============================================================================
 // Types
@@ -240,7 +240,7 @@ export function useChatFiles(
         )
 
         // Track document upload event
-        trackEvent('document_uploaded', {
+        trackDocumentUpload({
           document_id: newFile.id,
           file_name: newFile.fileName,
           file_size: newFile.fileSize,
@@ -322,6 +322,13 @@ export function useChatFiles(
       const contentDisposition = response.headers.get('Content-Disposition')
       const filenameMatch = contentDisposition?.match(/filename="?(.+)"?/i)
       const filename = filenameMatch?.[1] || 'arquivo'
+
+      // Get file type from Content-Type header
+      const contentType =
+        response.headers.get('Content-Type') || 'application/octet-stream'
+
+      // Track document download event
+      trackDocumentDownload(fileId, filename, contentType)
 
       // Create download
       const blob = await response.blob()
