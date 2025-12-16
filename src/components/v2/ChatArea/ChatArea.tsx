@@ -12,6 +12,8 @@ import { usePullToRefresh } from '@/hooks/usePullToRefresh'
 import { MESSAGE_ROLES } from '@/lib/constants'
 import { getAuthToken } from '@/lib/auth/cookies'
 import { toast } from 'sonner'
+import { usePlaygroundStore } from '@/store'
+import { trackChatFeedback } from '@/lib/analytics'
 
 interface ChatAreaProps {
   messages: PlaygroundChatMessage[]
@@ -24,6 +26,7 @@ export function ChatArea({ messages, isStreaming, onRefresh }: ChatAreaProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [showScrollButton, setShowScrollButton] = useState(false)
+  const sessionId = usePlaygroundStore((state) => state.sessionId)
 
   // Auto-scroll para última mensagem
   useEffect(() => {
@@ -79,6 +82,9 @@ export function ChatArea({ messages, isStreaming, onRefresh }: ChatAreaProps) {
     async (messageId: string, type: 'up' | 'down') => {
       const feedbackType = type === 'up' ? 'like' : 'dislike'
 
+      // Track feedback event
+      trackChatFeedback(messageId, feedbackType, sessionId || 'unknown')
+
       try {
         const token = getAuthToken()
         if (!token) return
@@ -97,7 +103,7 @@ export function ChatArea({ messages, isStreaming, onRefresh }: ChatAreaProps) {
         toast.error('Erro ao enviar feedback')
       }
     },
-    []
+    [sessionId]
   )
 
   return (

@@ -8,6 +8,7 @@ import {
   TrendingUp,
   AlertCircle
 } from 'lucide-react'
+import { trackCPRQuickAction } from '@/lib/analytics'
 
 /**
  * Quick action card for enterprise CPR analysis workflow.
@@ -101,7 +102,10 @@ export function SuggestionCards({ onSuggestionClick }: SuggestionCardsProps) {
           return (
             <button
               key={action.id}
-              onClick={() => onSuggestionClick(action.prompt)}
+              onClick={() => {
+                trackCPRQuickAction(action.id, action.title)
+                onSuggestionClick(action.prompt)
+              }}
               className="group flex flex-col items-start rounded-lg border border-gray-200 bg-white p-5 text-left transition-all hover:border-gray-300 hover:shadow-sm active:bg-gray-50 dark:border-gray-800 dark:bg-card dark:hover:border-gray-700"
             >
               <div className="mb-4 flex h-8 w-8 items-center justify-center rounded bg-gray-100 text-gray-600 group-hover:bg-gray-200 group-hover:text-gray-900 dark:bg-gray-800 dark:text-gray-400 dark:group-hover:bg-gray-700 dark:group-hover:text-gray-100">

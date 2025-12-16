@@ -11,6 +11,7 @@ import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { PostHogProvider } from '@/components/providers/PostHogProvider'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { InstallPrompt } from '@/components/v2/InstallPrompt'
 import './globals.css'
 
@@ -91,7 +92,9 @@ export default function RootLayout({
         >
           <PostHogProvider>
             <AuthProvider>
-              <NuqsAdapter>{children}</NuqsAdapter>
+              <ErrorBoundary>
+                <NuqsAdapter>{children}</NuqsAdapter>
+              </ErrorBoundary>
               <Toaster />
               <InstallPrompt />
             </AuthProvider>
