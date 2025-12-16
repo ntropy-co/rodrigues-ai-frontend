@@ -82,6 +82,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           token: data.access_token,
+          refreshToken: data.refresh_token,
           user,
           organization: null, // Backend doesn't have organization yet
           expiresAt

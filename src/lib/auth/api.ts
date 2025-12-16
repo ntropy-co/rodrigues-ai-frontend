@@ -15,7 +15,7 @@ import type {
   AuthApiClient
 } from '@/types/auth-api'
 import { AuthError, mapApiError, isNetworkError } from './errors'
-import { getToken, getRefreshToken } from './storage'
+import { getAuthToken, getRefreshToken } from './cookies'
 
 // ============================================================================
 // CONFIGURATION
@@ -56,7 +56,7 @@ async function authFetch<T>(
 
   // Add auth header if authenticated request
   if (authenticated) {
-    const token = getToken()
+    const token = getAuthToken()
     if (token) {
       ;(headers as Record<string, string>)['Authorization'] = `Bearer ${token}`
     }
