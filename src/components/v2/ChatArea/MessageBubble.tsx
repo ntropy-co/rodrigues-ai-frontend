@@ -159,7 +159,7 @@ export const MessageBubble = memo(function MessageBubble({
                   className={cn(
                     'flex items-center gap-3 rounded-lg p-2.5 transition-colors',
                     isUser
-                      ? 'border border-verde-700/50 bg-verde-900/40 hover:bg-verde-900/60'
+                      ? 'border border-white/30 bg-white/20 hover:bg-white/30'
                       : 'border border-verde-200 bg-verde-50 hover:bg-verde-100'
                   )}
                 >
@@ -167,7 +167,7 @@ export const MessageBubble = memo(function MessageBubble({
                     className={cn(
                       'flex h-8 w-8 items-center justify-center rounded-md',
                       isUser
-                        ? 'bg-white/10 text-white'
+                        ? 'bg-white/25 text-white'
                         : 'bg-white text-verde-600'
                     )}
                   >
@@ -178,10 +178,20 @@ export const MessageBubble = memo(function MessageBubble({
                     )}
                   </div>
                   <div className="flex flex-col overflow-hidden">
-                    <span className="truncate text-sm font-medium">
+                    <span
+                      className={cn(
+                        'truncate text-sm font-medium',
+                        isUser ? 'text-white' : 'text-verde-950'
+                      )}
+                    >
                       {file.name}
                     </span>
-                    <span className="text-[10px] opacity-70">
+                    <span
+                      className={cn(
+                        'text-[10px]',
+                        isUser ? 'text-white/90' : 'text-verde-700'
+                      )}
+                    >
                       {formatFileSize(file.size || 0)}
                     </span>
                   </div>
