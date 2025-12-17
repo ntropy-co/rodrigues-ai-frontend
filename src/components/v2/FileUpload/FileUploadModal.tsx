@@ -387,7 +387,7 @@ export function FileUploadModal({
         <div className="mt-6 flex gap-3">
           <button
             onClick={handleClose}
-            className="border-gemini-gray-300 text-gemini-gray-700 hover-hover:bg-gemini-gray-50 flex-1 rounded-lg border px-4 py-2 transition-colors"
+            className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-50"
             disabled={uploading}
           >
             Cancelar
@@ -397,8 +397,8 @@ export function FileUploadModal({
             disabled={files.length === 0 || uploading || success}
             className={`flex-1 rounded-lg px-4 py-2 font-medium text-white transition-colors ${
               files.length === 0 || uploading || success
-                ? 'bg-gemini-gray-300 cursor-not-allowed'
-                : 'bg-gemini-blue hover-hover:bg-gemini-blue-hover'
+                ? 'cursor-not-allowed bg-gray-300'
+                : 'bg-verde-600 hover:bg-verde-700'
             }`}
           >
             {uploading
