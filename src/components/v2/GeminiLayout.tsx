@@ -205,6 +205,26 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
               disabled={isStreaming || isLoadingSession}
               userId={user?.id}
               sessionId={currentSessionId || undefined}
+              onSessionCreated={(newSessionId) => {
+                // Navigate to new session when created during file upload
+                console.log('[GeminiLayout] Session created:', newSessionId)
+                router.push(`/chat/${newSessionId}`)
+              }}
+              onFileUploaded={(documentId, uploadedSessionId) => {
+                // Navigate to session if we're not already there
+                console.log(
+                  '[GeminiLayout] File uploaded:',
+                  documentId,
+                  'to session:',
+                  uploadedSessionId
+                )
+                if (
+                  uploadedSessionId &&
+                  uploadedSessionId !== currentSessionId
+                ) {
+                  router.push(`/chat/${uploadedSessionId}`)
+                }
+              }}
             />
           </div>
         </div>
