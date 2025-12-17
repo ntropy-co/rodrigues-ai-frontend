@@ -15,8 +15,9 @@ import { trackEvent } from '@/components/providers/PostHogProvider'
 interface FileUploadModalProps {
   isOpen: boolean
   onClose: () => void
-  onUploadComplete?: (documentId: string) => void
+  onUploadComplete?: (documentId: string, sessionId?: string) => void
   onFilesSelected?: (files: File[]) => void
+  onSessionCreated?: (sessionId: string) => void // Callback quando nova sessão é criada
   userId: string
   sessionId?: string
   mode?: 'upload' | 'attach' // 'upload' para sistema antigo, 'attach' para anexar à mensagem
@@ -41,6 +42,7 @@ export function FileUploadModal({
   onClose,
   onUploadComplete,
   onFilesSelected,
+  onSessionCreated,
   userId,
   sessionId,
   mode = 'upload' // Padrão é upload para compatibilidade
@@ -126,11 +128,41 @@ export function FileUploadModal({
       setUploadProgress(0)
 
       try {
+        // Se não tiver sessionId, criar uma nova sessão primeiro
+        let uploadSessionId = sessionId
+        if (!uploadSessionId) {
+          console.log('[FileUploadModal] No sessionId, creating new session...')
+          const token = getAuthToken()
+          const sessionResponse = await fetch('/api/sessions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(token ? { Authorization: `Bearer ${token}` } : {})
+            },
+            body: JSON.stringify({ title: 'Análise de documento' })
+          })
+
+          if (sessionResponse.ok) {
+            const sessionData = await sessionResponse.json()
+            uploadSessionId = sessionData.id
+            console.log('[FileUploadModal] Created session:', uploadSessionId)
+
+            // Notify parent about new session
+            if (onSessionCreated && uploadSessionId) {
+              onSessionCreated(uploadSessionId)
+            }
+          } else {
+            console.warn(
+              '[FileUploadModal] Failed to create session, upload will have no session'
+            )
+          }
+        }
+
         const formData = new FormData()
         formData.append('file', files[0]) // No modo upload, só envia o primeiro
         formData.append('user_id', userId)
-        if (sessionId) {
-          formData.append('session_id', sessionId)
+        if (uploadSessionId) {
+          formData.append('session_id', uploadSessionId)
         }
         formData.append('auto_process', 'true')
 
@@ -174,7 +206,8 @@ export function FileUploadModal({
 
         // Wait a bit to show success message
         setTimeout(() => {
-          onUploadComplete(data.id)
+          // Pass both documentId and the session that was used
+          onUploadComplete(data.id, uploadSessionId)
           handleClose()
         }, 1500)
       } catch (err) {
