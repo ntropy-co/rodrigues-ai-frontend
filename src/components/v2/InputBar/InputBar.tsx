@@ -20,7 +20,14 @@ import {
 import { formatFileSize } from '@/lib/utils/file-utils'
 import { toast } from 'sonner'
 import { FileUploadModal } from '@/components/v2/FileUpload/FileUploadModal'
-import { useAuth } from '@/contexts/AuthContext'
+import { useContext } from 'react'
+import { AuthContext } from '@/contexts/AuthContext'
+
+// Safe hook that doesn't throw error if outside AuthProvider
+function useSafeAuth() {
+  const context = useContext(AuthContext)
+  return context // Returns undefined if outside provider instead of throwing
+}
 
 interface InputBarProps {
   onSendMessage: (message: string, attachments?: File[]) => void
@@ -71,8 +78,8 @@ export function InputBar({
   sessionId,
   onSessionCreated
 }: InputBarProps) {
-  const { user } = useAuth()
-  const userId = propUserId || user?.id || 'anonymous'
+  const auth = useSafeAuth()
+  const userId = propUserId || auth?.user?.id || 'anonymous'
   // Use controlled state if provided, otherwise local state (for standalone usage)
   const [localInput, setLocalInput] = useState('')
   const input = setMessage ? message : localInput
