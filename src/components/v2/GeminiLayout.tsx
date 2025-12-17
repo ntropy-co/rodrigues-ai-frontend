@@ -52,6 +52,7 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
   const isFilesOpen = filesSidebar === 'open'
 
   const messages = usePlaygroundStore((state) => state.messages)
+  const setMessages = usePlaygroundStore((state) => state.setMessages)
   const isStreaming = usePlaygroundStore((state) => state.isStreaming)
   const currentSessionId = usePlaygroundStore((state) => state.sessionId)
   const locallyCreatedSessionIds = usePlaygroundStore(
@@ -210,14 +211,30 @@ export function GeminiLayout({ sessionId }: GeminiLayoutProps) {
                 console.log('[GeminiLayout] Session created:', newSessionId)
                 router.push(`/chat/${newSessionId}`)
               }}
-              onFileUploaded={(documentId, uploadedSessionId) => {
-                // Navigate to session if we're not already there
+              onFileUploaded={(documentId, uploadedSessionId, fileInfo) => {
+                // Add a user message showing the uploaded file
                 console.log(
                   '[GeminiLayout] File uploaded:',
                   documentId,
                   'to session:',
-                  uploadedSessionId
+                  uploadedSessionId,
+                  'file:',
+                  fileInfo
                 )
+
+                // Create a user message with the file attached
+                if (fileInfo) {
+                  const fileMessage = {
+                    id: `file-${documentId}`,
+                    role: 'user' as const,
+                    content: `Enviei o documento "${fileInfo.name}" para análise.`,
+                    created_at: Date.now(),
+                    files: [fileInfo]
+                  }
+                  setMessages((prev) => [...prev, fileMessage])
+                }
+
+                // Navigate to session if we're not already there
                 if (
                   uploadedSessionId &&
                   uploadedSessionId !== currentSessionId

@@ -32,7 +32,11 @@ function useSafeAuth() {
 interface InputBarProps {
   onSendMessage: (message: string, attachments?: File[]) => void
   onFileSelect?: (file: File) => void
-  onFileUploaded?: (documentId: string, sessionId: string) => void
+  onFileUploaded?: (
+    documentId: string,
+    sessionId: string,
+    fileInfo: { name: string; size: number; type?: string }
+  ) => void
   isLoading?: boolean
   disabled?: boolean
   // Props from GeminiLayout (controlled state)
@@ -196,18 +200,21 @@ export function InputBar({
   // Handle upload complete from modal
   const handleUploadComplete = (
     documentId: string,
-    uploadedSessionId?: string
+    uploadedSessionId?: string,
+    fileInfo?: { name: string; size: number; type?: string }
   ) => {
     console.log(
       '[InputBar] Upload complete:',
       documentId,
       'session:',
-      uploadedSessionId
+      uploadedSessionId,
+      'file:',
+      fileInfo
     )
     setIsUploadModalOpen(false)
 
-    if (onFileUploaded && uploadedSessionId) {
-      onFileUploaded(documentId, uploadedSessionId)
+    if (onFileUploaded && uploadedSessionId && fileInfo) {
+      onFileUploaded(documentId, uploadedSessionId, fileInfo)
     }
 
     toast.success('Documento enviado e processado!')

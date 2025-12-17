@@ -15,7 +15,11 @@ import { trackEvent } from '@/components/providers/PostHogProvider'
 interface FileUploadModalProps {
   isOpen: boolean
   onClose: () => void
-  onUploadComplete?: (documentId: string, sessionId?: string) => void
+  onUploadComplete?: (
+    documentId: string,
+    sessionId?: string,
+    fileInfo?: { name: string; size: number; type?: string }
+  ) => void
   onFilesSelected?: (files: File[]) => void
   onSessionCreated?: (sessionId: string) => void // Callback quando nova sessão é criada
   userId: string
@@ -206,8 +210,13 @@ export function FileUploadModal({
 
         // Wait a bit to show success message
         setTimeout(() => {
-          // Pass both documentId and the session that was used
-          onUploadComplete(data.id, uploadSessionId)
+          // Pass documentId, session, and file info
+          const fileInfo = {
+            name: files[0].name,
+            size: files[0].size,
+            type: files[0].type
+          }
+          onUploadComplete(data.id, uploadSessionId, fileInfo)
           handleClose()
         }, 1500)
       } catch (err) {
