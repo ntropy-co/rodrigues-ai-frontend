@@ -138,8 +138,19 @@ const pwaConfig = withPWA({
         }
       },
       {
-        // Páginas - NetworkFirst para sempre ter conteúdo atualizado
-        urlPattern: /^https?:\/\/[^/]+\/(?!api\/|_next\/).*/i,
+        // Navegações (HTML) - cache seguro apenas para o próprio site (evita cachear chamadas externas)
+        urlPattern: ({ request, url }: { request: Request; url: URL }) => {
+          const origin = (
+            globalThis as unknown as { location?: { origin?: string } }
+          ).location?.origin
+
+          return (
+            request.mode === 'navigate' &&
+            url.origin === origin &&
+            !url.pathname.startsWith('/api') &&
+            !url.pathname.startsWith('/_next')
+          )
+        },
         handler: 'NetworkFirst',
         options: {
           cacheName: 'pages',

@@ -54,8 +54,7 @@ export async function GET(
       return NextResponse.json(errorData, { status: response.status })
     }
 
-    // Forward the file stream
-    const blob = await response.blob()
+    // Forward the file stream (evita bufferizar o arquivo inteiro em memória)
     const headers = new Headers()
 
     // Copy content-disposition header for filename
@@ -70,9 +69,17 @@ export async function GET(
       headers.set('Content-Type', contentType)
     }
 
+    // Copy content-length if present
+    const contentLength = response.headers.get('Content-Length')
+    if (contentLength) {
+      headers.set('Content-Length', contentLength)
+    }
+
     console.log('[API Proxy] Download successful, returning file')
 
-    return new NextResponse(blob, {
+    const body = response.body ?? (await response.blob())
+
+    return new NextResponse(body, {
       status: 200,
       headers
     })
