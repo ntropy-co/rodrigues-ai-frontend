@@ -212,6 +212,15 @@ export function trackConversationSelected(
 }
 
 /**
+ * Track project selection
+ */
+export function trackProjectSelected(projectId: string): void {
+  track(ANALYTICS_EVENTS.PROJECT_SELECTED, {
+    project_id: projectId
+  })
+}
+
+/**
  * Track an error from Error Boundary
  */
 export function trackError(

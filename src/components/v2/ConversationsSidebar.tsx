@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, memo } from 'react'
+import { useState, useEffect, useCallback, useRef, memo } from 'react'
 import { motion } from 'framer-motion'
 import {
   Search,
@@ -19,7 +19,11 @@ import { useSessions } from '@/hooks/useSessions'
 import { useProjects, type Project } from '@/hooks/useProjects'
 import { formatRelativeTime } from '@/lib/utils/time'
 import type { SessionEntry } from '@/types/playground'
-import { trackConversationSelected } from '@/lib/analytics'
+import {
+  trackConversationSelected,
+  trackSearch,
+  trackProjectSelected
+} from '@/lib/analytics'
 // Spring animation config (Claude-inspired)
 const sidebarSpring = {
   type: 'spring' as const,
@@ -275,6 +279,44 @@ function SidebarContent({
   onDeleteProject: (id: string) => Promise<void>
   onOpenProjectDialog: () => void
 }) {
+  // Debounced search tracking (1s delay, min 2 chars)
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  useEffect(() => {
+    // Clear previous timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current)
+    }
+
+    // Only track if query has at least 2 characters
+    if (searchQuery.length >= 2) {
+      searchTimeoutRef.current = setTimeout(() => {
+        // Filter sessions to get results count
+        const filteredSessions = sessions.filter((session) =>
+          session.title.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+        trackSearch(searchQuery, filteredSessions.length)
+      }, 1000) // 1 second debounce
+    }
+
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current)
+      }
+    }
+  }, [searchQuery, sessions])
+
+  // Wrapper to track project selection
+  const handleProjectSelect = useCallback(
+    (projectId: string | null) => {
+      if (projectId) {
+        trackProjectSelected(projectId)
+      }
+      onSelectProject(projectId)
+    },
+    [onSelectProject]
+  )
+
   return (
     <>
       {/* Header Area: Search + New Analysis */}
@@ -338,7 +380,7 @@ function SidebarContent({
             <div className="space-y-1">
               {/* Header de "Todas as Conversas" (para limpar seleção) */}
               <button
-                onClick={() => onSelectProject(null)}
+                onClick={() => handleProjectSelect(null)}
                 className={cn(
                   'mb-1 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors',
                   !selectedProjectId
@@ -360,7 +402,7 @@ function SidebarContent({
                   timestamp={formatRelativeTime(new Date(project.created_at))}
                   isActive={selectedProjectId === project.id}
                   onClick={() =>
-                    onSelectProject(
+                    handleProjectSelect(
                       selectedProjectId === project.id ? null : project.id
                     )
                   }
