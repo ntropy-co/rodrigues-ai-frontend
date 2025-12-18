@@ -124,9 +124,17 @@ export function useChatFiles(
 
       const data = await response.json()
 
+      // Validate API response format
+      if (!data || typeof data !== 'object') {
+        throw new Error('Resposta inválida da API: formato inesperado')
+      }
+
+      // Ensure files is an array (defensive check)
+      const rawFiles = Array.isArray(data.files) ? data.files : []
+
       // Transform backend response to ChatFile format
       // Backend returns snake_case, frontend expects camelCase
-      const transformedFiles: ChatFile[] = (data.files || []).map(
+      const transformedFiles: ChatFile[] = rawFiles.map(
         (file: {
           id: string
           filename?: string
@@ -410,15 +418,15 @@ export function useChatFiles(
 
   // Cleanup on unmount
   useEffect(() => {
-    // Copy refs to local variables to avoid stale refs in cleanup
-    const controller = abortControllerRef.current
+    // Copy timeouts Set reference - safe because we never reassign .current
+    // (we only mutate the Set with add/delete)
     const timeouts = timeoutsRef.current
 
     return () => {
       // Cancel any pending fetch requests
-      if (controller) {
-        controller.abort()
-      }
+      // Must access .current at cleanup time because abortControllerRef.current
+      // gets reassigned on each new request
+      abortControllerRef.current?.abort()
 
       // Clear all pending timeouts
       timeouts.forEach((timeoutId) => {
