@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, memo } from 'react'
+import { useState, useEffect, useCallback, useRef, memo } from 'react'
 import { motion } from 'framer-motion'
 import {
   Search,
@@ -19,7 +19,11 @@ import { useSessions } from '@/hooks/useSessions'
 import { useProjects, type Project } from '@/hooks/useProjects'
 import { formatRelativeTime } from '@/lib/utils/time'
 import type { SessionEntry } from '@/types/playground'
-import { trackConversationSelected } from '@/lib/analytics'
+import {
+  trackConversationSelected,
+  trackSearch,
+  trackProjectSelected
+} from '@/lib/analytics'
 // Spring animation config (Claude-inspired)
 const sidebarSpring = {
   type: 'spring' as const,
@@ -275,6 +279,44 @@ function SidebarContent({
   onDeleteProject: (id: string) => Promise<void>
   onOpenProjectDialog: () => void
 }) {
+  // Debounced search tracking (1s delay, min 2 chars)
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  useEffect(() => {
+    // Clear previous timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current)
+    }
+
+    // Only track if query has at least 2 characters
+    if (searchQuery.length >= 2) {
+      searchTimeoutRef.current = setTimeout(() => {
+        // Filter sessions to get results count
+        const filteredSessions = sessions.filter((session) =>
+          session.title.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+        trackSearch(searchQuery, filteredSessions.length)
+      }, 1000) // 1 second debounce
+    }
+
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current)
+      }
+    }
+  }, [searchQuery, sessions])
+
+  // Wrapper to track project selection
+  const handleProjectSelect = useCallback(
+    (projectId: string | null) => {
+      if (projectId) {
+        trackProjectSelected(projectId)
+      }
+      onSelectProject(projectId)
+    },
+    [onSelectProject]
+  )
+
   return (
     <>
       {/* Header Area: Search + New Analysis */}
@@ -294,6 +336,7 @@ function SidebarContent({
         {/* New Analysis Button */}
         <div className="flex items-center gap-2">
           <motion.button
+            type="button"
             whileHover={{
               scale: 1.02,
               y: -1,
@@ -309,6 +352,7 @@ function SidebarContent({
 
           {showCloseButton && (
             <button
+              type="button"
               onClick={onToggle}
               className="flex h-9 w-9 items-center justify-center rounded-lg border border-verde-200 text-verde-600 transition-colors hover:bg-verde-50 hover:text-verde-900"
               aria-label="Fechar sidebar"
@@ -338,7 +382,8 @@ function SidebarContent({
             <div className="space-y-1">
               {/* Header de "Todas as Conversas" (para limpar seleção) */}
               <button
-                onClick={() => onSelectProject(null)}
+                type="button"
+                onClick={() => handleProjectSelect(null)}
                 className={cn(
                   'mb-1 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors',
                   !selectedProjectId
@@ -360,7 +405,7 @@ function SidebarContent({
                   timestamp={formatRelativeTime(new Date(project.created_at))}
                   isActive={selectedProjectId === project.id}
                   onClick={() =>
-                    onSelectProject(
+                    handleProjectSelect(
                       selectedProjectId === project.id ? null : project.id
                     )
                   }
@@ -373,6 +418,7 @@ function SidebarContent({
             </div>
           )}
           <motion.button
+            type="button"
             whileHover={{ scale: 1.01, x: 2 }}
             onClick={onOpenProjectDialog}
             className="flex w-full items-center gap-3 rounded-lg border border-transparent px-3 py-2 text-left text-verde-600 hover:bg-verde-50 hover:text-verde-800"
@@ -558,6 +604,7 @@ const ConversationCard = memo(function ConversationCard({
               {/* Edit Icon on Hover */}
               {onUpdateTitle && (
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.stopPropagation()
                     setIsEditing(true)
@@ -572,6 +619,7 @@ const ConversationCard = memo(function ConversationCard({
               {/* Delete Icon on Hover */}
               {onDelete && (
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.stopPropagation()
                     if (confirm('Tem certeza que deseja excluir?')) {
@@ -617,6 +665,7 @@ export function ConversationsSidebarToggle({
 }) {
   return (
     <motion.button
+      type="button"
       initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -10 }}
