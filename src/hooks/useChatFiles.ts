@@ -1,11 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
-import type {
-  ChatFile,
-  FileUploadProgress,
-  ChatFilesListResponse
-} from '@/types/chat-files'
+import type { ChatFile, FileUploadProgress } from '@/types/chat-files'
 import { getFileCategory, getFileExtension } from '@/lib/utils/file-utils'
 import { getAuthToken } from '@/lib/auth/cookies'
 import { trackDocumentUpload, trackDocumentDownload } from '@/lib/analytics'
@@ -126,8 +122,53 @@ export function useChatFiles(
         )
       }
 
-      const data: ChatFilesListResponse = await response.json()
-      setFiles(data.files || [])
+      const data = await response.json()
+
+      // Transform backend response to ChatFile format
+      // Backend returns snake_case, frontend expects camelCase
+      const transformedFiles: ChatFile[] = (data.files || []).map(
+        (file: {
+          id: string
+          filename?: string
+          fileName?: string
+          file_size?: number
+          fileSize?: number
+          mime_type?: string
+          mimeType?: string
+          type?: string
+          created_at?: string
+          uploadedAt?: string
+          url?: string
+          fileExtension?: string
+          fileCategory?: string
+          conversationId?: string
+        }) => {
+          const fileName = file.fileName || file.filename || 'unknown'
+          const fileExtension =
+            file.fileExtension || getFileExtension(fileName) || ''
+          return {
+            id: file.id,
+            conversationId: file.conversationId || conversationId || '',
+            type: (file.type === 'generated'
+              ? 'generated'
+              : 'upload') as ChatFile['type'],
+            fileName,
+            fileExtension,
+            fileCategory:
+              file.fileCategory || getFileCategory(fileExtension) || 'other',
+            fileSize: file.fileSize || file.file_size || 0,
+            mimeType:
+              file.mimeType || file.mime_type || 'application/octet-stream',
+            uploadedAt: file.uploadedAt
+              ? new Date(file.uploadedAt)
+              : file.created_at
+                ? new Date(file.created_at)
+                : new Date(),
+            url: file.url || ''
+          } as ChatFile
+        }
+      )
+      setFiles(transformedFiles)
     } catch (err) {
       // Ignore abort errors
       if (err instanceof Error && err.name === 'AbortError') {

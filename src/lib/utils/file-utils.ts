@@ -98,7 +98,10 @@ const EXTENSION_CATEGORY_MAP: Record<string, FileCategory> = {
  * getFileCategory('xlsx') // 'spreadsheet'
  * getFileCategory('unknown') // 'other'
  */
-export function getFileCategory(extension: string): FileCategory {
+export function getFileCategory(
+  extension: string | undefined | null
+): FileCategory {
+  if (!extension) return 'other'
   return EXTENSION_CATEGORY_MAP[extension.toLowerCase()] || 'other'
 }
 
@@ -149,7 +152,14 @@ const EXTENSION_ICON_MAP: Record<string, LucideIcon> = {
  * const Icon = getFileIcon('pdf')
  * <Icon className="h-4 w-4" />
  */
-export function getFileIcon(extensionOrCategory: string): LucideIcon {
+export function getFileIcon(
+  extensionOrCategory: string | undefined | null
+): LucideIcon {
+  // Handle undefined/null input
+  if (!extensionOrCategory) {
+    return File
+  }
+
   // Primeiro, tentar extensão específica
   const extLower = extensionOrCategory.toLowerCase()
   if (EXTENSION_ICON_MAP[extLower]) {
