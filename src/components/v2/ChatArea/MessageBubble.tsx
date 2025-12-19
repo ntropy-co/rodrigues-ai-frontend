@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils'
 import { formatFileSize } from '@/lib/utils/file-utils'
 import MarkdownRenderer from '@/components/ui/typography/MarkdownRenderer'
 import { AgentStateIndicator } from './AgentStateIndicator'
+import { SourceCitation } from './SourceCitation'
 
 interface MessageBubbleProps {
   message: PlaygroundChatMessage
@@ -120,18 +121,26 @@ export const MessageBubble = memo(function MessageBubble({
             {message.content ? (
               isAgent ? (
                 // Agent Content
-                <div className="markdown-content">
-                  {isStreamingFromStore && isLast ? (
-                    <StreamingText
-                      text={message.content}
-                      speed={80}
-                      renderMarkdown={true}
-                      className=""
+                // Agent Content
+                <div className="flex flex-col gap-2">
+                  <div className="markdown-content">
+                    {isStreamingFromStore && isLast ? (
+                      <StreamingText
+                        text={message.content}
+                        speed={80}
+                        renderMarkdown={true}
+                        className=""
+                      />
+                    ) : (
+                      <MarkdownRenderer classname="prose-verde">
+                        {message.content}
+                      </MarkdownRenderer>
+                    )}
+                  </div>
+                  {!isStreamingFromStore && (
+                    <SourceCitation
+                      references={message.extra_data?.references}
                     />
-                  ) : (
-                    <MarkdownRenderer classname="prose-verde">
-                      {message.content}
-                    </MarkdownRenderer>
                   )}
                 </div>
               ) : (

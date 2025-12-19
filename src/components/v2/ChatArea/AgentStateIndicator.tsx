@@ -2,11 +2,16 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, FileText, Brain, PenLine } from 'lucide-react'
+import { Search, FileText, Brain, PenLine, Database } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 
-export type AgentState = 'thinking' | 'analyzing' | 'summarizing' | 'typing'
+export type AgentState =
+  | 'thinking'
+  | 'searching'
+  | 'analyzing'
+  | 'summarizing'
+  | 'typing'
 
 interface AgentStateIndicatorProps {
   initialState?: AgentState
@@ -37,6 +42,12 @@ const STATE_CONFIG = {
     label: 'Digitando...',
     color: 'text-verde-500',
     bg: 'bg-verde-50'
+  },
+  searching: {
+    icon: Database,
+    label: 'Buscando na base de conhecimento...',
+    color: 'text-blue-600',
+    bg: 'bg-blue-100'
   }
 }
 
@@ -52,6 +63,7 @@ export function AgentStateIndicator({
   useEffect(() => {
     const sequence: { state: AgentState; duration: number }[] = [
       { state: 'thinking', duration: 1500 },
+      { state: 'searching', duration: 1800 },
       { state: 'analyzing', duration: 2000 },
       { state: 'summarizing', duration: 1200 },
       { state: 'typing', duration: 8000 } // Remains indefinitely usually until replaced
