@@ -25,6 +25,7 @@ import {
   setRefreshToken,
   removeRefreshToken
 } from '@/lib/auth/cookies'
+import { scheduleTokenRefresh } from '@/lib/auth/token-refresh'
 import { loginSchema } from '@/lib/auth/validations'
 import {
   loginRateLimiter,
@@ -82,6 +83,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     loadAuth()
   }, [])
+
+  // Schedule proactive token refresh when authenticated
+  useEffect(() => {
+    if (!token) return
+
+    // Start proactive token refresh (checks every 5 minutes, refreshes if < 2 min to expiry)
+    const cleanup = scheduleTokenRefresh(5 * 60 * 1000)
+
+    return cleanup
+  }, [token])
 
   const login = useCallback(async (email: string, password: string) => {
     try {

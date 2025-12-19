@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
+import { fetchWithRefresh } from '@/lib/auth/token-refresh'
 import type { SessionEntry } from '@/types/playground'
 
 /**
@@ -46,11 +47,8 @@ export function useSessions() {
           ? `/api/sessions?project_id=${projectId}`
           : '/api/sessions'
 
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+        const response = await fetchWithRefresh(url, {
+          method: 'GET'
         })
 
         if (!response.ok) {
@@ -83,11 +81,10 @@ export function useSessions() {
       setError(null)
 
       try {
-        const response = await fetch('/api/sessions', {
+        const response = await fetchWithRefresh('/api/sessions', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             title: title,
@@ -122,11 +119,8 @@ export function useSessions() {
       setError(null)
 
       try {
-        const response = await fetch(`/api/sessions/${sessionId}`, {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+        const response = await fetchWithRefresh(`/api/sessions/${sessionId}`, {
+          method: 'DELETE'
         })
 
         if (!response.ok && response.status !== 204) {
@@ -158,11 +152,10 @@ export function useSessions() {
       setError(null)
 
       try {
-        const response = await fetch(`/api/sessions/${sessionId}`, {
+        const response = await fetchWithRefresh(`/api/sessions/${sessionId}`, {
           method: 'PATCH',
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify(data)
         })

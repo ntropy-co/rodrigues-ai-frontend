@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { UserDocument } from '@/components/v2/FileUpload/FileList'
-import { getAuthToken } from '@/lib/auth/cookies'
+import { fetchWithRefresh } from '@/lib/auth/token-refresh'
 
 export function useDocuments(userId: string, sessionId?: string) {
   const [documents, setDocuments] = useState<UserDocument[]>([])
@@ -25,13 +25,7 @@ export function useDocuments(userId: string, sessionId?: string) {
 
       console.log('[useDocuments] Fetching documents from:', url.toString())
 
-      const token = getAuthToken()
-      const headers: HeadersInit = {}
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-
-      const response = await fetch(url.toString(), { headers })
+      const response = await fetchWithRefresh(url.toString())
 
       console.log('[useDocuments] Response status:', response.status)
 
@@ -61,15 +55,8 @@ export function useDocuments(userId: string, sessionId?: string) {
       // Use Next.js API Route as proxy to avoid CORS issues
       console.log('[useDocuments] Deleting document:', documentId)
 
-      const token = getAuthToken()
-      const headers: HeadersInit = {}
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-
-      const response = await fetch(`/api/documents/${documentId}`, {
-        method: 'DELETE',
-        headers
+      const response = await fetchWithRefresh(`/api/documents/${documentId}`, {
+        method: 'DELETE'
       })
 
       console.log('[useDocuments] Delete response status:', response.status)
@@ -91,15 +78,9 @@ export function useDocuments(userId: string, sessionId?: string) {
       // Use Next.js API Route as proxy to avoid CORS issues
       console.log('[useDocuments] Downloading document:', documentId)
 
-      const token = getAuthToken()
-      const headers: HeadersInit = {}
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-
-      const response = await fetch(`/api/documents/${documentId}/download`, {
-        headers
-      })
+      const response = await fetchWithRefresh(
+        `/api/documents/${documentId}/download`
+      )
 
       console.log('[useDocuments] Download response status:', response.status)
 

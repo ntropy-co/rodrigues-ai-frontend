@@ -11,14 +11,29 @@ const POSTHOG_HOST =
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (POSTHOG_KEY && typeof window !== 'undefined') {
+      const isDevelopment = process.env.NODE_ENV === 'development'
+
       posthog.init(POSTHOG_KEY, {
         api_host: POSTHOG_HOST,
         person_profiles: 'identified_only',
         capture_pageview: true,
         capture_pageleave: true,
-        // Disable in development
+
+        // Session Replay Configuration
+        disable_session_recording: isDevelopment, // Não gravar em development
+        session_recording: {
+          // Privacidade: mascarar inputs sensíveis
+          maskAllInputs: false, // Não mascarar todos (para UX insights)
+          maskInputOptions: {
+            password: true // Sempre mascarar senhas
+          },
+          maskTextSelector: '[data-mask]', // Mascarar elementos com data-mask
+          recordCrossOriginIframes: false // Não gravar iframes externos
+        },
+
+        // Disable debug in production
         loaded: (posthog) => {
-          if (process.env.NODE_ENV === 'development') {
+          if (isDevelopment) {
             posthog.debug()
           }
         }

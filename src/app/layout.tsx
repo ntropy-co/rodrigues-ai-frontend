@@ -13,6 +13,7 @@ import { AuthProvider } from '@/contexts/AuthContext'
 import { PostHogProvider } from '@/components/providers/PostHogProvider'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { InstallPrompt } from '@/components/v2/InstallPrompt'
+import { QueryProvider } from '@/providers/QueryProvider'
 import './globals.css'
 
 const inter = Inter({
@@ -92,11 +93,13 @@ export default function RootLayout({
         >
           <PostHogProvider>
             <AuthProvider>
-              <ErrorBoundary>
-                <NuqsAdapter>{children}</NuqsAdapter>
-              </ErrorBoundary>
-              <Toaster />
-              <InstallPrompt />
+              <QueryProvider>
+                <ErrorBoundary>
+                  <NuqsAdapter>{children}</NuqsAdapter>
+                </ErrorBoundary>
+                <Toaster />
+                <InstallPrompt />
+              </QueryProvider>
             </AuthProvider>
           </PostHogProvider>
         </ThemeProvider>

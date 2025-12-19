@@ -22,6 +22,7 @@ import { toast } from 'sonner'
 import { FileUploadModal } from '@/components/v2/FileUpload/FileUploadModal'
 import { useContext } from 'react'
 import { AuthContext } from '@/contexts/AuthContext'
+import { useCanvasStore } from '@/stores/useCanvasStore'
 
 // Safe hook that doesn't throw error if outside AuthProvider
 function useSafeAuth() {
@@ -131,6 +132,17 @@ export function InputBar({
   /* (Removed handleKeyDown as it was moved to inline props for better isLoading handling) */
 
   const handleSend = () => {
+    // DEV: Open Canvas Trigger
+    if (input.trim() === '/canvas') {
+      useCanvasStore
+        .getState()
+        .openCanvas(
+          '# Canvas Mode Active\n\nThis is a persistent workspace for drafting content.\n\n- [x] Edit this text\n- [ ] Copy to clipboard\n- [ ] Close panel',
+          'Demo Artifact'
+        )
+      handleInputChange('')
+      return
+    }
     if (
       (!input.trim() &&
         attachments.length === 0 &&
