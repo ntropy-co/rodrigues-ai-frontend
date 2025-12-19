@@ -2,76 +2,116 @@
  * Next.js Middleware para Proteção de Segurança
  *
  * Este middleware implementa várias proteções de segurança:
+ * - Rate Limiting (Upstash) para proteção contra abuso
  * - Validação de origem (Origin) para prevenir CSRF
- * - Validação de requisições apenas de mesma origem
  * - Headers de segurança adicionais
- *
- * CSRF Protection:
- * Para requisições que modificam dados (POST, PUT, DELETE, PATCH),
- * validamos que a origem da requisição corresponde ao host esperado.
  */
 
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { Redis } from '@upstash/redis'
+import { Ratelimit } from '@upstash/ratelimit'
 
-/**
- * Lista de métodos HTTP que modificam estado e precisam de proteção CSRF
- */
+// =============================================================================
+// Rate Limiting Configuration
+// =============================================================================
+
+// Initialize Ratelimit only if env vars are present
+let ratelimit: Ratelimit | null = null
+
+if (
+  process.env.UPSTASH_REDIS_REST_URL &&
+  process.env.UPSTASH_REDIS_REST_TOKEN
+) {
+  const redis = new Redis({
+    url: process.env.UPSTASH_REDIS_REST_URL,
+    token: process.env.UPSTASH_REDIS_REST_TOKEN
+  })
+
+  // Limit: 20 requests per 10 seconds per IP
+  ratelimit = new Ratelimit({
+    redis: redis,
+    limiter: Ratelimit.slidingWindow(20, '10 s'),
+    analytics: true,
+    prefix: '@upstash/ratelimit'
+  })
+}
+
+// =============================================================================
+// CSRF Configuration
+// =============================================================================
+
 const MUTATION_METHODS = ['POST', 'PUT', 'DELETE', 'PATCH']
+const CSRF_EXEMPT_PATHS: string[] = []
 
-/**
- * Lista de paths que devem ser excluídos da validação CSRF
- * Exemplo: webhooks de terceiros que precisam acessar a API
- */
-const CSRF_EXEMPT_PATHS: string[] = [
-  // Adicione aqui paths que devem ser isentos, ex:
-  // '/api/webhooks/stripe',
-]
-
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { method, headers, nextUrl } = request
+  // Fix: NextRequest.ip might be undefined in some environments or TS versions
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const ip =
+    (request as any).ip || request.headers.get('x-forwarded-for') || '127.0.0.1'
+  const pathname = nextUrl.pathname
 
-  // Apenas validar métodos que modificam estado
+  // 1. Rate Limiting (Skip for Health Check)
+  if (
+    ratelimit &&
+    pathname.startsWith('/api') &&
+    !pathname.startsWith('/api/health')
+  ) {
+    const identifier = ip || 'anonymous'
+
+    try {
+      const { success, limit, reset, remaining } =
+        await ratelimit.limit(identifier)
+
+      if (!success) {
+        return NextResponse.json(
+          { error: 'Too Many Requests', retryAfter: reset },
+          {
+            status: 429,
+            headers: {
+              'X-RateLimit-Limit': limit.toString(),
+              'X-RateLimit-Remaining': remaining.toString(),
+              'X-RateLimit-Reset': reset.toString()
+            }
+          }
+        )
+      }
+    } catch (error) {
+      console.error('Rate limit error:', error)
+      // Fail open if Redis is down
+    }
+  }
+
+  // 2. CSRF Protection
   if (MUTATION_METHODS.includes(method)) {
-    // Verificar se o path está isento
-    const isExempt = CSRF_EXEMPT_PATHS.some((path) =>
-      nextUrl.pathname.startsWith(path)
-    )
+    const isExempt = CSRF_EXEMPT_PATHS.some((path) => pathname.startsWith(path))
 
     if (!isExempt) {
       const origin = headers.get('origin')
       const host = headers.get('host')
 
-      // Se há origin header, validar que corresponde ao host
       if (origin) {
         let originHost: string
         try {
           originHost = new URL(origin).host
         } catch (error) {
-          console.warn(
-            `[Security] Invalid Origin header blocked: origin=${origin}, host=${host}`,
-            error
-          )
+          console.warn(`[Security] Invalid Origin: ${origin}`, error)
           return new NextResponse('CSRF validation failed', { status: 403 })
         }
 
-        // Validar que a requisição vem do mesmo host
         if (!host || originHost !== host) {
           console.warn(
-            `[Security] CSRF attempt blocked: origin=${originHost}, host=${host}`
+            `[Security] CSRF blocked: origin=${originHost}, host=${host}`
           )
           return new NextResponse('CSRF validation failed', { status: 403 })
         }
       }
-      // Nota: Algumas requisições podem não ter Origin header (ex: navegação direta)
-      // Nesses casos, confiamos no SameSite cookie protection
     }
   }
 
-  // Permitir a requisição continuar
+  // 3. Response & Security Headers
   const response = NextResponse.next()
-
-  // Adicionar headers de segurança adicionais
   response.headers.set('X-Content-Type-Options', 'nosniff')
   response.headers.set('X-Frame-Options', 'DENY')
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
@@ -79,15 +119,8 @@ export function middleware(request: NextRequest) {
   return response
 }
 
-/**
- * Configuração do matcher para aplicar middleware apenas em rotas específicas
- * Aplicamos SOMENTE em rotas de API internas do Next.js (/api/*)
- *
- * IMPORTANTE: Não aplicar em todas as rotas, pois isso interfere com
- * chamadas fetch() para APIs externas feitas pelo cliente.
- */
 export const config = {
   matcher: [
-    '/api/:path*' // Apenas rotas de API internas do Next.js
+    '/api/:path*' // Apenas rotas de API
   ]
 }
