@@ -9,6 +9,7 @@ import {
   CheckCircle,
   AlertCircle
 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { getAuthToken } from '@/lib/auth/cookies'
 import { trackEvent } from '@/components/providers/PostHogProvider'
 
@@ -58,6 +59,12 @@ export function FileUploadModal({
   const [success, setSuccess] = useState(false)
   const [dragActive, setDragActive] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const router = useRouter()
+
+  const handleAnalyze = () => {
+    onClose()
+    router.push('/analyze')
+  }
 
   if (!isOpen) return null
 
@@ -418,6 +425,14 @@ export function FileUploadModal({
                   ? 'OK'
                   : 'Enviar'}
           </button>
+          {success && (
+            <button
+              onClick={handleAnalyze}
+              className="flex-1 rounded-lg border border-verde-200 bg-verde-50 px-4 py-2 font-medium text-verde-700 transition-colors hover:bg-verde-100"
+            >
+              Analisar
+            </button>
+          )}
         </div>
       </div>
     </div>
