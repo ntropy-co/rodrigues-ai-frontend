@@ -425,7 +425,6 @@ export function FileUploadModal({
                   ? 'OK'
                   : 'Enviar'}
           </button>
-          
           {success && (
             <button
               onClick={handleAnalyze}

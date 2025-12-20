@@ -123,3 +123,4 @@ export const config = {
     '/api/:path*' // Apenas rotas de API
   ]
 }
+
