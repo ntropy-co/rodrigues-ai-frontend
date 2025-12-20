@@ -46,13 +46,11 @@ const CSRF_EXEMPT_PATHS: string[] = []
 
 export async function middleware(request: NextRequest) {
   const { method, headers, nextUrl } = request
-  // Fix: NextRequest.ip might be undefined in some environments
-  const ip =
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (request as any).ip ||
-    request.headers.get('x-forwarded-for') ||
-    '127.0.0.1'
   const pathname = nextUrl.pathname
+
+  // Fix: NextRequest.ip might be undefined in some environments
+  const forwardedFor = request.headers.get('x-forwarded-for')
+  const ip = forwardedFor || '127.0.0.1'
 
   // 1. Rate Limiting (Skip for Health Check)
   if (
