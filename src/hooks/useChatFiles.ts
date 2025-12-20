@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import type { ChatFile, FileUploadProgress } from '@/types/chat-files'
 import { getFileCategory, getFileExtension } from '@/lib/utils/file-utils'
-import { getAuthToken } from '@/lib/auth/cookies'
+import { fetchWithRefresh } from '@/lib/auth/token-refresh'
 import { trackDocumentUpload, trackDocumentDownload } from '@/lib/analytics'
 
 // ============================================================================
@@ -104,14 +104,7 @@ export function useChatFiles(
         url.searchParams.append('user_id', userId)
       }
 
-      const token = getAuthToken()
-      const headers: HeadersInit = {}
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-
-      const response = await fetch(url.toString(), {
-        headers,
+      const response = await fetchWithRefresh(url.toString(), {
         signal: controller.signal
       })
 
@@ -236,15 +229,8 @@ export function useChatFiles(
           )
         )
 
-        const token = getAuthToken()
-        const headers: HeadersInit = {}
-        if (token) {
-          headers['Authorization'] = `Bearer ${token}`
-        }
-
-        const response = await fetch('/api/documents/upload', {
+        const response = await fetchWithRefresh('/api/documents/upload', {
           method: 'POST',
-          headers,
           body: formData
         })
 
@@ -335,10 +321,8 @@ export function useChatFiles(
   // -------------------------------------------------------------------------
   const removeFile = useCallback(async (fileId: string) => {
     try {
-      const token = getAuthToken()
-      const response = await fetch(`/api/documents/${fileId}`, {
-        method: 'DELETE',
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined
+      const response = await fetchWithRefresh(`/api/documents/${fileId}`, {
+        method: 'DELETE'
       })
 
       if (!response.ok) {
@@ -358,10 +342,9 @@ export function useChatFiles(
   // -------------------------------------------------------------------------
   const downloadFile = useCallback(async (fileId: string) => {
     try {
-      const token = getAuthToken()
-      const response = await fetch(`/api/documents/${fileId}/download`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined
-      })
+      const response = await fetchWithRefresh(
+        `/api/documents/${fileId}/download`
+      )
 
       if (!response.ok) {
         throw new Error('Erro ao baixar arquivo')

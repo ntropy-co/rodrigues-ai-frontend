@@ -50,14 +50,17 @@ function transformConversations(
   const messages: PlaygroundChatMessage[] = []
 
   for (const conv of conversations) {
-    const timestamp = new Date(conv.created_at).getTime()
+    // Frontend trabalha com Unix timestamp em segundos (ver `src/lib/utils/format.ts`).
+    const timestampSeconds = Math.floor(
+      new Date(conv.created_at).getTime() / 1000
+    )
 
     // User message
     messages.push({
       id: `${conv.id}-user`,
       role: 'user',
       content: conv.message,
-      created_at: timestamp
+      created_at: timestampSeconds
     })
 
     // Agent response
@@ -66,7 +69,8 @@ function transformConversations(
       role: 'agent',
       content: conv.response,
       feedback: conv.feedback as 'like' | 'dislike' | null,
-      created_at: timestamp + 1 // +1ms to ensure proper ordering
+      // Pequeno offset para manter ordenação estável sem mudar o segundo visível.
+      created_at: timestampSeconds + 0.001
     })
   }
 

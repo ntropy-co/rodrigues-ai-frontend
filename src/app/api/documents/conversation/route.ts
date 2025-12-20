@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
     if (!response.ok) {
       // If backend doesn't have this endpoint, return empty array
       if (response.status === 404) {
-        return NextResponse.json({ documents: [] }, { status: 200 })
+        return NextResponse.json({ files: [], count: 0 }, { status: 200 })
       }
 
       let errorDetail = 'Erro ao carregar documentos'

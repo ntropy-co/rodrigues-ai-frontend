@@ -3,7 +3,7 @@ import { toast } from 'sonner'
 
 import { usePlaygroundStore } from '../store'
 import { type PlaygroundChatMessage } from '@/types/playground'
-import { useAuth } from '@/contexts/AuthContext'
+import { fetchWithRefresh } from '@/lib/auth/token-refresh'
 
 const useChatActions = () => {
   const { chatInputRef } = usePlaygroundStore()
@@ -15,7 +15,6 @@ const useChatActions = () => {
   const setIsEndpointLoading = usePlaygroundStore(
     (state) => state.setIsEndpointLoading
   )
-  const { token } = useAuth()
 
   // Função para salvar session ID no localStorage (usado quando backend retorna session_id)
   const saveSessionIdToStorage = useCallback((sessionIdToSave: string) => {
@@ -65,7 +64,7 @@ const useChatActions = () => {
     setIsEndpointLoading(true)
     try {
       // Check backend health using the status endpoint (which calls /api/v1/health)
-      const response = await fetch('/api/playground/status')
+      const response = await fetchWithRefresh('/api/playground/status')
       const isActive = response.ok
 
       setIsEndpointActive(isActive)
@@ -84,18 +83,13 @@ const useChatActions = () => {
   // Fetch chat history from backend
   const fetchChatHistory = useCallback(
     async (sessionId: string): Promise<PlaygroundChatMessage[]> => {
-      if (!token) {
-        console.warn('No auth token available for fetching chat history')
-        return []
-      }
-
       try {
-        const response = await fetch(`/api/chat/history/${sessionId}`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`
+        const response = await fetchWithRefresh(
+          `/api/chat/history/${sessionId}`,
+          {
+            method: 'GET'
           }
-        })
+        )
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}))
@@ -110,7 +104,7 @@ const useChatActions = () => {
         return []
       }
     },
-    [token]
+    []
   )
 
   // Load session by ID - fetches chat history and sets messages

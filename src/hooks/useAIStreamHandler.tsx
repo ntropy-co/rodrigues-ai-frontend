@@ -63,7 +63,7 @@ const useAIChatStreamHandler = () => {
   const handleStreamResponse = useCallback(
     async (
       input: string | FormData,
-      files?: File[],
+      files?: ({ name: string; size: number } | File)[],
       explicitSessionId?: string | null,
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       _toolId?: string

@@ -336,6 +336,7 @@ function SidebarContent({
         {/* New Analysis Button */}
         <div className="flex items-center gap-2">
           <motion.button
+            type="button"
             whileHover={{
               scale: 1.02,
               y: -1,
@@ -351,6 +352,7 @@ function SidebarContent({
 
           {showCloseButton && (
             <button
+              type="button"
               onClick={onToggle}
               className="flex h-9 w-9 items-center justify-center rounded-lg border border-verde-200 text-verde-600 transition-colors hover:bg-verde-50 hover:text-verde-900"
               aria-label="Fechar sidebar"
@@ -380,6 +382,7 @@ function SidebarContent({
             <div className="space-y-1">
               {/* Header de "Todas as Conversas" (para limpar seleção) */}
               <button
+                type="button"
                 onClick={() => handleProjectSelect(null)}
                 className={cn(
                   'mb-1 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors',
@@ -415,6 +418,7 @@ function SidebarContent({
             </div>
           )}
           <motion.button
+            type="button"
             whileHover={{ scale: 1.01, x: 2 }}
             onClick={onOpenProjectDialog}
             className="flex w-full items-center gap-3 rounded-lg border border-transparent px-3 py-2 text-left text-verde-600 hover:bg-verde-50 hover:text-verde-800"
@@ -600,6 +604,7 @@ const ConversationCard = memo(function ConversationCard({
               {/* Edit Icon on Hover */}
               {onUpdateTitle && (
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.stopPropagation()
                     setIsEditing(true)
@@ -614,6 +619,7 @@ const ConversationCard = memo(function ConversationCard({
               {/* Delete Icon on Hover */}
               {onDelete && (
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.stopPropagation()
                     if (confirm('Tem certeza que deseja excluir?')) {
@@ -659,6 +665,7 @@ export function ConversationsSidebarToggle({
 }) {
   return (
     <motion.button
+      type="button"
       initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -10 }}

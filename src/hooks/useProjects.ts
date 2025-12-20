@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
+import { fetchWithRefresh } from '@/lib/auth/token-refresh'
 
 /**
  * Project from backend
@@ -34,11 +35,8 @@ export function useProjects() {
     setError(null)
 
     try {
-      const response = await fetch('/api/projects', {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+      const response = await fetchWithRefresh('/api/projects', {
+        method: 'GET'
       })
 
       if (!response.ok) {
@@ -79,11 +77,10 @@ export function useProjects() {
       setError(null)
 
       try {
-        const response = await fetch('/api/projects', {
+        const response = await fetchWithRefresh('/api/projects', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify(data)
         })
@@ -116,11 +113,10 @@ export function useProjects() {
       setError(null)
 
       try {
-        const response = await fetch(`/api/projects/${id}`, {
+        const response = await fetchWithRefresh(`/api/projects/${id}`, {
           method: 'PATCH',
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify(data)
         })
@@ -150,11 +146,8 @@ export function useProjects() {
       setError(null)
 
       try {
-        const response = await fetch(`/api/projects/${id}`, {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+        const response = await fetchWithRefresh(`/api/projects/${id}`, {
+          method: 'DELETE'
         })
 
         if (!response.ok && response.status !== 204) {

@@ -10,7 +10,7 @@ import {
   Image as ImageIcon,
   Loader2
 } from 'lucide-react'
-import { useEffect, useRef, useState, ChangeEvent, KeyboardEvent } from 'react'
+import { useEffect, useRef, useState, ChangeEvent } from 'react'
 import {
   Tooltip,
   TooltipContent,
@@ -22,6 +22,7 @@ import { toast } from 'sonner'
 import { FileUploadModal } from '@/components/v2/FileUpload/FileUploadModal'
 import { useContext } from 'react'
 import { AuthContext } from '@/contexts/AuthContext'
+import { useCanvasStore } from '@/stores/useCanvasStore'
 
 // Safe hook that doesn't throw error if outside AuthProvider
 function useSafeAuth() {
@@ -39,12 +40,20 @@ interface InputBarProps {
   ) => void
   isLoading?: boolean
   disabled?: boolean
-  // Props from GeminiLayout (controlled state)
+  // Props from ChatLayout (controlled state)
   message?: string
   setMessage?: (message: string) => void
   userId?: string
   sessionId?: string
   onSessionCreated?: (sessionId: string) => void
+  // Staged attachments (already uploaded)
+  externalAttachments?: Array<{
+    name: string
+    size: number
+    type: string
+    id: string
+  }>
+  onRemoveExternalAttachment?: (id: string) => void
 }
 
 // Componente visual de Barra de Progresso
@@ -80,7 +89,9 @@ export function InputBar({
   setMessage,
   userId: propUserId,
   sessionId,
-  onSessionCreated
+  onSessionCreated,
+  externalAttachments = [],
+  onRemoveExternalAttachment
 }: InputBarProps) {
   const auth = useSafeAuth()
   const userId = propUserId || auth?.user?.id || 'anonymous'
@@ -118,15 +129,27 @@ export function InputBar({
     }
   }, [input])
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSend()
-    }
-  }
+  /* (Removed handleKeyDown as it was moved to inline props for better isLoading handling) */
 
   const handleSend = () => {
-    if ((!input.trim() && attachments.length === 0) || isLoading || disabled)
+    // DEV: Open Canvas Trigger
+    if (input.trim() === '/canvas') {
+      useCanvasStore
+        .getState()
+        .openCanvas(
+          '# Canvas Mode Active\n\nThis is a persistent workspace for drafting content.\n\n- [x] Edit this text\n- [ ] Copy to clipboard\n- [ ] Close panel',
+          'Demo Artifact'
+        )
+      handleInputChange('')
+      return
+    }
+    if (
+      (!input.trim() &&
+        attachments.length === 0 &&
+        externalAttachments.length === 0) ||
+      isLoading ||
+      disabled
+    )
       return
 
     // Verificar se todos os uploads terminaram (simulação)
@@ -136,16 +159,23 @@ export function InputBar({
       return
     }
 
-    if (attachments.length > 0) {
-      toast.success('Arquivo enviado com sucesso!')
+    if (attachments.length > 0 || externalAttachments.length > 0) {
+      // toast.success('Arquivo enviado com sucesso!')
+      // Removed toast to avoid spam if just attaching
     }
 
-    onSendMessage(input, attachments) // Pass attachments to parent
+    onSendMessage(input, attachments) // Pass local attachments to parent
+    // Note: externalAttachments are already known by parent
+
     handleInputChange('')
-    setAttachments([]) // Clear attachments locally after sending
+    setAttachments([]) // Clear local attachments
     setUploadProgress({}) // Limpar progressos
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto'
+      // Restore focus immediately
+      setTimeout(() => {
+        textareaRef.current?.focus()
+      }, 0)
     }
   }
 
@@ -285,14 +315,17 @@ export function InputBar({
           />
 
           {/* Attachments Preview - Floating above */}
-          {attachments.length > 0 && (
+          {(attachments.length > 0 || externalAttachments.length > 0) && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="mb-4 flex flex-wrap gap-2 px-1"
               style={{ transform: 'translateZ(10px)' }}
             >
-              {attachments.map((file, index) => (
+              {[
+                ...externalAttachments.map((f) => ({ ...f, isExternal: true })),
+                ...attachments.map((f) => ({ ...f, isExternal: false }))
+              ].map((file, index) => (
                 <motion.div
                   key={`${file.name}-${index}`}
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -301,7 +334,7 @@ export function InputBar({
                   className="relative flex items-center gap-2 overflow-hidden rounded-lg border border-verde-100 bg-white/90 py-1.5 pl-3 pr-8 text-xs text-verde-900 shadow-sm backdrop-blur-sm"
                 >
                   <div className="flex h-5 w-5 items-center justify-center rounded bg-verde-50 text-verde-600">
-                    {file.type.startsWith('image/') ? (
+                    {(file.type || '').startsWith('image/') ? (
                       <ImageIcon className="h-3 w-3" />
                     ) : (
                       <FileText className="h-3 w-3" />
@@ -318,15 +351,28 @@ export function InputBar({
                   <button
                     onClick={(e) => {
                       e.stopPropagation()
-                      removeAttachment(index)
+                      if (file.isExternal && onRemoveExternalAttachment) {
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        onRemoveExternalAttachment((file as any).id)
+                      } else {
+                        // Correct index for local attachments
+                        // If it's local, we need to find its index in the 'attachments' array
+                        // But since we are mapping a combined array, the index here is global
+                        // This is tricky. Let's filter 'attachments' by reference?
+                        // Or easier: use the mixed array for display but separate removal logic.
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        const localIndex = attachments.indexOf(file as any)
+                        if (localIndex !== -1) removeAttachment(localIndex)
+                      }
                     }}
                     className="absolute right-1 top-1/2 z-20 -translate-y-1/2 rounded-full p-1 text-verde-400 transition-colors hover:bg-verde-100 hover:text-verde-700"
                   >
                     <X className="h-3 w-3" />
                   </button>
 
-                  {/* Progress Bar */}
-                  {uploadProgress[file.name] !== undefined &&
+                  {/* Progress Bar (Only for local uploads) */}
+                  {!file.isExternal &&
+                    uploadProgress[file.name] !== undefined &&
                     uploadProgress[file.name] < 100 && (
                       <ProgressBar progress={uploadProgress[file.name]} />
                     )}
@@ -390,16 +436,31 @@ export function InputBar({
               ref={textareaRef}
               value={input}
               onChange={(e) => handleInputChange(e.target.value)}
-              onKeyDown={handleKeyDown}
+              onKeyDown={(e) => {
+                // If loading, block enter but allow other keys
+                if (isLoading) {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                  }
+                  return
+                }
+
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  handleSend()
+                }
+              }}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
               placeholder={
-                disabled
-                  ? 'Aguarde a resposta...'
-                  : 'Descreva sua análise ou consulte sobre CPR...'
+                isLoading
+                  ? 'Digite sua próxima mensagem...'
+                  : disabled
+                    ? 'Aguarde...'
+                    : 'Descreva sua análise ou consulte sobre CPR...'
               }
               className="relative z-10 flex-1 resize-none bg-transparent py-2.5 font-sans text-base text-verde-950 placeholder:text-verde-500/80 focus:outline-none"
-              disabled={disabled}
+              disabled={disabled} // Only disable if strictly disabled (e.g. session loading)
               rows={1}
               style={{ maxHeight: '200px' }}
             />
@@ -463,19 +524,25 @@ export function InputBar({
                         handleSend()
                       }}
                       disabled={
-                        (!input.trim() && attachments.length === 0) ||
+                        (!input.trim() &&
+                          attachments.length === 0 &&
+                          externalAttachments.length === 0) ||
                         isLoading ||
                         disabled
                       }
                       className={`relative flex h-10 w-10 items-center justify-center rounded-xl transition-all ${
-                        (!input.trim() && attachments.length === 0) ||
+                        (!input.trim() &&
+                          attachments.length === 0 &&
+                          externalAttachments.length === 0) ||
                         isLoading ||
                         disabled
                           ? 'cursor-not-allowed bg-gray-100 text-gray-400 opacity-70'
                           : 'bg-gradient-to-br from-verde-900 to-verde-800 text-white shadow-lg shadow-verde-900/20'
                       }`}
                       whileHover={
-                        (!input.trim() && attachments.length === 0) ||
+                        (!input.trim() &&
+                          attachments.length === 0 &&
+                          externalAttachments.length === 0) ||
                         isLoading ||
                         disabled
                           ? {}
