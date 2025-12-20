@@ -1,10 +1,10 @@
 /**
- * Next.js Middleware para Proteção de Segurança
+ * Next.js Middleware para Protecao de Seguranca
  *
- * Este middleware implementa várias proteções de segurança:
- * - Rate Limiting (Upstash) para proteção contra abuso
- * - Validação de origem (Origin) para prevenir CSRF
- * - Headers de segurança adicionais
+ * Este middleware implementa varias protecoes de seguranca:
+ * - Rate Limiting (Upstash) para protecao contra abuso
+ * - Validacao de origem (Origin) para prevenir CSRF
+ * - Headers de seguranca adicionais
  */
 
 import { NextResponse } from 'next/server'
@@ -48,7 +48,10 @@ export async function middleware(request: NextRequest) {
   const { method, headers, nextUrl } = request
   // Fix: NextRequest.ip might be undefined in some environments
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const ip = (request as any).ip || request.headers.get('x-forwarded-for') || '127.0.0.1'
+  const ip =
+    (request as any).ip ||
+    request.headers.get('x-forwarded-for') ||
+    '127.0.0.1'
   const pathname = nextUrl.pathname
 
   // 1. Rate Limiting (Skip for Health Check)
@@ -123,4 +126,3 @@ export const config = {
     '/api/:path*' // Apenas rotas de API
   ]
 }
-
