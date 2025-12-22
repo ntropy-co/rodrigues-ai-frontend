@@ -62,7 +62,10 @@ export const ANALYTICS_EVENTS = {
   // Engagement
   PAGE_SCROLL_DEPTH: 'page_scroll_depth',
   TIME_ON_PAGE: 'time_on_page',
-  FEATURE_USED: 'feature_used'
+  FEATURE_USED: 'feature_used',
+
+  // Performance
+  WEB_VITAL_REPORTED: 'web_vital_reported'
 } as const
 
 export type AnalyticsEvent =
@@ -238,6 +241,19 @@ export interface EngagementEventProperties {
   }
 }
 
+// Performance
+export interface WebVitalsEventProperties {
+  [ANALYTICS_EVENTS.WEB_VITAL_REPORTED]: {
+    name: string
+    value: number
+    rating: 'good' | 'needs-improvement' | 'poor'
+    delta?: number
+    id?: string
+    navigationType?: string
+    route: string
+  }
+}
+
 // Combined event properties type
 export type EventProperties = AuthEventProperties &
   ChatEventProperties &
@@ -246,4 +262,5 @@ export type EventProperties = AuthEventProperties &
   SearchEventProperties &
   UIEventProperties &
   ErrorEventProperties &
-  EngagementEventProperties
+  EngagementEventProperties &
+  WebVitalsEventProperties

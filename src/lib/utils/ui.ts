@@ -3,7 +3,36 @@
  */
 
 import { CATEGORY_COLORS } from '../constants'
-import * as LucideIcons from 'lucide-react'
+
+// PERFORMANCE FIX: Import only the icons that are actually used in ui-config.json
+// This allows tree-shaking to remove unused icons from the bundle
+// Previously: import * as LucideIcons (imports ALL ~1300 icons = ~500KB)
+// Now: explicit imports (imports ~10 icons = ~10KB)
+import {
+  FileText,
+  Shield,
+  Calculator,
+  AlertCircle,
+  FileCheck,
+  Scale,
+  TrendingUp,
+  Search,
+  HelpCircle,
+  type LucideIcon
+} from 'lucide-react'
+
+// Map of icon names (from ui-config.json) to actual components
+const ICON_MAP: Record<string, LucideIcon> = {
+  FileText,
+  Shield,
+  Calculator,
+  AlertCircle,
+  FileCheck,
+  Scale,
+  TrendingUp,
+  Search,
+  HelpCircle
+}
 
 /**
  * Retorna a classe CSS de cor baseada na categoria
@@ -16,19 +45,13 @@ export function getCategoryColor(category: string): string {
 
 /**
  * Retorna o componente de ícone Lucide baseado no nome
- * @param iconName - Nome do ícone Lucide
+ * @param iconName - Nome do ícone Lucide (must be in ICON_MAP)
  * @returns Componente React do ícone ou HelpCircle como fallback
  */
 export function getIconComponent(
   iconName: string
 ): React.ComponentType<{ className?: string }> {
-  const IconComponent = (
-    LucideIcons as unknown as Record<
-      string,
-      React.ComponentType<{ className?: string }>
-    >
-  )[iconName]
-  return IconComponent || LucideIcons.HelpCircle
+  return ICON_MAP[iconName] || HelpCircle
 }
 
 /**

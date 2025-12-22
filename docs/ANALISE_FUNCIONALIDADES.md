@@ -49,6 +49,21 @@
   - GET  /[projectId]
   - PATCH /[projectId]
   - DELETE /[projectId]
+
+/api/quotes/
+  - GET  /              (lista todas ou filtra por symbol)
+  - GET  /history       (historico por symbol+range)
+
+/api/cron/
+  - GET  /quotes        (atualiza cache de cotacoes)
+
+/api/metrics/
+  - GET  /cpr
+  - POST /cpr
+
+/api/health/
+  - GET  /              (liveness)
+  - GET  /ready         (readiness)
 ```
 
 ---
@@ -67,13 +82,13 @@
 - [x] Envio de mensagens para backend
 - [x] Exibicao de respostas
 - [x] Gerenciamento de sessoes
+- [x] UI preparada para citacoes (Smart Blocks / tag `<citation>`)
 
 **O que falta:**
 
 - [ ] Integracao com base de conhecimento (RAG)
 - [ ] Integracao com Dialogflow ES/CX
 - [ ] Indexacao de documentos sobre CPR no Vertex AI Search
-- [ ] Citacao de fontes nas respostas
 - [ ] Prompts especializados para contexto CPR
 
 **Dependencias Tecnicas:**
@@ -93,7 +108,7 @@
 [ ] CONTEUDO: Coletar e estruturar base de conhecimento CPR
 [ ] GCP: Configurar Vertex AI Search datastore
 [ ] GCP: Configurar Dialogflow CX agent
-[ ] FRONTEND: Exibir fontes/citacoes nas respostas
+[x] FRONTEND: Exibir fontes/citacoes nas respostas
 [ ] FRONTEND: Indicador visual de "buscando na base..."
 ```
 
@@ -110,6 +125,8 @@
 - [x] Upload de documentos (PDF, DOC, etc.)
 - [x] Armazenamento de documentos
 - [x] Download de documentos
+- [x] Interface de exibicao da analise (UI com mock data)
+- [x] Botao "Analisar" apos upload
 
 **O que falta:**
 
@@ -117,7 +134,6 @@
 - [ ] Analise estruturada do documento
 - [ ] Deteccao de erros e inconsistencias
 - [ ] Geracao de sugestoes de correcao
-- [ ] Interface de exibicao de resultados da analise
 - [ ] Exportacao do relatorio de analise
 
 **Dependencias Tecnicas:**
@@ -135,10 +151,10 @@
 [ ] BACKEND: Criar prompt estruturado para analise de CPR
 [ ] BACKEND: Implementar regras de validacao (dados obrigatorios, datas, etc.)
 [ ] BACKEND: Retornar resultado estruturado (erros, sugestoes, score)
-[ ] FRONTEND: Criar componente AnalysisResult
-[ ] FRONTEND: Criar pagina/modal de analise de CPR
-[ ] FRONTEND: Botao "Analisar" apos upload
-[ ] FRONTEND: Exibicao de erros criticos vs sugestoes
+[x] FRONTEND: Criar componente AnalysisResult
+[x] FRONTEND: Criar pagina/modal de analise de CPR
+[x] FRONTEND: Botao "Analisar" apos upload
+[x] FRONTEND: Exibicao de erros criticos vs sugestoes
 [ ] FRONTEND: Exportar relatorio em PDF
 ```
 
@@ -354,11 +370,11 @@
 
 ### 8. Calculadora de Risco
 
-**Status:** NAO IMPLEMENTADO
+**Status:** PARCIALMENTE IMPLEMENTADO
 
 **O que existe:**
 
-- [ ] Nada especifico
+- [x] Componente `RiskCalculator` (UI com gauge, fatores e recomendacao)
 
 **O que falta:**
 
@@ -381,11 +397,11 @@
 [ ] BACKEND: Criar endpoint POST /api/v1/risk/calculate
 [ ] BACKEND: Implementar algoritmo de scoring
 [ ] BACKEND: Gerar recomendacoes baseadas no score
-[ ] FRONTEND: Criar componente RiskCalculator
+[x] FRONTEND: Criar componente RiskCalculator
 [ ] FRONTEND: Input dos dados da operacao (ou usar dados extraidos)
-[ ] FRONTEND: Exibicao visual do score (gauge, progress)
-[ ] FRONTEND: Lista de fatores positivos/negativos
-[ ] FRONTEND: Recomendacoes
+[x] FRONTEND: Exibicao visual do score (gauge, progress)
+[x] FRONTEND: Lista de fatores positivos/negativos
+[x] FRONTEND: Recomendacoes
 ```
 
 **Estimativa:** Media complexidade
@@ -394,15 +410,17 @@
 
 ### 9. Historico de Cotacoes
 
-**Status:** NAO IMPLEMENTADO
+**Status:** PARCIALMENTE IMPLEMENTADO
 
 **O que existe:**
 
-- [ ] Nada especifico
+- [x] Integracao com API de cotacoes (Yahoo Finance)
+- [x] API BFF: `/api/quotes` e `/api/quotes/history`
+- [x] Cache Redis (Upstash) para reduzir requests
+- [x] Cron endpoint para atualizar cache (`/api/cron/quotes`)
 
 **O que falta:**
 
-- [ ] Integracao com API de cotacoes
 - [ ] Armazenamento de historico
 - [ ] Graficos de evolucao
 - [ ] Comparacao com preco da CPR
@@ -417,12 +435,11 @@
 **Backlog:**
 
 ```
+[x] FRONTEND/BFF: Criar endpoints `/api/quotes` e `/api/quotes/history`
+[x] FRONTEND: Implementar service de cotacoes com cache (`src/lib/quotes.ts`)
+[x] INFRA: Endpoint cron `/api/cron/quotes` para atualizar cache
 [ ] PESQUISA: Identificar APIs de cotacoes disponiveis (CEPEA, agrolink, etc.)
-[ ] BACKEND: Criar servico de coleta de cotacoes
-[ ] BACKEND: Criar endpoint GET /api/v1/quotes/history?product=soja&period=6m
-[ ] BACKEND: Criar endpoint GET /api/v1/quotes/current
-[ ] DATABASE: Tabela quotes_history
-[ ] INFRA: Cron job para atualizar cotacoes diariamente
+[ ] BACKEND: (opcional) Criar servico/DB para persistir historico
 [ ] FRONTEND: Criar componente QuotesChart
 [ ] FRONTEND: Seletor de produto e periodo
 [ ] FRONTEND: Grafico de linha com historico
@@ -436,18 +453,19 @@
 
 ### 10. Gerador de Minuta
 
-**Status:** NAO IMPLEMENTADO
+**Status:** PARCIALMENTE IMPLEMENTADO
 
 **O que existe:**
 
-- [ ] Nada especifico
+- [x] Componente `TemplateGenerator` (UI com preview e selecao)
+- [x] Geracao de DOCX (Word) no frontend
+- [x] Exportacao PDF basica via print (window.print)
 
 **O que falta:**
 
 - [ ] Sistema de templates
 - [ ] Variaveis dinamicas
 - [ ] Clausulas modulares
-- [ ] Geracao Word/PDF
 - [ ] Interface de selecao e personalizacao
 
 **Dependencias Tecnicas:**
@@ -467,11 +485,11 @@
 [ ] BACKEND: Implementar substituicao de variaveis
 [ ] BACKEND: Implementar adicao/remocao de clausulas
 [ ] BACKEND: Gerar Word e PDF
-[ ] FRONTEND: Criar componente TemplateGenerator
-[ ] FRONTEND: Seletor de tipo de documento
-[ ] FRONTEND: Checkboxes de clausulas opcionais
-[ ] FRONTEND: Preview do documento
-[ ] FRONTEND: Botoes de download (Word, PDF)
+[x] FRONTEND: Criar componente TemplateGenerator
+[x] FRONTEND: Seletor de tipo de documento
+[x] FRONTEND: Checkboxes de clausulas opcionais
+[x] FRONTEND: Preview do documento
+[x] FRONTEND: Botoes de download (Word, PDF)
 ```
 
 **Estimativa:** Baixa-Media complexidade
@@ -517,12 +535,12 @@ MODERADAS:
 
 ### No Codebase Atual
 
-| Arquivo                 | Problema                                | Severidade |
-| ----------------------- | --------------------------------------- | ---------- |
-| `/api/documents/upload` | Nao passa token de auth para backend    | Media      |
-| `useDocuments.ts`       | Nao passa token de auth                 | Media      |
-| `FileUploadModal.tsx`   | Nao trata erro de rede                  | Baixa      |
-| `store.ts`              | `locallyCreatedSessionIds` nao persiste | Baixa      |
+| Arquivo                 | Item                                   | Severidade | Status |
+| ----------------------- | -------------------------------------- | ---------- | :----: |
+| `/api/documents/upload` | Auth forward para backend              | Media      |   ✅   |
+| `useDocuments.ts`       | Usa `fetchWithRefresh` (inclui auth)   | Media      |   ✅   |
+| `FileUploadModal.tsx`   | Trata erro de rede e exibe feedback    | Baixa      |   ✅   |
+| `store.ts`              | `locallyCreatedSessionIds` nao persiste | Baixa      |   ⏳   |
 
 ### Melhorias Necessarias
 
@@ -539,8 +557,8 @@ MODERADAS:
 
 ### Confirmada (ja usa)
 
-- Next.js 14 (App Router)
-- React 18
+- Next.js 15 (App Router)
+- React 19
 - TypeScript
 - Zustand (state management)
 - Tailwind CSS

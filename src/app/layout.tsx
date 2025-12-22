@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import dynamic from 'next/dynamic'
 import {
   DM_Mono,
   Geist,
@@ -99,6 +100,7 @@ export default function RootLayout({
                 </ErrorBoundary>
                 <Toaster />
                 <InstallPrompt />
+                <WebVitalsReporter />
               </QueryProvider>
             </AuthProvider>
           </PostHogProvider>
@@ -107,3 +109,9 @@ export default function RootLayout({
     </html>
   )
 }
+
+// Dynamically import WebVitalsReporter to avoid SSR issues with client component
+const WebVitalsReporter = dynamic(
+  () => import('@/components/v2/Monitoring/WebVitalsReporter').then(m => m.WebVitalsReporter),
+  { ssr: false }
+)

@@ -222,6 +222,17 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
               <Plus className="h-4 w-4" />
               Nova Conversa
             </motion.button>
+            
+            <button
+               onClick={() => {
+                   router.push('/documents')
+                   onClose()
+               }}
+               className="mt-3 flex w-full items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+            >
+               <Search className="h-4 w-4" />
+               Meus Documentos
+            </button>
           </div>
 
           {/* Search */}

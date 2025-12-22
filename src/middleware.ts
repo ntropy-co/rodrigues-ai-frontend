@@ -48,9 +48,13 @@ export async function middleware(request: NextRequest) {
   const { method, headers, nextUrl } = request
   const pathname = nextUrl.pathname
 
-  // Fix: NextRequest.ip might be undefined in some environments
+  // Security Fix: Parse x-forwarded-for correctly to prevent spoofing
+  // Only use the FIRST IP (set by the trusted proxy), ignore attacker-injected IPs
   const forwardedFor = request.headers.get('x-forwarded-for')
-  const ip = forwardedFor || '127.0.0.1'
+  const realIp = request.headers.get('x-real-ip')
+  
+  // Priority: x-real-ip (set by proxy) > first x-forwarded-for > fallback
+  const ip = realIp || forwardedFor?.split(',')[0]?.trim() || '127.0.0.1'
 
   // 1. Rate Limiting (Skip for Health Check)
   if (

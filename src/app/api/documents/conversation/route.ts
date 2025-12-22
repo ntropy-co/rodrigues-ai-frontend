@@ -86,30 +86,40 @@ export async function GET(request: NextRequest) {
     // Get the response data
     const data = await response.json()
 
-    // Return the response with cache headers
+    // Return the response with cache and CORS headers
     return NextResponse.json(data, {
       status: 200,
       headers: {
-        'Cache-Control': 'private, max-age=30, stale-while-revalidate=60'
+        'Cache-Control': 'private, max-age=30, stale-while-revalidate=60',
+        'Access-Control-Allow-Origin': process.env.NEXT_PUBLIC_APP_URL || 'https://rodriguesagro.com.br',
+        'Access-Control-Allow-Credentials': 'true'
       }
     })
   } catch (error) {
     console.error('[API Route /api/documents/conversation] Error:', error)
     return NextResponse.json(
       { detail: 'Internal server error' },
-      { status: 500 }
+      {
+        status: 500,
+        headers: {
+          'Access-Control-Allow-Origin': process.env.NEXT_PUBLIC_APP_URL || 'https://rodriguesagro.com.br',
+          'Access-Control-Allow-Credentials': 'true'
+        }
+      }
     )
   }
 }
 
 // Handle OPTIONS for CORS
+// Security: Only allow same-origin requests (no external domains)
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 204,
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': process.env.NEXT_PUBLIC_APP_URL || 'https://rodriguesagro.com.br',
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Credentials': 'true'
     }
   })
 }

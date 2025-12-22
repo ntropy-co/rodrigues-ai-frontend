@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { redis } from '@/lib/redis'
+import logger from '@/lib/logger'
 
 export async function GET() {
   try {
@@ -24,7 +25,10 @@ export async function GET() {
       { status: 200 }
     )
   } catch (error) {
-    console.error('Health check failed:', error)
+    logger.error(
+      { error: error instanceof Error ? error.message : 'Unknown error' },
+      'Health check failed'
+    )
     return NextResponse.json(
       {
         status: 'unhealthy',

@@ -42,13 +42,15 @@ function isValidSessionId(str: string | null | undefined): boolean {
 }
 
 // Handle CORS preflight requests
+// Security: Only allow same-origin requests (no external domains)
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 204,
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': process.env.NEXT_PUBLIC_APP_URL || 'https://rodriguesagro.com.br',
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Credentials': 'true'
     }
   })
 }
@@ -133,13 +135,25 @@ export async function POST(request: NextRequest) {
     // Get the response data
     const data = await response.json()
 
-    // Return the response
-    return NextResponse.json(data, { status: 200 })
+    // Return the response with CORS headers
+    return NextResponse.json(data, {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': process.env.NEXT_PUBLIC_APP_URL || 'https://rodriguesagro.com.br',
+        'Access-Control-Allow-Credentials': 'true'
+      }
+    })
   } catch (error) {
     console.error('[API Route /api/chat] Error:', error)
     return NextResponse.json(
       { detail: 'Internal server error' },
-      { status: 500 }
+      {
+        status: 500,
+        headers: {
+          'Access-Control-Allow-Origin': process.env.NEXT_PUBLIC_APP_URL || 'https://rodriguesagro.com.br',
+          'Access-Control-Allow-Credentials': 'true'
+        }
+      }
     )
   }
 }
