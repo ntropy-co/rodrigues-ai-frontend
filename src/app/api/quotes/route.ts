@@ -1,65 +1,22 @@
-/**
- * API Route: GET /api/quotes
- *
- * Retorna cotações de commodities agrícolas com cache Upstash Redis.
- *
- * Query params:
- * - symbol: Ticker específico (ex: ZS=F, ZC=F)
- * - all: true para buscar todas as commodities
- */
 
 import { NextRequest, NextResponse } from 'next/server'
-import {
-  fetchCommodityQuote,
-  fetchAllCommodityQuotes,
-  type CommoditySymbol
-} from '@/lib/quotes'
 
 export async function GET(request: NextRequest) {
+  // Simple proxy for list of quotes
+  // Frontend might not use this specific endpoint often if it uses history, but keeping parity
+  
+  const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+
   try {
-    const { searchParams } = new URL(request.url)
-    const symbol = searchParams.get('symbol') as CommoditySymbol | null
-    const all = searchParams.get('all') === 'true'
-
-    // Fetch all quotes
-    if (all) {
-      const quotes = await fetchAllCommodityQuotes()
-      return NextResponse.json({
-        success: true,
-        data: quotes,
-        count: quotes.length,
-        timestamp: new Date().toISOString()
-      })
-    }
-
-    // Fetch single quote
-    if (symbol) {
-      const quote = await fetchCommodityQuote(symbol)
-
-      if (!quote) {
-        return NextResponse.json(
-          { success: false, error: 'Quote not found' },
-          { status: 404 }
-        )
-      }
-
-      return NextResponse.json({
-        success: true,
-        data: quote,
-        timestamp: new Date().toISOString()
-      })
-    }
-
-    // No params - return all by default
-    const quotes = await fetchAllCommodityQuotes()
-    return NextResponse.json({
-      success: true,
-      data: quotes,
-      count: quotes.length,
-      timestamp: new Date().toISOString()
+    const res = await fetch(`${backendUrl}/api/v1/quotes/latest`, {
+      cache: 'no-store'
     })
+    
+    if (!res.ok) throw new Error('Backend error')
+    
+    const data = await res.json()
+    return NextResponse.json(data)
   } catch (error) {
-    console.error('[API Quotes] Error:', error)
     return NextResponse.json(
       { success: false, error: 'Failed to fetch quotes' },
       { status: 500 }

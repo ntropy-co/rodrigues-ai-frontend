@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useMemo } from 'react'
-import { COMMODITY_INFO, type CommoditySymbol } from '@/lib/quotes'
+import { COMMODITY_INFO, type CommoditySymbol } from '@/lib/commodities'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'

@@ -2,8 +2,12 @@
 
 import React, { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import dayjs from 'dayjs'
+import 'dayjs/locale/pt-br'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+
+dayjs.locale('pt-br')
+dayjs.extend(customParseFormat)
 import {
   Select,
   SelectContent,
@@ -22,7 +26,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
-import { COMMODITY_INFO, type CommoditySymbol } from '@/lib/quotes'
+import { COMMODITY_INFO, type CommoditySymbol } from '@/lib/commodities'
 import { cn } from '@/lib/utils'
 import { ArrowDownIcon, ArrowUpIcon, MinusIcon, RefreshCw, TrendingUp } from 'lucide-react'
 
@@ -59,7 +63,7 @@ const formatCurrency = (value: number, currency = 'USD') => {
 
 const formatDate = (dateStr: string) => {
   try {
-    return format(new Date(dateStr), 'dd/MM/yyyy', { locale: ptBR })
+    return dayjs(dateStr).format('DD/MM/YYYY')
   } catch {
     return dateStr
   }

@@ -1,49 +1,25 @@
-/**
- * API Route: GET /api/quotes/history
- *
- * Retorna histórico de cotações de uma commodity.
- *
- * Query params:
- * - symbol: Ticker obrigatório (ex: ZS=F)
- * - range: Período (1mo, 3mo, 6mo, 1y) - default: 1mo
- */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { fetchCommodityHistory, type CommoditySymbol } from '@/lib/quotes'
 
 export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url)
+  const symbol = searchParams.get('symbol')
+  const range = searchParams.get('range') || '1mo'
+  
+  const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+
   try {
-    const { searchParams } = new URL(request.url)
-    const symbol = searchParams.get('symbol') as CommoditySymbol | null
-    const range = (searchParams.get('range') || '1mo') as
-      | '1mo'
-      | '3mo'
-      | '6mo'
-      | '1y'
-
-    if (!symbol) {
-      return NextResponse.json(
-        { success: false, error: 'Symbol is required' },
-        { status: 400 }
-      )
-    }
-
-    const history = await fetchCommodityHistory(symbol, range)
-
-    return NextResponse.json({
-      success: true,
-      data: {
-        symbol,
-        range,
-        history
-      },
-      count: history.length,
-      timestamp: new Date().toISOString()
+    const res = await fetch(`${backendUrl}/api/v1/quotes/history?symbol=${symbol}&range=${range}`, {
+      cache: 'no-store'
     })
+    
+    if (!res.ok) throw new Error('Backend error')
+    
+    const data = await res.json()
+    return NextResponse.json(data)
   } catch (error) {
-    console.error('[API Quotes History] Error:', error)
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch history' },
+      { success: false, error: 'Failed to fetch quotes history' },
       { status: 500 }
     )
   }

@@ -12,7 +12,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
-import { COMMODITY_INFO, type CommoditySymbol } from '@/lib/quotes'
+import { COMMODITY_INFO, type CommoditySymbol } from '@/lib/commodities'
 import { cn } from '@/lib/utils'
 import { TrendingUp, TrendingDown, RefreshCcw, AlertCircle } from 'lucide-react'
 
