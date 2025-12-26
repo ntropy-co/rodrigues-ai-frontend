@@ -22,8 +22,8 @@ const STATE_CONFIG = {
   thinking: {
     icon: Brain,
     label: 'Pensando na resposta...',
-    color: 'text-verde-600',
-    bg: 'bg-verde-100'
+    color: 'text-verity-600',
+    bg: 'bg-verity-100'
   },
   analyzing: {
     icon: Search,
@@ -34,14 +34,14 @@ const STATE_CONFIG = {
   summarizing: {
     icon: FileText,
     label: 'Resumindo informações...',
-    color: 'text-verde-700',
-    bg: 'bg-verde-200'
+    color: 'text-verity-700',
+    bg: 'bg-verity-200'
   },
   typing: {
     icon: PenLine,
     label: 'Digitando...',
-    color: 'text-verde-500',
-    bg: 'bg-verde-50'
+    color: 'text-verity-500',
+    bg: 'bg-verity-50'
   },
   searching: {
     icon: Database,
@@ -149,7 +149,7 @@ export function AgentStateIndicator({
 
       {/* Label with Typing Effect */}
       <div className="flex flex-col">
-        <span className="mb-0.5 text-xs font-semibold uppercase tracking-wider text-verde-400">
+        <span className="mb-0.5 text-xs font-semibold uppercase tracking-wider text-verity-400">
           Verity AI
         </span>
         <motion.span

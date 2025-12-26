@@ -15,10 +15,10 @@ export function Greeting() {
       transition={{ duration: 0.6, ease: 'easeOut' }}
       className="flex w-full flex-col items-center justify-center px-2 py-6 text-center md:px-0 md:py-10"
     >
-      <h1 className="mb-3 font-display text-4xl font-semibold tracking-tight text-verde-950 md:text-5xl lg:text-6xl">
+      <h1 className="mb-3 font-display text-4xl font-semibold tracking-tight text-verity-950 md:text-5xl lg:text-6xl">
         {greeting}
       </h1>
-      <p className="max-w-xl text-lg font-light text-verde-700 md:text-xl">
+      <p className="max-w-xl text-lg font-light text-verity-700 md:text-xl">
         {subtext}
       </p>
     </motion.div>

@@ -65,7 +65,7 @@ export function LoadingOverlay({
                 ease: 'linear'
               }}
             >
-              <Loader2 className="h-8 w-8 text-verde-600" />
+              <Loader2 className="h-8 w-8 text-verity-600" />
             </motion.div>
 
             {/* Message */}
@@ -78,7 +78,7 @@ export function LoadingOverlay({
               <div className="w-48">
                 <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                   <motion.div
-                    className="h-full bg-verde-600"
+                    className="h-full bg-verity-600"
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
                     transition={{ duration: 0.3, ease: 'easeOut' }}

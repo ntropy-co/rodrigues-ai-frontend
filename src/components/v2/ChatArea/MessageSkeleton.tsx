@@ -11,8 +11,8 @@ export function MessageSkeleton({ isUser = false }: { isUser?: boolean }) {
       <div
         className={`max-w-[85%] rounded-2xl px-5 py-4 ${
           isUser
-            ? 'rounded-tr-sm bg-verde-800/10'
-            : 'rounded-tl-sm border-2 border-verde-100 bg-white'
+            ? 'rounded-tr-sm bg-verity-800/10'
+            : 'rounded-tl-sm border-2 border-verity-100 bg-white'
         }`}
       >
         {/* Content skeleton */}
@@ -21,10 +21,10 @@ export function MessageSkeleton({ isUser = false }: { isUser?: boolean }) {
           style={{ animationDuration: '2s' }}
         >
           <div
-            className={`h-4 rounded ${isUser ? 'bg-verde-200/50' : 'bg-verde-100'} w-3/4`}
+            className={`h-4 rounded ${isUser ? 'bg-verity-200/50' : 'bg-verity-100'} w-3/4`}
           />
           <div
-            className={`h-4 rounded ${isUser ? 'bg-verde-200/50' : 'bg-verde-50'} w-1/2`}
+            className={`h-4 rounded ${isUser ? 'bg-verity-200/50' : 'bg-verity-50'} w-1/2`}
           />
         </div>
       </div>

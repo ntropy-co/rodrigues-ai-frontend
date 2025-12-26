@@ -50,28 +50,28 @@ export default function ForgotPasswordPage() {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="rounded-2xl border border-verde-100 bg-white p-8 text-center shadow-xl shadow-verde-900/5 lg:p-10"
+        className="rounded-2xl border border-verity-100 bg-white p-8 text-center shadow-xl shadow-verity-900/5 lg:p-10"
       >
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-          className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-verde-100"
+          className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-verity-100"
         >
-          <CheckCircle className="h-8 w-8 text-verde-600" />
+          <CheckCircle className="h-8 w-8 text-verity-600" />
         </motion.div>
 
-        <h2 className="mb-2 font-display text-2xl font-semibold text-verde-950">
+        <h2 className="mb-2 font-display text-2xl font-semibold text-verity-950">
           Email Enviado
         </h2>
-        <p className="mx-auto mb-8 max-w-xs text-verde-700">
+        <p className="mx-auto mb-8 max-w-xs text-verity-700">
           Enviamos as instruções de recuperação para{' '}
           <strong>{values.email}</strong>. Verifique sua caixa de entrada e
           spam.
         </p>
 
         <Link href="/login">
-          <Button className="h-12 w-full rounded-lg bg-verde-900 font-medium text-white hover:bg-verde-800">
+          <Button className="h-12 w-full rounded-lg bg-verity-900 font-medium text-white hover:bg-verity-800">
             Voltar para o Login
           </Button>
         </Link>
@@ -84,17 +84,17 @@ export default function ForgotPasswordPage() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="rounded-2xl border border-verde-100 bg-white p-8 shadow-xl shadow-verde-900/5 lg:p-10"
+      className="rounded-2xl border border-verity-100 bg-white p-8 shadow-xl shadow-verity-900/5 lg:p-10"
     >
       <div className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-verde-50 shadow-inner">
-          <KeyRound className="h-8 w-8 text-verde-800" />
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-verity-50 shadow-inner">
+          <KeyRound className="h-8 w-8 text-verity-800" />
         </div>
 
-        <h2 className="mb-2 font-display text-3xl font-semibold text-verde-950">
+        <h2 className="mb-2 font-display text-3xl font-semibold text-verity-950">
           Recuperar Senha
         </h2>
-        <p className="text-verde-700">
+        <p className="text-verity-700">
           Digite seu email corporativo para receber as instruções
         </p>
       </div>
@@ -124,7 +124,7 @@ export default function ForgotPasswordPage() {
         className="space-y-6"
       >
         <div className="space-y-1.5">
-          <label className="ml-1 block text-sm font-medium text-verde-950">
+          <label className="ml-1 block text-sm font-medium text-verity-950">
             Email corporativo
           </label>
           <motion.div whileFocus="focus" variants={inputVariants}>
@@ -136,8 +136,8 @@ export default function ForgotPasswordPage() {
               onBlur={() => handleBlur('email')}
               placeholder="seu.email@empresa.com.br"
               className={cn(
-                'h-12 border-verde-200 bg-verde-50/50 px-4 text-verde-950 transition-all placeholder:text-verde-400/70',
-                'focus:border-verde-600 focus:bg-white focus:ring-4 focus:ring-verde-600/10',
+                'h-12 border-verity-200 bg-verity-50/50 px-4 text-verity-950 transition-all placeholder:text-verity-400/70',
+                'focus:border-verity-600 focus:bg-white focus:ring-4 focus:ring-verity-600/10',
                 errors.email && touched.email && 'border-red-300'
               )}
             />
@@ -151,7 +151,7 @@ export default function ForgotPasswordPage() {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="h-12 w-full rounded-lg bg-verde-900 text-base font-medium text-white shadow-lg shadow-verde-900/20 transition-all hover:bg-verde-800 hover:shadow-xl hover:shadow-verde-900/30"
+            className="h-12 w-full rounded-lg bg-verity-900 text-base font-medium text-white shadow-lg shadow-verity-900/20 transition-all hover:bg-verity-800 hover:shadow-xl hover:shadow-verity-900/30"
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">
@@ -168,7 +168,7 @@ export default function ForgotPasswordPage() {
           <Button
             type="button"
             variant="ghost"
-            className="w-full text-verde-700 hover:bg-verde-50 hover:text-verde-900"
+            className="w-full text-verity-700 hover:bg-verity-50 hover:text-verity-900"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar para o login

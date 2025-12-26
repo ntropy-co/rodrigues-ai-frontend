@@ -33,14 +33,14 @@ import {
 function SignupSkeleton() {
   return (
     <div className="animate-pulse space-y-5">
-      <div className="h-24 rounded-lg border border-verde-100 bg-verde-50" />
+      <div className="h-24 rounded-lg border border-verity-100 bg-verity-50" />
       <div className="grid grid-cols-2 gap-4">
-        <div className="h-12 rounded-lg bg-verde-50" />
-        <div className="h-12 rounded-lg bg-verde-50" />
+        <div className="h-12 rounded-lg bg-verity-50" />
+        <div className="h-12 rounded-lg bg-verity-50" />
       </div>
-      <div className="h-12 rounded-lg bg-verde-50" />
-      <div className="h-12 rounded-lg bg-verde-50" />
-      <div className="h-12 rounded-lg bg-verde-50" />
+      <div className="h-12 rounded-lg bg-verity-50" />
+      <div className="h-12 rounded-lg bg-verity-50" />
+      <div className="h-12 rounded-lg bg-verity-50" />
     </div>
   )
 }
@@ -110,10 +110,10 @@ function SignupContent() {
 
   if (isInviteLoading) {
     return (
-      <div className="flex min-h-[600px] flex-col justify-center rounded-2xl border border-verde-100 bg-white p-8 shadow-xl shadow-verde-900/5 lg:p-10">
+      <div className="flex min-h-[600px] flex-col justify-center rounded-2xl border border-verity-100 bg-white p-8 shadow-xl shadow-verity-900/5 lg:p-10">
         <div className="mb-8 text-center">
-          <Loader2 className="mx-auto mb-4 h-12 w-12 animate-spin text-verde-600" />
-          <p className="font-medium text-verde-700">Validando seu convite...</p>
+          <Loader2 className="mx-auto mb-4 h-12 w-12 animate-spin text-verity-600" />
+          <p className="font-medium text-verity-700">Validando seu convite...</p>
         </div>
         <SignupSkeleton />
       </div>
@@ -122,21 +122,21 @@ function SignupContent() {
 
   if (!isValid && !isInviteLoading) {
     return (
-      <div className="rounded-2xl border border-verde-100 bg-white p-8 text-center shadow-xl shadow-verde-900/5 lg:p-10">
+      <div className="rounded-2xl border border-verity-100 bg-white p-8 text-center shadow-xl shadow-verity-900/5 lg:p-10">
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
           <AlertCircle className="h-8 w-8 text-red-500" />
         </div>
-        <h2 className="mb-2 font-display text-2xl font-semibold text-verde-950">
+        <h2 className="mb-2 font-display text-2xl font-semibold text-verity-950">
           Convite Inválido ou Expirado
         </h2>
-        <p className="mb-6 text-verde-700">
+        <p className="mb-6 text-verity-700">
           {inviteError ||
             'Não foi possível validar seu convite. Por favor, solicite um novo link ao administrador.'}
         </p>
         <Link href="/login">
           <Button
             variant="outline"
-            className="border-verde-200 text-verde-900 hover:bg-verde-50"
+            className="border-verity-200 text-verity-900 hover:bg-verity-50"
           >
             Voltar para Login
           </Button>
@@ -150,13 +150,13 @@ function SignupContent() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="rounded-2xl border border-verde-100 bg-white p-8 shadow-xl shadow-verde-900/5 lg:p-10"
+      className="rounded-2xl border border-verity-100 bg-white p-8 shadow-xl shadow-verity-900/5 lg:p-10"
     >
       <div className="mb-6">
-        <h2 className="mb-2 font-display text-3xl font-semibold text-verde-950">
+        <h2 className="mb-2 font-display text-3xl font-semibold text-verity-950">
           Criar Conta
         </h2>
-        <p className="text-verde-700">Complete seu cadastro para acessar</p>
+        <p className="text-verity-700">Complete seu cadastro para acessar</p>
       </div>
 
       {/* Invite Banner */}
@@ -209,7 +209,7 @@ function SignupContent() {
       >
         {/* Name Field */}
         <div className="space-y-1.5">
-          <label className="ml-1 block text-sm font-medium text-verde-950">
+          <label className="ml-1 block text-sm font-medium text-verity-950">
             Nome Completo
           </label>
           <motion.div whileFocus="focus" variants={inputVariants}>
@@ -220,8 +220,8 @@ function SignupContent() {
               onBlur={() => handleBlur('name')}
               placeholder="João Silva"
               className={cn(
-                'h-12 border-verde-200 bg-verde-50/50 px-4 text-verde-950 transition-all placeholder:text-verde-400/70',
-                'focus:border-verde-600 focus:bg-white focus:ring-4 focus:ring-verde-600/10',
+                'h-12 border-verity-200 bg-verity-50/50 px-4 text-verity-950 transition-all placeholder:text-verity-400/70',
+                'focus:border-verity-600 focus:bg-white focus:ring-4 focus:ring-verity-600/10',
                 errors.name && touched.name && 'border-red-300'
               )}
             />
@@ -234,17 +234,17 @@ function SignupContent() {
         {/* Email Field (Read-only) */}
         <div className="space-y-1.5">
           <div className="ml-1 flex items-center gap-2">
-            <label className="block text-sm font-medium text-verde-950">
+            <label className="block text-sm font-medium text-verity-950">
               Email corporativo
             </label>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Info className="h-3.5 w-3.5 cursor-help text-verde-400" />
+                  <Info className="h-3.5 w-3.5 cursor-help text-verity-400" />
                 </TooltipTrigger>
                 <TooltipContent
                   side="right"
-                  className="border-verde-800 bg-verde-950 text-xs text-white"
+                  className="border-verity-800 bg-verity-950 text-xs text-white"
                 >
                   O email é definido pelo convite e não pode ser alterado.
                 </TooltipContent>
@@ -255,13 +255,13 @@ function SignupContent() {
             value={values.email}
             readOnly
             disabled
-            className="h-12 cursor-not-allowed border-verde-200 bg-verde-100/50 px-4 text-verde-950/70"
+            className="h-12 cursor-not-allowed border-verity-200 bg-verity-100/50 px-4 text-verity-950/70"
           />
         </div>
 
         {/* Password Field */}
         <div className="space-y-1.5">
-          <label className="ml-1 block text-sm font-medium text-verde-950">
+          <label className="ml-1 block text-sm font-medium text-verity-950">
             Criar Senha
           </label>
           <div className="relative">
@@ -274,8 +274,8 @@ function SignupContent() {
                 onBlur={() => handleBlur('password')}
                 placeholder="••••••••"
                 className={cn(
-                  'h-12 border-verde-200 bg-verde-50/50 px-4 pr-12 text-verde-950 transition-all placeholder:text-verde-400/70',
-                  'focus:border-verde-600 focus:bg-white focus:ring-4 focus:ring-verde-600/10',
+                  'h-12 border-verity-200 bg-verity-50/50 px-4 pr-12 text-verity-950 transition-all placeholder:text-verity-400/70',
+                  'focus:border-verity-600 focus:bg-white focus:ring-4 focus:ring-verity-600/10',
                   errors.password && touched.password && 'border-red-300'
                 )}
               />
@@ -283,7 +283,7 @@ function SignupContent() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-verde-600 transition-colors hover:text-verde-900"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-verity-600 transition-colors hover:text-verity-900"
             >
               {showPassword ? (
                 <EyeOff className="h-4 w-4" />
@@ -305,7 +305,7 @@ function SignupContent() {
 
         {/* Confirm Password */}
         <div className="space-y-1.5">
-          <label className="ml-1 block text-sm font-medium text-verde-950">
+          <label className="ml-1 block text-sm font-medium text-verity-950">
             Confirmar Senha
           </label>
           <motion.div whileFocus="focus" variants={inputVariants}>
@@ -317,8 +317,8 @@ function SignupContent() {
               onBlur={() => handleBlur('confirmPassword')}
               placeholder="••••••••"
               className={cn(
-                'h-12 border-verde-200 bg-verde-50/50 px-4 text-verde-950 transition-all placeholder:text-verde-400/70',
-                'focus:border-verde-600 focus:bg-white focus:ring-4 focus:ring-verde-600/10',
+                'h-12 border-verity-200 bg-verity-50/50 px-4 text-verity-950 transition-all placeholder:text-verity-400/70',
+                'focus:border-verity-600 focus:bg-white focus:ring-4 focus:ring-verity-600/10',
                 errors.confirmPassword &&
                   touched.confirmPassword &&
                   'border-red-300'
@@ -340,18 +340,18 @@ function SignupContent() {
             onCheckedChange={(checked) =>
               handleChange('acceptTerms', checked === true)
             }
-            className="mt-1 border-verde-300 data-[state=checked]:border-verde-900 data-[state=checked]:bg-verde-900"
+            className="mt-1 border-verity-300 data-[state=checked]:border-verity-900 data-[state=checked]:bg-verity-900"
           />
           <label
             htmlFor="terms"
-            className="cursor-pointer select-none text-sm leading-tight text-verde-700"
+            className="cursor-pointer select-none text-sm leading-tight text-verity-700"
           >
             Concordo com os{' '}
-            <a href="#" className="underline hover:text-verde-900">
+            <a href="#" className="underline hover:text-verity-900">
               Termos de Serviço
             </a>{' '}
             e{' '}
-            <a href="#" className="underline hover:text-verde-900">
+            <a href="#" className="underline hover:text-verity-900">
               Política de Privacidade
             </a>
             .
@@ -366,7 +366,7 @@ function SignupContent() {
           <Button
             type="submit"
             disabled={isSubmitting || !isValid}
-            className="h-12 w-full rounded-lg bg-verde-900 text-base font-medium text-white shadow-lg shadow-verde-900/20 transition-all hover:bg-verde-800 hover:shadow-xl hover:shadow-verde-900/30 disabled:cursor-not-allowed disabled:opacity-70"
+            className="h-12 w-full rounded-lg bg-verity-900 text-base font-medium text-white shadow-lg shadow-verity-900/20 transition-all hover:bg-verity-800 hover:shadow-xl hover:shadow-verity-900/30 disabled:cursor-not-allowed disabled:opacity-70"
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">
@@ -390,10 +390,10 @@ export default function SignupPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-[600px] flex-col justify-center rounded-2xl border border-verde-100 bg-white p-8 shadow-xl shadow-verde-900/5 lg:p-10">
+        <div className="flex min-h-[600px] flex-col justify-center rounded-2xl border border-verity-100 bg-white p-8 shadow-xl shadow-verity-900/5 lg:p-10">
           <div className="mb-8 text-center">
-            <Loader2 className="mx-auto mb-4 h-12 w-12 animate-spin text-verde-600" />
-            <p className="font-medium text-verde-700">Carregando...</p>
+            <Loader2 className="mx-auto mb-4 h-12 w-12 animate-spin text-verity-600" />
+            <p className="font-medium text-verity-700">Carregando...</p>
           </div>
           <SignupSkeleton />
         </div>

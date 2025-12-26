@@ -141,7 +141,7 @@ export function ConversationsSidebar({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
           onClick={onToggle}
-          className="fixed inset-0 z-40 bg-verde-950/20 backdrop-blur-sm"
+          className="fixed inset-0 z-40 bg-verity-950/20 backdrop-blur-sm"
         />
 
         {/* Sidebar */}
@@ -150,7 +150,7 @@ export function ConversationsSidebar({
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: -280, opacity: 0 }}
           transition={sidebarSpring}
-          className="fixed left-0 top-0 z-50 flex h-screen w-[280px] flex-col border-r border-verde-100 bg-white"
+          className="fixed left-0 top-0 z-50 flex h-screen w-[280px] flex-col border-r border-sand-300 bg-sand-200"
         >
           <SidebarContent
             searchQuery={searchQuery}
@@ -198,7 +198,7 @@ export function ConversationsSidebar({
       initial={false}
       animate={{ width: isOpen ? 280 : 0 }}
       transition={sidebarSpring}
-      className="relative flex-shrink-0 overflow-hidden border-r border-verde-100 bg-white"
+      className="relative flex-shrink-0 overflow-hidden border-r border-sand-300 bg-sand-200"
     >
       <div className="flex h-full w-[280px] flex-col">
         <SidebarContent
@@ -320,16 +320,16 @@ function SidebarContent({
   return (
     <>
       {/* Header Area: Search + New Analysis */}
-      <div className="flex flex-col gap-3 border-b border-verde-100 bg-white/50 p-4 backdrop-blur-sm">
+      <div className="flex flex-col gap-3 border-b border-sand-300/50 bg-sand-200/50 p-4 backdrop-blur-sm">
         {/* Search Bar */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-verde-500" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-verity-500" />
           <input
             type="text"
             placeholder="Buscar"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-lg border border-verde-200 bg-verde-50/50 px-4 py-2 pl-10 text-sm text-verde-950 transition-all duration-200 placeholder:text-verde-500 focus:border-verde-600 focus:outline-none focus:ring-0 focus:ring-verde-600/15"
+            className="w-full rounded-lg border border-sand-300 bg-white/50 px-4 py-2 pl-10 text-sm text-verity-950 transition-all duration-200 placeholder:text-verity-500 focus:border-verity-600 focus:outline-none focus:ring-0 focus:ring-verity-600/15"
           />
         </div>
 
@@ -344,7 +344,7 @@ function SidebarContent({
             }}
             whileTap={{ scale: 0.98 }}
             onClick={onNewConversation}
-            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-gradient-to-br from-verde-900 to-verde-800 px-4 py-2.5 text-sm font-medium text-white shadow-md shadow-verde-900/20 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-gradient-to-br from-verity-900 to-verity-800 px-4 py-2.5 text-sm font-medium text-white shadow-md shadow-verity-900/20 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Plus className="h-4 w-4" />
             Nova Conversa
@@ -354,7 +354,7 @@ function SidebarContent({
             <button
               type="button"
               onClick={onToggle}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-verde-200 text-verde-600 transition-colors hover:bg-verde-50 hover:text-verde-900"
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-verity-200 text-verity-600 transition-colors hover:bg-verity-50 hover:text-verity-900"
               aria-label="Fechar sidebar"
             >
               <ChevronLeft className="h-5 w-5" />
@@ -367,16 +367,16 @@ function SidebarContent({
       <div className="flex-1 overflow-y-auto px-3 pb-4 pt-4">
         {/* Projetos Section */}
         <div className="mb-6">
-          <h3 className="mb-2 px-2 font-display text-lg font-semibold text-verde-950">
+          <h3 className="mb-2 px-2 font-display text-lg font-semibold text-verity-950">
             Projetos
           </h3>
           {projectsLoading ? (
             <div className="flex items-center justify-center py-4">
-              <Loader2 className="h-4 w-4 animate-spin text-verde-600" />
+              <Loader2 className="h-4 w-4 animate-spin text-verity-600" />
             </div>
           ) : projects.length === 0 ? (
             <div className="px-3 py-2 text-center">
-              <p className="text-sm text-verde-500">Nenhum projeto ainda</p>
+              <p className="text-sm text-verity-500">Nenhum projeto ainda</p>
             </div>
           ) : (
             <div className="space-y-1">
@@ -387,8 +387,8 @@ function SidebarContent({
                 className={cn(
                   'mb-1 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors',
                   !selectedProjectId
-                    ? 'bg-verde-100 font-medium text-verde-900'
-                    : 'text-verde-600 hover:bg-verde-50'
+                    ? 'bg-verity-100 font-medium text-verity-900'
+                    : 'text-verity-600 hover:bg-verity-50'
                 )}
               >
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg">
@@ -421,7 +421,7 @@ function SidebarContent({
             type="button"
             whileHover={{ scale: 1.01, x: 2 }}
             onClick={onOpenProjectDialog}
-            className="flex w-full items-center gap-3 rounded-lg border border-transparent px-3 py-2 text-left text-verde-600 hover:bg-verde-50 hover:text-verde-800"
+            className="flex w-full items-center gap-3 rounded-lg border border-transparent px-3 py-2 text-left text-verity-600 hover:bg-verity-50 hover:text-verity-800"
           >
             <div className="flex h-8 w-8 items-center justify-center rounded-lg">
               <Plus className="h-4 w-4" />
@@ -432,10 +432,10 @@ function SidebarContent({
 
         {/* Conversas Section */}
         <div>
-          <h3 className="mb-2 flex items-center gap-2 px-2 font-display text-lg font-semibold text-verde-950">
+          <h3 className="mb-2 flex items-center gap-2 px-2 font-display text-lg font-semibold text-verity-950">
             Conversas
             {selectedProjectId && (
-              <span className="rounded-full bg-verde-100 px-2 py-0.5 text-xs font-normal text-verde-500">
+              <span className="rounded-full bg-verity-100 px-2 py-0.5 text-xs font-normal text-verity-500">
                 Filtrado
               </span>
             )}
@@ -443,15 +443,15 @@ function SidebarContent({
 
           {sessionsLoading ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-5 w-5 animate-spin text-verde-600" />
+              <Loader2 className="h-5 w-5 animate-spin text-verity-600" />
             </div>
           ) : sessions.length === 0 ? (
             <div className="px-3 py-4 text-center">
-              <MessageSquare className="mx-auto h-8 w-8 text-verde-300" />
-              <p className="mt-2 text-sm text-verde-500">
+              <MessageSquare className="mx-auto h-8 w-8 text-verity-300" />
+              <p className="mt-2 text-sm text-verity-500">
                 Nenhuma conversa ainda
               </p>
-              <p className="text-xs text-verde-400">Inicie uma nova análise</p>
+              <p className="text-xs text-verity-400">Inicie uma nova análise</p>
             </div>
           ) : (
             <div className="space-y-1">
@@ -561,10 +561,10 @@ const ConversationCard = memo(function ConversationCard({
       }}
       whileTap={{ scale: 0.99 }}
       className={cn(
-        'group relative flex w-full cursor-pointer items-start gap-3 rounded-lg border-l-[3px] px-3 py-2.5 text-left outline-none transition-all duration-200',
+        'group relative flex w-full cursor-pointer items-start gap-3 rounded-lg border-l-0 px-3 py-2.5 text-left outline-none transition-all duration-200',
         isActive
-          ? 'border-verde-600 bg-verde-100 font-medium'
-          : 'border-transparent bg-transparent hover:border-verde-200'
+          ? 'bg-verity-800 font-medium text-white shadow-md shadow-verity-900/10'
+          : 'bg-transparent text-verity-900 hover:bg-white/50 hover:text-verity-950'
       )}
     >
       {/* Avatar mini */}
@@ -586,16 +586,14 @@ const ConversationCard = memo(function ConversationCard({
               onBlur={() => handleSave()}
               onKeyDown={handleKeyDown}
               onClick={handleInputClick}
-              className="h-6 w-full rounded border border-verde-300 bg-white px-1 text-sm text-verde-950 focus:border-verde-500 focus:outline-none"
+              className="h-6 w-full rounded border border-verity-300 bg-white px-1 text-sm text-verity-950 focus:border-verity-500 focus:outline-none"
             />
-          ) : (
-            <>
               <p
                 className={cn(
                   'flex-1 truncate text-sm',
                   isActive
-                    ? 'font-semibold text-verde-950'
-                    : 'font-medium text-verde-900'
+                    ? 'font-semibold text-white'
+                    : 'font-medium text-verity-900'
                 )}
               >
                 {title}
@@ -609,7 +607,7 @@ const ConversationCard = memo(function ConversationCard({
                     e.stopPropagation()
                     setIsEditing(true)
                   }}
-                  className="rounded p-1 text-verde-600 opacity-0 transition-opacity hover:bg-verde-200 group-hover:opacity-100"
+                  className="rounded p-1 text-verity-600 opacity-0 transition-opacity hover:bg-verity-200 group-hover:opacity-100"
                   title="Renomear"
                 >
                   <SquarePen className="h-3.5 w-3.5" />
@@ -637,7 +635,7 @@ const ConversationCard = memo(function ConversationCard({
 
           {/* Unread badge (only show when not editing) */}
           {!isEditing && unreadCount > 0 && (
-            <span className="inline-flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-verde-600 text-xs font-semibold text-white">
+            <span className="inline-flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-verity-600 text-xs font-semibold text-white">
               {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}
@@ -645,13 +643,13 @@ const ConversationCard = memo(function ConversationCard({
 
         {/* Preview (se houver) */}
         {preview && (
-          <p className="mb-1 truncate text-xs font-light text-verde-600">
+          <p className="mb-1 truncate text-xs font-light text-verity-600">
             {preview}
           </p>
         )}
 
         {/* Timestamp */}
-        <p className="text-xs font-light text-verde-500">{timestamp}</p>
+        <p className="text-xs font-light text-verity-500">{timestamp}</p>
       </div>
     </motion.div>
   )
@@ -670,7 +668,7 @@ export function ConversationsSidebarToggle({
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -10 }}
       onClick={onClick}
-      className="absolute left-4 top-20 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-verde-200 bg-white text-verde-700 shadow-md transition-colors hover:bg-verde-50 hover:text-verde-900"
+      className="absolute left-4 top-20 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-verity-200 bg-white text-verity-700 shadow-md transition-colors hover:bg-verity-50 hover:text-verity-900"
       aria-label="Abrir conversas"
     >
       <MessageSquare className="h-5 w-5" />

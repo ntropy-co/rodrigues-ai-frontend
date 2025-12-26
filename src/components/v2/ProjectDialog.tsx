@@ -58,7 +58,7 @@ export function ProjectDialog({
           <div className="flex flex-col gap-2">
             <label
               htmlFor="name"
-              className="text-sm font-medium text-verde-900"
+              className="text-sm font-medium text-verity-900"
             >
               Nome do Projeto
             </label>
@@ -67,7 +67,7 @@ export function ProjectDialog({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Ex: Análise de Crédito - Fazenda Santa Maria"
-              className="col-span-3 border-verde-200 focus:border-verde-500 focus:ring-verde-500"
+              className="col-span-3 border-verity-200 focus:border-verity-500 focus:ring-verity-500"
               autoFocus
               required
             />
@@ -75,7 +75,7 @@ export function ProjectDialog({
           <div className="flex flex-col gap-2">
             <label
               htmlFor="description"
-              className="text-sm font-medium text-verde-900"
+              className="text-sm font-medium text-verity-900"
             >
               Descrição (opcional)
             </label>
@@ -84,7 +84,7 @@ export function ProjectDialog({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Detalhes adicionais..."
-              className="col-span-3 border-verde-200 focus:border-verde-500 focus:ring-verde-500"
+              className="col-span-3 border-verity-200 focus:border-verity-500 focus:ring-verity-500"
             />
           </div>
           <DialogFooter>
@@ -92,14 +92,14 @@ export function ProjectDialog({
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="border-verde-200 text-verde-700 hover:bg-verde-50"
+              className="border-verity-200 text-verity-700 hover:bg-verity-50"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={isLoading || !title.trim()}
-              className="bg-verde-600 text-white hover:bg-verde-700"
+              className="bg-verity-600 text-white hover:bg-verity-700"
             >
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Criar Projeto

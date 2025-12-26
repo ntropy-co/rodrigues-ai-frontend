@@ -161,7 +161,7 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
   }
 
   return (
-    <div className="flex h-screen w-screen flex-col bg-verde-50 dark:bg-background">
+    <div className="flex h-screen w-screen flex-col bg-verity-50 dark:bg-background">
       {/* Header */}
       <ChatHeader />
 
@@ -200,8 +200,8 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
         <motion.div
           layout
           className={cn(
-            'relative flex flex-col overflow-hidden bg-verde-50 transition-all duration-300 ease-in-out',
-            isCanvasOpen && !isMobile ? 'border-r border-verde-200' : ''
+            'relative flex flex-col overflow-hidden bg-verity-50 transition-all duration-300 ease-in-out',
+            isCanvasOpen && !isMobile ? 'border-r border-verity-200' : ''
           )}
           style={{
             flex:
@@ -216,8 +216,8 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
             {isLoadingSession ? (
               <div className="flex h-full items-center justify-center">
                 <div className="text-center">
-                  <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-verde-900 border-t-transparent"></div>
-                  <p className="text-verde-700">Carregando conversa...</p>
+                  <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-verity-900 border-t-transparent"></div>
+                  <p className="text-verity-700">Carregando conversa...</p>
                 </div>
               </div>
             ) : hasMessages ? (

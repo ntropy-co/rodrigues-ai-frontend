@@ -71,7 +71,7 @@ export function IssueCard({
         'cursor-pointer rounded-lg border-2 p-4 transition-all',
         config.bgColor,
         config.borderColor,
-        isSelected && 'ring-2 ring-verde-500 ring-offset-2'
+        isSelected && 'ring-2 ring-verity-500 ring-offset-2'
       )}
     >
       <div className="flex items-start justify-between gap-3">
@@ -81,7 +81,7 @@ export function IssueCard({
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <h3 className="font-medium text-verde-900">{issue.title}</h3>
+              <h3 className="font-medium text-verity-900">{issue.title}</h3>
               <span
                 className={cn(
                   'rounded-full px-2 py-0.5 text-xs font-medium',
@@ -92,11 +92,11 @@ export function IssueCard({
                 {config.label}
               </span>
             </div>
-            <p className="mt-1 text-sm text-verde-700">{issue.description}</p>
-            <p className="mt-2 text-xs text-verde-500">{issue.location}</p>
+            <p className="mt-1 text-sm text-verity-700">{issue.description}</p>
+            <p className="mt-2 text-xs text-verity-500">{issue.location}</p>
 
             {issue.suggestion && (
-              <div className="mt-3 rounded-md bg-white/60 p-2 text-sm text-verde-700">
+              <div className="mt-3 rounded-md bg-white/60 p-2 text-sm text-verity-700">
                 <span className="font-medium">Sugestão: </span>
                 {issue.suggestion}
               </div>
@@ -111,7 +111,7 @@ export function IssueCard({
             e.stopPropagation()
             onFix?.()
           }}
-          className="shrink-0 border-verde-300 text-verde-700 hover:bg-verde-100"
+          className="shrink-0 border-verity-300 text-verity-700 hover:bg-verity-100"
         >
           <Wrench className="mr-1 h-3 w-3" />
           Corrigir

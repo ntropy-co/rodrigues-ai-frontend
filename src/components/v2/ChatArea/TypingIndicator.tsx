@@ -7,11 +7,11 @@ export function TypingIndicator() {
 
   return (
     <div className="flex w-full justify-start py-2">
-      <div className="flex items-center gap-1.5 rounded-2xl rounded-tl-sm border-2 border-verde-100 bg-white px-4 py-3 shadow-[0_2px_8px_rgba(45,90,69,0.08)]">
+      <div className="flex items-center gap-1.5 rounded-2xl rounded-tl-sm border-2 border-verity-100 bg-white px-4 py-3 shadow-[0_2px_8px_rgba(45,90,69,0.08)]">
         {[0, 1, 2].map((dot) => (
           <motion.div
             key={dot}
-            className="h-1.5 w-1.5 rounded-full bg-verde-600"
+            className="h-1.5 w-1.5 rounded-full bg-verity-600"
             animate={
               prefersReducedMotion
                 ? { opacity: 0.7 }

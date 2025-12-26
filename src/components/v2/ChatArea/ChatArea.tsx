@@ -177,7 +177,7 @@ export function ChatArea({ messages, isStreaming, onRefresh }: ChatAreaProps) {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={scrollToBottom}
-            className="fixed bottom-24 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-verde-900 text-white shadow-lg shadow-verde-900/20 hover:bg-verde-800 md:bottom-28 md:right-8 landscape:bottom-20"
+            className="fixed bottom-24 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-verity-900 text-white shadow-lg shadow-verity-900/20 hover:bg-verity-800 md:bottom-28 md:right-8 landscape:bottom-20"
             aria-label="Rolar para baixo"
           >
             <ArrowDown className="h-5 w-5" />

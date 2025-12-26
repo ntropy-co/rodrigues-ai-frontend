@@ -24,7 +24,7 @@ export function MessageInput3D() {
       >
         {/* Camada de sombra 3D (atrás) */}
         <div
-          className="absolute inset-0 rounded-2xl bg-verde-900/5 blur-xl"
+          className="absolute inset-0 rounded-2xl bg-verity-900/5 blur-xl"
           style={{
             transform: 'translateZ(-20px) scale(1.02)'
           }}
@@ -40,7 +40,7 @@ export function MessageInput3D() {
 
         {/* Input principal com profundidade */}
         <div
-          className="group relative flex items-center gap-3 overflow-hidden rounded-2xl border-2 border-verde-300 bg-gradient-to-b from-white to-verde-50/30 px-5 py-4 backdrop-blur-sm"
+          className="group relative flex items-center gap-3 overflow-hidden rounded-2xl border-2 border-verity-300 bg-gradient-to-b from-white to-verity-50/30 px-5 py-4 backdrop-blur-sm"
           style={{
             transform: 'translateZ(0)',
             boxShadow: `
@@ -71,7 +71,7 @@ export function MessageInput3D() {
           {/* Input field */}
           <Input
             placeholder="Descreva sua análise ou consulte sobre CPR..."
-            className="relative z-10 h-auto flex-1 border-0 bg-transparent p-0 text-base text-verde-950 shadow-none placeholder:text-verde-500 focus-visible:outline-none focus-visible:ring-0"
+            className="relative z-10 h-auto flex-1 border-0 bg-transparent p-0 text-base text-verity-950 shadow-none placeholder:text-verity-500 focus-visible:outline-none focus-visible:ring-0"
           />
 
           {/* Botões com hover 3D */}
@@ -83,7 +83,7 @@ export function MessageInput3D() {
                 transition: { duration: 0.2 }
               }}
               whileTap={{ scale: 0.95 }}
-              className="rounded-lg p-2.5 text-verde-700 transition-colors hover:bg-verde-50 hover:text-verde-900"
+              className="rounded-lg p-2.5 text-verity-700 transition-colors hover:bg-verity-50 hover:text-verity-900"
               style={{
                 transformStyle: 'preserve-3d'
               }}
@@ -99,7 +99,7 @@ export function MessageInput3D() {
                 transition: { duration: 0.2 }
               }}
               whileTap={{ scale: 0.95, y: 0 }}
-              className="relative rounded-xl bg-gradient-to-br from-verde-900 to-verde-800 p-2.5 text-white hover:from-verde-800 hover:to-verde-900"
+              className="relative rounded-xl bg-gradient-to-br from-verity-900 to-verity-800 p-2.5 text-white hover:from-verity-800 hover:to-verity-900"
               style={{
                 transformStyle: 'preserve-3d',
                 boxShadow: `
@@ -136,7 +136,7 @@ export function MessageInput3D() {
 
         {/* Reflexo inferior (como se estivesse em superfície) */}
         <div
-          className="absolute -bottom-8 left-0 right-0 h-8 rounded-2xl bg-gradient-to-b from-verde-900/5 to-transparent blur-md"
+          className="absolute -bottom-8 left-0 right-0 h-8 rounded-2xl bg-gradient-to-b from-verity-900/5 to-transparent blur-md"
           style={{
             transform: 'translateZ(-30px) scaleY(0.3)',
             transformOrigin: 'top'
@@ -149,7 +149,7 @@ export function MessageInput3D() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5, duration: 0.8 }}
-        className="mt-4 text-center text-xs text-verde-600"
+        className="mt-4 text-center text-xs text-verity-600"
       >
         Verity Agro pode cometer erros. Verifique informações importantes.
       </motion.p>

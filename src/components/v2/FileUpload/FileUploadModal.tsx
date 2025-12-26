@@ -414,7 +414,7 @@ export function FileUploadModal({
             className={`flex-1 rounded-lg px-4 py-2 font-medium text-white transition-colors ${
               files.length === 0 || uploading || success
                 ? 'cursor-not-allowed bg-gray-300'
-                : 'bg-verde-600 hover:bg-verde-700'
+                : 'bg-verity-600 hover:bg-verity-700'
             }`}
           >
             {uploading
@@ -429,7 +429,7 @@ export function FileUploadModal({
           {success && (
             <button
               onClick={handleAnalyze}
-              className="flex-1 rounded-lg border border-verde-200 bg-verde-50 px-4 py-2 font-medium text-verde-700 transition-colors hover:bg-verde-100"
+              className="flex-1 rounded-lg border border-verity-200 bg-verity-50 px-4 py-2 font-medium text-verity-700 transition-colors hover:bg-verity-100"
             >
               Analisar
             </button>

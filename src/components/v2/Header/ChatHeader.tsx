@@ -20,7 +20,7 @@ export function ChatHeader() {
   const [profileOpen, setProfileOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-verde-100 bg-white/95 px-6 backdrop-blur-xl">
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-verity-100 bg-white/95 px-6 backdrop-blur-xl">
       {/* Esquerda: Menu + Logo */}
       <div className="flex items-center gap-3">
         {/* Hamburger */}
@@ -28,15 +28,15 @@ export function ChatHeader() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={toggleConversationsSidebar}
-          className="flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-verde-50 active:bg-verde-100"
+          className="flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-verity-50 active:bg-verity-100"
           aria-label="Toggle sidebar"
         >
-          <Menu className="h-5 w-5 text-verde-700" />
+          <Menu className="h-5 w-5 text-verity-700" />
         </motion.button>
 
         {/* Logo + Brand */}
         <div className="flex items-center gap-3">
-          <span className="font-display text-2xl font-semibold tracking-tight text-verde-950 sm:block">
+          <span className="font-display text-2xl font-semibold tracking-tight text-verity-950 sm:block">
             Verity Agro
           </span>
         </div>
@@ -48,14 +48,14 @@ export function ChatHeader() {
       {/* Direita: Status + Files Toggle + Avatar */}
       <div className="flex items-center gap-4">
         {/* Separator */}
-        <div className="hidden h-8 w-px bg-verde-100 sm:block" />
+        <div className="hidden h-8 w-px bg-verity-100 sm:block" />
 
         {/* Files Sidebar Toggle */}
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={toggleFilesSidebar}
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-verde-700 transition-colors hover:bg-verde-50 active:bg-verde-100"
+          className="flex h-10 w-10 items-center justify-center rounded-lg text-verity-700 transition-colors hover:bg-verity-50 active:bg-verity-100"
           aria-label="Toggle files sidebar"
         >
           <PanelRight className="h-5 w-5" />
@@ -67,7 +67,7 @@ export function ChatHeader() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-verde-600"
+              className="rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-verity-600"
             >
               <Avatar email={user?.email || ''} size="lg" showBorder />
             </motion.button>
@@ -75,16 +75,16 @@ export function ChatHeader() {
 
           <DropdownMenuContent
             align="end"
-            className="w-64 rounded-xl border-2 border-verde-100 bg-white p-4 shadow-xl shadow-verde-900/15"
+            className="w-64 rounded-xl border-2 border-verity-100 bg-white p-4 shadow-xl shadow-verity-900/15"
           >
             {/* User Info */}
             <div className="mb-4 flex items-center gap-3">
               <Avatar email={user?.email || ''} size="xl" />
               <div>
-                <p className="font-sans font-semibold text-verde-950">
+                <p className="font-sans font-semibold text-verity-950">
                   {user?.name}
                 </p>
-                <p className="font-sans text-sm text-verde-600">
+                <p className="font-sans text-sm text-verity-600">
                   {user?.email}
                 </p>
               </div>
@@ -92,17 +92,17 @@ export function ChatHeader() {
 
             {/* Actions */}
             <div className="space-y-1">
-              <DropdownMenuItem className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-verde-50">
+              <DropdownMenuItem className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-verity-50">
                 <Settings className="h-4 w-4" />
                 Configurações
               </DropdownMenuItem>
 
-              <DropdownMenuItem className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-verde-50">
+              <DropdownMenuItem className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-verity-50">
                 <HelpCircle className="h-4 w-4" />
                 Ajuda e Suporte
               </DropdownMenuItem>
 
-              <DropdownMenuSeparator className="my-1 bg-verde-100" />
+              <DropdownMenuSeparator className="my-1 bg-verity-100" />
 
               <DropdownMenuItem
                 onClick={logout}

@@ -50,7 +50,7 @@ export function Sidebar({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
               onClick={onClose}
-              className="fixed inset-0 z-40 bg-verde-950/20 backdrop-blur-sm"
+              className="fixed inset-0 z-40 bg-verity-950/20 backdrop-blur-sm"
             />
 
             {/* Sidebar */}
@@ -75,16 +75,16 @@ export function Sidebar({
               className={cn(
                 'fixed top-0 z-50 flex h-screen flex-col overflow-hidden bg-white',
                 isLeft ? 'left-0 border-r-2' : 'right-0 border-l-2',
-                'border-verde-100',
+                'border-verity-100',
                 className
               )}
             >
               {/* Header with Close Button */}
-              <div className="flex items-center justify-between border-b border-verde-100 p-4">
+              <div className="flex items-center justify-between border-b border-verity-100 p-4">
                 {header}
                 <button
                   onClick={onClose}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-verde-600 transition-colors hover:bg-verde-100 hover:text-verde-900"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-verity-600 transition-colors hover:bg-verity-100 hover:text-verity-900"
                   aria-label="Fechar"
                 >
                   <X className="h-5 w-5" />
@@ -112,13 +112,13 @@ export function Sidebar({
       className={cn(
         'relative h-screen flex-shrink-0 overflow-hidden bg-white',
         isLeft ? 'border-r' : 'border-l',
-        'border-verde-100',
+        'border-verity-100',
         className
       )}
     >
       <div className="flex h-full flex-col" style={{ width: `${width}px` }}>
         {header && (
-          <div className="flex-shrink-0 border-b border-verde-100 p-4">
+          <div className="flex-shrink-0 border-b border-verity-100 p-4">
             {header}
           </div>
         )}
