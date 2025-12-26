@@ -1,10 +1,10 @@
 /**
  * Next.js Middleware para Protecao de Seguranca
  *
- * Este middleware implementa varias protecoes de seguranca:
- * - Rate Limiting (Upstash) para protecao contra abuso
- * - Validacao de origem (Origin) para prevenir CSRF
- * - Headers de seguranca adicionais
+ * Este middleware implementa várias proteções de segurança:
+ * - Rate Limiting (Upstash) para proteção contra abuso
+ * - Validação de origem (Origin) para prevenir CSRF
+ * - Headers de segurança adicionais
  */
 
 import { NextResponse } from 'next/server'
@@ -46,16 +46,15 @@ const CSRF_EXEMPT_PATHS: string[] = []
 
 export async function middleware(request: NextRequest) {
   const { method, headers, nextUrl } = request
-  const pathname = nextUrl.pathname
-
   // Security Fix: Parse x-forwarded-for correctly to prevent spoofing
   // Only use the FIRST IP (set by the trusted proxy), ignore attacker-injected IPs
   const forwardedFor = request.headers.get('x-forwarded-for')
   const realIp = request.headers.get('x-real-ip')
   
   // Priority: x-real-ip (set by proxy) > first x-forwarded-for > fallback
-  const ip = realIp || forwardedFor?.split(',')[0]?.trim() || '127.0.0.1'
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const ip = realIp || forwardedFor?.split(',')[0]?.trim() || (request as any).ip || '127.0.0.1'
+  const pathname = nextUrl.pathname
   // 1. Rate Limiting (Skip for Health Check)
   if (
     ratelimit &&
