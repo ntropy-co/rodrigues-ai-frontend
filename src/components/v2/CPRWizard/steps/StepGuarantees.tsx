@@ -70,8 +70,8 @@ export function StepGuarantees({ data, updateData, onNext, onBack }: StepGuarant
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
       
       {/* Garantias */}
-      <div className="space-y-3">
-        <Label>Tipo de Garantia</Label>
+      <fieldset className="space-y-3">
+        <legend className="text-sm font-medium mb-2">Tipo de Garantia</legend>
         <div className="grid grid-cols-2 gap-2">
             {GUARANTEE_OPTIONS.map(opt => (
                 <div key={opt} className="flex items-center space-x-2 border p-3 rounded-md hover:bg-muted/50 transition-colors">
@@ -79,18 +79,24 @@ export function StepGuarantees({ data, updateData, onNext, onBack }: StepGuarant
                         id={`g-${opt}`} 
                         checked={data.guaranteeType?.includes(opt)}
                         onCheckedChange={() => toggleGuarantee(opt)}
+                        aria-invalid={!!errors.guaranteeType}
+                        aria-describedby={errors.guaranteeType ? 'guarantee-type-error' : undefined}
                     />
                     <label 
                         htmlFor={`g-${opt}`}
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer w-full"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer w-full text-gray-800"
                     >
                         {opt}
                     </label>
                 </div>
             ))}
         </div>
-        {errors.guaranteeType && <span className="text-xs text-red-500">{errors.guaranteeType}</span>}
-      </div>
+        {errors.guaranteeType && (
+          <span id="guarantee-type-error" role="alert" className="text-xs font-medium text-red-600">
+            {errors.guaranteeType}
+          </span>
+        )}
+      </fieldset>
 
       <div className="space-y-2">
         <Label htmlFor="desc">Descrição da Garantia</Label>

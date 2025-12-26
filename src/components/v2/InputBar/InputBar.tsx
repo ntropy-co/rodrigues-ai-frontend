@@ -23,6 +23,15 @@ import { FileUploadModal } from '@/components/v2/FileUpload/FileUploadModal'
 import { useContext } from 'react'
 import { AuthContext } from '@/contexts/AuthContext'
 import { useCanvasStore } from '@/stores/useCanvasStore'
+import {
+  SLASH_COMMANDS,
+  MOCK_MENTIONS,
+  AgentCommand,
+  AgentMention,
+  CommandType,
+} from './CommandRegistry'
+import { SuggestionList } from './SuggestionList'
+import { getCaretCoordinates } from '@/lib/utils/caret-coords'
 
 // Safe hook that doesn't throw error if outside AuthProvider
 function useSafeAuth() {
@@ -104,8 +113,13 @@ export function InputBar({
     } else {
       setLocalInput(val)
     }
+    // Check for triggers on next tick to ensure cursor position is updated?
+    // Actually, we usually check in the same tick if we have the ref.
+    // We'll do it in a useEffect or directly if we pass the new value.
+    checkForTrigger(val)
   }
 
+  // --- Original State (Restored) ---
   const [isFocused, setIsFocused] = useState(false)
   const [isDragOver, setIsDragOver] = useState(false)
   const [attachments, setAttachments] = useState<File[]>([])
@@ -129,18 +143,183 @@ export function InputBar({
     }
   }, [input])
 
-  /* (Removed handleKeyDown as it was moved to inline props for better isLoading handling) */
+  // --- Agentic State ---
+  const [suggestionMode, setSuggestionMode] = useState<CommandType | null>(null)
+  const [suggestionQuery, setSuggestionQuery] = useState('')
+  const [suggestionPos, setSuggestionPos] = useState<{
+    top: number
+    left: number
+  } | null>(null)
+  const [selectedIndex, setSelectedIndex] = useState(0)
 
-  const handleSend = () => {
-    // DEV: Open Canvas Trigger
-    if (input.trim() === '/canvas') {
-      useCanvasStore
+  const filteredItems =
+    suggestionMode === 'slash'
+      ? SLASH_COMMANDS.filter((c) =>
+          c.trigger.toLowerCase().startsWith(suggestionQuery.toLowerCase())
+        )
+      : suggestionMode === 'mention'
+        ? MOCK_MENTIONS.filter((m) =>
+            m.trigger.toLowerCase().includes(suggestionQuery.toLowerCase())
+          )
+        : []
+
+  const closeSuggestions = () => {
+    setSuggestionMode(null)
+    setSuggestionQuery('')
+    setSelectedIndex(0)
+  }
+
+  const checkForTrigger = (text: string) => {
+    const textarea = textareaRef.current
+    if (!textarea) return
+
+    // Allow state update to happen first so selectionStart is correct?
+    // We might need to use the 'new value' but 'old selection'.
+    // Better: use a small timeout or requestAnimationFrame.
+    requestAnimationFrame(() => {
+      const cursor = textarea.selectionStart
+      const textBeforeCursor = text.slice(0, cursor)
+
+      // 1. Check Slash Command (Start of line)
+      const slashMatch = textBeforeCursor.match(/^\/(\w*)$/)
+      if (slashMatch) {
+        setSuggestionMode('slash')
+        setSuggestionQuery(textBeforeCursor) // Includes '/' for filtering convenience
+        const coords = getCaretCoordinates(textarea, cursor)
+        // Adjust for parent relative output (simplification)
+        // Since the suggestions are absolute in the parent, we assume 0,0 is top-left of textarea container?
+        // Actually, SuggestionList is absolute. We need coordinates relative to the nearest positioned ancestor.
+        // The container `div.relative.mx-auto` is positioned.
+        // getCaretCoordinates returns coords relative to the element (textarea).
+        // Textarea is inside the container, so `element.offsetLeft` matters.
+        // But the textarea is w-full inside the container.
+        setSuggestionPos({
+          top: coords.top - 280, // Show above
+          left: coords.left,
+        })
+        setSelectedIndex(0)
+        return
+      }
+
+      // 2. Check Mention (Anywhere)
+      // Regex: Look for @ followed by word chars at end of string
+      const mentionMatch = textBeforeCursor.match(/@(\w*)$/)
+      if (mentionMatch) {
+        setSuggestionMode('mention')
+        setSuggestionQuery(mentionMatch[0]) // '@sometext'
+        const coords = getCaretCoordinates(textarea, cursor)
+        setSuggestionPos({
+          top: coords.top - 280,
+          left: coords.left,
+        })
+        setSelectedIndex(0)
+        return
+      }
+
+      closeSuggestions()
+    })
+  }
+
+  const handleCreateCanvas = () => {
+     useCanvasStore
         .getState()
         .openCanvas(
-          '# Canvas Mode Active\n\nThis is a persistent workspace for drafting content.\n\n- [x] Edit this text\n- [ ] Copy to clipboard\n- [ ] Close panel',
-          'Demo Artifact'
+          '# Canvas Mode Active\n\nThis is a persistent workspace.\n',
+          'New Artifact'
         )
       handleInputChange('')
+      closeSuggestions()
+  }
+
+  const selectItem = (item: AgentCommand | AgentMention) => {
+    if (item.id === 'canvas') {
+      handleCreateCanvas()
+      return
+    }
+
+    // Replace text
+    const textarea = textareaRef.current
+    if (!textarea) return
+    
+    // Logic: Replace the 'trigger' part with the 'label' or specialized text
+    // Slash: usually replaces the whole line or input? For now, replace trigger with empty if it's an action, or keep it?
+    // Let's assume selecting a command clears input (action) or appends (tag).
+    // For mentions: replace @part with @Label + space.
+
+    let newText = input
+    const cursor = textarea.selectionStart
+    
+    if (item.type === 'slash') {
+       // Most slash commands are "Actions". 
+       // If reset -> call reset logic. (Simulated)
+       if (item.id === 'reset') {
+         toast.info('Contexto limpo!')
+         handleInputChange('')
+       } else if (item.id.includes('gpt') || item.id.includes('claude')) {
+          toast.success(`Modelo alterado para: ${item.label}`)
+          handleInputChange('')
+       } else {
+         // Default action
+         handleInputChange('')
+       }
+    } else {
+       // Mention
+       const textBefore = input.slice(0, cursor)
+       const lastAt = textBefore.lastIndexOf('@')
+       if (lastAt !== -1) {
+         const prefix = textBefore.slice(0, lastAt)
+         const suffix = input.slice(cursor)
+         newText = `${prefix}@${item.label} ${suffix}`
+         handleInputChange(newText)
+       }
+    }
+
+    closeSuggestions()
+    setTimeout(() => textarea.focus(), 10)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (suggestionMode && filteredItems.length > 0) {
+      if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        setSelectedIndex((i) => (i > 0 ? i - 1 : filteredItems.length - 1))
+        return
+      }
+      if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        setSelectedIndex((i) => (i < filteredItems.length - 1 ? i + 1 : 0))
+        return
+      }
+      if (e.key === 'Enter' || e.key === 'Tab') {
+        e.preventDefault()
+        selectItem(filteredItems[selectedIndex])
+        return
+      }
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        closeSuggestions()
+        return
+      }
+    }
+
+    // Original Enter logic
+    if (isLoading) {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+      }
+      return
+    }
+
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSend()
+    }
+  }
+
+  const handleSend = () => {
+    // DEV: Open Canvas Trigger (Legacy check, kept for safety)
+    if (input.trim() === '/canvas') {
+      handleCreateCanvas()
       return
     }
     if (
@@ -431,35 +610,44 @@ export function InputBar({
               style={{ transform: 'translateZ(2px)' }}
             />
 
+            {/* Autosuggestion Floating Menu */}
+            <SuggestionList
+              isVisible={!!suggestionMode && filteredItems.length > 0}
+              items={filteredItems}
+              selectedIndex={selectedIndex}
+              onSelect={selectItem}
+              position={suggestionPos}
+              trigger={suggestionMode === 'slash' ? '/' : '@'}
+            />
+
             {/* Text Area */}
             <textarea
               ref={textareaRef}
+              id="chat-input"
               value={input}
               onChange={(e) => handleInputChange(e.target.value)}
-              onKeyDown={(e) => {
-                // If loading, block enter but allow other keys
-                if (isLoading) {
-                  if (e.key === 'Enter') {
-                    e.preventDefault()
-                  }
-                  return
-                }
-
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault()
-                  handleSend()
-                }
-              }}
+              onKeyDown={handleKeyDown}
               onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
+              onBlur={() => {
+                setIsFocused(false)
+                // Delayed close to allow click on suggestion list
+                setTimeout(closeSuggestions, 200)
+              }}
               placeholder={
                 isLoading
                   ? 'Digite sua próxima mensagem...'
                   : disabled
                     ? 'Aguarde...'
-                    : 'Descreva sua análise ou consulte sobre CPR...'
+                    : 'Descreva sua análise, use / para comandos ou @ para documentos...'
               }
-              className="relative z-10 flex-1 resize-none bg-transparent py-2.5 font-sans text-base text-verde-950 placeholder:text-verde-500/80 focus:outline-none"
+              aria-label="Mensagem para o assistente Verity Agro"
+              aria-multiline="true"
+              aria-autocomplete="list"
+              aria-haspopup="listbox"
+              aria-expanded={!!suggestionMode}
+              aria-controls="suggestion-list"
+              aria-activedescendant={suggestionMode ? `suggestion-option-${selectedIndex}` : undefined}
+              className="relative z-10 flex-1 resize-none bg-transparent py-2.5 font-sans text-base text-verde-950 placeholder:text-verde-700 focus:outline-none"
               disabled={disabled} // Only disable if strictly disabled (e.g. session loading)
               rows={1}
               style={{ maxHeight: '200px' }}
@@ -485,6 +673,7 @@ export function InputBar({
                     <motion.button
                       whileHover={{ scale: 1.05, z: 10, rotateZ: 2 }}
                       whileTap={{ scale: 0.95 }}
+                      aria-label="Anexar documentos"
                       onClick={(e) => {
                         e.stopPropagation()
                         setIsUploadModalOpen(true)
@@ -493,7 +682,7 @@ export function InputBar({
                         disabled ||
                         Object.values(uploadProgress).some((p) => p < 100)
                       }
-                      className="flex h-10 w-10 items-center justify-center rounded-xl text-verde-600 transition-colors hover:bg-verde-50 hover:text-verde-900 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="flex h-10 w-10 items-center justify-center rounded-xl text-verde-700 transition-colors hover:bg-verde-50 hover:text-verde-950 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {Object.values(uploadProgress).some((p) => p < 100) ? (
                         <motion.div
@@ -523,6 +712,7 @@ export function InputBar({
                         e.stopPropagation()
                         handleSend()
                       }}
+                      aria-label="Enviar mensagem"
                       disabled={
                         (!input.trim() &&
                           attachments.length === 0 &&
@@ -578,7 +768,7 @@ export function InputBar({
             transition={{ delay: 0.5 }}
             className="mt-4 text-center"
           >
-            <p className="text-xs font-medium text-verde-600/60">
+            <p className="text-xs font-medium text-verde-800">
               Verity Agro pode cometer erros. Verifique informações importantes.
             </p>
           </motion.div>

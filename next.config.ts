@@ -185,4 +185,11 @@ const sentryOptions = {
   }
 }
 
-export default withSentryConfig(pwaConfig(nextConfig), sentryOptions)
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+})
+
+export default withSentryConfig(
+  withBundleAnalyzer(pwaConfig(nextConfig)),
+  sentryOptions
+)

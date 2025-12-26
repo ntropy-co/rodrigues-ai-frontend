@@ -2,7 +2,17 @@
 
 import React from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { QuotesChart } from '@/components/v2/QuotesChart/QuotesChart'
+import { Skeleton } from '@/components/ui/skeleton'
+import dynamic from 'next/dynamic'
+
+// Lazy load the chart component
+const QuotesChart = dynamic(
+  () => import('@/components/v2/QuotesChart/QuotesChart').then((mod) => mod.QuotesChart),
+  {
+    loading: () => <Skeleton className="w-full h-[400px] rounded-xl" />,
+    ssr: false
+  }
+)
 
 // Create a client
 const queryClient = new QueryClient()

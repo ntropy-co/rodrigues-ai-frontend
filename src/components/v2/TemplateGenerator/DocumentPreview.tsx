@@ -21,7 +21,7 @@ export function DocumentPreview({ typeId, data, clauses }: DocumentPreviewProps)
     .filter((c): c is NonNullable<typeof c> => c !== undefined);
 
   return (
-    <div className="bg-white shadow-lg border border-slate-200 p-8 min-h-[800px] w-full max-w-[210mm] mx-auto text-sm leading-relaxed text-justify font-serif text-slate-900">
+    <div id="document-preview-content" className="bg-white shadow-lg border border-slate-200 p-8 min-h-[800px] w-full max-w-[210mm] mx-auto text-sm leading-relaxed text-justify font-serif text-slate-900">
       <h1 className="text-xl font-bold text-center mb-8 uppercase border-b-2 border-black pb-4">
         {getTitle()}
       </h1>

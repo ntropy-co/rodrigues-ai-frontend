@@ -73,9 +73,17 @@ export function StepValues({ data, updateData, onNext, onBack }: StepValuesProps
             placeholder="0.00"
             value={data.amount || ''}
             onChange={(e) => updateData({ amount: parseFloat(e.target.value) })}
-            className={errors.amount ? 'border-red-500' : ''}
+            className={errors.amount ? 'border-red-600' : ''}
+            aria-invalid={!!errors.amount}
+            aria-describedby={errors.amount ? 'amount-error' : undefined}
+            required
+            aria-required="true"
           />
-          {errors.amount && <span className="text-xs text-red-500">{errors.amount}</span>}
+          {errors.amount && (
+            <span id="amount-error" role="alert" className="text-xs font-medium text-red-600">
+              {errors.amount}
+            </span>
+          )}
         </div>
 
         {/* Quantidade */}
@@ -109,12 +117,12 @@ export function StepValues({ data, updateData, onNext, onBack }: StepValuesProps
 
          {/* Índice de Correção */}
          <div className="space-y-2">
-            <Label>Índice de Correção</Label>
+            <Label htmlFor="correction-index">Índice de Correção</Label>
             <Select 
                 value={data.correctionIndex} 
                 onValueChange={(val) => updateData({ correctionIndex: val as any })}
             >
-                <SelectTrigger className={errors.correctionIndex ? 'border-red-500' : ''}>
+                <SelectTrigger id="correction-index" className={errors.correctionIndex ? 'border-red-600' : ''} aria-invalid={!!errors.correctionIndex} aria-describedby={errors.correctionIndex ? 'correction-error' : undefined}>
                     <SelectValue placeholder="Selecione" />
                 </SelectTrigger>
                 <SelectContent>
@@ -123,7 +131,11 @@ export function StepValues({ data, updateData, onNext, onBack }: StepValuesProps
                     <SelectItem value="IGP-M">IGP-M</SelectItem>
                 </SelectContent>
             </Select>
-            {errors.correctionIndex && <span className="text-xs text-red-500">{errors.correctionIndex}</span>}
+            {errors.correctionIndex && (
+              <span id="correction-error" role="alert" className="text-xs font-medium text-red-600">
+                {errors.correctionIndex}
+              </span>
+            )}
         </div>
 
         {/* Datas */}

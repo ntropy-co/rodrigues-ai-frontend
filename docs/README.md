@@ -1,48 +1,41 @@
-# 📚 Documentação Técnica - Verity Agro Frontend
+# 📚 Technical Documentation Index
 
-> Documentação interna para onboarding e manutenção do frontend Next.js 15
+Welcome to the **Verity Agro Frontend** documentation. To maintain clarity and speed up development, we follow a categorized hierarchy.
 
-## Quick Links
+## 🚀 Onboarding
+Everything you need to get the project running locally.
+*   [**Setup Guide**](./onboarding/SETUP.md): Installation and execution.
+*   [**Tech Stack**](./onboarding/STACK.md): Detailed versions and technologies.
+*   [**Environment Variables**](./onboarding/ENV_VARS.md): Required keys and tokens.
 
-| Documento | Descrição |
-|-----------|-----------|
-| [ARCHITECTURE](./ARCHITECTURE.md) | Visão geral da arquitetura |
-| [AUTHENTICATION](./AUTHENTICATION.md) | Fluxo de autenticação |
-| [API_ROUTES](./API_ROUTES.md) | Rotas BFF do Next.js |
-| [COMPONENTS](./COMPONENTS.md) | Componentes principais |
-| [HOOKS](./HOOKS.md) | Custom hooks |
-| [SETUP](./SETUP.md) | Configuração local |
+## 🏗️ Architecture
+Understanding how the system is built and how data flows.
+*   [**Architecture Overview**](./architecture/OVERVIEW.md): Layers, store, and BFF pattern.
+*   [**Authentication**](./architecture/AUTHENTICATION.md): JWT flow and session protection.
+*   [**API Reference**](./architecture/API_REFERENCE.md): List of all BFF routes.
 
-## Stack Técnico
+## 🧩 Technical Reference
+Deep dives into the codebase elements.
+*   [**UI Components**](./reference/COMPONENTS.md): Design system and patterns.
+*   [**Custom Hooks**](./reference/HOOKS.md): Logic reuse and side-effects.
 
-- **Framework:** Next.js 15 (App Router)
-- **UI:** React 19, Tailwind CSS
-- **Animações:** Framer Motion
-- **Estado:** Zustand + React Query
-- **Auth:** JWT via cookies (SameSite=Strict)
-- **Backend:** FastAPI (rodrigues-ai-backend)
+## 🛠️ Infrastructure & Ops
+Deployment, pipelines, and external services.
+*   [**CI/CD Pipeline**](./infrastructure/CI_CD.md): GitHub Actions & Vercel flow.
+*   [**Excel Setup**](./infrastructure/EMAIL_SETUP.md): SMTP (Resend/Gmail) configuration.
 
-## Estrutura de Diretórios
+## 📈 Product & Roadmap
+Planning, backlogs, and feature tracking.
+*   [**Feature Analysis**](./product/FEATURE_ANALYSIS.md): Implementation status of all features.
+*   [**Technical Backlog**](./product/TECHNICAL_BACKLOG.md): Prompts and pending technical tasks.
+*   [**API Backlog**](./product/API_DOCUMENTATION_BACKLOG.md): Standardization checklist for endpoints.
+*   [**Pilot Roadmap**](./product/ROADMAP_PILOT.md): Strategic vision and pilot architecture.
 
-```
-src/
-├── app/              # App Router pages
-│   ├── api/          # BFF routes
-│   └── (auth)/       # Auth pages
-├── components/
-│   ├── ui/           # Primitivos (Button, Input)
-│   └── v2/           # Componentes de features
-├── hooks/            # 23 custom hooks
-├── lib/              # Utilitários
-│   ├── auth/         # Autenticação
-│   └── utils/        # Helpers
-├── stores/           # Zustand stores
-└── types/            # TypeScript types
-```
+## 🛡️ Compliance & Governance
+Official records, audits, and migration history.
+*   [**Analytics Audit**](./compliance/ANALYTICS_AUDIT.md): Assessment of the tracking system.
+*   [**Analytics Plan**](./compliance/ANALYTICS_PLAN.md): Implementation steps for tracking fixes.
+*   [**Dialogflow Migration**](./compliance/DIALOGFLOW_MIGRATION.md): Status of the LangGraph transition.
 
-## Documentação Existente
-
-Veja também a pasta `/docs` para documentação adicional:
-- `STACK.md` - Stack técnico detalhado
-- `VARIAVEIS_AMBIENTE.md` - Variáveis de ambiente
-- `EMAIL_SETUP.md` - Configuração de email
+---
+> For historical context or old plans, see the [Archived Folder](./archived/).
