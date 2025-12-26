@@ -50,6 +50,31 @@ Visit [http://localhost:3000](http://localhost:3000)
 - ✅ **Sentry**: Error tracking (client, server, edge)
 - ✅ **PostHog**: Product analytics
 
+## Workflows de CPR (LangGraph — Backend)
+
+Os fluxos conversacionais de **Análise** e **Criação** de CPR estão sendo migrados do Dialogflow CX para **LangGraph** no backend, com:
+
+- **Workflows como grafo** (nós + transições) versionados em código
+- **Human-in-the-loop** nativo (`interrupt()/resume`) para confirmação de dados
+- **Persistência de estado** (checkpointer em PostgreSQL) para retomar sessões
+- **Multi-modelo** por tarefa via **OpenRouter** (roteamento de modelos)
+
+Detalhes completos do desenho/cronograma: `docs/MIGRACAO_DIALOGFLOW_LANGGRAPH.md`.
+
+### Workflows suportados
+
+- `analise_cpr`: extrair texto do documento → validar/confirmar campos → compliance → score de risco → relatório final
+- `criar_cpr`: wizard de coleta de dados → confirmação → geração do documento
+
+## OpenRouter (integração no backend)
+
+O **OpenRouter** é usado **somente no backend** para acesso a múltiplos modelos e seleção por tarefa (ex.: extração estruturada, compliance, sumarização).
+
+- Variável necessária no backend: `OPENROUTER_API_KEY`
+- **Não** configure essa chave no frontend (`NEXT_PUBLIC_*`) para evitar exposição no browser
+
+Lista completa de variáveis (frontend + backend): `docs/VARIAVEIS_AMBIENTE.md`.
+
 ## Project Structure
 
 ```
@@ -99,6 +124,8 @@ pnpm validate     # Run all checks
 - [API Backlog](docs/api-backlog.md)
 - [Email Setup](docs/EMAIL_SETUP.md)
 - [Stack](docs/STACK.md)
+- [Variáveis de Ambiente](docs/VARIAVEIS_AMBIENTE.md)
+- [Migração Dialogflow → LangGraph](docs/MIGRACAO_DIALOGFLOW_LANGGRAPH.md)
 - [Feature Analysis](docs/ANALISE_FUNCIONALIDADES.md)
 - [Pilot Plan](docs/PLANO_PILOTO_ESTRATEGICO.md)
 
