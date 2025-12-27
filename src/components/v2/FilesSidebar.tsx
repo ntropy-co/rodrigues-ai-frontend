@@ -5,11 +5,8 @@ import { motion } from 'framer-motion'
 import { useFilesSidebarStore } from '@/stores/filesSidebarStore'
 import { useChatFiles } from '@/hooks/useChatFiles'
 import { X, Download, FileQuestion } from 'lucide-react'
-import {
-  formatFileSize,
-  formatRelativeTime,
-  getFileIcon
-} from '@/lib/utils/file-utils'
+import { formatFileSize, getFileIcon } from '@/lib/utils/file-utils'
+import { formatRelativeTime } from '@/lib/utils/time'
 import { cn } from '@/lib/utils'
 import type { ChatFile } from '@/types/chat-files'
 
