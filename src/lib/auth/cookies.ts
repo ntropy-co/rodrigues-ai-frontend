@@ -4,10 +4,12 @@
  */
 
 export const getAuthToken = (): string | undefined => undefined
-export const setAuthToken = (_token: string) => {}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const setAuthToken = (token: string) => {}
 export const removeAuthToken = () => {}
 export const getRefreshToken = (): string | undefined => undefined
-export const setRefreshToken = (_token: string) => {}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const setRefreshToken = (token: string) => {}
 export const removeRefreshToken = () => {}
 export const clearAllTokens = () => {}
 export const hasAuthToken = (): boolean => false

@@ -6,3 +6,9 @@ export {
   type RiskFactor,
   type RiskLevel
 } from './RiskCalculator'
+
+// Container with API integration
+export {
+  RiskCalculatorContainer,
+  type RiskCalculatorContainerProps
+} from './RiskCalculatorContainer'
