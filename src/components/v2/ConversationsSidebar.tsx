@@ -588,6 +588,8 @@ const ConversationCard = memo(function ConversationCard({
               onClick={handleInputClick}
               className="h-6 w-full rounded border border-verity-300 bg-white px-1 text-sm text-verity-950 focus:border-verity-500 focus:outline-none"
             />
+          ) : (
+            <>
               <p
                 className={cn(
                   'flex-1 truncate text-sm',
