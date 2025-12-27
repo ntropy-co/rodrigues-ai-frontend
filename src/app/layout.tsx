@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from 'next'
-import dynamic from 'next/dynamic'
 import {
   DM_Mono,
   Geist,
@@ -15,6 +14,7 @@ import { PostHogProvider } from '@/components/providers/PostHogProvider'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { InstallPrompt } from '@/components/v2/InstallPrompt'
 import { QueryProvider } from '@/providers/QueryProvider'
+import { WebVitalsReporterWrapper } from '@/components/v2/Monitoring/WebVitalsReporterWrapper'
 import './globals.css'
 
 const inter = Inter({
@@ -84,7 +84,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${playfair.variable} ${crimson.variable} ${geistSans.variable} ${dmMono.variable} font-sans antialiased bg-sand-100 text-verity-900 selection:bg-verity-200 selection:text-verity-900`}
+        className={`${inter.variable} ${playfair.variable} ${crimson.variable} ${geistSans.variable} ${dmMono.variable} bg-sand-100 font-sans text-verity-900 antialiased selection:bg-verity-200 selection:text-verity-900`}
       >
         <ThemeProvider
           attribute="class"
@@ -100,7 +100,7 @@ export default function RootLayout({
                 </ErrorBoundary>
                 <Toaster />
                 <InstallPrompt />
-                <WebVitalsReporter />
+                <WebVitalsReporterWrapper />
               </QueryProvider>
             </AuthProvider>
           </PostHogProvider>
@@ -109,9 +109,3 @@ export default function RootLayout({
     </html>
   )
 }
-
-// Dynamically import WebVitalsReporter to avoid SSR issues with client component
-const WebVitalsReporter = dynamic(
-  () => import('@/components/v2/Monitoring/WebVitalsReporter').then(m => m.WebVitalsReporter),
-  { ssr: false }
-)
