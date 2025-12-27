@@ -79,7 +79,8 @@ export async function POST(request: NextRequest) {
         Date.now() + 8 * 24 * 60 * 60 * 1000
       ).toISOString()
 
-      return NextResponse.json(
+      // Create response with JSON body
+      const jsonResponse = NextResponse.json(
         {
           token: data.access_token,
           refreshToken: data.refresh_token,
@@ -89,6 +90,29 @@ export async function POST(request: NextRequest) {
         },
         { status: response.status }
       )
+
+      // Set HttpOnly cookie with the access token
+      // This allows subsequent requests to automatically include auth
+      jsonResponse.cookies.set('auth_token', data.access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 8 * 24 * 60 * 60 // 8 days in seconds
+      })
+
+      // Also set refresh token if available
+      if (data.refresh_token) {
+        jsonResponse.cookies.set('refresh_token', data.refresh_token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          path: '/',
+          maxAge: 30 * 24 * 60 * 60 // 30 days in seconds
+        })
+      }
+
+      return jsonResponse
     }
 
     // Return error response as-is

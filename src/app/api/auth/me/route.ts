@@ -26,8 +26,16 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 export async function GET(request: NextRequest) {
   try {
-    // Get the Authorization header from the request
-    const authorization = request.headers.get('authorization')
+    // Get the Authorization header from the request or from HttpOnly cookie
+    let authorization = request.headers.get('authorization')
+
+    // If no Authorization header, check for auth_token cookie
+    if (!authorization) {
+      const authToken = request.cookies.get('auth_token')?.value
+      if (authToken) {
+        authorization = `Bearer ${authToken}`
+      }
+    }
 
     if (!authorization) {
       return NextResponse.json(
