@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from 'next'
-import { WebVitalsReporter } from '@/components/v2/Monitoring/WebVitalsReporter'
 import {
   DM_Mono,
   Geist,
@@ -15,6 +14,7 @@ import { PostHogProvider } from '@/components/providers/PostHogProvider'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { InstallPrompt } from '@/components/v2/InstallPrompt'
 import { QueryProvider } from '@/providers/QueryProvider'
+import { WebVitalsReporterWrapper } from '@/components/v2/Monitoring/WebVitalsReporterWrapper'
 import './globals.css'
 
 const inter = Inter({
@@ -100,7 +100,7 @@ export default function RootLayout({
                 </ErrorBoundary>
                 <Toaster />
                 <InstallPrompt />
-                <WebVitalsReporter />
+                <WebVitalsReporterWrapper />
               </QueryProvider>
             </AuthProvider>
           </PostHogProvider>

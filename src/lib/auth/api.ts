@@ -46,6 +46,7 @@ async function authFetch<T>(
   endpoint: string,
   options: FetchOptions = {}
 ): Promise<T> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { authenticated = false, ...fetchOptions } = options
 
   const headers: HeadersInit = {
@@ -55,7 +56,7 @@ async function authFetch<T>(
 
   // NOTE: Authorization header is NO LONGER needed.
   // We use HttpOnly cookies which are automatically sent by the browser.
-  
+
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...fetchOptions,
@@ -224,6 +225,7 @@ export const registerApi = signup
  * Get current user data
  */
 export async function getCurrentUserApi(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   token?: string // Deprecated param, kept for signature compat
 ): Promise<{ id: string; email: string; name: string; role: string }> {
   return authFetch<{ id: string; email: string; name: string; role: string }>(

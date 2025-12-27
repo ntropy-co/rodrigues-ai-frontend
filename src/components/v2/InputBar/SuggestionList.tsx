@@ -1,4 +1,3 @@
-
 import { motion, AnimatePresence } from 'framer-motion'
 import { AgentCommand, AgentMention } from './CommandRegistry'
 import { useEffect, useRef } from 'react'
@@ -19,14 +18,16 @@ export function SuggestionList({
   onSelect,
   position,
   isVisible,
-  trigger,
+  trigger
 }: SuggestionListProps) {
   const listRef = useRef<HTMLUListElement>(null)
 
   // Scroll active item into view
   useEffect(() => {
     if (listRef.current && items.length > 0) {
-      const activeElement = listRef.current.children[selectedIndex] as HTMLElement
+      const activeElement = listRef.current.children[
+        selectedIndex
+      ] as HTMLElement
       if (activeElement) {
         activeElement.scrollIntoView({ block: 'nearest' })
       }
@@ -47,17 +48,18 @@ export function SuggestionList({
         style={{
           top: position.top - 10, // Slight offset to be above
           left: position.left,
-          maxHeight: '300px',
+          maxHeight: '300px'
         }}
         role="listbox"
         id="suggestion-list"
-        aria-label={trigger === '/' ? 'Comandos disponíveis' : 'Menções disponíveis'}
+        aria-label={
+          trigger === '/' ? 'Comandos disponíveis' : 'Menções disponíveis'
+        }
       >
         <li className="bg-verity-50 px-3 py-1.5 text-xs font-semibold text-verity-700">
           {trigger === '/' ? 'COMANDOS' : 'MENÇÕES SUGERIDAS'}
         </li>
         {items.map((item, index) => {
-          const Icon = item.type === 'slash' ? item.icon : null
           const isSelected = index === selectedIndex
 
           return (
@@ -82,15 +84,19 @@ export function SuggestionList({
                     : 'border-gray-200 bg-gray-50 text-gray-600'
                 )}
               >
-                {item.type === 'slash' ? (
-                  <Icon className="h-4 w-4" />
+                {item.type === 'slash' && item.icon ? (
+                  <item.icon className="h-4 w-4" />
                 ) : (
                   <span className="text-xs font-bold">@</span>
                 )}
               </div>
               <div className="flex flex-col">
-                <span className="font-semibold text-gray-950">{item.label}</span>
-                <span className="text-xs text-gray-700">{item.description}</span>
+                <span className="font-semibold text-gray-950">
+                  {item.label}
+                </span>
+                <span className="text-xs text-gray-700">
+                  {item.description}
+                </span>
               </div>
             </li>
           )

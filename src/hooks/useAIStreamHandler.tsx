@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { useShallow } from 'zustand/react/shallow'
@@ -9,7 +9,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { trackEvent } from '@/components/providers/PostHogProvider'
 
 /**
- * Chat response from backend
+ * Chat response from backend (non-streaming)
  */
 interface ChatResponse {
   text: string
@@ -18,11 +18,67 @@ interface ChatResponse {
 }
 
 /**
+ * SSE event types from backend streaming endpoint
+ */
+interface SSEContentEvent {
+  type: 'content'
+  content: string
+}
+
+interface SSEUsageEvent {
+  type: 'usage'
+  usage: {
+    prompt_tokens: number
+    completion_tokens: number
+    total_tokens: number
+  }
+}
+
+interface SSEDoneEvent {
+  type: 'done'
+}
+
+interface SSEErrorEvent {
+  type: 'error'
+  error: string
+}
+
+type SSEEvent = SSEContentEvent | SSEUsageEvent | SSEDoneEvent | SSEErrorEvent
+
+/**
+ * Parse SSE line into event object
+ */
+function parseSSELine(line: string): SSEEvent | null {
+  if (!line.startsWith('data: ')) return null
+
+  const data = line.slice(6).trim()
+
+  // Handle terminal event
+  if (data === '[DONE]') {
+    return { type: 'done' }
+  }
+
+  try {
+    return JSON.parse(data) as SSEEvent
+  } catch {
+    console.warn('[SSE] Failed to parse:', data)
+    return null
+  }
+}
+
+/**
  * useAIChatStreamHandler is responsible for making API calls to the chat endpoint.
- * Uses POST /api/chat which proxies to /api/v1/chat on the backend.
+ *
+ * Supports two modes:
+ * 1. Streaming (SSE) - Real-time streaming via POST /api/chat/stream
+ * 2. Non-streaming - Full response via POST /api/chat (fallback)
+ *
+ * Streaming is used when session_id exists (existing session).
+ * Non-streaming is used for new sessions (to get session_id first).
  */
 const useAIChatStreamHandler = () => {
   const router = useRouter()
+  const abortControllerRef = useRef<AbortController | null>(null)
 
   // Consolidated Zustand selectors with shallow equality to prevent unnecessary re-renders
   const {
@@ -60,6 +116,167 @@ const useAIChatStreamHandler = () => {
     })
   }, [setMessages])
 
+  /**
+   * Update the last agent message content (for streaming)
+   */
+  const appendToLastMessage = useCallback(
+    (chunk: string) => {
+      setMessages((prevMessages) => {
+        const newMessages = [...prevMessages]
+        const lastMessage = newMessages[newMessages.length - 1]
+        if (lastMessage && lastMessage.role === 'agent') {
+          lastMessage.content = (lastMessage.content || '') + chunk
+        }
+        return newMessages
+      })
+    },
+    [setMessages]
+  )
+
+  /**
+   * Handle streaming response via SSE
+   */
+  const handleStreamingChat = useCallback(
+    async (
+      message: string,
+      currentSessionId: string,
+      signal: AbortSignal
+    ): Promise<void> => {
+      const response = await fetch('/api/chat/stream', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          message: message.trim(),
+          session_id: currentSessionId
+        }),
+        signal
+      })
+
+      if (!response.ok) {
+        let errorMessage = 'Erro ao iniciar streaming'
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.detail || errorMessage
+        } catch {
+          errorMessage = `Erro ${response.status}: ${response.statusText}`
+        }
+        throw new Error(errorMessage)
+      }
+
+      if (!response.body) {
+        throw new Error('No response body for streaming')
+      }
+
+      // Read the stream
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read()
+
+          if (done) break
+
+          // Decode chunk and add to buffer
+          buffer += decoder.decode(value, { stream: true })
+
+          // Process complete lines
+          const lines = buffer.split('\n')
+          buffer = lines.pop() || '' // Keep incomplete line in buffer
+
+          for (const line of lines) {
+            const trimmedLine = line.trim()
+            if (!trimmedLine) continue
+
+            const event = parseSSELine(trimmedLine)
+            if (!event) continue
+
+            switch (event.type) {
+              case 'content':
+                // Append content chunk to message
+                appendToLastMessage(event.content)
+                break
+
+              case 'usage':
+                // Log usage stats (optional)
+                console.debug('[SSE] Usage:', event.usage)
+                break
+
+              case 'done':
+                // Stream complete
+                console.debug('[SSE] Stream complete')
+                break
+
+              case 'error':
+                throw new Error(event.error)
+            }
+          }
+        }
+      } finally {
+        reader.releaseLock()
+      }
+
+      // Track streaming event
+      trackEvent('chat_message_streamed', {
+        session_id: currentSessionId,
+        message_length: message.trim().length
+      })
+    },
+    [token, appendToLastMessage]
+  )
+
+  /**
+   * Handle non-streaming response (for new sessions or fallback)
+   */
+  const handleNonStreamingChat = useCallback(
+    async (
+      message: string,
+      currentSessionId: string | null,
+      signal: AbortSignal
+    ): Promise<ChatResponse> => {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          message: message.trim(),
+          session_id: currentSessionId
+        }),
+        signal
+      })
+
+      if (!response.ok) {
+        let errorMessage = 'Erro ao enviar mensagem'
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.detail || errorMessage
+        } catch {
+          errorMessage = `Erro ${response.status}: ${response.statusText}`
+        }
+        throw new Error(errorMessage)
+      }
+
+      return response.json()
+    },
+    [token]
+  )
+
+  /**
+   * Cancel ongoing stream
+   */
+  const cancelStream = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+      abortControllerRef.current = null
+    }
+  }, [])
+
   const handleStreamResponse = useCallback(
     async (
       input: string | FormData,
@@ -68,8 +285,15 @@ const useAIChatStreamHandler = () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       _toolId?: string
     ) => {
+      // Cancel any ongoing stream
+      cancelStream()
+
       setIsStreaming(true)
       setStreamingErrorMessage('')
+
+      // Create new abort controller for this request
+      abortControllerRef.current = new AbortController()
+      const signal = abortControllerRef.current.signal
 
       // Extract message from input
       const message =
@@ -113,7 +337,7 @@ const useAIChatStreamHandler = () => {
       })
 
       // Determine session ID to use
-      const sessionIdToSend =
+      const sessionIdToUse =
         explicitSessionId !== undefined ? explicitSessionId : sessionId
 
       try {
@@ -121,84 +345,94 @@ const useAIChatStreamHandler = () => {
           throw new Error('Usuário não autenticado')
         }
 
-        // Call chat API
-        const response = await fetch('/api/chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            message: message.trim(),
-            session_id: sessionIdToSend || null
-          })
-        })
+        // Use streaming if we have a session ID, otherwise use non-streaming
+        // (streaming requires session_id to be set first)
+        if (sessionIdToUse) {
+          // Streaming mode
+          await handleStreamingChat(message, sessionIdToUse, signal)
 
-        if (!response.ok) {
-          let errorMessage = 'Erro ao enviar mensagem'
-          try {
-            const errorData = await response.json()
-            errorMessage = errorData.detail || errorMessage
-          } catch {
-            // Response is not JSON (e.g., HTML error page)
-            errorMessage = `Erro ${response.status}: ${response.statusText}`
-          }
-          throw new Error(errorMessage)
-        }
-
-        const data: ChatResponse = await response.json()
-
-        // Track chat message event
-        trackEvent('chat_message_sent', {
-          session_id: data.session_id,
-          message_length: message.trim().length,
-          has_files: files && files.length > 0,
-          file_count: files?.length || 0,
-          is_new_session: data.session_id !== sessionId
-        })
-
-        // Update session ID if backend returned a new one
-        if (data.session_id && data.session_id !== sessionId) {
-          setSessionId(data.session_id)
-          saveSessionIdToStorage(data.session_id)
-          addLocallyCreatedSessionId(data.session_id)
-
-          // Add to sessions list
-          setSessionsData((prevSessionsData) => {
-            const sessionExists = prevSessionsData?.some(
-              (session) => session.session_id === data.session_id
-            )
-            if (sessionExists) {
-              return prevSessionsData
+          // Update message timestamp after streaming completes
+          setMessages((prevMessages) => {
+            const newMessages = [...prevMessages]
+            const lastMessage = newMessages[newMessages.length - 1]
+            if (lastMessage && lastMessage.role === 'agent') {
+              lastMessage.created_at = Math.floor(Date.now() / 1000)
             }
-            return [
-              {
-                session_id: data.session_id,
-                title: message.substring(0, 50),
-                created_at: Math.floor(Date.now() / 1000)
-              },
-              ...(prevSessionsData ?? [])
-            ]
+            return newMessages
           })
 
-          // Navigate to session URL
-          if (window.location.pathname !== `/chat/${data.session_id}`) {
-            router.push(`/chat/${data.session_id}`)
+          // Track event
+          trackEvent('chat_message_sent', {
+            session_id: sessionIdToUse,
+            message_length: message.trim().length,
+            has_files: files && files.length > 0,
+            file_count: files?.length || 0,
+            is_new_session: false,
+            streaming: true
+          })
+        } else {
+          // Non-streaming mode (new session)
+          const data = await handleNonStreamingChat(message, null, signal)
+
+          // Track chat message event
+          trackEvent('chat_message_sent', {
+            session_id: data.session_id,
+            message_length: message.trim().length,
+            has_files: files && files.length > 0,
+            file_count: files?.length || 0,
+            is_new_session: true,
+            streaming: false
+          })
+
+          // Update session ID
+          if (data.session_id) {
+            setSessionId(data.session_id)
+            saveSessionIdToStorage(data.session_id)
+            addLocallyCreatedSessionId(data.session_id)
+
+            // Add to sessions list
+            setSessionsData((prevSessionsData) => {
+              const sessionExists = prevSessionsData?.some(
+                (session) => session.session_id === data.session_id
+              )
+              if (sessionExists) {
+                return prevSessionsData
+              }
+              return [
+                {
+                  session_id: data.session_id,
+                  title: message.substring(0, 50),
+                  created_at: Math.floor(Date.now() / 1000)
+                },
+                ...(prevSessionsData ?? [])
+              ]
+            })
+
+            // Navigate to session URL
+            if (window.location.pathname !== `/chat/${data.session_id}`) {
+              router.push(`/chat/${data.session_id}`)
+            }
           }
+
+          // Update agent message with response
+          setMessages((prevMessages) => {
+            const newMessages = [...prevMessages]
+            const lastMessage = newMessages[newMessages.length - 1]
+            if (lastMessage && lastMessage.role === 'agent') {
+              lastMessage.content = data.text
+              lastMessage.id = data.message_id
+              lastMessage.created_at = Math.floor(Date.now() / 1000)
+            }
+            return newMessages
+          })
+        }
+      } catch (error) {
+        // Ignore abort errors
+        if (error instanceof Error && error.name === 'AbortError') {
+          console.debug('[Chat] Request aborted')
+          return
         }
 
-        // Update agent message with response
-        setMessages((prevMessages) => {
-          const newMessages = [...prevMessages]
-          const lastMessage = newMessages[newMessages.length - 1]
-          if (lastMessage && lastMessage.role === 'agent') {
-            lastMessage.content = data.text
-            lastMessage.id = data.message_id
-            lastMessage.created_at = Math.floor(Date.now() / 1000)
-          }
-          return newMessages
-        })
-      } catch (error) {
         updateMessagesWithErrorState()
         let errorMessage =
           error instanceof Error ? error.message : String(error)
@@ -224,6 +458,7 @@ const useAIChatStreamHandler = () => {
       } finally {
         focusChatInput()
         setIsStreaming(false)
+        abortControllerRef.current = null
       }
     },
     [
@@ -239,11 +474,14 @@ const useAIChatStreamHandler = () => {
       setSessionId,
       addLocallyCreatedSessionId,
       token,
-      router
+      router,
+      handleStreamingChat,
+      handleNonStreamingChat,
+      cancelStream
     ]
   )
 
-  return { handleStreamResponse }
+  return { handleStreamResponse, cancelStream }
 }
 
 export default useAIChatStreamHandler

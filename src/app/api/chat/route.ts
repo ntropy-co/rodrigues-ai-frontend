@@ -1,23 +1,26 @@
 /**
- * BFF (Next.js API Route) — Chat
+ * BFF (Next.js API Route) — Chat (Non-Streaming)
  *
- * Encaminha mensagens para o backend (`/api/v1/chat/`) e retorna a resposta do agente.
+ * Proxy para o endpoint de chat do backend.
+ * Mantém compatibilidade com o hook useAIStreamHandler atual.
  *
  * Frontend:
  * - `POST /api/chat`
  *
  * Backend:
- * - `POST ${BACKEND_URL}/api/v1/chat/` (slash final é importante no FastAPI)
+ * - `POST ${BACKEND_URL}/api/v1/chat/`
  *
  * Auth:
  * - Obrigatório: `Authorization: Bearer <token>`
  *
- * Regras importantes:
- * - `session_id` é opcional. Se ausente/vazio, o backend cria uma nova sessão.
- * - Quando presente, precisa ter prefixo `s_` (ex.: `s_<uuidhex>`).
+ * Request Body:
+ * - message: string (mensagem do usuário)
+ * - session_id: string | null (ID da sessão, null para nova sessão)
  *
- * CORS:
- * - Implementa `OPTIONS` para preflight.
+ * Response:
+ * - text: string (resposta do agente)
+ * - session_id: string
+ * - message_id?: string (ID da mensagem para feedback)
  *
  * Chamadores:
  * - `src/hooks/useAIStreamHandler.tsx`
@@ -27,37 +30,21 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
-/**
- * Validates if a string is a valid session ID (s_xxx format from backend)
- * Accepts: null, undefined, empty string (backend will create new session)
- * Accepts: strings starting with "s_" (existing session from backend)
- */
-function isValidSessionId(str: string | null | undefined): boolean {
-  // null/undefined/empty is valid - backend will create a new session
-  if (!str || typeof str !== 'string') return true
-  const trimmed = str.trim()
-  if (!trimmed) return true
-  // Session IDs from backend start with "s_" prefix
-  return trimmed.startsWith('s_') && trimmed.length > 3
+export interface ChatRequest {
+  message: string
+  session_id: string | null
 }
 
-// Handle CORS preflight requests
-// Security: Only allow same-origin requests (no external domains)
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': process.env.NEXT_PUBLIC_APP_URL || 'https://rodriguesagro.com.br',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Allow-Credentials': 'true'
-    }
-  })
+export interface ChatResponse {
+  text: string
+  session_id: string
+  message_id?: string
+  sources?: string[]
 }
 
 export async function POST(request: NextRequest) {
   try {
-    // Get the Authorization header from the request
+    // Get the Authorization header
     const authorization = request.headers.get('authorization')
 
     if (!authorization) {
@@ -67,42 +54,26 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Parse the request body
-    const body = await request.json()
-    const { message, session_id } = body
+    // Parse request body
+    let body: ChatRequest
+    try {
+      body = await request.json()
+    } catch {
+      return NextResponse.json(
+        { detail: 'Invalid request body' },
+        { status: 400 }
+      )
+    }
 
-    if (!message) {
+    // Validate message
+    if (!body.message?.trim()) {
       return NextResponse.json(
         { detail: 'Message is required' },
         { status: 400 }
       )
     }
 
-    // Validate session_id format if provided
-    // Accept: null, undefined, empty string (backend will create new session)
-    // Accept: strings starting with "s_" (existing session from backend)
-    let sanitizedSessionId: string | null = null
-
-    if (session_id !== null && session_id !== undefined && session_id !== '') {
-      // session_id was provided, validate it
-      if (!isValidSessionId(session_id)) {
-        console.warn(
-          '[API Route /api/chat] Invalid session_id format:',
-          session_id
-        )
-        return NextResponse.json(
-          {
-            detail:
-              'Formato de sessão inválido. Por favor, inicie uma nova conversa.'
-          },
-          { status: 400 }
-        )
-      }
-      // Sanitize: trim whitespace
-      sanitizedSessionId = String(session_id).trim()
-    }
-
-    // Forward the request to the backend (trailing slash required by FastAPI)
+    // Forward to backend
     const response = await fetch(`${BACKEND_URL}/api/v1/chat/`, {
       method: 'POST',
       headers: {
@@ -110,50 +81,35 @@ export async function POST(request: NextRequest) {
         Authorization: authorization
       },
       body: JSON.stringify({
-        message,
-        session_id: sanitizedSessionId
+        message: body.message.trim(),
+        session_id: body.session_id || null
       })
     })
 
-    // Handle error responses from backend
+    // Handle error responses
     if (!response.ok) {
-      let errorDetail = 'Erro ao processar mensagem'
+      let errorDetail = 'Erro ao enviar mensagem'
       try {
         const errorData = await response.json()
         errorDetail = errorData.detail || errorDetail
       } catch {
-        // Backend returned non-JSON (e.g., HTML error page)
         errorDetail = `Backend error: ${response.status} ${response.statusText}`
       }
-      console.error('[API Route /api/chat] Backend error:', errorDetail)
+      console.error('[API /api/chat] Backend error:', errorDetail)
       return NextResponse.json(
         { detail: errorDetail },
         { status: response.status }
       )
     }
 
-    // Get the response data
-    const data = await response.json()
-
-    // Return the response with CORS headers
-    return NextResponse.json(data, {
-      status: 200,
-      headers: {
-        'Access-Control-Allow-Origin': process.env.NEXT_PUBLIC_APP_URL || 'https://rodriguesagro.com.br',
-        'Access-Control-Allow-Credentials': 'true'
-      }
-    })
+    // Return successful response
+    const data: ChatResponse = await response.json()
+    return NextResponse.json(data, { status: 200 })
   } catch (error) {
-    console.error('[API Route /api/chat] Error:', error)
+    console.error('[API /api/chat] Error:', error)
     return NextResponse.json(
       { detail: 'Internal server error' },
-      {
-        status: 500,
-        headers: {
-          'Access-Control-Allow-Origin': process.env.NEXT_PUBLIC_APP_URL || 'https://rodriguesagro.com.br',
-          'Access-Control-Allow-Credentials': 'true'
-        }
-      }
+      { status: 500 }
     )
   }
 }

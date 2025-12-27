@@ -1,4 +1,4 @@
-import { track } from '@/lib/analytics'
+import { track, ANALYTICS_EVENTS } from '@/lib/analytics'
 import { toast } from 'sonner'
 
 interface ExportPdfOptions {
@@ -12,13 +12,13 @@ interface ExportPdfOptions {
 
 /**
  * Generates a high-quality PDF from a DOM element using html2canvas and jspdf.
- * 
+ *
  * @param options Configuration for PDF generation
  */
-export const exportToPdf = async ({ 
-  source, 
-  elementId = 'document-preview-content', 
-  filename = 'documento.pdf' 
+export const exportToPdf = async ({
+  source,
+  elementId = 'document-preview-content',
+  filename = 'documento.pdf'
 }: ExportPdfOptions) => {
   try {
     const html2canvas = (await import('html2canvas')).default
@@ -34,7 +34,7 @@ export const exportToPdf = async ({
     const toastId = toast.loading('Gerando PDF...')
 
     // Track start
-    track('export_pdf_start', { source, format: 'pdf' })
+    track(ANALYTICS_EVENTS.EXPORT_PDF_START, { source, format: 'pdf' })
 
     // Capture canvas
     const canvas = await html2canvas(element, {
@@ -45,12 +45,12 @@ export const exportToPdf = async ({
     })
 
     const imgData = canvas.toDataURL('image/jpeg', 1.0)
-    
+
     // PDF Setup (A4)
     const pdf = new jsPDF('p', 'mm', 'a4')
     const pdfWidth = pdf.internal.pageSize.getWidth()
     const pdfHeight = pdf.internal.pageSize.getHeight()
-    
+
     // Calc dimensions preserving aspect ratio
     const imgWidth = pdfWidth
     const imgHeight = (canvas.height * imgWidth) / canvas.width
@@ -74,12 +74,11 @@ export const exportToPdf = async ({
     pdf.save(filename)
 
     // Success
-    track('export_pdf_success', { source })
+    track(ANALYTICS_EVENTS.EXPORT_PDF_SUCCESS, { source })
     toast.success('PDF baixado com sucesso!', { id: toastId })
-
   } catch (error) {
     console.error('PDF Generation Error:', error)
-    track('export_pdf_error', { source, error: String(error) })
+    track(ANALYTICS_EVENTS.EXPORT_PDF_ERROR, { source, error: String(error) })
     toast.error('Erro ao gerar PDF. Tente novamente.')
   }
 }

@@ -30,7 +30,7 @@ const properties = [
   'textIndent',
   'textDecoration',
   'letterSpacing',
-  'wordSpacing',
+  'wordSpacing'
 ] as const
 
 interface Coordinates {
@@ -71,14 +71,16 @@ export function getCaretCoordinates(
   }
 
   properties.forEach((prop) => {
-    // @ts-ignore
     style[prop] = computed[prop]
   })
 
   if (isBrowser) {
     // FireFox throws an error if we try to access cssText locally
     // but works fine if we use the computed style object
-    if ((window as any).mozInnerScreenX != null) {
+    if (
+      (window as unknown as { mozInnerScreenX?: number }).mozInnerScreenX !=
+      null
+    ) {
       if (element.scrollHeight > parseInt(computed.height))
         style.overflowY = 'scroll'
     } else {
@@ -106,7 +108,7 @@ export function getCaretCoordinates(
   const coordinates = {
     top: span.offsetTop + parseInt(computed.borderTopWidth),
     left: span.offsetLeft + parseInt(computed.borderLeftWidth),
-    height: parseInt(computed.lineHeight),
+    height: parseInt(computed.lineHeight)
   }
 
   if (options?.debug) {

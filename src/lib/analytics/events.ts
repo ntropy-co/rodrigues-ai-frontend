@@ -65,7 +65,12 @@ export const ANALYTICS_EVENTS = {
   FEATURE_USED: 'feature_used',
 
   // Performance
-  WEB_VITAL_REPORTED: 'web_vital_reported'
+  WEB_VITAL_REPORTED: 'web_vital_reported',
+
+  // Export
+  EXPORT_PDF_START: 'export_pdf_start',
+  EXPORT_PDF_SUCCESS: 'export_pdf_success',
+  EXPORT_PDF_ERROR: 'export_pdf_error'
 } as const
 
 export type AnalyticsEvent =
@@ -254,6 +259,21 @@ export interface WebVitalsEventProperties {
   }
 }
 
+// Export
+export interface ExportEventProperties {
+  [ANALYTICS_EVENTS.EXPORT_PDF_START]: {
+    source: string
+    format: 'pdf'
+  }
+  [ANALYTICS_EVENTS.EXPORT_PDF_SUCCESS]: {
+    source: string
+  }
+  [ANALYTICS_EVENTS.EXPORT_PDF_ERROR]: {
+    source: string
+    error: string
+  }
+}
+
 // Combined event properties type
 export type EventProperties = AuthEventProperties &
   ChatEventProperties &
@@ -263,4 +283,5 @@ export type EventProperties = AuthEventProperties &
   UIEventProperties &
   ErrorEventProperties &
   EngagementEventProperties &
-  WebVitalsEventProperties
+  WebVitalsEventProperties &
+  ExportEventProperties

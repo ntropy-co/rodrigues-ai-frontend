@@ -4,7 +4,7 @@ import React, { useState, Suspense } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useAuthForm } from '@/hooks/useAuthForm'
@@ -39,7 +39,7 @@ function LoginContent() {
   const [showPassword, setShowPassword] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
   const redirect = getSafeRedirectPath(searchParams.get('redirect')) || '/chat'
-  const shouldReduceMotion = useReducedMotion()
+  // Motion preferences available via useReducedMotion() if needed
 
   const {
     values,
@@ -227,7 +227,9 @@ function LoginContent() {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-verity-600 transition-colors hover:text-verity-900"
-                    aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                    aria-label={
+                      showPassword ? 'Ocultar senha' : 'Mostrar senha'
+                    }
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4" />
@@ -290,7 +292,7 @@ function LoginContent() {
                     <div className="w-full border-t border-verity-200/50" />
                   </div>
                   <div className="relative flex justify-center text-xs uppercase tracking-wider">
-                    <span className="bg-white/60 px-4 text-verity-500 backdrop-blur-sm rounded-full">
+                    <span className="rounded-full bg-white/60 px-4 text-verity-500 backdrop-blur-sm">
                       Ainda não tem conta?
                     </span>
                   </div>
@@ -316,7 +318,8 @@ function LoginContent() {
             transition={{ delay: 0.5 }}
             className="mt-6 text-center text-xs text-white/70"
           >
-            © {new Date().getFullYear()} Verity Agro. Todos os direitos reservados.
+            © {new Date().getFullYear()} Verity Agro. Todos os direitos
+            reservados.
           </motion.p>
         </motion.div>
       </div>
