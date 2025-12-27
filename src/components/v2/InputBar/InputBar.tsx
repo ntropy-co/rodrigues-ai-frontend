@@ -33,6 +33,10 @@ import {
 import { SuggestionList } from './SuggestionList'
 import { getCaretCoordinates } from '@/lib/utils/caret-coords'
 
+// Suggestion list positioning constants
+const SUGGESTION_LIST_HEIGHT = 280
+const SUGGESTION_VERTICAL_OFFSET = -SUGGESTION_LIST_HEIGHT
+
 // Safe hook that doesn't throw error if outside AuthProvider
 function useSafeAuth() {
   const context = useContext(AuthContext)
@@ -65,25 +69,6 @@ interface InputBarProps {
   onRemoveExternalAttachment?: (id: string) => void
 }
 
-// Componente visual de Barra de Progresso
-function ProgressBar({ progress }: { progress: number }) {
-  return (
-    <div className="absolute bottom-0 left-0 right-0 h-1 overflow-hidden rounded-b-lg bg-verity-100">
-      <motion.div
-        className="h-full bg-gradient-to-r from-verity-900 to-verity-700"
-        initial={{ width: 0 }}
-        animate={{ width: `${progress}%` }}
-        transition={{ duration: 0.3, ease: easings.butter }}
-      />
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
-        animate={{ x: ['-100%', '100%'] }}
-        transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-      />
-    </div>
-  )
-}
-
 /**
  * Premium 3D Input Bar for Verity Agro.
  * Implements complex layering, depth effects, and micro-interactions.
@@ -108,15 +93,14 @@ export function InputBar({
   const [localInput, setLocalInput] = useState('')
   const input = setMessage ? message : localInput
   const handleInputChange = (val: string) => {
+    // Capture cursor position before state update to avoid race condition
+    const cursorPos = textareaRef.current?.selectionStart ?? val.length
     if (setMessage) {
       setMessage(val)
     } else {
       setLocalInput(val)
     }
-    // Check for triggers on next tick to ensure cursor position is updated?
-    // Actually, we usually check in the same tick if we have the ref.
-    // We'll do it in a useEffect or directly if we pass the new value.
-    checkForTrigger(val)
+    checkForTrigger(val, cursorPos)
   }
 
   // --- Original State (Restored) ---
@@ -124,10 +108,6 @@ export function InputBar({
   const [isDragOver, setIsDragOver] = useState(false)
   const [attachments, setAttachments] = useState<File[]>([])
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
-  // Estado para simular progresso de upload por arquivo
-  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>(
-    {}
-  )
 
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -169,55 +149,42 @@ export function InputBar({
     setSelectedIndex(0)
   }
 
-  const checkForTrigger = (text: string) => {
+  const checkForTrigger = (text: string, cursorPos: number) => {
     const textarea = textareaRef.current
     if (!textarea) return
 
-    // Allow state update to happen first so selectionStart is correct?
-    // We might need to use the 'new value' but 'old selection'.
-    // Better: use a small timeout or requestAnimationFrame.
-    requestAnimationFrame(() => {
-      const cursor = textarea.selectionStart
-      const textBeforeCursor = text.slice(0, cursor)
+    const textBeforeCursor = text.slice(0, cursorPos)
 
-      // 1. Check Slash Command (Start of line)
-      const slashMatch = textBeforeCursor.match(/^\/(\w*)$/)
-      if (slashMatch) {
-        setSuggestionMode('slash')
-        setSuggestionQuery(textBeforeCursor) // Includes '/' for filtering convenience
-        const coords = getCaretCoordinates(textarea, cursor)
-        // Adjust for parent relative output (simplification)
-        // Since the suggestions are absolute in the parent, we assume 0,0 is top-left of textarea container?
-        // Actually, SuggestionList is absolute. We need coordinates relative to the nearest positioned ancestor.
-        // The container `div.relative.mx-auto` is positioned.
-        // getCaretCoordinates returns coords relative to the element (textarea).
-        // Textarea is inside the container, so `element.offsetLeft` matters.
-        // But the textarea is w-full inside the container.
-        setSuggestionPos({
-          top: coords.top - 280, // Show above
-          left: coords.left
-        })
-        setSelectedIndex(0)
-        return
-      }
+    // 1. Check Slash Command (Start of line)
+    const slashMatch = textBeforeCursor.match(/^\/(\w*)$/)
+    if (slashMatch) {
+      setSuggestionMode('slash')
+      setSuggestionQuery(textBeforeCursor) // Includes '/' for filtering convenience
+      const coords = getCaretCoordinates(textarea, cursorPos)
+      setSuggestionPos({
+        top: coords.top + SUGGESTION_VERTICAL_OFFSET,
+        left: coords.left
+      })
+      setSelectedIndex(0)
+      return
+    }
 
-      // 2. Check Mention (Anywhere)
-      // Regex: Look for @ followed by word chars at end of string
-      const mentionMatch = textBeforeCursor.match(/@(\w*)$/)
-      if (mentionMatch) {
-        setSuggestionMode('mention')
-        setSuggestionQuery(mentionMatch[0]) // '@sometext'
-        const coords = getCaretCoordinates(textarea, cursor)
-        setSuggestionPos({
-          top: coords.top - 280,
-          left: coords.left
-        })
-        setSelectedIndex(0)
-        return
-      }
+    // 2. Check Mention (Anywhere)
+    // Regex: Look for @ followed by word chars at end of string
+    const mentionMatch = textBeforeCursor.match(/@(\w*)$/)
+    if (mentionMatch) {
+      setSuggestionMode('mention')
+      setSuggestionQuery(mentionMatch[0]) // '@sometext'
+      const coords = getCaretCoordinates(textarea, cursorPos)
+      setSuggestionPos({
+        top: coords.top + SUGGESTION_VERTICAL_OFFSET,
+        left: coords.left
+      })
+      setSelectedIndex(0)
+      return
+    }
 
-      closeSuggestions()
-    })
+    closeSuggestions()
   }
 
   const handleCreateCanvas = () => {
@@ -331,24 +298,11 @@ export function InputBar({
     )
       return
 
-    // Verificar se todos os uploads terminaram (simulação)
-    const pendingUploads = Object.values(uploadProgress).some((p) => p < 100)
-    if (pendingUploads) {
-      toast.error('Aguarde o carregamento dos arquivos.')
-      return
-    }
-
-    if (attachments.length > 0 || externalAttachments.length > 0) {
-      // toast.success('Arquivo enviado com sucesso!')
-      // Removed toast to avoid spam if just attaching
-    }
-
     onSendMessage(input, attachments) // Pass local attachments to parent
     // Note: externalAttachments are already known by parent
 
     handleInputChange('')
     setAttachments([]) // Clear local attachments
-    setUploadProgress({}) // Limpar progressos
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto'
       // Restore focus immediately
@@ -358,26 +312,10 @@ export function InputBar({
     }
   }
 
-  const simulateUpload = (fileName: string) => {
-    setUploadProgress((prev) => ({ ...prev, [fileName]: 0 }))
-    let progress = 0
-    const interval = setInterval(() => {
-      progress += Math.random() * 30
-      if (progress >= 100) {
-        progress = 100
-        clearInterval(interval)
-      }
-      setUploadProgress((prev) => ({ ...prev, [fileName]: progress }))
-    }, 200)
-  }
-
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const newFiles = Array.from(e.target.files)
       setAttachments((prev) => [...prev, ...newFiles])
-
-      // Iniciar simulação de upload para novos arquivos
-      newFiles.forEach((f) => simulateUpload(f.name))
 
       if (onFileSelect) {
         newFiles.forEach((f) => onFileSelect(f))
@@ -386,13 +324,7 @@ export function InputBar({
   }
 
   const removeAttachment = (index: number) => {
-    const fileToRemove = attachments[index]
     setAttachments((prev) => prev.filter((_, i) => i !== index))
-    setUploadProgress((prev) => {
-      const newProgress = { ...prev }
-      delete newProgress[fileToRemove.name]
-      return newProgress
-    })
   }
 
   // Drag and drop handlers...
@@ -402,7 +334,6 @@ export function InputBar({
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const newFiles = Array.from(e.dataTransfer.files)
       setAttachments((prev) => [...prev, ...newFiles])
-      newFiles.forEach((f) => simulateUpload(f.name))
     }
   }
 
@@ -412,14 +343,6 @@ export function InputBar({
     uploadedSessionId?: string,
     fileInfo?: { name: string; size: number; type?: string }
   ) => {
-    console.log(
-      '[InputBar] Upload complete:',
-      documentId,
-      'session:',
-      uploadedSessionId,
-      'file:',
-      fileInfo
-    )
     setIsUploadModalOpen(false)
 
     if (onFileUploaded && uploadedSessionId && fileInfo) {
@@ -431,7 +354,6 @@ export function InputBar({
 
   // Handle session created from modal
   const handleSessionCreated = (newSessionId: string) => {
-    console.log('[InputBar] Session created:', newSessionId)
     if (onSessionCreated) {
       onSessionCreated(newSessionId)
     }
@@ -548,13 +470,6 @@ export function InputBar({
                   >
                     <X className="h-3 w-3" />
                   </button>
-
-                  {/* Progress Bar (Only for local uploads) */}
-                  {!file.isExternal &&
-                    uploadProgress[file.name] !== undefined &&
-                    uploadProgress[file.name] < 100 && (
-                      <ProgressBar progress={uploadProgress[file.name]} />
-                    )}
                 </motion.div>
               ))}
             </motion.div>
@@ -682,25 +597,10 @@ export function InputBar({
                         e.stopPropagation()
                         setIsUploadModalOpen(true)
                       }}
-                      disabled={
-                        disabled ||
-                        Object.values(uploadProgress).some((p) => p < 100)
-                      }
+                      disabled={disabled}
                       className="flex h-10 w-10 items-center justify-center rounded-xl text-verity-700 transition-colors hover:bg-verity-50 hover:text-verity-950 disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      {Object.values(uploadProgress).some((p) => p < 100) ? (
-                        <motion.div
-                          animate={{ rotate: 360 }}
-                          transition={{
-                            duration: 1,
-                            repeat: Infinity,
-                            ease: 'linear'
-                          }}
-                          className="h-5 w-5 rounded-full border-2 border-verity-600 border-t-transparent"
-                        />
-                      ) : (
-                        <Paperclip className="h-5 w-5" />
-                      )}
+                      <Paperclip className="h-5 w-5" />
                     </motion.button>
                   </TooltipTrigger>
                   <TooltipContent className="border-verity-900 bg-verity-950 text-white">

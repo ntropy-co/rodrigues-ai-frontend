@@ -44,7 +44,6 @@ interface PlaygroundStore {
   ) => void
   hasStorage: boolean
   setHasStorage: (hasStorage: boolean) => void
-  chatInputRef: React.RefObject<HTMLTextAreaElement | null>
   selectedEndpoint: string
   setSelectedEndpoint: (selectedEndpoint: string) => void
   agents: Agent[]
@@ -63,7 +62,7 @@ interface PlaygroundStore {
   ) => void
   isSessionsLoading: boolean
   setIsSessionsLoading: (isSessionsLoading: boolean) => void
-  locallyCreatedSessionIds: Set<string>
+  locallyCreatedSessionIds: string[]
   addLocallyCreatedSessionId: (sessionId: string) => void
 }
 
@@ -93,7 +92,6 @@ export const usePlaygroundStore = create<PlaygroundStore>()(
         })),
       hasStorage: false,
       setHasStorage: (hasStorage) => set(() => ({ hasStorage })),
-      chatInputRef: { current: null },
       selectedEndpoint: process.env.NEXT_PUBLIC_API_URL || '',
       setSelectedEndpoint: (selectedEndpoint) =>
         set(() => ({ selectedEndpoint })),
@@ -116,12 +114,14 @@ export const usePlaygroundStore = create<PlaygroundStore>()(
       isSessionsLoading: false,
       setIsSessionsLoading: (isSessionsLoading) =>
         set(() => ({ isSessionsLoading })),
-      locallyCreatedSessionIds: new Set<string>(),
+      locallyCreatedSessionIds: [],
       addLocallyCreatedSessionId: (sessionId) =>
         set((state) => ({
-          locallyCreatedSessionIds: new Set(state.locallyCreatedSessionIds).add(
+          locallyCreatedSessionIds: state.locallyCreatedSessionIds.includes(
             sessionId
           )
+            ? state.locallyCreatedSessionIds
+            : [...state.locallyCreatedSessionIds, sessionId]
         }))
     }),
     {

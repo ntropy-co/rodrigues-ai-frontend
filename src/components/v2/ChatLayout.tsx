@@ -88,7 +88,7 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
         return
       }
 
-      if (locallyCreatedSessionIds.has(sessionId)) {
+      if (locallyCreatedSessionIds.includes(sessionId)) {
         setIsLoadingSession(false)
         return
       }
