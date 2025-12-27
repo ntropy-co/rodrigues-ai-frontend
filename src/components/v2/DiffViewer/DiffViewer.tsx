@@ -44,14 +44,14 @@ interface DiffLine {
 function computeDiff(original: string, modified: string): DiffLine[] {
   const originalLines = original.split('\n')
   const modifiedLines = modified.split('\n')
-  
-  const result: DiffLine[] = []
-  
+
   // Build LCS table
   const m = originalLines.length
   const n = modifiedLines.length
-  const dp: number[][] = Array(m + 1).fill(null).map(() => Array(n + 1).fill(0))
-  
+  const dp: number[][] = Array(m + 1)
+    .fill(null)
+    .map(() => Array(n + 1).fill(0))
+
   for (let i = 1; i <= m; i++) {
     for (let j = 1; j <= n; j++) {
       if (originalLines[i - 1] === modifiedLines[j - 1]) {
@@ -61,19 +61,19 @@ function computeDiff(original: string, modified: string): DiffLine[] {
       }
     }
   }
-  
+
   // Backtrack to find diff
   let i = m
   let j = n
   const tempResult: DiffLine[] = []
-  
+
   while (i > 0 || j > 0) {
     if (i > 0 && j > 0 && originalLines[i - 1] === modifiedLines[j - 1]) {
       tempResult.push({
         type: 'unchanged',
         content: originalLines[i - 1],
         originalLineNumber: i,
-        modifiedLineNumber: j,
+        modifiedLineNumber: j
       })
       i--
       j--
@@ -81,19 +81,19 @@ function computeDiff(original: string, modified: string): DiffLine[] {
       tempResult.push({
         type: 'added',
         content: modifiedLines[j - 1],
-        modifiedLineNumber: j,
+        modifiedLineNumber: j
       })
       j--
     } else {
       tempResult.push({
         type: 'removed',
         content: originalLines[i - 1],
-        originalLineNumber: i,
+        originalLineNumber: i
       })
       i--
     }
   }
-  
+
   return tempResult.reverse()
 }
 
@@ -117,7 +117,7 @@ function LineNumber({ num, className }: { num?: number; className?: string }) {
 
 function DiffLineContent({
   line,
-  showLineNumbers,
+  showLineNumbers
 }: {
   line: DiffLine
   showLineNumbers: boolean
@@ -125,36 +125,42 @@ function DiffLineContent({
   const bgColor = {
     added: 'bg-green-50 dark:bg-green-950/30',
     removed: 'bg-red-50 dark:bg-red-950/30',
-    unchanged: 'bg-transparent',
+    unchanged: 'bg-transparent'
   }[line.type]
 
   const textColor = {
     added: 'text-green-800 dark:text-green-300',
     removed: 'text-red-800 dark:text-red-300',
-    unchanged: 'text-gray-900 dark:text-gray-100',
+    unchanged: 'text-gray-900 dark:text-gray-100'
   }[line.type]
 
   const icon = {
     added: <Plus className="h-3 w-3 text-green-600" aria-hidden="true" />,
     removed: <Minus className="h-3 w-3 text-red-600" aria-hidden="true" />,
-    unchanged: <Equal className="h-3 w-3 text-gray-400" aria-hidden="true" />,
+    unchanged: <Equal className="h-3 w-3 text-gray-400" aria-hidden="true" />
   }[line.type]
 
   const ariaLabel = {
     added: `Linha ${line.modifiedLineNumber}, adicionada: ${line.content || '(linha vazia)'}`,
     removed: `Linha ${line.originalLineNumber}, removida: ${line.content || '(linha vazia)'}`,
-    unchanged: `Linha ${line.originalLineNumber}, sem alteração`,
+    unchanged: `Linha ${line.originalLineNumber}, sem alteração`
   }[line.type]
 
   return (
     <div
-      className={cn('flex items-start border-b border-gray-100 dark:border-gray-800', bgColor)}
+      className={cn(
+        'flex items-start border-b border-gray-100 dark:border-gray-800',
+        bgColor
+      )}
       role="row"
       aria-label={ariaLabel}
     >
       {showLineNumbers && (
         <>
-          <LineNumber num={line.originalLineNumber} className="border-r border-gray-200 dark:border-gray-700" />
+          <LineNumber
+            num={line.originalLineNumber}
+            className="border-r border-gray-200 dark:border-gray-700"
+          />
           <LineNumber num={line.modifiedLineNumber} />
         </>
       )}
@@ -179,7 +185,7 @@ function DiffLineContent({
 
 function SplitView({
   diffLines,
-  showLineNumbers,
+  showLineNumbers
 }: {
   diffLines: DiffLine[]
   showLineNumbers: boolean
@@ -190,7 +196,7 @@ function SplitView({
 
   // Align by creating pairs
   const maxLength = Math.max(originalLines.length, modifiedLines.length)
-  
+
   return (
     <div className="flex divide-x divide-gray-200 dark:divide-gray-700">
       {/* Original Side */}
@@ -200,12 +206,21 @@ function SplitView({
         </div>
         <div role="table" aria-label="Documento original">
           {originalLines.map((line, idx) => (
-            <DiffLineContent key={`orig-${idx}`} line={line} showLineNumbers={showLineNumbers} />
+            <DiffLineContent
+              key={`orig-${idx}`}
+              line={line}
+              showLineNumbers={showLineNumbers}
+            />
           ))}
           {/* Pad if needed */}
-          {Array.from({ length: maxLength - originalLines.length }).map((_, idx) => (
-            <div key={`orig-pad-${idx}`} className="h-8 border-b border-gray-100" />
-          ))}
+          {Array.from({ length: maxLength - originalLines.length }).map(
+            (_, idx) => (
+              <div
+                key={`orig-pad-${idx}`}
+                className="h-8 border-b border-gray-100"
+              />
+            )
+          )}
         </div>
       </div>
 
@@ -216,12 +231,21 @@ function SplitView({
         </div>
         <div role="table" aria-label="Documento modificado">
           {modifiedLines.map((line, idx) => (
-            <DiffLineContent key={`mod-${idx}`} line={line} showLineNumbers={showLineNumbers} />
+            <DiffLineContent
+              key={`mod-${idx}`}
+              line={line}
+              showLineNumbers={showLineNumbers}
+            />
           ))}
           {/* Pad if needed */}
-          {Array.from({ length: maxLength - modifiedLines.length }).map((_, idx) => (
-            <div key={`mod-pad-${idx}`} className="h-8 border-b border-gray-100" />
-          ))}
+          {Array.from({ length: maxLength - modifiedLines.length }).map(
+            (_, idx) => (
+              <div
+                key={`mod-pad-${idx}`}
+                className="h-8 border-b border-gray-100"
+              />
+            )
+          )}
         </div>
       </div>
     </div>
@@ -234,7 +258,7 @@ function SplitView({
 
 function UnifiedView({
   diffLines,
-  showLineNumbers,
+  showLineNumbers
 }: {
   diffLines: DiffLine[]
   showLineNumbers: boolean
@@ -245,7 +269,11 @@ function UnifiedView({
         Comparação Unificada
       </div>
       {diffLines.map((line, idx) => (
-        <DiffLineContent key={idx} line={line} showLineNumbers={showLineNumbers} />
+        <DiffLineContent
+          key={idx}
+          line={line}
+          showLineNumbers={showLineNumbers}
+        />
       ))}
     </div>
   )
@@ -266,10 +294,12 @@ function DiffStats({ diffLines }: { diffLines: DiffLine[] }) {
         <Plus className="h-3 w-3" /> {added} adicionada{added !== 1 ? 's' : ''}
       </span>
       <span className="flex items-center gap-1 text-red-700 dark:text-red-400">
-        <Minus className="h-3 w-3" /> {removed} removida{removed !== 1 ? 's' : ''}
+        <Minus className="h-3 w-3" /> {removed} removida
+        {removed !== 1 ? 's' : ''}
       </span>
       <span className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
-        <Equal className="h-3 w-3" /> {unchanged} inalterada{unchanged !== 1 ? 's' : ''}
+        <Equal className="h-3 w-3" /> {unchanged} inalterada
+        {unchanged !== 1 ? 's' : ''}
       </span>
     </div>
   )
@@ -284,18 +314,26 @@ export function DiffViewer({
   modified,
   mode: initialMode = 'unified',
   showLineNumbers = true,
-  className,
+  className
 }: DiffViewerProps) {
   const [mode, setMode] = useState<DiffMode>(initialMode)
 
-  const diffLines = useMemo(() => computeDiff(original, modified), [original, modified])
+  const diffLines = useMemo(
+    () => computeDiff(original, modified),
+    [original, modified]
+  )
 
   return (
-    <div className={cn('rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900', className)}>
+    <div
+      className={cn(
+        'rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900',
+        className
+      )}
+    >
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-200 px-4 py-3 dark:border-gray-700">
         <DiffStats diffLines={diffLines} />
-        
+
         <div className="flex items-center gap-1 rounded-md bg-gray-100 p-1 dark:bg-gray-800">
           <Button
             variant="ghost"
@@ -333,7 +371,10 @@ export function DiffViewer({
         {mode === 'split' ? (
           <SplitView diffLines={diffLines} showLineNumbers={showLineNumbers} />
         ) : (
-          <UnifiedView diffLines={diffLines} showLineNumbers={showLineNumbers} />
+          <UnifiedView
+            diffLines={diffLines}
+            showLineNumbers={showLineNumbers}
+          />
         )}
       </div>
 

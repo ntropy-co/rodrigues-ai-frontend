@@ -16,8 +16,7 @@ export const APIRoutes = {
 
   // Documents
   DocumentsUpload: (baseUrl: string) => `${baseUrl}/api/v1/documents/upload`,
-  DocumentsByUser: (baseUrl: string, userId: string) =>
-    `${baseUrl}/api/v1/documents/user/${userId}`,
+  DocumentsByUser: (baseUrl: string) => `${baseUrl}/api/v1/documents/user`,
   DocumentById: (baseUrl: string, documentId: string) =>
     `${baseUrl}/api/v1/documents/${documentId}`,
   DocumentDownload: (baseUrl: string, documentId: string) =>

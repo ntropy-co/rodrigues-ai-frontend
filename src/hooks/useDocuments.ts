@@ -2,23 +2,19 @@ import { useState, useEffect, useCallback } from 'react'
 import type { UserDocument } from '@/components/v2/FileUpload/FileList'
 import { fetchWithRefresh } from '@/lib/auth/token-refresh'
 
-export function useDocuments(userId: string, sessionId?: string) {
+export function useDocuments(sessionId?: string) {
   const [documents, setDocuments] = useState<UserDocument[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const fetchDocuments = useCallback(async () => {
-    if (!userId) return
-
     setLoading(true)
     setError(null)
 
     try {
       // Use Next.js API Route as proxy to avoid CORS issues
-      const url = new URL(
-        `/api/documents/user/${userId}`,
-        window.location.origin
-      )
+      // Backend now uses the authenticated user's ID from the JWT token
+      const url = new URL('/api/documents/user', window.location.origin)
       if (sessionId) {
         url.searchParams.append('session_id', sessionId)
       }
@@ -48,7 +44,7 @@ export function useDocuments(userId: string, sessionId?: string) {
     } finally {
       setLoading(false)
     }
-  }, [userId, sessionId])
+  }, [sessionId])
 
   const removeDocument = async (documentId: string) => {
     try {
