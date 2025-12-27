@@ -25,21 +25,21 @@ export function AnalysisLayout({
   const [isFullscreen, setIsFullscreen] = useState(false)
 
   return (
-    <div className="flex h-screen w-screen flex-col bg-verde-50">
+    <div className="flex h-screen w-screen flex-col bg-verity-50">
       {/* Header */}
-      <header className="flex items-center justify-between border-b border-verde-200 bg-white px-4 py-3 shadow-sm">
+      <header className="flex items-center justify-between border-b border-verity-200 bg-white px-4 py-3 shadow-sm">
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => router.back()}
-            className="text-verde-700 hover:bg-verde-100"
+            className="text-verity-700 hover:bg-verity-100"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-verde-600" />
-            <h1 className="max-w-md truncate font-semibold text-verde-900">
+            <FileText className="h-5 w-5 text-verity-600" />
+            <h1 className="max-w-md truncate font-semibold text-verity-900">
               {documentName}
             </h1>
           </div>
@@ -69,7 +69,7 @@ export function AnalysisLayout({
             variant="ghost"
             size="icon"
             onClick={() => setIsFullscreen(!isFullscreen)}
-            className="text-verde-700 hover:bg-verde-100"
+            className="text-verity-700 hover:bg-verity-100"
           >
             {isFullscreen ? (
               <Minimize2 className="h-4 w-4" />
@@ -85,7 +85,7 @@ export function AnalysisLayout({
         {/* Painel do Documento */}
         <motion.div
           className={cn(
-            'overflow-hidden border-r border-verde-200 bg-gray-100',
+            'overflow-hidden border-r border-verity-200 bg-gray-100',
             'hidden md:block',
             isFullscreen ? 'w-0' : 'w-1/2'
           )}

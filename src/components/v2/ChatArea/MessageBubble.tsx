@@ -71,7 +71,7 @@ export const MessageBubble = memo(function MessageBubble({
         {/* Timestamp & Status (Above) */}
         <div
           className={cn(
-            'mb-2 flex items-center gap-2 px-1 text-xs font-light text-verde-600',
+            'mb-2 flex items-center gap-2 px-1 text-xs font-light text-verity-600',
             isUser ? 'justify-end' : 'justify-start'
           )}
         >
@@ -98,7 +98,7 @@ export const MessageBubble = memo(function MessageBubble({
             'relative px-6 py-5',
             isUser
               ? 'rounded-[1.25rem_1.25rem_0.25rem_1.25rem] bg-gradient-to-br from-[#2D5A45] to-[#3A6B54] text-white shadow-[0_10px_25px_rgba(45,90,69,0.2),0_4px_10px_rgba(45,90,69,0.15),inset_0_-2px_4px_rgba(45,90,69,0.1),inset_0_1px_1px_rgba(255,255,255,0.25)]'
-              : 'rounded-[1.25rem_1.25rem_1.25rem_0.25rem] border border-verde-100 bg-white text-verde-950 shadow-[0_8px_20px_rgba(45,90,69,0.08),0_2px_8px_rgba(45,90,69,0.04)]'
+              : 'rounded-[1.25rem_1.25rem_1.25rem_0.25rem] border border-verity-100 bg-white text-verity-950 shadow-[0_8px_20px_rgba(45,90,69,0.08),0_2px_8px_rgba(45,90,69,0.04)]'
           )}
           style={{ transformStyle: 'preserve-3d' }}
         >
@@ -108,7 +108,7 @@ export const MessageBubble = memo(function MessageBubble({
               'absolute bottom-3 h-4 w-4 rotate-45 transform shadow-sm',
               isUser
                 ? '-right-[6px] rounded-[0_0_0.25rem_0] bg-[#3A6B54]'
-                : '-left-[6px] rounded-[0_0_0_0.25rem] border-b border-l border-verde-100 bg-white'
+                : '-left-[6px] rounded-[0_0_0_0.25rem] border-b border-l border-verity-100 bg-white'
             )}
           />
 
@@ -169,7 +169,7 @@ export const MessageBubble = memo(function MessageBubble({
                     'flex items-center gap-3 rounded-lg p-2.5 transition-colors',
                     isUser
                       ? 'border border-white/30 bg-white/20 hover:bg-white/30'
-                      : 'border border-verde-200 bg-verde-50 hover:bg-verde-100'
+                      : 'border border-verity-200 bg-verity-50 hover:bg-verity-100'
                   )}
                 >
                   <div
@@ -177,7 +177,7 @@ export const MessageBubble = memo(function MessageBubble({
                       'flex h-8 w-8 items-center justify-center rounded-md',
                       isUser
                         ? 'bg-white/25 text-white'
-                        : 'bg-white text-verde-600'
+                        : 'bg-white text-verity-600'
                     )}
                   >
                     {file.type?.startsWith('image/') ? (
@@ -190,7 +190,7 @@ export const MessageBubble = memo(function MessageBubble({
                     <span
                       className={cn(
                         'truncate text-sm font-medium',
-                        isUser ? 'text-white' : 'text-verde-950'
+                        isUser ? 'text-white' : 'text-verity-950'
                       )}
                     >
                       {file.name}
@@ -198,7 +198,7 @@ export const MessageBubble = memo(function MessageBubble({
                     <span
                       className={cn(
                         'text-[10px]',
-                        isUser ? 'text-white/90' : 'text-verde-700'
+                        isUser ? 'text-white/90' : 'text-verity-700'
                       )}
                     >
                       {formatFileSize(file.size || 0)}
@@ -215,12 +215,12 @@ export const MessageBubble = memo(function MessageBubble({
               initial={{ opacity: 0, y: 10, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.9 }}
-              className="absolute -bottom-10 left-0 flex items-center gap-1 rounded-xl border border-verde-200 bg-white/95 px-3 py-1.5 shadow-[0_4px_12px_rgba(45,90,69,0.1)] backdrop-blur-sm"
+              className="absolute -bottom-10 left-0 flex items-center gap-1 rounded-xl border border-verity-200 bg-white/95 px-3 py-1.5 shadow-[0_4px_12px_rgba(45,90,69,0.1)] backdrop-blur-sm"
               style={{ transform: 'translateZ(20px)' }}
             >
               <button
                 onClick={handleCopy}
-                className="rounded-lg p-1.5 text-verde-700 transition-colors hover:bg-verde-50"
+                className="rounded-lg p-1.5 text-verity-700 transition-colors hover:bg-verity-50"
                 aria-label="Copiar"
               >
                 {copied ? (
@@ -229,17 +229,17 @@ export const MessageBubble = memo(function MessageBubble({
                   <Copy className="h-4 w-4" />
                 )}
               </button>
-              <div className="h-4 w-px bg-verde-200" />
+              <div className="h-4 w-px bg-verity-200" />
               <button
                 onClick={() => onFeedback?.(message.id || 'unknown', 'up')}
-                className="rounded-lg p-1.5 text-verde-700 transition-colors hover:bg-verde-50"
+                className="rounded-lg p-1.5 text-verity-700 transition-colors hover:bg-verity-50"
                 aria-label="Útil"
               >
                 <ThumbsUp className="h-4 w-4" />
               </button>
               <button
                 onClick={() => onFeedback?.(message.id || 'unknown', 'down')}
-                className="rounded-lg p-1.5 text-verde-700 transition-colors hover:bg-verde-50"
+                className="rounded-lg p-1.5 text-verity-700 transition-colors hover:bg-verity-50"
                 aria-label="Não útil"
               >
                 <ThumbsDown className="h-4 w-4" />

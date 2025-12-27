@@ -10,7 +10,7 @@ import { MessageBubble } from './MessageBubble'
 import { TypingIndicator } from './TypingIndicator'
 import { usePullToRefresh } from '@/hooks/usePullToRefresh'
 import { MESSAGE_ROLES } from '@/lib/constants'
-import { getAuthToken } from '@/lib/auth/cookies'
+// Cookies import removed
 import { toast } from 'sonner'
 import { usePlaygroundStore } from '@/store'
 import { trackChatFeedback } from '@/lib/analytics'
@@ -86,14 +86,10 @@ export function ChatArea({ messages, isStreaming, onRefresh }: ChatAreaProps) {
       trackChatFeedback(messageId, feedbackType, sessionId || 'unknown')
 
       try {
-        const token = getAuthToken()
-        if (!token) return
-
         await fetch(`/api/chat/${messageId}/feedback`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({ feedback: feedbackType })
         })
@@ -177,7 +173,7 @@ export function ChatArea({ messages, isStreaming, onRefresh }: ChatAreaProps) {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={scrollToBottom}
-            className="fixed bottom-24 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-verde-900 text-white shadow-lg shadow-verde-900/20 hover:bg-verde-800 md:bottom-28 md:right-8 landscape:bottom-20"
+            className="fixed bottom-24 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-verity-900 text-white shadow-lg shadow-verity-900/20 hover:bg-verity-800 md:bottom-28 md:right-8 landscape:bottom-20"
             aria-label="Rolar para baixo"
           >
             <ArrowDown className="h-5 w-5" />

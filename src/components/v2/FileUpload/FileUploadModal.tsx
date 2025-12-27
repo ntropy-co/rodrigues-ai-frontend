@@ -10,7 +10,7 @@ import {
   AlertCircle
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { getAuthToken } from '@/lib/auth/cookies'
+// cookie import removed
 import { trackEvent } from '@/components/providers/PostHogProvider'
 
 interface FileUploadModalProps {
@@ -143,13 +143,13 @@ export function FileUploadModal({
         let uploadSessionId = sessionId
         if (!uploadSessionId) {
           console.log('[FileUploadModal] No sessionId, creating new session...')
-          const token = getAuthToken()
+          console.log('[FileUploadModal] No sessionId, creating new session...')
           const sessionResponse = await fetch('/api/sessions', {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
-              ...(token ? { Authorization: `Bearer ${token}` } : {})
+              'Content-Type': 'application/json'
             },
+
             body: JSON.stringify({ title: 'Análise de documento' })
           })
 
@@ -183,15 +183,10 @@ export function FileUploadModal({
           '/api/documents/upload'
         )
 
-        const token = getAuthToken()
-        const headers: HeadersInit = {}
-        if (token) {
-          headers['Authorization'] = `Bearer ${token}`
-        }
-
         const response = await fetch('/api/documents/upload', {
           method: 'POST',
-          headers,
+          // headers, // No headers needed for FormData, browser sets boundary
+
           body: formData
         })
 
@@ -414,7 +409,7 @@ export function FileUploadModal({
             className={`flex-1 rounded-lg px-4 py-2 font-medium text-white transition-colors ${
               files.length === 0 || uploading || success
                 ? 'cursor-not-allowed bg-gray-300'
-                : 'bg-verde-600 hover:bg-verde-700'
+                : 'bg-verity-600 hover:bg-verity-700'
             }`}
           >
             {uploading
@@ -429,7 +424,7 @@ export function FileUploadModal({
           {success && (
             <button
               onClick={handleAnalyze}
-              className="flex-1 rounded-lg border border-verde-200 bg-verde-50 px-4 py-2 font-medium text-verde-700 transition-colors hover:bg-verde-100"
+              className="flex-1 rounded-lg border border-verity-200 bg-verity-50 px-4 py-2 font-medium text-verity-700 transition-colors hover:bg-verity-100"
             >
               Analisar
             </button>

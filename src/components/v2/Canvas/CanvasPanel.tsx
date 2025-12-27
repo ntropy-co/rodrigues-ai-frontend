@@ -30,13 +30,13 @@ export function CanvasPanel() {
           exit={{ opacity: 0, x: 50 }}
           transition={{ duration: 0.3, ease: 'easeInOut' }}
           className={cn(
-            'flex h-full flex-col border-l border-verde-200 bg-white shadow-xl',
+            'flex h-full flex-col border-l border-verity-200 bg-white shadow-xl',
             isExpanded ? 'fixed inset-0 z-50 w-full' : 'relative w-full'
           )}
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-verde-100 bg-verde-50/50 px-4 py-3">
-            <h2 className="max-w-[200px] truncate font-display text-lg font-medium text-verde-900">
+          <div className="flex items-center justify-between border-b border-verity-100 bg-verity-50/50 px-4 py-3">
+            <h2 className="max-w-[200px] truncate font-display text-lg font-medium text-verity-900">
               {title || 'Artifact'}
             </h2>
 
@@ -45,7 +45,7 @@ export function CanvasPanel() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-verde-700 hover:bg-verde-100"
+                className="h-8 w-8 text-verity-700 hover:bg-verity-100"
                 onClick={() => setMode(mode === 'view' ? 'edit' : 'view')}
                 title={mode === 'view' ? 'Edit Mode' : 'View Mode'}
               >
@@ -60,7 +60,7 @@ export function CanvasPanel() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-verde-700 hover:bg-verde-100"
+                className="h-8 w-8 text-verity-700 hover:bg-verity-100"
                 onClick={handleCopy}
                 title="Copy content"
               >
@@ -75,7 +75,7 @@ export function CanvasPanel() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-verde-700 hover:bg-verde-100"
+                className="h-8 w-8 text-verity-700 hover:bg-verity-100"
                 onClick={() => setIsExpanded(!isExpanded)}
                 title={isExpanded ? 'Collapse' : 'Expand'}
               >
@@ -90,7 +90,7 @@ export function CanvasPanel() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-verde-700 hover:bg-verde-100 hover:text-red-600"
+                className="h-8 w-8 text-verity-700 hover:bg-verity-100 hover:text-red-600"
                 onClick={closeCanvas}
                 title="Close Canvas"
               >
@@ -100,10 +100,10 @@ export function CanvasPanel() {
           </div>
 
           {/* Body */}
-          <div className="scrollbar-thin scrollbar-thumb-verde-200 scrollbar-track-transparent flex-1 overflow-y-auto p-6">
+          <div className="scrollbar-thin scrollbar-thumb-verity-200 scrollbar-track-transparent flex-1 overflow-y-auto p-6">
             {mode === 'edit' ? (
               <textarea
-                className="h-full w-full resize-none border-none bg-transparent p-0 font-mono text-sm leading-relaxed text-verde-900 outline-none focus:ring-0"
+                className="h-full w-full resize-none border-none bg-transparent p-0 font-mono text-sm leading-relaxed text-verity-900 outline-none focus:ring-0"
                 value={content || ''}
                 onChange={(e) => updateContent(e.target.value)}
                 placeholder="Start typing..."
@@ -118,7 +118,7 @@ export function CanvasPanel() {
           </div>
 
           {/* Footer (Optional status bar) */}
-          <div className="flex justify-between border-t border-verde-100 bg-verde-50/30 px-4 py-2 text-xs text-verde-600">
+          <div className="flex justify-between border-t border-verity-100 bg-verity-50/30 px-4 py-2 text-xs text-verity-600">
             <span>{mode === 'edit' ? 'Editing...' : 'Read-only'}</span>
             <span>{content?.length || 0} chars</span>
           </div>

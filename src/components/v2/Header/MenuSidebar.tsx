@@ -217,7 +217,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleNewConversation}
-              className="flex w-full items-center gap-2 rounded-lg bg-verde-600 px-3 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-verde-700"
+              className="flex w-full items-center gap-2 rounded-lg bg-verity-600 px-3 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-verity-700"
             >
               <Plus className="h-4 w-4" />
               Nova Conversa

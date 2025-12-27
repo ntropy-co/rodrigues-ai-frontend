@@ -24,7 +24,7 @@ interface AnalysisResultProps {
 
 export function AnalysisResult({ data, onExportPDF }: AnalysisResultProps) {
   const getScoreColor = (score: number) => {
-    if (score >= 90) return 'text-verde-600'
+    if (score >= 90) return 'text-verity-600'
     if (score >= 70) return 'text-ouro-500' // Using yellow/gold for warning
     return 'text-red-600'
   }
@@ -36,14 +36,14 @@ export function AnalysisResult({ data, onExportPDF }: AnalysisResultProps) {
   return (
     <div className="space-y-6">
       {/* Header / Score Card */}
-      <Card className="overflow-hidden border-verde-100 bg-white shadow-sm">
+      <Card className="overflow-hidden border-verity-100 bg-white shadow-sm">
         <CardContent className="p-6">
           <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
             <div>
-              <h2 className="font-display text-2xl font-semibold text-verde-950">
+              <h2 className="font-display text-2xl font-semibold text-verity-950">
                 Resultado da Análise
               </h2>
-              <p className="mt-1 text-verde-700">
+              <p className="mt-1 text-verity-700">
                 Documento analisado em{' '}
                 {new Date(data.processedAt).toLocaleString()}
               </p>
@@ -51,7 +51,7 @@ export function AnalysisResult({ data, onExportPDF }: AnalysisResultProps) {
 
             <div className="flex items-center gap-4">
               <div className="flex flex-col items-end">
-                <span className="text-sm font-medium uppercase tracking-wider text-verde-600">
+                <span className="text-sm font-medium uppercase tracking-wider text-verity-600">
                   Compliance Score
                 </span>
                 <span
@@ -85,9 +85,9 @@ export function AnalysisResult({ data, onExportPDF }: AnalysisResultProps) {
             Erros Críticos ({criticalIssues.length})
           </h3>
           {criticalIssues.length === 0 ? (
-            <Card className="border-verde-100 bg-verde-50/50">
-              <CardContent className="flex items-center gap-3 p-6 text-verde-700">
-                <CheckCircle className="h-5 w-5 text-verde-600" />
+            <Card className="border-verity-100 bg-verity-50/50">
+              <CardContent className="flex items-center gap-3 p-6 text-verity-700">
+                <CheckCircle className="h-5 w-5 text-verity-600" />
                 <p>Nenhum erro crítico encontrado.</p>
               </CardContent>
             </Card>
@@ -107,9 +107,9 @@ export function AnalysisResult({ data, onExportPDF }: AnalysisResultProps) {
             Alertas ({alertIssues.length})
           </h3>
           {alertIssues.length === 0 ? (
-            <Card className="border-verde-100 bg-white">
-              <CardContent className="flex items-center gap-3 p-6 text-verde-700">
-                <CheckCircle className="h-5 w-5 text-verde-600" />
+            <Card className="border-verity-100 bg-white">
+              <CardContent className="flex items-center gap-3 p-6 text-verity-700">
+                <CheckCircle className="h-5 w-5 text-verity-600" />
                 <p>Nenhum alerta de atenção.</p>
               </CardContent>
             </Card>
@@ -144,7 +144,7 @@ export function AnalysisResult({ data, onExportPDF }: AnalysisResultProps) {
           <Button
             onClick={onExportPDF}
             variant="outline"
-            className="gap-2 border-verde-200 text-verde-700 hover:bg-verde-50"
+            className="gap-2 border-verity-200 text-verity-700 hover:bg-verity-50"
           >
             <Download className="h-4 w-4" />
             Baixar Relatório PDF

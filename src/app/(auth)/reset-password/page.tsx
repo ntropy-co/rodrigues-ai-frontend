@@ -98,27 +98,27 @@ function ResetPasswordContent() {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="rounded-2xl border border-verde-100 bg-white p-8 text-center shadow-xl shadow-verde-900/5 lg:p-10"
+        className="rounded-2xl border border-verity-100 bg-white p-8 text-center shadow-xl shadow-verity-900/5 lg:p-10"
       >
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-          className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-verde-100"
+          className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-verity-100"
         >
-          <CheckCircle className="h-8 w-8 text-verde-600" />
+          <CheckCircle className="h-8 w-8 text-verity-600" />
         </motion.div>
 
-        <h2 className="mb-2 font-display text-2xl font-semibold text-verde-950">
+        <h2 className="mb-2 font-display text-2xl font-semibold text-verity-950">
           Senha Redefinida!
         </h2>
-        <p className="mx-auto mb-8 max-w-xs text-verde-700">
+        <p className="mx-auto mb-8 max-w-xs text-verity-700">
           Sua senha foi atualizada com sucesso. Você será redirecionado em
           instantes.
         </p>
 
         <Link href="/login">
-          <Button className="h-12 w-full rounded-lg bg-verde-900 font-medium text-white hover:bg-verde-800">
+          <Button className="h-12 w-full rounded-lg bg-verity-900 font-medium text-white hover:bg-verity-800">
             Ir para Login Agora
           </Button>
         </Link>
@@ -131,17 +131,17 @@ function ResetPasswordContent() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="rounded-2xl border border-verde-100 bg-white p-8 shadow-xl shadow-verde-900/5 lg:p-10"
+      className="rounded-2xl border border-verity-100 bg-white p-8 shadow-xl shadow-verity-900/5 lg:p-10"
     >
       <div className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-verde-50 shadow-inner">
-          <LockKeyhole className="h-8 w-8 text-verde-800" />
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-verity-50 shadow-inner">
+          <LockKeyhole className="h-8 w-8 text-verity-800" />
         </div>
 
-        <h2 className="mb-2 font-display text-3xl font-semibold text-verde-950">
+        <h2 className="mb-2 font-display text-3xl font-semibold text-verity-950">
           Nova Senha
         </h2>
-        <p className="text-verde-700">Defina sua nova senha de acesso</p>
+        <p className="text-verity-700">Defina sua nova senha de acesso</p>
       </div>
 
       {/* Error Alert */}
@@ -164,7 +164,7 @@ function ResetPasswordContent() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Password */}
         <div className="space-y-1.5">
-          <label className="ml-1 block text-sm font-medium text-verde-950">
+          <label className="ml-1 block text-sm font-medium text-verity-950">
             Nova Senha
           </label>
           <div className="relative">
@@ -176,13 +176,13 @@ function ResetPasswordContent() {
                 required
                 minLength={8}
                 placeholder="••••••••"
-                className="h-12 border-verde-200 bg-verde-50/50 px-4 pr-12 text-verde-950 transition-all placeholder:text-verde-400/70 focus:border-verde-600 focus:bg-white focus:ring-4 focus:ring-verde-600/10"
+                className="h-12 border-verity-200 bg-verity-50/50 px-4 pr-12 text-verity-950 transition-all placeholder:text-verity-400/70 focus:border-verity-600 focus:bg-white focus:ring-4 focus:ring-verity-600/10"
               />
             </motion.div>
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-verde-600 transition-colors hover:text-verde-900"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-verity-600 transition-colors hover:text-verity-900"
             >
               {showPassword ? (
                 <EyeOff className="h-4 w-4" />
@@ -191,12 +191,12 @@ function ResetPasswordContent() {
               )}
             </button>
           </div>
-          <p className="ml-1 text-xs text-verde-600">Mínimo de 8 caracteres</p>
+          <p className="ml-1 text-xs text-verity-600">Mínimo de 8 caracteres</p>
         </div>
 
         {/* Confirm Password */}
         <div className="space-y-1.5">
-          <label className="ml-1 block text-sm font-medium text-verde-950">
+          <label className="ml-1 block text-sm font-medium text-verity-950">
             Confirmar Senha
           </label>
           <div className="relative">
@@ -208,13 +208,13 @@ function ResetPasswordContent() {
                 required
                 minLength={8}
                 placeholder="••••••••"
-                className="h-12 border-verde-200 bg-verde-50/50 px-4 pr-12 text-verde-950 transition-all placeholder:text-verde-400/70 focus:border-verde-600 focus:bg-white focus:ring-4 focus:ring-verde-600/10"
+                className="h-12 border-verity-200 bg-verity-50/50 px-4 pr-12 text-verity-950 transition-all placeholder:text-verity-400/70 focus:border-verity-600 focus:bg-white focus:ring-4 focus:ring-verity-600/10"
               />
             </motion.div>
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-verde-600 transition-colors hover:text-verde-900"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-verity-600 transition-colors hover:text-verity-900"
             >
               {showConfirmPassword ? (
                 <EyeOff className="h-4 w-4" />
@@ -229,7 +229,7 @@ function ResetPasswordContent() {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="h-12 w-full rounded-lg bg-verde-900 text-base font-medium text-white shadow-lg shadow-verde-900/20 transition-all hover:bg-verde-800 hover:shadow-xl hover:shadow-verde-900/30"
+            className="h-12 w-full rounded-lg bg-verity-900 text-base font-medium text-white shadow-lg shadow-verity-900/20 transition-all hover:bg-verity-800 hover:shadow-xl hover:shadow-verity-900/30"
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">
@@ -246,7 +246,7 @@ function ResetPasswordContent() {
           <Button
             type="button"
             variant="ghost"
-            className="w-full text-verde-700 hover:bg-verde-50 hover:text-verde-900"
+            className="w-full text-verity-700 hover:bg-verity-50 hover:text-verity-900"
           >
             Voltar para o login
           </Button>
@@ -261,7 +261,7 @@ export default function ResetPasswordPage() {
     <Suspense
       fallback={
         <div className="flex h-64 items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-verde-900" />
+          <Loader2 className="h-8 w-8 animate-spin text-verity-900" />
         </div>
       }
     >

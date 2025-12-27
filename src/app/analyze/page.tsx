@@ -111,21 +111,21 @@ export default function AnalysisPage() {
   }
 
   return (
-    <div className="min-h-screen bg-verde-50/50 p-6 md:p-12">
+    <div className="min-h-screen bg-verity-50/50 p-6 md:p-12">
       <div className="mx-auto max-w-5xl space-y-8">
         {/* Header */}
         <div className="flex items-center gap-4">
           <Link
             href="/"
-            className="rounded-full p-2 text-verde-700 transition-colors hover:bg-verde-100"
+            className="rounded-full p-2 text-verity-700 transition-colors hover:bg-verity-100"
           >
             <ArrowLeft className="h-5 w-5" />
           </Link>
           <div>
-            <h1 className="font-display text-3xl font-bold text-verde-950">
+            <h1 className="font-display text-3xl font-bold text-verity-950">
               Análise de CPR
             </h1>
-            <p className="text-verde-700">
+            <p className="text-verity-700">
               Faça upload do documento para identificar erros e sugestões de
               melhoria.
             </p>
@@ -140,10 +140,10 @@ export default function AnalysisPage() {
               exit={{ opacity: 0, y: -20 }}
               key="upload-area"
             >
-              <Card className="border-2 border-dashed border-verde-200 bg-white/80">
+              <Card className="border-2 border-dashed border-verity-200 bg-white/80">
                 <CardContent className="flex flex-col items-center justify-center space-y-6 p-12 text-center">
                   <div
-                    className={`w-full max-w-xl cursor-pointer rounded-2xl border-2 border-dashed p-12 transition-colors ${dragActive ? 'border-verde-500 bg-verde-50' : 'border-verde-100 hover:border-verde-300 hover:bg-verde-50/50'} `}
+                    className={`w-full max-w-xl cursor-pointer rounded-2xl border-2 border-dashed p-12 transition-colors ${dragActive ? 'border-verity-500 bg-verity-50' : 'border-verity-100 hover:border-verity-300 hover:bg-verity-50/50'} `}
                     onDragOver={(e) => {
                       e.preventDefault()
                       setDragActive(true)
@@ -153,7 +153,7 @@ export default function AnalysisPage() {
                     onClick={() => fileInputRef.current?.click()}
                   >
                     <div className="flex flex-col items-center gap-4">
-                      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-verde-100 text-verde-600">
+                      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-verity-100 text-verity-600">
                         {file ? (
                           <FileText className="h-8 w-8" />
                         ) : (
@@ -162,10 +162,10 @@ export default function AnalysisPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <h3 className="text-xl font-semibold text-verde-900">
+                        <h3 className="text-xl font-semibold text-verity-900">
                           {file ? file.name : 'Arraste seu PDF aqui'}
                         </h3>
-                        <p className="text-verde-600">
+                        <p className="text-verity-600">
                           {file
                             ? `${(file.size / 1024 / 1024).toFixed(2)} MB`
                             : 'ou clique para selecionar do computador'}
@@ -173,7 +173,7 @@ export default function AnalysisPage() {
                       </div>
 
                       {!file && (
-                        <p className="text-sm text-verde-400">
+                        <p className="text-sm text-verity-400">
                           Apenas arquivos PDF são aceitos no momento.
                         </p>
                       )}
@@ -192,13 +192,13 @@ export default function AnalysisPage() {
 
                   {status === 'uploading' && (
                     <div className="w-full max-w-md space-y-2">
-                      <div className="flex justify-between text-xs text-verde-700">
+                      <div className="flex justify-between text-xs text-verity-700">
                         <span>Enviando documento...</span>
                         <span>{progress}%</span>
                       </div>
-                      <div className="h-2 w-full overflow-hidden rounded-full bg-verde-100">
+                      <div className="h-2 w-full overflow-hidden rounded-full bg-verity-100">
                         <div
-                          className="h-full bg-verde-500 transition-all duration-300"
+                          className="h-full bg-verity-500 transition-all duration-300"
                           style={{ width: `${progress}%` }}
                         />
                       </div>
@@ -210,13 +210,13 @@ export default function AnalysisPage() {
                       <Button
                         variant="outline"
                         onClick={() => setFile(null)}
-                        className="border-verde-200 text-verde-700"
+                        className="border-verity-200 text-verity-700"
                       >
                         Trocar arquivo
                       </Button>
                       <Button
                         onClick={startAnalysis}
-                        className="bg-verde-600 px-8 text-white hover:bg-verde-700"
+                        className="bg-verity-600 px-8 text-white hover:bg-verity-700"
                       >
                         Analisar CPR
                       </Button>
@@ -234,24 +234,24 @@ export default function AnalysisPage() {
               className="flex flex-col items-center justify-center space-y-8 py-20"
             >
               <div className="relative">
-                <div className="absolute inset-0 animate-pulse-soft bg-verde-400 opacity-20 blur-2xl" />
+                <div className="absolute inset-0 animate-pulse-soft bg-verity-400 opacity-20 blur-2xl" />
                 <div className="relative z-10 flex h-24 w-24 items-center justify-center rounded-2xl bg-white shadow-xl">
-                  <Loader2 className="h-10 w-10 animate-spin text-verde-600" />
+                  <Loader2 className="h-10 w-10 animate-spin text-verity-600" />
                 </div>
               </div>
 
               <div className="space-y-2 text-center">
-                <h2 className="text-2xl font-semibold text-verde-900">
+                <h2 className="text-2xl font-semibold text-verity-900">
                   Analisando seu documento
                 </h2>
-                <p className="mx-auto max-w-md text-verde-600">
+                <p className="mx-auto max-w-md text-verity-600">
                   Nossa IA está verificando cláusulas, datas, conformidade legal
                   e consistência dos dados.
                 </p>
               </div>
 
               {/* Steps visualization */}
-              <div className="w-full max-w-md rounded-xl border border-verde-100 bg-white p-6 shadow-sm">
+              <div className="w-full max-w-md rounded-xl border border-verity-100 bg-white p-6 shadow-sm">
                 <AgentStateIndicator initialState="analyzing" />
               </div>
             </motion.div>
@@ -265,7 +265,7 @@ export default function AnalysisPage() {
                 <Button
                   onClick={reset}
                   variant="ghost"
-                  className="text-verde-600 hover:bg-verde-50"
+                  className="text-verity-600 hover:bg-verity-50"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Nova Análise

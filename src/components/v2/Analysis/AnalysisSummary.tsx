@@ -16,13 +16,13 @@ export function AnalysisSummary({
   lowCount
 }: AnalysisSummaryProps) {
   return (
-    <div className="border-b border-verde-200 bg-verde-50/50 p-4">
+    <div className="border-b border-verity-200 bg-verity-50/50 p-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-display text-lg font-semibold text-verde-900">
+          <h2 className="font-display text-lg font-semibold text-verity-900">
             Resumo da Análise
           </h2>
-          <p className="text-sm text-verde-600">
+          <p className="text-sm text-verity-600">
             {totalIssues === 0
               ? 'Nenhum problema encontrado!'
               : `${totalIssues} problema${totalIssues > 1 ? 's' : ''} encontrado${totalIssues > 1 ? 's' : ''}`}

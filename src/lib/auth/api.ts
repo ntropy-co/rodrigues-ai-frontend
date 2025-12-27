@@ -15,7 +15,6 @@ import type {
   AuthApiClient
 } from '@/types/auth-api'
 import { AuthError, mapApiError, isNetworkError } from './errors'
-import { getAuthToken, getRefreshToken } from './cookies'
 
 // ============================================================================
 // CONFIGURATION
@@ -54,14 +53,9 @@ async function authFetch<T>(
     ...fetchOptions.headers
   }
 
-  // Add auth header if authenticated request
-  if (authenticated) {
-    const token = getAuthToken()
-    if (token) {
-      ;(headers as Record<string, string>)['Authorization'] = `Bearer ${token}`
-    }
-  }
-
+  // NOTE: Authorization header is NO LONGER needed.
+  // We use HttpOnly cookies which are automatically sent by the browser.
+  
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...fetchOptions,
@@ -175,19 +169,17 @@ export async function resetPassword(
 
 /**
  * Refresh authentication token
+ * Note: Now relies on HttpOnly cookie, but accepts optional token for legacy/manual flow
  */
 export async function refreshToken(
   data?: RefreshTokenRequest
 ): Promise<RefreshTokenResponse> {
-  const token = data?.refreshToken || getRefreshToken()
-
-  if (!token) {
-    throw new AuthError('session_expired')
-  }
+  // If data is provided, use it (body param). If not, send empty body (use cookie).
+  const body = data?.refreshToken ? { refreshToken: data.refreshToken } : {}
 
   return authFetch<RefreshTokenResponse>(AUTH_ENDPOINTS.REFRESH, {
     method: 'POST',
-    body: JSON.stringify({ refreshToken: token })
+    body: JSON.stringify(body)
   })
 }
 
@@ -232,15 +224,13 @@ export const registerApi = signup
  * Get current user data
  */
 export async function getCurrentUserApi(
-  token: string
+  token?: string // Deprecated param, kept for signature compat
 ): Promise<{ id: string; email: string; name: string; role: string }> {
   return authFetch<{ id: string; email: string; name: string; role: string }>(
     '/auth/me',
     {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      method: 'GET'
+      // No explicit headers needed, cookies are sent automatically
     }
   )
 }

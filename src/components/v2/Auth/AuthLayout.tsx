@@ -10,7 +10,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
   return (
     <div className="animate-fade-in flex min-h-screen">
       {/* Lado Esquerdo - Branding & Informação */}
-      <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-gradient-to-br from-verde-900 via-verde-800 to-verde-900 p-12 lg:flex">
+      <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-gradient-to-br from-verity-900 via-verity-800 to-verity-900 p-12 lg:flex">
         {/* Pattern de fundo sutil */}
         <div className="pointer-events-none absolute inset-0 opacity-5">
           <div
@@ -31,7 +31,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
               <h1 className="font-display text-2xl font-semibold tracking-tight text-branco">
                 Verity Agro
               </h1>
-              <p className="text-sm font-light tracking-wide text-verde-100">
+              <p className="text-sm font-light tracking-wide text-verity-100">
                 Análise Inteligente de CPR
               </p>
             </div>
@@ -43,7 +43,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
           <h2 className="mb-6 font-display text-4xl font-semibold leading-tight text-branco lg:text-5xl">
             Análise de crédito rural com inteligência artificial
           </h2>
-          <p className="mb-8 text-lg font-light leading-relaxed text-verde-100">
+          <p className="mb-8 text-lg font-light leading-relaxed text-verity-100">
             Decisões mais rápidas e seguras para operações de CPR, com
             conformidade regulatória garantida.
           </p>
@@ -53,7 +53,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
 
         {/* Footer */}
         <div className="relative z-10">
-          <p className="font-mono text-xs text-verde-200/80">
+          <p className="font-mono text-xs text-verity-200/80">
             Plataforma enterprise para análise de risco agrícola • Verity v2.0
           </p>
         </div>
@@ -66,23 +66,23 @@ export function AuthLayout({ children }: AuthLayoutProps) {
 
           {/* Footer - Termos */}
           <div className="mt-8 space-y-2 text-center">
-            <p className="text-xs text-verde-800/60">
+            <p className="text-xs text-verity-800/60">
               Ao continuar, você concorda com nossos{' '}
               <a
                 href="#"
-                className="underline transition-colors hover:text-verde-900"
+                className="underline transition-colors hover:text-verity-900"
               >
                 Termos de Serviço
               </a>{' '}
               e{' '}
               <a
                 href="#"
-                className="underline transition-colors hover:text-verde-900"
+                className="underline transition-colors hover:text-verity-900"
               >
                 Política de Privacidade
               </a>
             </p>
-            <p className="text-[10px] uppercase tracking-widest text-verde-800/40">
+            <p className="text-[10px] uppercase tracking-widest text-verity-800/40">
               Secured by Verity Agro Enterprise
             </p>
           </div>

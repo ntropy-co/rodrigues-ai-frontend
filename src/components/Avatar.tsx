@@ -29,7 +29,7 @@ export function Avatar({
   const initial = useMemo(() => getInitialLetter(name, email), [name, email])
 
   // Deterministic color based on email/name if needed, currently using Verity green
-  const bgColor = 'bg-verde-900'
+  const bgColor = 'bg-verity-900'
 
   return (
     <div

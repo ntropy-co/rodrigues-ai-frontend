@@ -17,8 +17,8 @@ export default function ChatPage() {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-verde-50">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-verde-600 border-t-transparent"></div>
+      <div className="flex h-screen items-center justify-center bg-verity-50">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-verity-600 border-t-transparent"></div>
       </div>
     )
   }
@@ -28,8 +28,8 @@ export default function ChatPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex h-screen items-center justify-center bg-verde-50">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-verde-600 border-t-transparent"></div>
+        <div className="flex h-screen items-center justify-center bg-verity-50">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-verity-600 border-t-transparent"></div>
         </div>
       }
     >

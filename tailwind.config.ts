@@ -14,58 +14,68 @@ export default {
     extend: {
       colors: {
         // Standard Shadcn/Radix aliases mapped to Verity Palette
-        border: '#E8F3ED', // verde-100
-        input: '#D1E7DD', // verde-200
-        ring: '#5A7A6B', // verde-600
-        background: '#F5F9F7', // bg-primary
-        foreground: '#1A3A2E', // text-primary
+        // Standard Shadcn/Radix aliases mapped to Verity Palette
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
 
         primary: {
-          DEFAULT: '#2D5A45', // verde-900
-          foreground: '#FFFFFF'
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))'
         },
         secondary: {
-          DEFAULT: '#E8F3ED', // verde-100
-          foreground: '#1A3A2E' // verde-950
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))'
         },
         destructive: {
-          DEFAULT: '#C53030',
-          foreground: '#FFFFFF'
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))'
         },
         muted: {
-          DEFAULT: '#F0F8F4', // verde-50
-          foreground: '#5A7A6B' // verde-600
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))'
         },
         accent: {
-          DEFAULT: '#E8F3ED', // verde-100
-          foreground: '#1A3A2E'
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))'
         },
         popover: {
-          DEFAULT: '#FFFFFF',
-          foreground: '#1A3A2E'
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))'
         },
         card: {
-          DEFAULT: '#FFFFFF',
-          foreground: '#1A3A2E'
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))'
         },
 
-        // Semantic Layers (Claude-Inspired)
-        'bg-primary': '#F5F9F7', // verde-50 aquecido
+        // Semantic Layers (Verity Organic)
+        'bg-primary': '#F9F8F6', // Sand-100
         surface: '#FFFFFF', // Branco puro
 
-        // Verde spectrum (950 → 50) - Verity Agro Monochromatic
-        verde: {
-          950: '#1A3A2E', // Text primary (mais escuro)
-          900: '#2D5A45', // Accent/CTA
-          800: '#3A6B54', // Hover CTA
-          700: '#478063', // Accent light
-          600: '#5A7A6B', // Text secondary
-          500: '#6D8D7D', // Medium
-          400: '#8BA89B', // Text tertiary
-          300: '#9DC4B0', // Border medium
-          200: '#D1E7DD', // Border
-          100: '#E8F3ED', // Border light
-          50: '#F5F9F7' // Background
+        // Verity Gradient Spectrum (Deep Green)
+        verity: {
+          950: '#05110D', // Darkest
+          900: '#0D211A', // Dark
+          800: '#1A3C30', // Brand Primary
+          700: '#2A4D3E', // Button Hover
+          600: '#5C6D63', // Text Muted
+          500: '#426154', // Medium
+          400: '#5C8070', // Light Text
+          300: '#7A9F8F', // Accent
+          200: '#A3C2B5', // Light Accent
+          100: '#D1E7DD', // Minty
+          50: '#E8F3EE'   // Minty Light
+        },
+
+        // Sand Spectrum (Warm Backgrounds)
+        sand: {
+          400: '#E5E5E5',
+          300: '#EBE9E1',
+          200: '#F3F1EB',
+          100: '#F9F8F6', // Main BG
+          50: '#FDFCFB'
         },
 
         // Ouro (apenas para R$)

@@ -84,7 +84,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${playfair.variable} ${crimson.variable} ${geistSans.variable} ${dmMono.variable} font-sans antialiased`}
+        className={`${inter.variable} ${playfair.variable} ${crimson.variable} ${geistSans.variable} ${dmMono.variable} font-sans antialiased bg-sand-100 text-verity-900 selection:bg-verity-200 selection:text-verity-900`}
       >
         <ThemeProvider
           attribute="class"

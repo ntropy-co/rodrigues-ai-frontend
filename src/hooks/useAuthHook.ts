@@ -12,13 +12,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import type { SignupData } from '@/types/auth'
 import type { AuthResponse } from '@/types/auth-api'
 import * as authApi from '@/lib/auth/api'
-import {
-  setAuthToken,
-  removeAuthToken,
-  getAuthToken,
-  setRefreshToken,
-  removeRefreshToken
-} from '@/lib/auth/cookies'
+// Cookies imports removed
 import {
   clearRateLimitState,
   recordFailedAttempt,
@@ -74,32 +68,19 @@ export function useAuth(): UseAuthReturn {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const token = getAuthToken()
+        // Tenta buscar usuário atual (cookies enviados automaticamente)
+        const userData = await authApi.getCurrentUserApi()
+        
+        setState({
+          user: userData,
+          isAuthenticated: true,
+          isLoading: false,
+          error: null,
+          isInitialized: true
+        })
 
-        if (token) {
-          // Token existe, buscar dados do usuário
-          const userData = await authApi.getCurrentUserApi(token)
-          setState({
-            user: userData,
-            isAuthenticated: true,
-            isLoading: false,
-            error: null,
-            isInitialized: true
-          })
-        } else {
-          // Sem token
-          setState({
-            user: null,
-            isAuthenticated: false,
-            isLoading: false,
-            error: null,
-            isInitialized: true
-          })
-        }
       } catch {
-        // Token inválido ou expirado
-        removeAuthToken()
-        removeRefreshToken()
+        // Token inválido/expirado ou falha na rede
         setState({
           user: null,
           isAuthenticated: false,
@@ -134,11 +115,9 @@ export function useAuth(): UseAuthReturn {
       try {
         const response: AuthResponse = await authApi.login({ email, password })
 
-        // Salvar token no cookie seguro
-        setAuthToken(response.token)
-        if (response.refreshToken) {
-          setRefreshToken(response.refreshToken)
-        }
+        // Salvar token no cookie seguro - FEITO PELO BACKEND AUTOMATICAMENTE
+        // setAuthToken(response.token)
+
 
         // Limpar rate limit após sucesso
         clearRateLimitState()
@@ -179,8 +158,6 @@ export function useAuth(): UseAuthReturn {
       console.warn('Erro ao fazer logout na API:', error)
     } finally {
       // Sempre limpar estado local
-      removeAuthToken()
-      removeRefreshToken()
       setState({
         user: null,
         isAuthenticated: false,
@@ -207,11 +184,8 @@ export function useAuth(): UseAuthReturn {
           name: data.name
         })
 
-        // Salvar token no cookie
-        setAuthToken(response.token)
-        if (response.refreshToken) {
-          setRefreshToken(response.refreshToken)
-        }
+        // Salvar token no cookie - FEITO PELO BACKEND
+
 
         setState({
           user: response.user,

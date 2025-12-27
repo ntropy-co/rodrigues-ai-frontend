@@ -176,20 +176,20 @@ function RiskGauge({ score }: RiskGaugeProps) {
         transition={{ type: 'spring', stiffness: 60, damping: 15 }}
         style={{ width: '4px', height: '70px', marginLeft: '-2px' }}
       >
-        <div className="h-full w-full rounded-full bg-verde-900" />
-        <div className="absolute bottom-0 left-1/2 -ml-1.5 h-3 w-3 rounded-full bg-verde-900" />
+        <div className="h-full w-full rounded-full bg-verity-900" />
+        <div className="absolute bottom-0 left-1/2 -ml-1.5 h-3 w-3 rounded-full bg-verity-900" />
       </motion.div>
 
       {/* Score display */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 transform text-center">
         <motion.span
-          className="text-2xl font-bold text-verde-900"
+          className="text-2xl font-bold text-verity-900"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
           {score}
         </motion.span>
-        <span className="text-sm text-verde-600">/100</span>
+        <span className="text-sm text-verity-600">/100</span>
       </div>
     </div>
   )
@@ -211,7 +211,7 @@ function FactorList({ factors, type }: FactorListProps) {
 
   return (
     <div className="space-y-2">
-      <h4 className="flex items-center gap-2 text-sm font-semibold text-verde-800">
+      <h4 className="flex items-center gap-2 text-sm font-semibold text-verity-800">
         <TrendIcon className={cn('h-4 w-4', iconColor)} />
         {title}
       </h4>
@@ -226,16 +226,16 @@ function FactorList({ factors, type }: FactorListProps) {
           >
             <Icon className={cn('mt-0.5 h-4 w-4 shrink-0', iconColor)} />
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-verde-900">
+              <p className="text-sm font-medium text-verity-900">
                 {factor.label}
               </p>
               {factor.description && (
-                <p className="mt-0.5 text-xs text-verde-600">
+                <p className="mt-0.5 text-xs text-verity-600">
                   {factor.description}
                 </p>
               )}
             </div>
-            <span className="shrink-0 text-xs font-medium text-verde-500">
+            <span className="shrink-0 text-xs font-medium text-verity-500">
               {factor.weight}%
             </span>
           </motion.div>
@@ -279,12 +279,12 @@ export function RiskCalculator({
   }, [data.factors])
 
   return (
-    <div className="overflow-hidden rounded-xl border border-verde-200 bg-gradient-to-br from-verde-50 to-white">
+    <div className="overflow-hidden rounded-xl border border-verity-200 bg-gradient-to-br from-verity-50 to-white">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-verde-200 bg-white/50 px-4 py-3">
+      <div className="flex items-center justify-between border-b border-verity-200 bg-white/50 px-4 py-3">
         <div className="flex items-center gap-2">
-          <AlertTriangle className="h-5 w-5 text-verde-600" />
-          <h3 className="font-semibold text-verde-900">{title}</h3>
+          <AlertTriangle className="h-5 w-5 text-verity-600" />
+          <h3 className="font-semibold text-verity-900">{title}</h3>
         </div>
         <div className="flex items-center gap-2">
           <span
@@ -302,7 +302,7 @@ export function RiskCalculator({
               variant="ghost"
               onClick={handleRecalculate}
               disabled={isLoading || isRecalculating}
-              className="text-verde-600 hover:bg-verde-100 hover:text-verde-700"
+              className="text-verity-600 hover:bg-verity-100 hover:text-verity-700"
             >
               <RefreshCw
                 className={cn(
@@ -330,12 +330,12 @@ export function RiskCalculator({
           <div className="flex items-center gap-1.5 text-green-600">
             <TrendingUp className="h-4 w-4" />
             <span className="font-medium">{positiveFactorsWeight}%</span>
-            <span className="text-verde-500">positivo</span>
+            <span className="text-verity-500">positivo</span>
           </div>
           <div className="flex items-center gap-1.5 text-red-600">
             <TrendingDown className="h-4 w-4" />
             <span className="font-medium">{negativeFactorsWeight}%</span>
-            <span className="text-verde-500">negativo</span>
+            <span className="text-verity-500">negativo</span>
           </div>
         </div>
 
@@ -346,14 +346,14 @@ export function RiskCalculator({
         </div>
 
         {/* Recommendation */}
-        <div className="rounded-lg bg-verde-100/50 p-4">
+        <div className="rounded-lg bg-verity-100/50 p-4">
           <div className="flex items-start gap-2">
-            <Info className="mt-0.5 h-5 w-5 shrink-0 text-verde-600" />
+            <Info className="mt-0.5 h-5 w-5 shrink-0 text-verity-600" />
             <div>
-              <h4 className="mb-1 text-sm font-semibold text-verde-800">
+              <h4 className="mb-1 text-sm font-semibold text-verity-800">
                 Recomendação
               </h4>
-              <p className="text-sm leading-relaxed text-verde-700">
+              <p className="text-sm leading-relaxed text-verity-700">
                 {data.recommendation}
               </p>
             </div>
@@ -362,7 +362,7 @@ export function RiskCalculator({
 
         {/* Timestamp */}
         {data.calculatedAt && (
-          <p className="text-center text-xs text-verde-500">
+          <p className="text-center text-xs text-verity-500">
             Calculado em {data.calculatedAt.toLocaleDateString('pt-BR')} às{' '}
             {data.calculatedAt.toLocaleTimeString('pt-BR', {
               hour: '2-digit',

@@ -45,7 +45,7 @@ export function PasswordStrengthMeter({
         {[1, 2, 3].map((index) => (
           <div
             key={index}
-            className="flex-1 overflow-hidden rounded-full bg-verde-100"
+            className="flex-1 overflow-hidden rounded-full bg-verity-100"
           >
             <motion.div
               initial={{ width: 0 }}

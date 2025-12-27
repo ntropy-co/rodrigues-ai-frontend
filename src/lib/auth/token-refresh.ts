@@ -7,88 +7,44 @@
  * Intercepts 401 responses and attempts to refresh the token before retrying.
  */
 
-import {
-  getAuthToken,
-  setAuthToken,
-  getRefreshToken,
-  setRefreshToken,
-  removeAuthToken,
-  removeRefreshToken
-} from './cookies'
+/**
+ * Token Refresh Utility
+ *
+ * Provides automatic token refresh functionality for the authentication system.
+ * Intercepts 401 responses and attempts to refresh the token before retrying.
+ */
 
-const API_BASE = '/api/auth'
-
-interface RefreshResponse {
-  access_token: string
-  refresh_token: string
-  token_type: string
-}
+import { authApi } from './api'
 
 /**
- * Attempt to refresh the access token using the refresh token.
- * @returns New tokens or null if refresh failed
+ * Attempt to refresh the access token using the refresh token (via cookie).
+ * @returns boolean indicating success
  */
-export async function refreshTokens(): Promise<RefreshResponse | null> {
-  const refreshToken = getRefreshToken()
-
-  if (!refreshToken) {
-    console.log('[TokenRefresh] No refresh token available')
-    return null
-  }
-
+export async function refreshTokens(): Promise<boolean> {
   try {
     console.log('[TokenRefresh] Attempting token refresh...')
-
-    const response = await fetch(`${API_BASE}/refresh`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ refresh_token: refreshToken })
-    })
-
-    if (!response.ok) {
-      console.error('[TokenRefresh] Refresh failed:', response.status)
-      // Clear tokens on refresh failure
-      removeAuthToken()
-      removeRefreshToken()
-      return null
-    }
-
-    const data: RefreshResponse = await response.json()
-
-    // Store new tokens
-    setAuthToken(data.access_token)
-    if (data.refresh_token) {
-      setRefreshToken(data.refresh_token)
-    }
-
+    // Call refresh endpoint with empty body - backend will check cookie
+    await authApi.refreshToken() 
     console.log('[TokenRefresh] Token refreshed successfully')
-    return data
+    return true
   } catch (error) {
     console.error('[TokenRefresh] Error during refresh:', error)
-    removeAuthToken()
-    removeRefreshToken()
-    return null
+    return false
   }
 }
 
 /**
  * Wrapper for fetch that automatically handles token refresh on 401.
  * Use this instead of fetch for authenticated requests.
+ * 
+ * NOTE: Since we use HttpOnly cookies, we don't need to inject headers.
+ * We just need to catch 401 and retry.
  */
 export async function fetchWithRefresh(
   url: string,
   options: RequestInit = {}
 ): Promise<Response> {
-  // Add auth header if we have a token
-  const token = getAuthToken()
-  if (token) {
-    options.headers = {
-      ...options.headers,
-      Authorization: `Bearer ${token}`
-    }
-  }
+  // No Authorization header injection needed
 
   let response = await fetch(url, options)
 
@@ -96,15 +52,11 @@ export async function fetchWithRefresh(
   if (response.status === 401) {
     console.log('[TokenRefresh] Got 401, attempting refresh...')
 
-    const newTokens = await refreshTokens()
+    const success = await refreshTokens()
 
-    if (newTokens) {
-      // Retry with new token
-      options.headers = {
-        ...options.headers,
-        Authorization: `Bearer ${newTokens.access_token}`
-      }
-
+    if (success) {
+      // Retry request (cookies are sent automatically)
+      console.log('[TokenRefresh] Retrying request...')
       response = await fetch(url, options)
       console.log('[TokenRefresh] Retry response:', response.status)
     }
@@ -116,28 +68,19 @@ export async function fetchWithRefresh(
 /**
  * Check if token is about to expire and proactively refresh.
  * Call this periodically (e.g., every 5 minutes) to maintain session.
+ * 
+ * Since we can't read the HTTPOnly cookie to know expiration, 
+ * we just blindly refresh periodically.
  */
 export function scheduleTokenRefresh(
   intervalMs: number = 5 * 60 * 1000
 ): () => void {
   const intervalId = setInterval(async () => {
-    const token = getAuthToken()
-    if (!token) return
-
-    // Decode token to check expiration (simple base64 decode)
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]))
-      const expiresAt = payload.exp * 1000
-      const now = Date.now()
-      const timeUntilExpiry = expiresAt - now
-
-      // Refresh if less than 2 minutes until expiry
-      if (timeUntilExpiry < 2 * 60 * 1000) {
-        console.log('[TokenRefresh] Token expiring soon, proactive refresh')
+    // Blind refresh: just call it. If it fails (e.g. 401), session might be invalid.
+    // We could check if we are online/active before refreshing.
+    if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+        console.log('[TokenRefresh] Proactive refresh check')
         await refreshTokens()
-      }
-    } catch {
-      // Token decode failed, ignore
     }
   }, intervalMs)
 

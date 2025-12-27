@@ -68,9 +68,9 @@ interface InputBarProps {
 // Componente visual de Barra de Progresso
 function ProgressBar({ progress }: { progress: number }) {
   return (
-    <div className="absolute bottom-0 left-0 right-0 h-1 overflow-hidden rounded-b-lg bg-verde-100">
+    <div className="absolute bottom-0 left-0 right-0 h-1 overflow-hidden rounded-b-lg bg-verity-100">
       <motion.div
-        className="h-full bg-gradient-to-r from-verde-900 to-verde-700"
+        className="h-full bg-gradient-to-r from-verity-900 to-verity-700"
         initial={{ width: 0 }}
         animate={{ width: `${progress}%` }}
         transition={{ duration: 0.3, ease: easings.butter }}
@@ -452,7 +452,7 @@ export function InputBar({
 
       <div
         className={`relative w-full px-4 pb-8 pt-2 transition-colors md:px-6 ${
-          isDragOver ? 'bg-verde-100/50' : ''
+          isDragOver ? 'bg-verity-100/50' : ''
         }`}
         onDragOver={(e) => {
           e.preventDefault()
@@ -478,7 +478,7 @@ export function InputBar({
         >
           {/* Layer 6: Reflexo Inferior (Chão) */}
           <div
-            className="absolute -bottom-10 left-0 right-0 h-10 rounded-[100%] bg-gradient-to-b from-verde-900/5 to-transparent blur-lg"
+            className="absolute -bottom-10 left-0 right-0 h-10 rounded-[100%] bg-gradient-to-b from-verity-900/5 to-transparent blur-lg"
             style={{
               transform: 'translateZ(-40px) scaleY(0.3)',
               transformOrigin: 'top'
@@ -487,7 +487,7 @@ export function InputBar({
 
           {/* Layer 5: Sombra Profunda */}
           <div
-            className="absolute inset-0 rounded-2xl bg-verde-900/10 blur-2xl"
+            className="absolute inset-0 rounded-2xl bg-verity-900/10 blur-2xl"
             style={{
               transform: 'translateZ(-30px) scale(0.95) translateY(20px)'
             }}
@@ -510,9 +510,9 @@ export function InputBar({
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: index * 0.05 }}
-                  className="relative flex items-center gap-2 overflow-hidden rounded-lg border border-verde-100 bg-white/90 py-1.5 pl-3 pr-8 text-xs text-verde-900 shadow-sm backdrop-blur-sm"
+                  className="relative flex items-center gap-2 overflow-hidden rounded-lg border border-verity-100 bg-white/90 py-1.5 pl-3 pr-8 text-xs text-verity-900 shadow-sm backdrop-blur-sm"
                 >
-                  <div className="flex h-5 w-5 items-center justify-center rounded bg-verde-50 text-verde-600">
+                  <div className="flex h-5 w-5 items-center justify-center rounded bg-verity-50 text-verity-600">
                     {(file.type || '').startsWith('image/') ? (
                       <ImageIcon className="h-3 w-3" />
                     ) : (
@@ -523,7 +523,7 @@ export function InputBar({
                     <span className="max-w-[150px] truncate font-medium">
                       {file.name}
                     </span>
-                    <span className="text-[10px] text-verde-500">
+                    <span className="text-[10px] text-verity-500">
                       {formatFileSize(file.size)}
                     </span>
                   </div>
@@ -544,7 +544,7 @@ export function InputBar({
                         if (localIndex !== -1) removeAttachment(localIndex)
                       }
                     }}
-                    className="absolute right-1 top-1/2 z-20 -translate-y-1/2 rounded-full p-1 text-verde-400 transition-colors hover:bg-verde-100 hover:text-verde-700"
+                    className="absolute right-1 top-1/2 z-20 -translate-y-1/2 rounded-full p-1 text-verity-400 transition-colors hover:bg-verity-100 hover:text-verity-700"
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -562,7 +562,7 @@ export function InputBar({
 
           {/* Layer 4: Container Principal */}
           <motion.div
-            className="group relative flex items-end gap-3 rounded-2xl border-2 border-verde-300 bg-gradient-to-b from-white to-verde-50/20 px-5 py-4 backdrop-blur-xl"
+            className="group relative flex items-end gap-3 rounded-2xl border-2 border-verity-300 bg-gradient-to-b from-white to-verity-50/20 px-5 py-4 backdrop-blur-xl"
             style={{
               transform: 'translateZ(0)',
               transformStyle: 'preserve-3d'
@@ -647,7 +647,7 @@ export function InputBar({
               aria-expanded={!!suggestionMode}
               aria-controls="suggestion-list"
               aria-activedescendant={suggestionMode ? `suggestion-option-${selectedIndex}` : undefined}
-              className="relative z-10 flex-1 resize-none bg-transparent py-2.5 font-sans text-base text-verde-950 placeholder:text-verde-700 focus:outline-none"
+              className="relative z-10 flex-1 resize-none bg-transparent py-2.5 font-sans text-base text-verity-950 placeholder:text-verity-700 focus:outline-none"
               disabled={disabled} // Only disable if strictly disabled (e.g. session loading)
               rows={1}
               style={{ maxHeight: '200px' }}
@@ -682,7 +682,7 @@ export function InputBar({
                         disabled ||
                         Object.values(uploadProgress).some((p) => p < 100)
                       }
-                      className="flex h-10 w-10 items-center justify-center rounded-xl text-verde-700 transition-colors hover:bg-verde-50 hover:text-verde-950 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="flex h-10 w-10 items-center justify-center rounded-xl text-verity-700 transition-colors hover:bg-verity-50 hover:text-verity-950 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {Object.values(uploadProgress).some((p) => p < 100) ? (
                         <motion.div
@@ -692,14 +692,14 @@ export function InputBar({
                             repeat: Infinity,
                             ease: 'linear'
                           }}
-                          className="h-5 w-5 rounded-full border-2 border-verde-600 border-t-transparent"
+                          className="h-5 w-5 rounded-full border-2 border-verity-600 border-t-transparent"
                         />
                       ) : (
                         <Paperclip className="h-5 w-5" />
                       )}
                     </motion.button>
                   </TooltipTrigger>
-                  <TooltipContent className="border-verde-900 bg-verde-950 text-white">
+                  <TooltipContent className="border-verity-900 bg-verity-950 text-white">
                     <p>Anexar documentos</p>
                   </TooltipContent>
                 </Tooltip>
@@ -727,7 +727,7 @@ export function InputBar({
                         isLoading ||
                         disabled
                           ? 'cursor-not-allowed bg-gray-100 text-gray-400 opacity-70'
-                          : 'bg-gradient-to-br from-verde-900 to-verde-800 text-white shadow-lg shadow-verde-900/20'
+                          : 'bg-gradient-to-br from-verity-900 to-verity-800 text-white shadow-lg shadow-verity-900/20'
                       }`}
                       whileHover={
                         (!input.trim() &&
@@ -753,7 +753,7 @@ export function InputBar({
                       )}
                     </motion.button>
                   </TooltipTrigger>
-                  <TooltipContent className="border-verde-900 bg-verde-950 text-white">
+                  <TooltipContent className="border-verity-900 bg-verity-950 text-white">
                     <p>Enviar mensagem</p>
                   </TooltipContent>
                 </Tooltip>
@@ -768,7 +768,7 @@ export function InputBar({
             transition={{ delay: 0.5 }}
             className="mt-4 text-center"
           >
-            <p className="text-xs font-medium text-verde-800">
+            <p className="text-xs font-medium text-verity-800">
               Verity Agro pode cometer erros. Verifique informações importantes.
             </p>
           </motion.div>
