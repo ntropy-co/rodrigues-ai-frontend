@@ -98,4 +98,4 @@ const TextArea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
 TextArea.displayName = 'TextArea'
 
 export type { TextareaProps }
-export { TextArea }
+export { TextArea, TextArea as Textarea }

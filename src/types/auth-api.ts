@@ -121,7 +121,7 @@ export interface AuthApiClient {
   login(data: LoginRequest): Promise<AuthResponse>
   signup(data: SignupRequest): Promise<AuthResponse>
   logout(): Promise<void>
-  refreshToken(data: RefreshTokenRequest): Promise<RefreshTokenResponse>
+  refreshToken(data?: RefreshTokenRequest): Promise<RefreshTokenResponse>
 
   // Invite Validation
   validateInvite(token: string): Promise<InviteValidationResponse>

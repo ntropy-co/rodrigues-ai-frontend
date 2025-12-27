@@ -34,6 +34,9 @@ export const ANALYTICS_EVENTS = {
   DOCUMENT_VIEWED: 'document_viewed',
   DOCUMENT_DOWNLOADED: 'document_downloaded',
   DOCUMENT_DELETED: 'document_deleted',
+  EXPORT_PDF_START: 'export_pdf_start',
+  EXPORT_PDF_SUCCESS: 'export_pdf_success',
+  EXPORT_PDF_ERROR: 'export_pdf_error',
 
   // CPR (Core Business)
   CPR_QUICK_ACTION_CLICKED: 'cpr_quick_action_clicked',
