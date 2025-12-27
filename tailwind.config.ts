@@ -10,6 +10,21 @@ export default {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}'
   ],
+  safelist: [
+    // Dynamic color classes that might be used programmatically
+    {
+      pattern:
+        /^bg-(verity|sand|ouro|error)-(50|100|200|300|400|500|600|700|800|900|950)$/
+    },
+    {
+      pattern:
+        /^text-(verity|sand|ouro|error)-(50|100|200|300|400|500|600|700|800|900|950)$/
+    },
+    {
+      pattern:
+        /^border-(verity|sand|ouro|error)-(50|100|200|300|400|500|600|700|800|900|950)$/
+    }
+  ],
   theme: {
     extend: {
       colors: {
@@ -66,7 +81,7 @@ export default {
           300: '#7A9F8F', // Accent
           200: '#A3C2B5', // Light Accent
           100: '#D1E7DD', // Minty
-          50: '#E8F3EE'   // Minty Light
+          50: '#E8F3EE' // Minty Light
         },
 
         // Sand Spectrum (Warm Backgrounds)

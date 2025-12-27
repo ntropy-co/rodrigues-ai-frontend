@@ -10,6 +10,7 @@ import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import { AuthProvider } from '@/contexts/AuthContext'
+import { ChatInputProvider } from '@/contexts/ChatInputContext'
 import { PostHogProvider } from '@/components/providers/PostHogProvider'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { InstallPrompt } from '@/components/v2/InstallPrompt'
@@ -94,14 +95,16 @@ export default function RootLayout({
         >
           <PostHogProvider>
             <AuthProvider>
-              <QueryProvider>
-                <ErrorBoundary>
-                  <NuqsAdapter>{children}</NuqsAdapter>
-                </ErrorBoundary>
-                <Toaster />
-                <InstallPrompt />
-                <WebVitalsReporterWrapper />
-              </QueryProvider>
+              <ChatInputProvider>
+                <QueryProvider>
+                  <ErrorBoundary>
+                    <NuqsAdapter>{children}</NuqsAdapter>
+                  </ErrorBoundary>
+                  <Toaster />
+                  <InstallPrompt />
+                  <WebVitalsReporterWrapper />
+                </QueryProvider>
+              </ChatInputProvider>
             </AuthProvider>
           </PostHogProvider>
         </ThemeProvider>

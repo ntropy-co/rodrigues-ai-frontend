@@ -4,9 +4,10 @@ import { toast } from 'sonner'
 import { usePlaygroundStore } from '../store'
 import { type PlaygroundChatMessage } from '@/types/playground'
 import { fetchWithRefresh } from '@/lib/auth/token-refresh'
+import { useChatInputRef } from '@/contexts/ChatInputContext'
 
 const useChatActions = () => {
-  const { chatInputRef } = usePlaygroundStore()
+  const chatInputRef = useChatInputRef()
   const setSessionId = usePlaygroundStore((state) => state.setSessionId)
   const setMessages = usePlaygroundStore((state) => state.setMessages)
   const setIsEndpointActive = usePlaygroundStore(
