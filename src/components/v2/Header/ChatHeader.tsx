@@ -20,7 +20,7 @@ export function ChatHeader() {
   const [profileOpen, setProfileOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-verity-100 bg-white/95 px-6 backdrop-blur-xl">
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-sand-300 bg-sand-200/95 px-6 backdrop-blur-xl">
       {/* Esquerda: Menu + Logo */}
       <div className="flex items-center gap-3">
         {/* Hamburger */}
