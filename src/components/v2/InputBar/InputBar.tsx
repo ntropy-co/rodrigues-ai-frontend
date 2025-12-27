@@ -28,7 +28,7 @@ import {
   MOCK_MENTIONS,
   AgentCommand,
   AgentMention,
-  CommandType,
+  CommandType
 } from './CommandRegistry'
 import { SuggestionList } from './SuggestionList'
 import { getCaretCoordinates } from '@/lib/utils/caret-coords'
@@ -195,7 +195,7 @@ export function InputBar({
         // But the textarea is w-full inside the container.
         setSuggestionPos({
           top: coords.top - 280, // Show above
-          left: coords.left,
+          left: coords.left
         })
         setSelectedIndex(0)
         return
@@ -210,7 +210,7 @@ export function InputBar({
         const coords = getCaretCoordinates(textarea, cursor)
         setSuggestionPos({
           top: coords.top - 280,
-          left: coords.left,
+          left: coords.left
         })
         setSelectedIndex(0)
         return
@@ -221,14 +221,14 @@ export function InputBar({
   }
 
   const handleCreateCanvas = () => {
-     useCanvasStore
-        .getState()
-        .openCanvas(
-          '# Canvas Mode Active\n\nThis is a persistent workspace.\n',
-          'New Artifact'
-        )
-      handleInputChange('')
-      closeSuggestions()
+    useCanvasStore
+      .getState()
+      .openCanvas(
+        '# Canvas Mode Active\n\nThis is a persistent workspace.\n',
+        'New Artifact'
+      )
+    handleInputChange('')
+    closeSuggestions()
   }
 
   const selectItem = (item: AgentCommand | AgentMention) => {
@@ -240,7 +240,7 @@ export function InputBar({
     // Replace text
     const textarea = textareaRef.current
     if (!textarea) return
-    
+
     // Logic: Replace the 'trigger' part with the 'label' or specialized text
     // Slash: usually replaces the whole line or input? For now, replace trigger with empty if it's an action, or keep it?
     // Let's assume selecting a command clears input (action) or appends (tag).
@@ -248,30 +248,30 @@ export function InputBar({
 
     let newText = input
     const cursor = textarea.selectionStart
-    
+
     if (item.type === 'slash') {
-       // Most slash commands are "Actions". 
-       // If reset -> call reset logic. (Simulated)
-       if (item.id === 'reset') {
-         toast.info('Contexto limpo!')
-         handleInputChange('')
-       } else if (item.id.includes('gpt') || item.id.includes('claude')) {
-          toast.success(`Modelo alterado para: ${item.label}`)
-          handleInputChange('')
-       } else {
-         // Default action
-         handleInputChange('')
-       }
+      // Most slash commands are "Actions".
+      // If reset -> call reset logic. (Simulated)
+      if (item.id === 'reset') {
+        toast.info('Contexto limpo!')
+        handleInputChange('')
+      } else if (item.id.includes('gpt') || item.id.includes('claude')) {
+        toast.success(`Modelo alterado para: ${item.label}`)
+        handleInputChange('')
+      } else {
+        // Default action
+        handleInputChange('')
+      }
     } else {
-       // Mention
-       const textBefore = input.slice(0, cursor)
-       const lastAt = textBefore.lastIndexOf('@')
-       if (lastAt !== -1) {
-         const prefix = textBefore.slice(0, lastAt)
-         const suffix = input.slice(cursor)
-         newText = `${prefix}@${item.label} ${suffix}`
-         handleInputChange(newText)
-       }
+      // Mention
+      const textBefore = input.slice(0, cursor)
+      const lastAt = textBefore.lastIndexOf('@')
+      if (lastAt !== -1) {
+        const prefix = textBefore.slice(0, lastAt)
+        const suffix = input.slice(cursor)
+        newText = `${prefix}@${item.label} ${suffix}`
+        handleInputChange(newText)
+      }
     }
 
     closeSuggestions()
@@ -640,13 +640,17 @@ export function InputBar({
                     ? 'Aguarde...'
                     : 'Descreva sua análise, use / para comandos ou @ para documentos...'
               }
+              role="combobox"
               aria-label="Mensagem para o assistente Verity Agro"
-              aria-multiline="true"
               aria-autocomplete="list"
               aria-haspopup="listbox"
               aria-expanded={!!suggestionMode}
               aria-controls="suggestion-list"
-              aria-activedescendant={suggestionMode ? `suggestion-option-${selectedIndex}` : undefined}
+              aria-activedescendant={
+                suggestionMode
+                  ? `suggestion-option-${selectedIndex}`
+                  : undefined
+              }
               className="relative z-10 flex-1 resize-none bg-transparent py-2.5 font-sans text-base text-verity-950 placeholder:text-verity-700 focus:outline-none"
               disabled={disabled} // Only disable if strictly disabled (e.g. session loading)
               rows={1}
