@@ -19,9 +19,8 @@ export interface ComplianceRequirement {
  * Request data for compliance verification
  */
 export interface ComplianceVerifyRequest {
-  document_id: string
+  document_id?: string
   extracted_data: Record<string, unknown>
-  force_refresh?: boolean
 }
 
 /**
@@ -89,7 +88,7 @@ interface UseComplianceState {
  * ```
  */
 export function useCompliance() {
-  const { user } = useAuth()
+  const { token } = useAuth()
 
   const [state, setState] = useState<UseComplianceState>({
     result: null,
@@ -105,19 +104,10 @@ export function useCompliance() {
     async (
       data: ComplianceVerifyRequest
     ): Promise<ComplianceVerifyResponse | null> => {
-      if (!user) {
+      if (!token) {
         setState((prev) => ({
           ...prev,
           error: 'Usuário não autenticado',
-          isLoading: false
-        }))
-        return null
-      }
-
-      if (!data.document_id) {
-        setState((prev) => ({
-          ...prev,
-          error: 'Campo obrigatório ausente: document_id',
           isLoading: false
         }))
         return null
@@ -134,7 +124,8 @@ export function useCompliance() {
         const response = await fetch('/api/compliance/verify', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
           },
           body: JSON.stringify(data)
         })
@@ -187,7 +178,7 @@ export function useCompliance() {
         return null
       }
     },
-    [user]
+    [token]
   )
 
   /**
@@ -195,7 +186,7 @@ export function useCompliance() {
    */
   const getDashboard =
     useCallback(async (): Promise<ComplianceDashboard | null> => {
-      if (!user) {
+      if (!token) {
         setState((prev) => ({
           ...prev,
           error: 'Usuário não autenticado',
@@ -215,7 +206,8 @@ export function useCompliance() {
         const response = await fetch('/api/compliance/dashboard', {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
           }
         })
 
@@ -264,7 +256,7 @@ export function useCompliance() {
 
         return null
       }
-    }, [user])
+    }, [token])
 
   /**
    * Reset state to initial values

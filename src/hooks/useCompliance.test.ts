@@ -18,15 +18,9 @@ import type {
 // =============================================================================
 
 // Mock AuthContext
-const mockUser = {
-  id: 'user-123',
-  email: 'user@example.com',
-  name: 'Test User',
-  role: 'analyst'
-}
-let authUser = mockUser
+const mockToken = 'test-jwt-token'
 vi.mock('@/contexts/AuthContext', () => ({
-  useAuth: () => ({ user: authUser })
+  useAuth: () => ({ token: mockToken })
 }))
 
 // Mock PostHog
@@ -117,7 +111,6 @@ const mockDashboardResponse: ComplianceDashboard = {
 describe('useCompliance', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    authUser = mockUser
   })
 
   afterEach(() => {
@@ -187,7 +180,8 @@ describe('useCompliance', () => {
       expect(mockFetch).toHaveBeenCalledWith('/api/compliance/verify', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${mockToken}`
         },
         body: JSON.stringify(mockVerifyRequest)
       })
@@ -260,9 +254,14 @@ describe('useCompliance', () => {
     })
 
     it('should handle verification without document_id', async () => {
-      const requestWithoutId = {
+      const requestWithoutId: ComplianceVerifyRequest = {
         extracted_data: { produto: 'Milho' }
-      } as ComplianceVerifyRequest
+      }
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockVerifyResponse)
+      })
 
       const { result } = renderHook(() => useCompliance())
 
@@ -270,11 +269,15 @@ describe('useCompliance', () => {
         await result.current.verify(requestWithoutId)
       })
 
-      expect(mockFetch).not.toHaveBeenCalled()
-      expect(result.current.result).toBeNull()
-      expect(result.current.error).toBe(
-        'Campo obrigatório ausente: document_id'
-      )
+      expect(mockFetch).toHaveBeenCalledWith('/api/compliance/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${mockToken}`
+        },
+        body: JSON.stringify(requestWithoutId)
+      })
+      expect(result.current.result).toEqual(mockVerifyResponse)
     })
   })
 
@@ -322,7 +325,8 @@ describe('useCompliance', () => {
       expect(mockFetch).toHaveBeenCalledWith('/api/compliance/dashboard', {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${mockToken}`
         }
       })
     })
