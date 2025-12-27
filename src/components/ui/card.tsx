@@ -1,6 +1,4 @@
 import * as React from 'react'
-import { Slot } from '@radix-ui/react-slot'
-import { cva, type VariantProps } from 'class-variance-authority'
 
 import { cn } from '@/lib/utils'
 
@@ -25,10 +23,7 @@ const GlassCard = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn(
-      'glass-card text-card-foreground',
-      className
-    )}
+    className={cn('glass-card text-card-foreground', className)}
     {...props}
   />
 ))
@@ -90,4 +85,12 @@ const CardFooter = React.forwardRef<
 ))
 CardFooter.displayName = 'CardFooter'
 
-export { Card, GlassCard, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
+export {
+  Card,
+  GlassCard,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardDescription,
+  CardContent
+}

@@ -53,7 +53,6 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<ContextUser | null>(null)
-  const [token, setToken] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   // Load token and user on mount
@@ -103,8 +102,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Validação de input com Zod
       loginSchema.parse({ username: email, password })
 
-      const authResponse = await loginApi({ email, password })
-      
+      await loginApi({ email, password })
+
       // Cookies are set by backend automatically
 
       // Fetch user data
@@ -205,7 +204,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // But let's let the user retry or let the UI handle it.
       // For now, if we can't get user, we assume logged out?
       // No, effectively we are logged out if we can't get user.
-      setUser(null) 
+      setUser(null)
     }
   }, [])
 
