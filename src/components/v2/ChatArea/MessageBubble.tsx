@@ -47,7 +47,9 @@ export const MessageBubble = memo(function MessageBubble({
   }, [message.content])
 
   return (
-    <motion.div
+    <motion.article
+      role="article"
+      aria-label={isUser ? 'Sua mensagem' : 'Mensagem do assistente'}
       initial={{ opacity: 0, y: 16, scale: 0.95, rotateX: 5 }}
       animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
@@ -248,6 +250,6 @@ export const MessageBubble = memo(function MessageBubble({
           )}
         </motion.div>
       </div>
-    </motion.div>
+    </motion.article>
   )
 })

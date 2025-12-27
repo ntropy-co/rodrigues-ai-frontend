@@ -134,6 +134,9 @@ export function ChatArea({ messages, isStreaming, onRefresh }: ChatAreaProps) {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
               className="space-y-6 pb-4 landscape:space-y-4"
+              role="log"
+              aria-label="Mensagens da conversa"
+              aria-live="polite"
             >
               {messages.map((message, index) => (
                 <MessageBubble
