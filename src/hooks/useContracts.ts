@@ -73,7 +73,7 @@ export interface ContractTemplate {
 export function useContracts() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const { user } = useAuth()
+  const { token } = useAuth()
 
   /**
    * Fetch all available contract types
@@ -81,10 +81,8 @@ export function useContracts() {
   const fetchContractTypes = useCallback(async (): Promise<
     ContractTypeInfo[]
   > => {
-    if (!user) {
-      console.log(
-        '[useContracts] No authenticated user available, skipping fetch'
-      )
+    if (!token) {
+      console.log('[useContracts] No token available, skipping fetch')
       return []
     }
 
@@ -120,7 +118,7 @@ export function useContracts() {
     } finally {
       setLoading(false)
     }
-  }, [user])
+  }, [token])
 
   /**
    * Generate a contract document
@@ -129,10 +127,8 @@ export function useContracts() {
     async (
       request: ContractGenerateRequest
     ): Promise<ContractGenerateResponse | null> => {
-      if (!user) {
-        console.log(
-          '[useContracts] No authenticated user available, skipping generation'
-        )
+      if (!token) {
+        console.log('[useContracts] No token available, skipping generation')
         return null
       }
 
@@ -168,7 +164,7 @@ export function useContracts() {
         setLoading(false)
       }
     },
-    [user]
+    [token]
   )
 
   /**
@@ -176,10 +172,8 @@ export function useContracts() {
    */
   const fetchTemplate = useCallback(
     async (contractType: ContractType): Promise<ContractTemplate | null> => {
-      if (!user) {
-        console.log(
-          '[useContracts] No authenticated user available, skipping fetch'
-        )
+      if (!token) {
+        console.log('[useContracts] No token available, skipping fetch')
         return null
       }
 
@@ -219,7 +213,7 @@ export function useContracts() {
         setLoading(false)
       }
     },
-    [user]
+    [token]
   )
 
   return {

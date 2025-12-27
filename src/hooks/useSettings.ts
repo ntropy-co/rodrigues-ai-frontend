@@ -106,16 +106,14 @@ const DEFAULT_UI_PREFERENCES: UIPreferences = {
 export function useSettings() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const { user } = useAuth()
+  const { token } = useAuth()
 
   /**
    * Fetch all user settings
    */
   const fetchSettings = useCallback(async (): Promise<UserSettings | null> => {
-    if (!user) {
-      console.log(
-        '[useSettings] No authenticated user available, skipping fetch'
-      )
+    if (!token) {
+      console.log('[useSettings] No token available, skipping fetch')
       return null
     }
 
@@ -149,16 +147,14 @@ export function useSettings() {
     } finally {
       setLoading(false)
     }
-  }, [user])
+  }, [token])
 
   /**
    * Fetch user profile only
    */
   const fetchProfile = useCallback(async (): Promise<UserProfile | null> => {
-    if (!user) {
-      console.log(
-        '[useSettings] No authenticated user available, skipping fetch'
-      )
+    if (!token) {
+      console.log('[useSettings] No token available, skipping fetch')
       return null
     }
 
@@ -192,14 +188,14 @@ export function useSettings() {
     } finally {
       setLoading(false)
     }
-  }, [user])
+  }, [token])
 
   /**
    * Update user profile
    */
   const updateProfile = useCallback(
     async (data: UserProfileUpdate): Promise<UserProfile | null> => {
-      if (!user) {
+      if (!token) {
         return null
       }
 
@@ -230,7 +226,7 @@ export function useSettings() {
         setLoading(false)
       }
     },
-    [user]
+    [token]
   )
 
   /**
@@ -240,7 +236,7 @@ export function useSettings() {
     async (
       data: NotificationSettings
     ): Promise<NotificationSettings | null> => {
-      if (!user) {
+      if (!token) {
         return null
       }
 
@@ -271,7 +267,7 @@ export function useSettings() {
         setLoading(false)
       }
     },
-    [user]
+    [token]
   )
 
   /**
@@ -279,7 +275,7 @@ export function useSettings() {
    */
   const updateUIPreferences = useCallback(
     async (data: UIPreferences): Promise<UIPreferences | null> => {
-      if (!user) {
+      if (!token) {
         return null
       }
 
@@ -312,7 +308,7 @@ export function useSettings() {
         setLoading(false)
       }
     },
-    [user]
+    [token]
   )
 
   /**
@@ -320,7 +316,7 @@ export function useSettings() {
    */
   const updateSettings = useCallback(
     async (data: UserSettingsUpdate): Promise<UserSettings | null> => {
-      if (!user) {
+      if (!token) {
         return null
       }
 
@@ -351,7 +347,7 @@ export function useSettings() {
         setLoading(false)
       }
     },
-    [user]
+    [token]
   )
 
   return {

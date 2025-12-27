@@ -14,7 +14,7 @@
 import React, { useState, useEffect, Suspense, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Eye,
