@@ -20,11 +20,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import {
-  updateOrganizationSchema,
-  type UpdateOrganizationInput
-} from '@/lib/organizations/validations'
-import { type ZodError, type ZodIssue } from 'zod'
+import { updateOrganizationSchema } from '@/lib/organizations/validations'
+import { ZodError } from 'zod'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -84,16 +81,11 @@ export async function PATCH(request: NextRequest) {
     try {
       updateOrganizationSchema.parse(body)
     } catch (validationError) {
-      if (
-        validationError &&
-        typeof validationError === 'object' &&
-        'issues' in validationError
-      ) {
-        const zodError = validationError as ZodError<UpdateOrganizationInput>
+      if (validationError instanceof ZodError) {
         return NextResponse.json(
           {
             detail: 'Invalid input data',
-            errors: zodError.issues.map((err: ZodIssue) => ({
+            errors: validationError.issues.map((err) => ({
               field: err.path.join('.'),
               message: err.message
             }))
