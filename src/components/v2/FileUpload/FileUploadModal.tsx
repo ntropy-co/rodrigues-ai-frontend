@@ -142,8 +142,6 @@ export function FileUploadModal({
         // Se não tiver sessionId, criar uma nova sessão primeiro
         let uploadSessionId = sessionId
         if (!uploadSessionId) {
-          console.log('[FileUploadModal] No sessionId, creating new session...')
-          console.log('[FileUploadModal] No sessionId, creating new session...')
           const sessionResponse = await fetch('/api/sessions', {
             method: 'POST',
             headers: {
@@ -156,16 +154,11 @@ export function FileUploadModal({
           if (sessionResponse.ok) {
             const sessionData = await sessionResponse.json()
             uploadSessionId = sessionData.id
-            console.log('[FileUploadModal] Created session:', uploadSessionId)
 
             // Notify parent about new session
             if (onSessionCreated && uploadSessionId) {
               onSessionCreated(uploadSessionId)
             }
-          } else {
-            console.warn(
-              '[FileUploadModal] Failed to create session, upload will have no session'
-            )
           }
         }
 
@@ -178,11 +171,6 @@ export function FileUploadModal({
         formData.append('auto_process', 'true')
 
         // Use Next.js API Route as proxy to avoid CORS issues
-        console.log(
-          '[FileUploadModal] Uploading to proxy:',
-          '/api/documents/upload'
-        )
-
         const response = await fetch('/api/documents/upload', {
           method: 'POST',
           // headers, // No headers needed for FormData, browser sets boundary
@@ -420,7 +408,7 @@ export function FileUploadModal({
                   ? 'OK'
                   : 'Enviar'}
           </button>
-          
+
           {success && (
             <button
               onClick={handleAnalyze}
