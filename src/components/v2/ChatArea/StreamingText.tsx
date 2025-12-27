@@ -85,22 +85,28 @@ export function StreamingText({
 
   if (renderMarkdown) {
     return (
-      <div className={className}>
+      <div className={className} aria-live="polite" aria-atomic="false">
         <MarkdownRenderer classname="prose-sm prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ol:my-1 prose-hr:my-2 prose-hr:border-muted-foreground/20 max-w-none w-full [&_hr~p]:text-xs [&_hr~p]:opacity-70 [&_hr~p_strong]:text-xs [&_hr~p_strong]:font-medium">
           {displayedText}
         </MarkdownRenderer>
         {isStreaming && (
-          <span className="bg-gemini-blue ml-1 inline-block h-4 w-2 animate-pulse"></span>
+          <span
+            className="bg-gemini-blue ml-1 inline-block h-4 w-2 animate-pulse"
+            aria-hidden="true"
+          />
         )}
       </div>
     )
   }
 
   return (
-    <span className={className}>
+    <span className={className} aria-live="polite" aria-atomic="false">
       {displayedText}
       {isStreaming && (
-        <span className="bg-gemini-blue ml-1 inline-block h-4 w-2 animate-pulse"></span>
+        <span
+          className="bg-gemini-blue ml-1 inline-block h-4 w-2 animate-pulse"
+          aria-hidden="true"
+        />
       )}
     </span>
   )
