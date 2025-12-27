@@ -14,7 +14,7 @@
 import React, { useState, useEffect, Suspense, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Eye,
@@ -362,8 +362,8 @@ function InviteContent() {
       // Store organization name for success screen
       setSuccessOrgName(inviteData?.organization_name || '')
 
-      // If user is returned, we're authenticated (tokens are in HttpOnly cookies)
-      if (result.user) {
+      // If we got a token, we're authenticated (BFF returns tokens if available)
+      if (result.token) {
         // Refetch user to update AuthContext
         try {
           await refetchUser()

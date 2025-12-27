@@ -5,6 +5,7 @@ import { useShallow } from 'zustand/react/shallow'
 
 import useChatActions from '@/hooks/useChatActions'
 import { usePlaygroundStore } from '../store'
+import { useAuth } from '@/contexts/AuthContext'
 import { trackEvent } from '@/components/providers/PostHogProvider'
 
 /**
@@ -60,9 +61,7 @@ function parseSSELine(line: string): SSEEvent | null {
   try {
     return JSON.parse(data) as SSEEvent
   } catch {
-    if (process.env.NODE_ENV !== 'production') {
-      console.warn('[SSE] Failed to parse:', data)
-    }
+    console.warn('[SSE] Failed to parse:', data)
     return null
   }
 }
@@ -104,6 +103,7 @@ const useAIChatStreamHandler = () => {
 
   const { addMessage, focusChatInput, saveSessionIdToStorage } =
     useChatActions()
+  const { token } = useAuth()
 
   const updateMessagesWithErrorState = useCallback(() => {
     setMessages((prevMessages) => {
@@ -145,9 +145,9 @@ const useAIChatStreamHandler = () => {
       const response = await fetch('/api/chat/stream', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
         },
-        credentials: 'include',
         body: JSON.stringify({
           message: message.trim(),
           session_id: currentSessionId
@@ -202,17 +202,13 @@ const useAIChatStreamHandler = () => {
                 break
 
               case 'usage':
-                // Log usage stats in development only
-                if (process.env.NODE_ENV !== 'production') {
-                  console.debug('[SSE] Usage:', event.usage)
-                }
+                // Log usage stats (optional)
+                console.debug('[SSE] Usage:', event.usage)
                 break
 
               case 'done':
                 // Stream complete
-                if (process.env.NODE_ENV !== 'production') {
-                  console.debug('[SSE] Stream complete')
-                }
+                console.debug('[SSE] Stream complete')
                 break
 
               case 'error':
@@ -230,7 +226,7 @@ const useAIChatStreamHandler = () => {
         message_length: message.trim().length
       })
     },
-    [appendToLastMessage]
+    [token, appendToLastMessage]
   )
 
   /**
@@ -245,9 +241,9 @@ const useAIChatStreamHandler = () => {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
         },
-        credentials: 'include',
         body: JSON.stringify({
           message: message.trim(),
           session_id: currentSessionId
@@ -268,7 +264,7 @@ const useAIChatStreamHandler = () => {
 
       return response.json()
     },
-    []
+    [token]
   )
 
   /**
@@ -345,6 +341,10 @@ const useAIChatStreamHandler = () => {
         explicitSessionId !== undefined ? explicitSessionId : sessionId
 
       try {
+        if (!token) {
+          throw new Error('Usuário não autenticado')
+        }
+
         // Use streaming if we have a session ID, otherwise use non-streaming
         // (streaming requires session_id to be set first)
         if (sessionIdToUse) {
@@ -429,9 +429,7 @@ const useAIChatStreamHandler = () => {
       } catch (error) {
         // Ignore abort errors
         if (error instanceof Error && error.name === 'AbortError') {
-          if (process.env.NODE_ENV !== 'production') {
-            console.debug('[Chat] Request aborted')
-          }
+          console.debug('[Chat] Request aborted')
           return
         }
 
@@ -464,24 +462,19 @@ const useAIChatStreamHandler = () => {
       }
     },
     [
-      // Zustand store actions
       setMessages,
+      addMessage,
+      updateMessagesWithErrorState,
       setStreamingErrorMessage,
       setIsStreaming,
-      setSessionsData,
-      setSessionId,
-      addLocallyCreatedSessionId,
-      // Zustand store state
-      sessionId,
-      // Custom hook actions
-      addMessage,
       focusChatInput,
       saveSessionIdToStorage,
-      // Error handling
-      updateMessagesWithErrorState,
-      // Navigation
+      setSessionsData,
+      sessionId,
+      setSessionId,
+      addLocallyCreatedSessionId,
+      token,
       router,
-      // API handlers
       handleStreamingChat,
       handleNonStreamingChat,
       cancelStream

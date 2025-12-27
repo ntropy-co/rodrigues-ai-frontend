@@ -33,6 +33,9 @@ import type { Invite, InviteStatus } from '@/types/auth'
 // TYPES
 // ============================================================================
 
+// Use backend role types (member instead of analyst)
+type InviteRole = 'admin' | 'member' | 'viewer'
+
 interface InviteListProps {
   /** Optional className for styling */
   className?: string
@@ -74,11 +77,10 @@ const STATUS_CONFIG: Record<
   }
 }
 
-const ROLE_LABELS: Record<string, string> = {
+const ROLE_LABELS: Record<InviteRole, string> = {
   admin: 'Administrador',
   member: 'Membro',
-  viewer: 'Visualizador',
-  analyst: 'Analista'
+  viewer: 'Visualizador'
 }
 
 // ============================================================================
