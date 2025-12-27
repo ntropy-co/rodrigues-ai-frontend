@@ -44,14 +44,15 @@ export interface WorkflowStatusResponse {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { sessionId: string } }
+  { params }: { params: Promise<{ sessionId: string }> }
 ) {
   try {
-    const { sessionId } = params
+    const { sessionId } = await params
 
-    if (!sessionId) {
+    // Validate sessionId format (alphanumeric, hyphens, underscores, max 100 chars)
+    if (!sessionId || !/^[a-zA-Z0-9_-]{1,100}$/.test(sessionId)) {
       return NextResponse.json(
-        { detail: 'Session ID is required' },
+        { detail: 'Invalid session ID format' },
         { status: 400 }
       )
     }

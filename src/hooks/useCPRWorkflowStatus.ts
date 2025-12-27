@@ -188,6 +188,9 @@ export function useCPRWorkflowStatus({
   // Use refs to avoid recreating interval on every render
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const retryCountRef = useRef(0)
+  const abortControllerRef = useRef<AbortController | null>(null)
+  const isMountedRef = useRef(true)
+  const stopPollingRef = useRef<(() => void) | null>(null)
   const maxRetries = 3
 
   /**
@@ -195,9 +198,19 @@ export function useCPRWorkflowStatus({
    */
   const fetchStatus = useCallback(async (): Promise<WorkflowStatus | null> => {
     if (!sessionId) {
-      setError('Session ID is required')
+      if (isMountedRef.current) {
+        setError('Session ID is required')
+      }
       return null
     }
+
+    // Cancel previous request if any
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+    }
+
+    // Create new AbortController for this request
+    abortControllerRef.current = new AbortController()
 
     try {
       const endpoint =
@@ -210,7 +223,8 @@ export function useCPRWorkflowStatus({
         headers: {
           'Content-Type': 'application/json'
         },
-        credentials: 'include' // Send cookies
+        credentials: 'include', // Send cookies
+        signal: abortControllerRef.current.signal
       })
 
       if (!response.ok) {
@@ -229,10 +243,17 @@ export function useCPRWorkflowStatus({
 
       // Reset retry count on success
       retryCountRef.current = 0
-      setError(null)
+      if (isMountedRef.current) {
+        setError(null)
+      }
 
       return newStatus
     } catch (err) {
+      // Ignore abort errors (expected when canceling requests)
+      if (err instanceof Error && err.name === 'AbortError') {
+        return null
+      }
+
       const errorMessage =
         err instanceof Error ? err.message : 'Erro desconhecido'
 
@@ -240,8 +261,10 @@ export function useCPRWorkflowStatus({
       retryCountRef.current += 1
 
       if (retryCountRef.current >= maxRetries) {
-        setError(errorMessage)
-        setIsPolling(false)
+        if (isMountedRef.current) {
+          setError(errorMessage)
+          setIsPolling(false)
+        }
         onError?.(errorMessage)
 
         trackEvent('cpr_workflow_status_error', {
@@ -261,13 +284,13 @@ export function useCPRWorkflowStatus({
    */
   const refresh = useCallback(async () => {
     const newStatus = await fetchStatus()
-    if (newStatus) {
+    if (newStatus && isMountedRef.current) {
       setStatus(newStatus)
       onStatusChange?.(newStatus)
 
       // Check if workflow completed
       if (newStatus.state === 'completed') {
-        stopPolling()
+        stopPollingRef.current?.()
         onComplete?.(newStatus)
 
         trackEvent('cpr_workflow_completed', {
@@ -277,14 +300,7 @@ export function useCPRWorkflowStatus({
         })
       }
     }
-  }, [
-    fetchStatus,
-    onStatusChange,
-    onComplete,
-    sessionId,
-    workflowType,
-    stopPolling
-  ])
+  }, [fetchStatus, onStatusChange, onComplete, sessionId, workflowType])
 
   /**
    * Start polling
@@ -292,7 +308,9 @@ export function useCPRWorkflowStatus({
   const startPolling = useCallback(() => {
     if (!sessionId || isPolling) return
 
-    setIsPolling(true)
+    if (isMountedRef.current) {
+      setIsPolling(true)
+    }
     retryCountRef.current = 0
 
     // Immediate first fetch
@@ -318,7 +336,16 @@ export function useCPRWorkflowStatus({
       clearInterval(intervalRef.current)
       intervalRef.current = null
     }
-    setIsPolling(false)
+    if (isMountedRef.current) {
+      setIsPolling(false)
+    }
+    retryCountRef.current = 0
+
+    // Cancel any pending request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+      abortControllerRef.current = null
+    }
 
     trackEvent('cpr_workflow_polling_stopped', {
       session_id: sessionId,
@@ -327,18 +354,46 @@ export function useCPRWorkflowStatus({
   }, [sessionId, workflowType])
 
   /**
-   * Auto-start polling on mount
+   * Initialize stopPollingRef to break circular dependency
    */
   useEffect(() => {
-    if (autoStart && sessionId) {
-      startPolling()
-    }
+    stopPollingRef.current = stopPolling
+  }, [stopPolling])
+
+  /**
+   * Track component mount status
+   */
+  useEffect(() => {
+    isMountedRef.current = true
 
     // Cleanup on unmount
     return () => {
+      isMountedRef.current = false
       stopPolling()
     }
-  }, [autoStart, sessionId, startPolling, stopPolling])
+  }, [stopPolling])
+
+  /**
+   * Handle sessionId changes - restart polling if needed
+   */
+  useEffect(() => {
+    if (sessionId && isPolling) {
+      // Session changed while polling - restart
+      stopPolling()
+      if (autoStart) {
+        startPolling()
+      }
+    }
+  }, [sessionId])
+
+  /**
+   * Auto-start polling on mount
+   */
+  useEffect(() => {
+    if (autoStart && sessionId && !isPolling) {
+      startPolling()
+    }
+  }, [autoStart, sessionId, startPolling, isPolling])
 
   /**
    * Stop polling when workflow completes
