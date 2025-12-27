@@ -243,19 +243,9 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
                 setStagedFiles((prev) => prev.filter((f) => f.id !== id))
               }}
               onSessionCreated={(newSessionId) => {
-                console.log('[ChatLayout] Session created:', newSessionId)
                 router.push(`/chat/${newSessionId}`)
               }}
               onFileUploaded={(documentId, uploadedSessionId, fileInfo) => {
-                console.log(
-                  '[ChatLayout] File uploaded:',
-                  documentId,
-                  'to session:',
-                  uploadedSessionId,
-                  'file:',
-                  fileInfo
-                )
-
                 if (fileInfo) {
                   setStagedFiles((prev) => [
                     ...prev,
