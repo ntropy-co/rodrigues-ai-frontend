@@ -12,6 +12,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { z } from 'zod'
 
+type CorrectionIndex = 'IPCA' | 'IGP-M' | 'Nenhum'
+
 interface StepValuesProps {
   data: Partial<CPRWizardData>
   updateData: (data: Partial<CPRWizardData>) => void
@@ -145,7 +147,7 @@ export function StepValues({
             value={data.correctionIndex}
             onValueChange={(val) =>
               updateData({
-                correctionIndex: val as 'IPCA' | 'IGP-M' | 'Nenhum'
+                correctionIndex: val as CorrectionIndex
               })
             }
           >
