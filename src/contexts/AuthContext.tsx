@@ -18,13 +18,8 @@ import {
   logoutApi,
   registerApi
 } from '@/lib/auth/api'
-import {
-  getAuthToken,
-  setAuthToken,
-  removeAuthToken,
-  setRefreshToken,
-  removeRefreshToken
-} from '@/lib/auth/cookies'
+// Cookies imports removed
+
 import { scheduleTokenRefresh } from '@/lib/auth/token-refresh'
 import { loginSchema } from '@/lib/auth/validations'
 import {
@@ -65,17 +60,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const loadAuth = async () => {
       try {
-        const storedToken = getAuthToken()
-        if (storedToken) {
-          setToken(storedToken)
-          const userData = await getCurrentUserApi(storedToken)
-          setUser(userData)
-        }
+        // Try to fetch current user (cookies are sent automatically)
+        const userData = await getCurrentUserApi()
+        setUser(userData)
       } catch (error) {
         console.error('Failed to load user:', error)
-        removeAuthToken()
-        removeRefreshToken()
-        setToken(null)
+        setUser(null)
       } finally {
         setIsLoading(false)
       }
@@ -86,13 +76,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Schedule proactive token refresh when authenticated
   useEffect(() => {
-    if (!token) return
+    // Start proactive token refresh (checks periodically)
+    // Only schedule if we have a user (implies authentication attempt succeeded)
+    if (!user) return
 
-    // Start proactive token refresh (checks every 5 minutes, refreshes if < 2 min to expiry)
     const cleanup = scheduleTokenRefresh(5 * 60 * 1000)
 
     return cleanup
-  }, [token])
+  }, [user])
 
   const login = useCallback(async (email: string, password: string) => {
     try {
@@ -113,17 +104,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       loginSchema.parse({ username: email, password })
 
       const authResponse = await loginApi({ email, password })
-      const { token: accessToken } = authResponse
-
-      // Save token in secure cookie
-      setAuthToken(accessToken)
-      if (authResponse.refreshToken) {
-        setRefreshToken(authResponse.refreshToken)
-      }
-      setToken(accessToken)
+      
+      // Cookies are set by backend automatically
 
       // Fetch user data
-      const userData = await getCurrentUserApi(accessToken)
+      const userData = await getCurrentUserApi()
       setUser(userData)
 
       // Reset rate limiter on successful login
@@ -204,30 +189,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     trackLogout()
 
     logoutApi().catch(console.error)
-    removeAuthToken()
-    removeRefreshToken()
-    setToken(null)
     setUser(null)
+
     toast.success('Logout realizado com sucesso!')
   }, [])
 
   const refetchUser = useCallback(async () => {
-    if (!token) return
-
     try {
-      const userData = await getCurrentUserApi(token)
+      const userData = await getCurrentUserApi()
       setUser(userData)
     } catch (error) {
       console.error('Failed to refetch user:', error)
-      logout()
+      // Dont logout automatically on simple refetch failure, unless 401 (handled by interceptor?)
+      // Actually, if refetch fails (e.g. 401), we might be logged out.
+      // But let's let the user retry or let the UI handle it.
+      // For now, if we can't get user, we assume logged out?
+      // No, effectively we are logged out if we can't get user.
+      setUser(null) 
     }
-  }, [token, logout])
+  }, [])
 
   const value: AuthContextType = {
     user,
-    token,
+    token: null, // Token is not exposed to JS
     isLoading,
-    isAuthenticated: !!user && !!token,
+    isAuthenticated: !!user,
     login,
     register,
     logout,

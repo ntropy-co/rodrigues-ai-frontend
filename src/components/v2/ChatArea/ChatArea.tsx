@@ -10,7 +10,7 @@ import { MessageBubble } from './MessageBubble'
 import { TypingIndicator } from './TypingIndicator'
 import { usePullToRefresh } from '@/hooks/usePullToRefresh'
 import { MESSAGE_ROLES } from '@/lib/constants'
-import { getAuthToken } from '@/lib/auth/cookies'
+// Cookies import removed
 import { toast } from 'sonner'
 import { usePlaygroundStore } from '@/store'
 import { trackChatFeedback } from '@/lib/analytics'
@@ -86,14 +86,10 @@ export function ChatArea({ messages, isStreaming, onRefresh }: ChatAreaProps) {
       trackChatFeedback(messageId, feedbackType, sessionId || 'unknown')
 
       try {
-        const token = getAuthToken()
-        if (!token) return
-
         await fetch(`/api/chat/${messageId}/feedback`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({ feedback: feedbackType })
         })

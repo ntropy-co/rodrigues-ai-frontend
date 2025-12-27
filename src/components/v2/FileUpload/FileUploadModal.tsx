@@ -10,7 +10,7 @@ import {
   AlertCircle
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { getAuthToken } from '@/lib/auth/cookies'
+// cookie import removed
 import { trackEvent } from '@/components/providers/PostHogProvider'
 
 interface FileUploadModalProps {
@@ -143,13 +143,13 @@ export function FileUploadModal({
         let uploadSessionId = sessionId
         if (!uploadSessionId) {
           console.log('[FileUploadModal] No sessionId, creating new session...')
-          const token = getAuthToken()
+          console.log('[FileUploadModal] No sessionId, creating new session...')
           const sessionResponse = await fetch('/api/sessions', {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
-              ...(token ? { Authorization: `Bearer ${token}` } : {})
+              'Content-Type': 'application/json'
             },
+
             body: JSON.stringify({ title: 'Análise de documento' })
           })
 
@@ -183,15 +183,10 @@ export function FileUploadModal({
           '/api/documents/upload'
         )
 
-        const token = getAuthToken()
-        const headers: HeadersInit = {}
-        if (token) {
-          headers['Authorization'] = `Bearer ${token}`
-        }
-
         const response = await fetch('/api/documents/upload', {
           method: 'POST',
-          headers,
+          // headers, // No headers needed for FormData, browser sets boundary
+
           body: formData
         })
 
