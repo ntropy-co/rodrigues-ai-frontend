@@ -172,53 +172,6 @@ export function getFileIcon(
 }
 
 // ============================================================================
-// Relative Time Formatting
-// ============================================================================
-
-/**
- * Formata data para tempo relativo em português.
- *
- * @example
- * formatRelativeTime(new Date()) // "agora"
- * formatRelativeTime(new Date(Date.now() - 60000)) // "há 1 minuto"
- * formatRelativeTime(new Date(Date.now() - 3600000)) // "há 1 hora"
- */
-export function formatRelativeTime(date: Date): string {
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffSeconds = Math.floor(diffMs / 1000)
-  const diffMinutes = Math.floor(diffSeconds / 60)
-  const diffHours = Math.floor(diffMinutes / 60)
-  const diffDays = Math.floor(diffHours / 24)
-
-  if (diffSeconds < 60) {
-    return 'agora'
-  }
-
-  if (diffMinutes < 60) {
-    return diffMinutes === 1 ? 'há 1 minuto' : `há ${diffMinutes} minutos`
-  }
-
-  if (diffHours < 24) {
-    return diffHours === 1 ? 'há 1 hora' : `há ${diffHours} horas`
-  }
-
-  if (diffDays === 1) {
-    return 'ontem'
-  }
-
-  if (diffDays < 7) {
-    return `há ${diffDays} dias`
-  }
-
-  // Para datas mais antigas, mostrar data formatada
-  return date.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: 'short'
-  })
-}
-
-// ============================================================================
 // MIME Type Helpers
 // ============================================================================
 
