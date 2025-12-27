@@ -14,11 +14,13 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import {
   Upload,
   FileText,
+  ArrowLeft,
   ArrowRight,
   Send,
   Loader2,
@@ -37,7 +39,6 @@ import {
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { InternalHeader } from '@/components/v2/Header/InternalHeader'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   ComplianceVerifier,
@@ -587,14 +588,28 @@ export default function CPRAnalysisPage() {
     workflowState?.complianceResult || workflowState?.riskResult
 
   return (
-    <div className="min-h-screen bg-verity-50/50">
-      <InternalHeader
-        title="Analise de CPR"
-        subtitle="Analise completa com verificacao de compliance e risco."
-        backHref="/chat"
-        containerClassName="max-w-7xl"
-        actions={
-          step !== 'upload' ? (
+    <div className="min-h-screen bg-verity-50/50 p-4 md:p-8">
+      <div className="mx-auto max-w-7xl space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Link
+              href="/"
+              className="rounded-full p-2 text-verity-700 transition-colors hover:bg-verity-100"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Link>
+            <div>
+              <h1 className="font-display text-2xl font-bold text-verity-950 md:text-3xl">
+                Analise de CPR
+              </h1>
+              <p className="text-verity-700">
+                Analise completa com verificacao de compliance e risco
+              </p>
+            </div>
+          </div>
+
+          {step !== 'upload' && (
             <Button
               variant="outline"
               onClick={handleReset}
@@ -603,10 +618,9 @@ export default function CPRAnalysisPage() {
               <RefreshCw className="mr-2 h-4 w-4" />
               Nova Analise
             </Button>
-          ) : null
-        }
-      />
-      <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 md:px-8 md:py-8">
+          )}
+        </div>
+
         {/* Progress Indicator */}
         <div className="flex items-center justify-center gap-4">
           {[

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useMemo, useCallback } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { CPRWizardData } from '../schema'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -24,16 +24,12 @@ import {
   type RiskFactor,
   type RiskLevel
 } from '@/components/v2/RiskCalculator/RiskCalculator'
-import type { DraftSubmitResponse } from '@/types/cpr-wizard'
+import { useCPRCreation, type DocumentData } from '@/hooks/useCPRCreation'
 
 interface StepReviewProps {
   data: Partial<CPRWizardData>
   onBack: () => void
   goToStep: (step: number) => void
-  onGenerate: () => Promise<DraftSubmitResponse | null>
-  isGenerating: boolean
-  cprError: string | null
-  onClearError: () => void
 }
 
 // =============================================================================
@@ -89,6 +85,46 @@ function formatDateToBR(date: string): string {
   return `${day}/${month}/${year}`
 }
 
+/**
+ * Map wizard data to DocumentData format expected by the CPR creation API
+ */
+function mapWizardDataToDocumentData(
+  data: Partial<CPRWizardData>
+): DocumentData {
+  return {
+    valores: {
+      valor_total: data.amount,
+      preco_unitario: data.unitPrice,
+      forma_pagamento:
+        data.correctionIndex !== 'Nenhum'
+          ? `Correção: ${data.correctionIndex}`
+          : undefined
+    },
+    produto: {
+      descricao: data.product,
+      quantidade: data.quantity,
+      local_entrega: data.deliveryPlace
+    },
+    datas: {
+      emissao: data.issueDate,
+      vencimento: data.dueDate
+    },
+    garantias: {
+      tipo: data.guaranteeType?.join(', '),
+      descricao: data.guaranteeDescription
+    },
+    // Include guarantor info if available
+    ...(data.hasGuarantor &&
+      data.guarantorName && {
+        avalista: {
+          nome: data.guarantorName,
+          cpf_cnpj: data.guarantorCpfCnpj,
+          endereco: data.guarantorAddress
+        }
+      })
+  }
+}
+
 // Generation progress steps for user feedback
 const GENERATION_STEPS = [
   'Iniciando geração...',
@@ -102,20 +138,22 @@ const GENERATION_STEPS = [
 // Component
 // =============================================================================
 
-export function StepReview({
-  data,
-  onBack,
-  goToStep,
-  onGenerate,
-  isGenerating,
-  cprError,
-  onClearError
-}: StepReviewProps) {
+export function StepReview({ data, onBack, goToStep }: StepReviewProps) {
   const [confirmed, setConfirmed] = useState(false)
   const [generated, setGenerated] = useState(false)
   const [riskCalculated, setRiskCalculated] = useState(false)
   const [progressStep, setProgressStep] = useState(0)
   const [documentUrl, setDocumentUrl] = useState<string | null>(null)
+
+  // CPR creation hook
+  const {
+    state: cprState,
+    isLoading: isGenerating,
+    error: cprError,
+    startCreation,
+    continueCreation,
+    reset: resetCPRCreation
+  } = useCPRCreation()
 
   // Risk calculator hook
   const {
@@ -128,10 +166,8 @@ export function StepReview({
 
   // Transform wizard data to risk calculation request
   const riskRequest = useMemo((): RiskCalculateRequest | null => {
-    const quantity = data.quantity ?? data.expectedQuantity
-
     // Check if we have minimum required data
-    if (!data.amount || !quantity || !data.issueDate || !data.dueDate) {
+    if (!data.amount || !data.quantity || !data.issueDate || !data.dueDate) {
       return null
     }
 
@@ -139,14 +175,14 @@ export function StepReview({
     const hasGuarantees = (data.guaranteeType?.length ?? 0) > 0
 
     return {
-      commodity: data.commodity || 'soja',
-      quantity,
-      unit: data.unit || 'saca',
+      commodity: data.product || 'soja', // Default to soja if not specified
+      quantity: data.quantity,
+      unit: 'sacas', // Default unit - could be enhanced if wizard stores unit
       total_value: data.amount,
       issue_date: formatDateToBR(data.issueDate),
       maturity_date: formatDateToBR(data.dueDate),
       has_guarantees: hasGuarantees,
-      guarantee_value: hasGuarantees ? data.amount * 0.5 : undefined,
+      guarantee_value: hasGuarantees ? data.amount * 0.5 : undefined, // Estimate 50% of value as guarantee
       unit_price: data.unitPrice
     }
   }, [data])
@@ -187,6 +223,15 @@ export function StepReview({
     }
   }, [isGenerating])
 
+  // Handle document URL from API response
+  useEffect(() => {
+    if (cprState?.documentUrl) {
+      setDocumentUrl(cprState.documentUrl)
+      setGenerated(true)
+      toast.success('Minuta da CPR gerada com sucesso!')
+    }
+  }, [cprState?.documentUrl])
+
   // Transform API result to display format
   const riskDisplayData = useMemo(() => {
     if (!riskResult) return null
@@ -208,38 +253,57 @@ export function StepReview({
   const handleGenerate = useCallback(async () => {
     if (!confirmed) return
 
+    // Reset any previous error state
+    resetCPRCreation()
     setProgressStep(0)
 
-    const response = await onGenerate()
-    if (!response) {
+    // Convert wizard data to API format
+    const documentData = mapWizardDataToDocumentData(data)
+
+    // Start the CPR creation workflow
+    const startResponse = await startCreation(documentData)
+
+    if (!startResponse) {
+      // Error is handled by the hook and displayed in the UI
       return
     }
 
-    const hasDocument = !!(
-      response.workflow?.documentUrl || response.draft.documentUrl
-    )
+    // If the workflow is waiting for confirmation, continue with confirmation
+    if (startResponse.is_waiting_input) {
+      const confirmResponse = await continueCreation(
+        'Confirmo todos os dados e desejo gerar o documento da CPR.',
+        { confirmed: true, wizard_data: data }
+      )
 
-    if (hasDocument) {
-      const downloadBaseUrl = `/api/cpr/drafts/${response.draft.draftId}/download`
-      setDocumentUrl(downloadBaseUrl)
+      if (!confirmResponse) {
+        return
+      }
+
+      // Check if document was generated
+      if (confirmResponse.document_url) {
+        setDocumentUrl(confirmResponse.document_url)
+        setGenerated(true)
+        toast.success('Minuta da CPR gerada com sucesso!')
+      } else if (!confirmResponse.is_waiting_input) {
+        // Generation complete but no URL - might need another step
+        setGenerated(true)
+        toast.success('CPR processada com sucesso!')
+      }
+    } else if (startResponse.document_url) {
+      // Document was generated in the start call
+      setDocumentUrl(startResponse.document_url)
       setGenerated(true)
       toast.success('Minuta da CPR gerada com sucesso!')
-      return
     }
-
-    if (!response.workflow || !response.workflow.isWaitingInput) {
-      setGenerated(true)
-      toast.success('CPR processada com sucesso!')
-    }
-  }, [confirmed, onGenerate])
+  }, [confirmed, data, startCreation, continueCreation, resetCPRCreation])
 
   // Handle retry after error
   const handleRetry = useCallback(() => {
-    onClearError()
+    resetCPRCreation()
     setGenerated(false)
     setDocumentUrl(null)
     setConfirmed(false)
-  }, [onClearError])
+  }, [resetCPRCreation])
 
   // Handle download with actual URL
   const handleDownload = useCallback(
