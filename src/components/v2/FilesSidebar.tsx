@@ -141,7 +141,7 @@ export function FilesSidebar({
       </div>
 
       {/* Footer */}
-      <div className="border-t border-verity-100 bg-white p-4">
+      <div className="border-t border-sand-300 bg-sand-200 p-4">
         <button
           className="flex w-full items-center justify-center gap-2 rounded-xl border border-verity-200 bg-verity-50 px-4 py-2.5 text-sm font-medium text-verity-900 shadow-sm transition-all hover:bg-verity-100 hover:shadow-md active:scale-95 disabled:opacity-50"
           disabled={uploadedFiles.length === 0 && generatedFiles.length === 0}
@@ -172,7 +172,7 @@ export function FilesSidebar({
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: 320, opacity: 0 }}
           transition={sidebarSpring}
-          className="fixed right-0 top-0 z-50 h-screen w-[320px] border-l border-verity-100 bg-white"
+          className="fixed right-0 top-0 z-50 h-screen w-[320px] border-l border-sand-300 bg-sand-200"
         >
           {sidebarContent}
         </motion.aside>
@@ -185,7 +185,7 @@ export function FilesSidebar({
       initial={false}
       animate={{ width: isOpen ? 320 : 0 }}
       transition={sidebarSpring}
-      className="relative flex-shrink-0 overflow-hidden border-l border-verity-100 bg-white"
+      className="relative flex-shrink-0 overflow-hidden border-l border-sand-300 bg-sand-200"
     >
       {sidebarContent}
     </motion.aside>

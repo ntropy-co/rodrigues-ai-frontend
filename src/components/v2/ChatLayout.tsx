@@ -161,7 +161,7 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
   }
 
   return (
-    <div className="flex h-screen w-screen flex-col bg-verity-50 dark:bg-background">
+    <div className="flex h-screen w-screen flex-col bg-sand-200 dark:bg-background">
       {/* Header */}
       <ChatHeader />
 
@@ -200,7 +200,7 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
         <motion.div
           layout
           className={cn(
-            'relative flex flex-col overflow-hidden bg-verity-50 transition-all duration-300 ease-in-out',
+            'relative flex flex-col overflow-hidden bg-sand-200 transition-all duration-300 ease-in-out',
             isCanvasOpen && !isMobile ? 'border-r border-verity-200' : ''
           )}
           style={{
@@ -283,7 +283,7 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
         {!isFilesOpen && (
           <div
             className={cn(
-              'relative z-20 h-full bg-white shadow-xl transition-all duration-300 ease-in-out',
+              'relative z-20 h-full bg-sand-200 shadow-xl transition-all duration-300 ease-in-out',
               isMobile && isCanvasOpen ? 'absolute inset-0 w-full' : ''
             )}
             style={{
