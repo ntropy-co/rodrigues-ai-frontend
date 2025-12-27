@@ -79,7 +79,9 @@
     "zustand": "^5.0.9"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^15.3.3",
     "@babel/core": "^7.28.5",
+    "cross-env": "^7.0.3",
     "@eslint/eslintrc": "^3.3.3",
     "@next/bundle-analyzer": "^16.1.1",
     "@tailwindcss/typography": "^0.5.19",
