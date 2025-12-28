@@ -21,6 +21,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { isValidSessionId, parseRequestBody } from '@/lib/api/bff-utils'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -36,6 +37,13 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     if (!authorization) {
       return NextResponse.json({ detail: 'Unauthorized' }, { status: 401 })
+    }
+
+    if (!isValidSessionId(sessionId)) {
+      return NextResponse.json(
+        { detail: 'Invalid session ID format' },
+        { status: 400 }
+      )
     }
 
     const response = await fetch(
@@ -73,7 +81,45 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ detail: 'Unauthorized' }, { status: 401 })
     }
 
-    const body = await request.json()
+    if (!isValidSessionId(sessionId)) {
+      return NextResponse.json(
+        { detail: 'Invalid session ID format' },
+        { status: 400 }
+      )
+    }
+
+    // Parse and validate request body
+    const bodyResult = await parseRequestBody<{
+      title?: string
+      status?: string
+    }>(request)
+
+    if ('error' in bodyResult) {
+      return bodyResult.error
+    }
+
+    const body = bodyResult.data
+
+    // Validate allowed fields and constraints
+    const allowedFields = ['title', 'status']
+    const invalidFields = Object.keys(body).filter(
+      (key) => !allowedFields.includes(key)
+    )
+
+    if (invalidFields.length > 0) {
+      return NextResponse.json(
+        { detail: `Unexpected fields: ${invalidFields.join(', ')}` },
+        { status: 400 }
+      )
+    }
+
+    // Validate title length if provided
+    if (body.title !== undefined && body.title.length > 200) {
+      return NextResponse.json(
+        { detail: 'Title must be 200 characters or less' },
+        { status: 400 }
+      )
+    }
 
     const response = await fetch(
       `${BACKEND_URL}/api/v1/sessions/${sessionId}`,
@@ -109,6 +155,13 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     if (!authorization) {
       return NextResponse.json({ detail: 'Unauthorized' }, { status: 401 })
+    }
+
+    if (!isValidSessionId(sessionId)) {
+      return NextResponse.json(
+        { detail: 'Invalid session ID format' },
+        { status: 400 }
+      )
     }
 
     const response = await fetch(

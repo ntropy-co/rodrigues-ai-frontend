@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { fetchWithRefresh } from '@/lib/auth/token-refresh'
+import { isValidProjectId } from '@/lib/api/bff-utils'
 import type { SessionEntry } from '@/types/playground'
 
 /**
@@ -39,6 +40,12 @@ export function useSessions() {
         return []
       }
 
+      // Validate project_id format if provided
+      if (projectId && !isValidProjectId(projectId)) {
+        setError('Invalid project_id format')
+        return []
+      }
+
       setLoading(true)
       setError(null)
 
@@ -74,6 +81,17 @@ export function useSessions() {
       projectId?: string
     ): Promise<SessionEntry | null> => {
       if (!token) {
+        return null
+      }
+
+      // Validate inputs before making request
+      if (title && title.length > 200) {
+        setError('Title must be 200 characters or less')
+        return null
+      }
+
+      if (projectId && !isValidProjectId(projectId)) {
+        setError('Invalid project_id format')
         return null
       }
 
@@ -145,6 +163,12 @@ export function useSessions() {
       data: { title?: string }
     ): Promise<SessionEntry | null> => {
       if (!token) {
+        return null
+      }
+
+      // Validate title length if provided
+      if (data.title && data.title.length > 200) {
+        setError('Title must be 200 characters or less')
         return null
       }
 

@@ -22,6 +22,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { handleBackendResponse, isValidProjectId } from '@/lib/api/bff-utils'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -42,6 +43,14 @@ export async function GET(request: NextRequest) {
     const limit = searchParams.get('limit') || '100'
     const projectId = searchParams.get('project_id')
 
+    // Validate project_id format if provided
+    if (projectId && !isValidProjectId(projectId)) {
+      return NextResponse.json(
+        { detail: 'Invalid project_id format' },
+        { status: 400 }
+      )
+    }
+
     const backendUrl = new URL(`${BACKEND_URL}/api/v1/sessions/`)
     backendUrl.searchParams.set('skip', skip)
     backendUrl.searchParams.set('limit', limit)
@@ -55,11 +64,15 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    const data = await response.json()
+    const backendResponse = await handleBackendResponse(
+      response,
+      'Failed to fetch sessions'
+    )
 
     // Add cache headers for GET requests
-    return NextResponse.json(data, {
-      status: response.status,
+    const responseData = await backendResponse.json()
+    return NextResponse.json(responseData, {
+      status: backendResponse.status,
       headers: {
         'Cache-Control': 'private, max-age=30, stale-while-revalidate=60'
       }
@@ -101,9 +114,7 @@ export async function POST(request: NextRequest) {
       body: body ? JSON.stringify(body) : undefined
     })
 
-    const data = await response.json()
-
-    return NextResponse.json(data, { status: response.status })
+    return await handleBackendResponse(response, 'Failed to create session')
   } catch (error) {
     console.error('[API Route /api/sessions] POST Error:', error)
     return NextResponse.json(
