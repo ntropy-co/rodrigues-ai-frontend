@@ -257,6 +257,22 @@ export function useCPRWorkflowStatus({
   }, [sessionId, workflowType, onError])
 
   /**
+   * Stop polling
+   */
+  const stopPolling = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
+    setIsPolling(false)
+
+    trackEvent('cpr_workflow_polling_stopped', {
+      session_id: sessionId,
+      workflow_type: workflowType
+    })
+  }, [sessionId, workflowType])
+
+  /**
    * Manual refresh
    */
   const refresh = useCallback(async () => {
@@ -309,22 +325,6 @@ export function useCPRWorkflowStatus({
       interval: pollingInterval
     })
   }, [sessionId, workflowType, pollingInterval, isPolling, refresh])
-
-  /**
-   * Stop polling
-   */
-  const stopPolling = useCallback(() => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current)
-      intervalRef.current = null
-    }
-    setIsPolling(false)
-
-    trackEvent('cpr_workflow_polling_stopped', {
-      session_id: sessionId,
-      workflow_type: workflowType
-    })
-  }, [sessionId, workflowType])
 
   /**
    * Auto-start polling on mount
