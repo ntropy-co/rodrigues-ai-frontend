@@ -24,7 +24,7 @@ export async function refreshTokens(): Promise<boolean> {
   try {
     console.log('[TokenRefresh] Attempting token refresh...')
     // Call refresh endpoint with empty body - backend will check cookie
-    await authApi.refreshToken() 
+    await authApi.refreshToken()
     console.log('[TokenRefresh] Token refreshed successfully')
     return true
   } catch (error) {
@@ -36,7 +36,7 @@ export async function refreshTokens(): Promise<boolean> {
 /**
  * Wrapper for fetch that automatically handles token refresh on 401.
  * Use this instead of fetch for authenticated requests.
- * 
+ *
  * NOTE: Since we use HttpOnly cookies, we don't need to inject headers.
  * We just need to catch 401 and retry.
  */
@@ -68,8 +68,8 @@ export async function fetchWithRefresh(
 /**
  * Check if token is about to expire and proactively refresh.
  * Call this periodically (e.g., every 5 minutes) to maintain session.
- * 
- * Since we can't read the HTTPOnly cookie to know expiration, 
+ *
+ * Since we can't read the HTTPOnly cookie to know expiration,
  * we just blindly refresh periodically.
  */
 export function scheduleTokenRefresh(
@@ -78,9 +78,14 @@ export function scheduleTokenRefresh(
   const intervalId = setInterval(async () => {
     // Blind refresh: just call it. If it fails (e.g. 401), session might be invalid.
     // We could check if we are online/active before refreshing.
-    if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
-        console.log('[TokenRefresh] Proactive refresh check')
-        await refreshTokens()
+    if (
+      typeof document !== 'undefined' &&
+      document.visibilityState === 'visible'
+    ) {
+      console.log('[TokenRefresh] Proactive refresh check')
+      await refreshTokens().catch((err) => {
+        console.error('[TokenRefresh] Scheduled refresh failed:', err)
+      })
     }
   }, intervalMs)
 

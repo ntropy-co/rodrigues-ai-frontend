@@ -73,19 +73,34 @@ export function ConversationsSidebar({
 
   // Fetch projects on mount
   useEffect(() => {
-    fetchProjects().then(setProjects)
+    fetchProjects()
+      .then(setProjects)
+      .catch((err) => {
+        console.error('[ConversationsSidebar] Error fetching projects:', err)
+      })
   }, [fetchProjects])
 
   // Fetch sessions when selectedProjectId changes
   useEffect(() => {
-    fetchSessions(selectedProjectId).then(setSessions)
+    fetchSessions(selectedProjectId)
+      .then(setSessions)
+      .catch((err) => {
+        console.error('[ConversationsSidebar] Error fetching sessions:', err)
+      })
   }, [fetchSessions, selectedProjectId])
 
   // Memoized handlers to prevent re-renders of child components
   const handleUpdateSession = useCallback(
     async (id: string, data: { title?: string }) => {
       await updateSession(id, data)
-      fetchSessions(selectedProjectId).then(setSessions)
+      fetchSessions(selectedProjectId)
+        .then(setSessions)
+        .catch((err) => {
+          console.error(
+            '[ConversationsSidebar] Error refreshing sessions:',
+            err
+          )
+        })
     },
     [updateSession, fetchSessions, selectedProjectId]
   )
@@ -93,7 +108,14 @@ export function ConversationsSidebar({
   const handleUpdateProject = useCallback(
     async (id: string, data: { title?: string }) => {
       await updateProject(id, data)
-      fetchProjects().then(setProjects)
+      fetchProjects()
+        .then(setProjects)
+        .catch((err) => {
+          console.error(
+            '[ConversationsSidebar] Error refreshing projects:',
+            err
+          )
+        })
     },
     [updateProject, fetchProjects]
   )
@@ -101,7 +123,14 @@ export function ConversationsSidebar({
   const handleCreateProject = useCallback(
     async (data: { title: string }) => {
       await createProject(data)
-      fetchProjects().then(setProjects)
+      fetchProjects()
+        .then(setProjects)
+        .catch((err) => {
+          console.error(
+            '[ConversationsSidebar] Error refreshing projects:',
+            err
+          )
+        })
     },
     [createProject, fetchProjects]
   )
@@ -116,7 +145,14 @@ export function ConversationsSidebar({
       if (newSession && onSelectConversation) {
         onSelectConversation(newSession.session_id)
         // Update list
-        fetchSessions(selectedProjectId).then(setSessions)
+        fetchSessions(selectedProjectId)
+          .then(setSessions)
+          .catch((err) => {
+            console.error(
+              '[ConversationsSidebar] Error refreshing sessions:',
+              err
+            )
+          })
         if (onToggle) onToggle()
       }
     } else {
