@@ -20,6 +20,11 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import {
+  updateOrganizationSettingsSchema,
+  type UpdateOrganizationSettingsInput
+} from '@/lib/organizations/validations'
+import { type ZodError, type ZodIssue } from 'zod'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -74,6 +79,31 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json()
+
+    // Validate request body
+    try {
+      updateOrganizationSettingsSchema.parse(body)
+    } catch (validationError) {
+      if (
+        validationError &&
+        typeof validationError === 'object' &&
+        'issues' in validationError
+      ) {
+        const zodError =
+          validationError as ZodError<UpdateOrganizationSettingsInput>
+        return NextResponse.json(
+          {
+            detail: 'Invalid input data',
+            errors: zodError.issues.map((err: ZodIssue) => ({
+              field: err.path.join('.'),
+              message: err.message
+            }))
+          },
+          { status: 400 }
+        )
+      }
+      throw validationError
+    }
 
     const response = await fetch(
       `${BACKEND_URL}/api/v1/organizations/current/settings`,
