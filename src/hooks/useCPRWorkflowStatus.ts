@@ -195,7 +195,7 @@ export function useCPRWorkflowStatus({
   /**
    * Stop polling - using ref to avoid circular dependencies
    */
-  const stopPollingRef = useRef<() => void>()
+  const stopPollingRef = useRef<() => void>(() => {})
   stopPollingRef.current = () => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current)
