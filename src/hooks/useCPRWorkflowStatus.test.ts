@@ -60,7 +60,7 @@ describe('useCPRWorkflowStatus', () => {
   })
 
   afterEach(() => {
-    vi.runOnlyPendingTimers()
+    vi.clearAllTimers()
     vi.useRealTimers()
   })
 

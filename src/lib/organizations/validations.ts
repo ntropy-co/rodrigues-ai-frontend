@@ -24,7 +24,7 @@ const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
 export const updateOrganizationSchema = z.object({
   name: z
     .string()
-    .min(1, 'Nome da organização é obrigatório')
+    .min(1, 'Nome não pode ser vazio quando fornecido')
     .max(100, 'Nome da organização muito longo (máximo 100 caracteres)')
     .optional(),
   primary_color: z
@@ -44,7 +44,7 @@ export const updateOrganizationSchema = z.object({
   email: z
     .string()
     .email('Email inválido')
-    .max(255, 'Email muito longo')
+    .max(254, 'Email muito longo (máximo 254 caracteres)')
     .optional(),
   website: z
     .string()
@@ -68,11 +68,19 @@ export const updateOrganizationSchema = z.object({
 /**
  * Schema de validação para atualização de settings da organização
  * - Permite qualquer objeto JSON com chaves string (será validado pelo backend)
+ * - Tamanho máximo: 100KB
  */
-export const updateOrganizationSettingsSchema = z.record(
-  z.string(),
-  z.unknown()
-)
+export const updateOrganizationSettingsSchema = z
+  .record(z.string(), z.unknown())
+  .refine(
+    (data) => {
+      const size = new Blob([JSON.stringify(data)]).size
+      return size <= 100 * 1024 // 100KB
+    },
+    {
+      message: 'Settings muito grande (máximo 100KB)'
+    }
+  )
 
 // Type exports para TypeScript
 export type UpdateOrganizationInput = z.output<typeof updateOrganizationSchema>

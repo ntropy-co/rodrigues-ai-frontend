@@ -80,7 +80,7 @@ describe('updateOrganizationSchema', () => {
       })
       expect(result.success).toBe(false)
       if (!result.success) {
-        expect(result.error.issues[0].message).toContain('obrigatório')
+        expect(result.error.issues[0].message).toContain('não pode ser vazio')
       }
     })
 
@@ -146,7 +146,7 @@ describe('updateOrganizationSchema', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should reject email longer than 255 characters', () => {
+    it('should reject email longer than 254 characters', () => {
       const longEmail = 'a'.repeat(250) + '@test.com'
       const result = updateOrganizationSchema.safeParse({
         email: longEmail
@@ -253,6 +253,27 @@ describe('updateOrganizationSettingsSchema', () => {
       allowed_ips: ['192.168.1.1', '192.168.1.2'],
       tags: ['tag1', 'tag2', 'tag3']
     })
+    expect(result.success).toBe(true)
+  })
+
+  it('should reject settings larger than 100KB', () => {
+    // Create a large object that exceeds 100KB
+    const largeSettings = {
+      data: 'x'.repeat(101 * 1024) // 101KB
+    }
+    const result = updateOrganizationSettingsSchema.safeParse(largeSettings)
+    expect(result.success).toBe(false)
+    if (!result.success) {
+      expect(result.error.issues[0].message).toContain('muito grande')
+    }
+  })
+
+  it('should accept settings exactly at 100KB limit', () => {
+    // Create an object close to but under 100KB
+    const largeSettings = {
+      data: 'x'.repeat(90 * 1024) // 90KB (safely under 100KB)
+    }
+    const result = updateOrganizationSettingsSchema.safeParse(largeSettings)
     expect(result.success).toBe(true)
   })
 })
