@@ -190,36 +190,8 @@ export function useCPRWorkflowStatus({
   const retryCountRef = useRef(0)
   const abortControllerRef = useRef<AbortController | null>(null)
   const isMountedRef = useRef(true)
+  const stopPollingRef = useRef<(() => void) | null>(null)
   const maxRetries = 3
-
-  /**
-   * Stop polling - using ref to avoid circular dependencies
-   */
-  const stopPollingRef = useRef<() => void>(() => {})
-  stopPollingRef.current = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current)
-      intervalRef.current = null
-    }
-
-    // Cancel any ongoing fetch
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort()
-      abortControllerRef.current = null
-    }
-
-    // Reset retry counter
-    retryCountRef.current = 0
-
-    if (isMountedRef.current) {
-      setIsPolling(false)
-    }
-
-    trackEvent('cpr_workflow_polling_stopped', {
-      session_id: sessionId,
-      workflow_type: workflowType
-    })
-  }
 
   /**
    * Fetch workflow status from BFF
@@ -232,7 +204,7 @@ export function useCPRWorkflowStatus({
       return null
     }
 
-    // Cancel previous request if still pending
+    // Cancel previous request if any
     if (abortControllerRef.current) {
       abortControllerRef.current.abort()
     }
@@ -271,14 +243,13 @@ export function useCPRWorkflowStatus({
 
       // Reset retry count on success
       retryCountRef.current = 0
-
       if (isMountedRef.current) {
         setError(null)
       }
 
       return newStatus
     } catch (err) {
-      // Ignore AbortError - it's expected when cancelling requests
+      // Ignore abort errors (expected when canceling requests)
       if (err instanceof Error && err.name === 'AbortError') {
         return null
       }
@@ -292,8 +263,8 @@ export function useCPRWorkflowStatus({
       if (retryCountRef.current >= maxRetries) {
         if (isMountedRef.current) {
           setError(errorMessage)
+          setIsPolling(false)
         }
-        stopPollingRef.current?.()
         onError?.(errorMessage)
 
         trackEvent('cpr_workflow_status_error', {
@@ -337,7 +308,9 @@ export function useCPRWorkflowStatus({
   const startPolling = useCallback(() => {
     if (!sessionId || isPolling) return
 
-    setIsPolling(true)
+    if (isMountedRef.current) {
+      setIsPolling(true)
+    }
     retryCountRef.current = 0
 
     // Immediate first fetch
@@ -356,54 +329,71 @@ export function useCPRWorkflowStatus({
   }, [sessionId, workflowType, pollingInterval, isPolling, refresh])
 
   /**
-   * Stable stopPolling function (uses ref internally)
+   * Stop polling
    */
   const stopPolling = useCallback(() => {
-    stopPollingRef.current?.()
-  }, [])
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
+    if (isMountedRef.current) {
+      setIsPolling(false)
+    }
+    retryCountRef.current = 0
+
+    // Cancel any pending request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+      abortControllerRef.current = null
+    }
+
+    trackEvent('cpr_workflow_polling_stopped', {
+      session_id: sessionId,
+      workflow_type: workflowType
+    })
+  }, [sessionId, workflowType])
 
   /**
-   * Cleanup on sessionId change - prevent memory leaks
+   * Initialize stopPollingRef to break circular dependency
    */
   useEffect(() => {
-    return () => {
-      // Clear interval when sessionId changes
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-        intervalRef.current = null
-      }
+    stopPollingRef.current = stopPolling
+  }, [stopPolling])
 
-      // Cancel ongoing fetch
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort()
-        abortControllerRef.current = null
+  /**
+   * Track component mount status
+   */
+  useEffect(() => {
+    isMountedRef.current = true
+
+    // Cleanup on unmount
+    return () => {
+      isMountedRef.current = false
+      stopPolling()
+    }
+  }, [stopPolling])
+
+  /**
+   * Handle sessionId changes - restart polling if needed
+   */
+  useEffect(() => {
+    if (sessionId && isPolling) {
+      // Session changed while polling - restart
+      stopPolling()
+      if (autoStart) {
+        startPolling()
       }
     }
   }, [sessionId])
 
   /**
-   * Track component mount state
-   */
-  useEffect(() => {
-    isMountedRef.current = true
-    return () => {
-      isMountedRef.current = false
-    }
-  }, [])
-
-  /**
    * Auto-start polling on mount
    */
   useEffect(() => {
-    if (autoStart && sessionId) {
+    if (autoStart && sessionId && !isPolling) {
       startPolling()
     }
-
-    // Cleanup on unmount
-    return () => {
-      stopPollingRef.current?.()
-    }
-  }, [autoStart, sessionId, startPolling])
+  }, [autoStart, sessionId, startPolling, isPolling])
 
   /**
    * Stop polling when workflow completes

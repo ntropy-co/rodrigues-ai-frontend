@@ -48,9 +48,8 @@ export async function GET(
   try {
     const { sessionId } = await params
 
-    // Validate sessionId format (security)
-    const sessionIdRegex = /^[a-zA-Z0-9_-]{1,100}$/
-    if (!sessionId || !sessionIdRegex.test(sessionId)) {
+    // Validate sessionId format (alphanumeric, hyphens, underscores, max 100 chars)
+    if (!sessionId || !/^[a-zA-Z0-9_-]{1,100}$/.test(sessionId)) {
       return NextResponse.json(
         { detail: 'Invalid session ID format' },
         { status: 400 }
