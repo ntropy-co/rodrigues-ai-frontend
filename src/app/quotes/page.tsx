@@ -7,9 +7,12 @@ import dynamic from 'next/dynamic'
 
 // Lazy load the chart component
 const QuotesChart = dynamic(
-  () => import('@/components/v2/QuotesChart/QuotesChart').then((mod) => mod.QuotesChart),
+  () =>
+    import('@/components/v2/QuotesChart/QuotesChart').then(
+      (mod) => mod.QuotesChart
+    ),
   {
-    loading: () => <Skeleton className="w-full h-[400px] rounded-xl" />,
+    loading: () => <Skeleton className="h-[400px] w-full rounded-xl" />,
     ssr: false
   }
 )

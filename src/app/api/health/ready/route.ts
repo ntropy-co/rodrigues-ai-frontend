@@ -15,7 +15,10 @@ import logger from '@/lib/logger'
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 export async function GET() {
-  const checks: Record<string, { status: string; latency_ms?: number; error?: string }> = {}
+  const checks: Record<
+    string,
+    { status: string; latency_ms?: number; error?: string }
+  > = {}
   let allHealthy = true
 
   // 1. Check Redis (Frontend should not depend on Redis directly anymore)

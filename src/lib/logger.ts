@@ -21,7 +21,8 @@ interface Logger {
 }
 
 const isDev = process.env.NODE_ENV === 'development'
-const LOG_LEVEL = (process.env.LOG_LEVEL as LogLevel) || (isDev ? 'debug' : 'info')
+const LOG_LEVEL =
+  (process.env.LOG_LEVEL as LogLevel) || (isDev ? 'debug' : 'info')
 
 const LOG_LEVELS: Record<LogLevel, number> = {
   debug: 10,
@@ -34,7 +35,11 @@ function shouldLog(level: LogLevel): boolean {
   return LOG_LEVELS[level] >= LOG_LEVELS[LOG_LEVEL]
 }
 
-function formatLog(level: LogLevel, context: LogContext, message: string): string {
+function formatLog(
+  level: LogLevel,
+  context: LogContext,
+  message: string
+): string {
   const timestamp = new Date().toISOString()
   const base = {
     timestamp,

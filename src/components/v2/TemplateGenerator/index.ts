@@ -1,1 +1,1 @@
-export { TemplateGenerator } from "./TemplateGenerator";
+export { TemplateGenerator } from './TemplateGenerator'

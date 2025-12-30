@@ -6,7 +6,7 @@ import { track, ANALYTICS_EVENTS } from '@/lib/analytics'
 
 /**
  * WebVitalsReporter Component
- * 
+ *
  * Collects Core Web Vitals (LCP, INP, CLS) and reports them using
  * the centralized analytics system. Uses navigator.sendBeacon internally
  * via the analytics provider for reliability.
@@ -17,15 +17,15 @@ export function WebVitalsReporter() {
   useReportWebVitals((metric) => {
     // [MANDATORY] Filter for LCP, INP, and CLS
     if (!['LCP', 'INP', 'CLS'].includes(metric.name)) {
-        return
+      return
     }
 
     // Logging in Development for visibility
     if (process.env.NODE_ENV === 'development') {
       console.log(`[Web Vital] ${metric.name}:`, {
-          id: metric.id,
-          value: metric.value,
-          rating: metric.rating
+        id: metric.id,
+        value: metric.value,
+        rating: metric.rating
       })
     }
 
@@ -37,7 +37,9 @@ export function WebVitalsReporter() {
       rating: metric.rating as 'good' | 'needs-improvement' | 'poor',
       delta: metric.delta,
       navigationType: metric.navigationType,
-      route: pathname || (typeof window !== 'undefined' ? window.location.pathname : '/')
+      route:
+        pathname ||
+        (typeof window !== 'undefined' ? window.location.pathname : '/')
     })
   })
 

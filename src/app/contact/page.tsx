@@ -57,7 +57,8 @@ export default function ContactPage() {
                 Solicitar Acesso
               </h1>
               <p className="mt-1 text-sm text-verity-600">
-                Preencha o formulário abaixo para entrar em contato com nossa equipe.
+                Preencha o formulário abaixo para entrar em contato com nossa
+                equipe.
               </p>
             </div>
 
@@ -75,7 +76,8 @@ export default function ContactPage() {
                   Solicitação Enviada!
                 </h3>
                 <p className="mb-6 text-sm text-verity-600">
-                  Nossa equipe analisará sua solicitação e entrará em contato em breve através do email fornecido.
+                  Nossa equipe analisará sua solicitação e entrará em contato em
+                  breve através do email fornecido.
                 </p>
                 <Link href="/login" className="w-full">
                   <Button className="w-full" size="lg">
@@ -97,7 +99,11 @@ export default function ContactPage() {
                   <label className="text-sm font-medium text-verity-900">
                     Email Corporativo
                   </label>
-                  <Input type="email" required placeholder="nome@empresa.com.br" />
+                  <Input
+                    type="email"
+                    required
+                    placeholder="nome@empresa.com.br"
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -118,7 +124,12 @@ export default function ContactPage() {
                   />
                 </div>
 
-                <Button type="submit" disabled={isLoading} className="w-full" size="lg">
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full"
+                  size="lg"
+                >
                   {isLoading ? (
                     <span className="flex items-center gap-2">
                       <Loader2 className="h-5 w-5 animate-spin" />
@@ -141,10 +152,11 @@ export default function ContactPage() {
               </form>
             )}
           </div>
-          
-           {/* Footer Text */}
-           <p className="mt-6 text-center text-xs text-white/70">
-            © {new Date().getFullYear()} Verity Agro. Todos os direitos reservados.
+
+          {/* Footer Text */}
+          <p className="mt-6 text-center text-xs text-white/70">
+            © {new Date().getFullYear()} Verity Agro. Todos os direitos
+            reservados.
           </p>
         </motion.div>
       </div>
