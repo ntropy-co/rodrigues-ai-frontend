@@ -42,7 +42,17 @@ if (
 // =============================================================================
 
 const MUTATION_METHODS = ['POST', 'PUT', 'DELETE', 'PATCH']
-const CSRF_EXEMPT_PATHS: string[] = []
+
+// Paths that don't require CSRF validation (public endpoints)
+const CSRF_EXEMPT_PATHS = [
+  '/api/auth/register',
+  '/api/auth/login',
+  '/api/auth/forgot-password',
+  '/api/auth/reset-password',
+  '/api/contact',
+  '/api/health',
+  '/api/webhooks'
+] as const
 
 export async function middleware(request: NextRequest) {
   const { method, headers, nextUrl } = request
@@ -50,10 +60,14 @@ export async function middleware(request: NextRequest) {
   // Only use the FIRST IP (set by the trusted proxy), ignore attacker-injected IPs
   const forwardedFor = request.headers.get('x-forwarded-for')
   const realIp = request.headers.get('x-real-ip')
-  
+
   // Priority: x-real-ip (set by proxy) > first x-forwarded-for > fallback
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const ip = realIp || forwardedFor?.split(',')[0]?.trim() || (request as any).ip || '127.0.0.1'
+  const ip =
+    realIp ||
+    forwardedFor?.split(',')[0]?.trim() ||
+    (request as any).ip ||
+    '127.0.0.1'
   const pathname = nextUrl.pathname
   // 1. Rate Limiting (Skip for Health Check)
   if (
@@ -86,7 +100,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // 2. CSRF Protection
+  // 2. CSRF Protection (MANDATORY for mutations)
   if (MUTATION_METHODS.includes(method)) {
     const isExempt = CSRF_EXEMPT_PATHS.some((path) => pathname.startsWith(path))
 
@@ -94,21 +108,36 @@ export async function middleware(request: NextRequest) {
       const origin = headers.get('origin')
       const host = headers.get('host')
 
-      if (origin) {
-        let originHost: string
-        try {
-          originHost = new URL(origin).host
-        } catch (error) {
-          console.warn(`[Security] Invalid Origin: ${origin}`, error)
-          return new NextResponse('CSRF validation failed', { status: 403 })
-        }
+      // Origin header is REQUIRED for non-exempt mutations
+      if (!origin) {
+        console.warn(
+          `[Security] CSRF blocked: missing Origin header for ${method} ${pathname}`
+        )
+        return new NextResponse(
+          'CSRF validation failed: Origin header required',
+          {
+            status: 403
+          }
+        )
+      }
 
-        if (!host || originHost !== host) {
-          console.warn(
-            `[Security] CSRF blocked: origin=${originHost}, host=${host}`
-          )
-          return new NextResponse('CSRF validation failed', { status: 403 })
-        }
+      let originHost: string
+      try {
+        originHost = new URL(origin).host
+      } catch (error) {
+        console.warn(`[Security] Invalid Origin: ${origin}`, error)
+        return new NextResponse('CSRF validation failed: Invalid Origin', {
+          status: 403
+        })
+      }
+
+      if (!host || originHost !== host) {
+        console.warn(
+          `[Security] CSRF blocked: origin=${originHost}, host=${host}`
+        )
+        return new NextResponse('CSRF validation failed: Origin mismatch', {
+          status: 403
+        })
       }
     }
   }

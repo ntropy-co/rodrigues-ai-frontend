@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next'
 import withPWA from '@ducanh2912/next-pwa'
 import { withSentryConfig } from '@sentry/nextjs'
+import bundleAnalyzer from '@next/bundle-analyzer'
 
 const nextConfig: NextConfig = {
   devIndicators: false,
@@ -12,8 +13,8 @@ const nextConfig: NextConfig = {
         key: 'Content-Security-Policy',
         value: [
           "default-src 'self'",
-          // Next.js precisa de 'unsafe-eval' e 'unsafe-inline' para funcionar
-          "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
+          // Next.js precisa de 'unsafe-inline' para funcionar (unsafe-eval removido quando possível)
+          "script-src 'self' 'unsafe-inline'",
           // Permitir Google Fonts CSS
           "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
           "img-src 'self' data: https: blob:",
@@ -23,7 +24,9 @@ const nextConfig: NextConfig = {
           "connect-src 'self' https://rodrigues-ai-backend-production.up.railway.app https://api.rodriguesagro.com.br https://*.ingest.sentry.io https://*.sentry.io https://us.i.posthog.com https://us.posthog.com",
           "frame-ancestors 'none'",
           "base-uri 'self'",
-          "form-action 'self'"
+          "form-action 'self'",
+          "object-src 'none'",
+          'upgrade-insecure-requests'
         ].join('; ')
       },
       {
@@ -45,6 +48,11 @@ const nextConfig: NextConfig = {
         // Desabilita features do navegador que não são usadas
         key: 'Permissions-Policy',
         value: 'camera=(), microphone=(), geolocation=()'
+      },
+      {
+        // XSS Protection (legacy browsers)
+        key: 'X-XSS-Protection',
+        value: '1; mode=block'
       }
     ]
 
@@ -185,8 +193,8 @@ const sentryOptions = {
   }
 }
 
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true'
 })
 
 export default withSentryConfig(
