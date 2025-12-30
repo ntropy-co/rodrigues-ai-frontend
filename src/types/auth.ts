@@ -21,7 +21,11 @@ export type InviteStatus =
 
 export type UserRole = 'admin' | 'analyst' | 'viewer'
 
-export type OrganizationPlan = 'trial' | 'enterprise'
+// Aligned with backend plan_tier values (app/models/user.py:179)
+export type PlanTier = 'free' | 'pro' | 'enterprise'
+
+// Legacy alias for backwards compatibility
+export type OrganizationPlan = PlanTier
 
 export type OrganizationStatus = 'active' | 'suspended'
 
@@ -41,18 +45,98 @@ export interface Organization {
   updatedAt?: Date
 }
 
+/**
+ * Backend User model (matches app/models/user.py:128-186)
+ * These are the actual fields returned by the backend API
+ */
+export interface BackendUser {
+  id: string
+  email: string
+  full_name: string | null
+  is_active: boolean
+  is_superuser: boolean
+  organization_id: string | null
+  phone_number: string | null
+  job_title: string | null
+  avatar_url: string | null
+  company_name: string | null
+  last_login_at: string | null
+  login_count: number
+  onboarding_completed: boolean
+  onboarding_step: number
+  plan_tier: PlanTier
+  storage_used_bytes: number
+  created_at: string
+  updated_at: string
+}
+
+/**
+ * Frontend User model
+ * Transformed from BackendUser by the BFF layer
+ */
 export interface User {
   id: string
-  organizationId: string
+  organizationId: string | null
   email: string
-  name: string
-  role: UserRole
-  status: UserStatus
-  emailVerified: boolean
+  name: string // Mapped from full_name
+  fullName: string | null // Original backend field
+  role: UserRole // Derived from is_superuser
+  isActive: boolean
+  isSuperuser: boolean
+  // Profile fields
+  phoneNumber: string | null
+  jobTitle: string | null
+  avatarUrl: string | null
+  companyName: string | null
+  // Engagement
   lastLoginAt?: Date
+  loginCount: number
+  // Onboarding
+  onboardingCompleted: boolean
+  onboardingStep: number
+  // Plan
+  planTier: PlanTier
+  storageUsedBytes: number
+  // Timestamps
   createdAt: Date
   updatedAt?: Date
-  inviteId?: string // Referência ao convite original
+  // Legacy fields (for backwards compatibility)
+  status?: UserStatus
+  emailVerified?: boolean
+  inviteId?: string
+}
+
+/**
+ * Transform backend user to frontend user
+ */
+export function transformBackendUser(backend: BackendUser): User {
+  return {
+    id: backend.id,
+    organizationId: backend.organization_id,
+    email: backend.email,
+    name: backend.full_name || backend.email.split('@')[0],
+    fullName: backend.full_name,
+    role: backend.is_superuser ? 'admin' : 'analyst',
+    isActive: backend.is_active,
+    isSuperuser: backend.is_superuser,
+    phoneNumber: backend.phone_number,
+    jobTitle: backend.job_title,
+    avatarUrl: backend.avatar_url,
+    companyName: backend.company_name,
+    lastLoginAt: backend.last_login_at
+      ? new Date(backend.last_login_at)
+      : undefined,
+    loginCount: backend.login_count,
+    onboardingCompleted: backend.onboarding_completed,
+    onboardingStep: backend.onboarding_step,
+    planTier: backend.plan_tier,
+    storageUsedBytes: backend.storage_used_bytes,
+    createdAt: new Date(backend.created_at),
+    updatedAt: backend.updated_at ? new Date(backend.updated_at) : undefined,
+    // Legacy defaults
+    status: backend.is_active ? 'active' : 'suspended',
+    emailVerified: true // Backend doesn't track this separately
+  }
 }
 
 export interface Invite {

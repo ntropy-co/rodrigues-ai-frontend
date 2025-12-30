@@ -13,8 +13,11 @@
  * Transformações de contrato:
  * - Frontend envia JSON: `{ email, password }`
  * - Backend espera `application/x-www-form-urlencoded`: `{ username=email, password }`
- * - Frontend recebe: `{ token, user, organization, expiresAt }`
- *   onde `token` é o `access_token` do backend.
+ * - Frontend recebe: `{ user, organization, expiresAt }`
+ *
+ * SECURITY:
+ * - Tokens are stored ONLY in HttpOnly cookies (not in JSON response)
+ * - This prevents XSS attacks from stealing tokens
  *
  * Auth:
  * - Público (retorna Bearer token para uso nas próximas requisições)
@@ -24,6 +27,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+
+import { transformBackendUser } from '@/types/auth'
+import type { BackendUser } from '@/types/auth'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -65,50 +71,44 @@ export async function POST(request: NextRequest) {
 
       let user = null
       if (userResponse.ok) {
-        const userData = await userResponse.json()
-        user = {
-          id: userData.id,
-          email: userData.email,
-          name: userData.full_name || '',
-          role: userData.is_superuser ? 'admin' : 'user'
-        }
+        const userData: BackendUser = await userResponse.json()
+        user = transformBackendUser(userData)
       }
 
-      // Calculate expiration (8 days from now, matching backend)
-      const expiresAt = new Date(
-        Date.now() + 8 * 24 * 60 * 60 * 1000
-      ).toISOString()
+      // Calculate expiration (30 minutes for access token, matching backend config)
+      const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString()
 
       // Create response with JSON body
+      // SECURITY: tokens are NOT included in JSON response (stored in HttpOnly cookies only)
       const jsonResponse = NextResponse.json(
         {
-          token: data.access_token,
-          refreshToken: data.refresh_token,
           user,
-          organization: null, // Backend doesn't have organization yet
+          organization: null, // TODO: Backend should return organization in login response
           expiresAt
         },
         { status: response.status }
       )
 
       // Set HttpOnly cookie with the access token
-      // This allows subsequent requests to automatically include auth
+      // SECURITY: HttpOnly prevents XSS from stealing tokens
+      // maxAge matches backend ACCESS_TOKEN_EXPIRE_MINUTES (30 min)
       jsonResponse.cookies.set('auth_token', data.access_token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         path: '/',
-        maxAge: 8 * 24 * 60 * 60 // 8 days in seconds
+        maxAge: 30 * 60 // 30 minutes in seconds (matches backend config)
       })
 
       // Also set refresh token if available
+      // maxAge matches backend REFRESH_TOKEN_EXPIRE_DAYS (30 days)
       if (data.refresh_token) {
         jsonResponse.cookies.set('refresh_token', data.refresh_token, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'lax',
           path: '/',
-          maxAge: 30 * 24 * 60 * 60 // 30 days in seconds
+          maxAge: 30 * 24 * 60 * 60 // 30 days in seconds (matches backend config)
         })
       }
 

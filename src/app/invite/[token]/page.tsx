@@ -362,8 +362,8 @@ function InviteContent() {
       // Store organization name for success screen
       setSuccessOrgName(inviteData?.organization_name || '')
 
-      // If we got a token, we're authenticated (BFF returns tokens if available)
-      if (result.token) {
+      // If user is returned, we're authenticated (tokens are in HttpOnly cookies)
+      if (result.user) {
         // Refetch user to update AuthContext
         try {
           await refetchUser()

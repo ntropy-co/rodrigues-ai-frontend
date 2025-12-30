@@ -9,12 +9,15 @@ import type { User, Organization, Invite, UserRole } from './auth'
 // API RESPONSES
 // ============================================================================
 
+/**
+ * Auth response from BFF layer
+ * SECURITY: tokens are stored in HttpOnly cookies, not in JSON response
+ */
 export interface AuthResponse {
   user: User
-  organization: Organization
-  token: string
-  refreshToken?: string
+  organization: Organization | null
   expiresAt: string // ISO date string
+  // Token fields removed for security - tokens are in HttpOnly cookies only
 }
 
 export interface InviteValidationResponse {

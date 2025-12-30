@@ -68,10 +68,9 @@ export interface ValidateInviteResponse {
 
 /**
  * Response from accept invite endpoint
+ * SECURITY: tokens are stored in HttpOnly cookies, not returned in JSON
  */
 export interface AcceptInviteResponse {
-  token: string
-  refreshToken?: string
   user: {
     id: string
     email: string
@@ -316,9 +315,9 @@ export function useInvites(): UseInvitesReturn {
 
         const result: AcceptInviteResponse = await response.json()
 
-        // If we got tokens, the user is now authenticated
+        // If user is returned, authentication succeeded (tokens are in HttpOnly cookies)
         // Refetch user data to update AuthContext
-        if (result.token) {
+        if (result.user) {
           try {
             await refetchUser()
           } catch (refetchError) {

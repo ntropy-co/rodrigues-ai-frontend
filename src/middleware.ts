@@ -62,12 +62,7 @@ export async function middleware(request: NextRequest) {
   const realIp = request.headers.get('x-real-ip')
 
   // Priority: x-real-ip (set by proxy) > first x-forwarded-for > fallback
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const ip =
-    realIp ||
-    forwardedFor?.split(',')[0]?.trim() ||
-    (request as any).ip ||
-    '127.0.0.1'
+  const ip = realIp || forwardedFor?.split(',')[0]?.trim() || '127.0.0.1'
   const pathname = nextUrl.pathname
   // 1. Rate Limiting (Skip for Health Check)
   if (
