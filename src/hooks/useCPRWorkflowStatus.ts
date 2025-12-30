@@ -191,6 +191,7 @@ export function useCPRWorkflowStatus({
   const abortControllerRef = useRef<AbortController | null>(null)
   const isMountedRef = useRef(true)
   const stopPollingRef = useRef<(() => void) | null>(null)
+  const startPollingRef = useRef<(() => void) | null>(null)
   const maxRetries = 3
 
   /**
@@ -354,11 +355,12 @@ export function useCPRWorkflowStatus({
   }, [sessionId, workflowType])
 
   /**
-   * Initialize stopPollingRef to break circular dependency
+   * Initialize function refs to break circular dependencies
    */
   useEffect(() => {
     stopPollingRef.current = stopPolling
-  }, [stopPolling])
+    startPollingRef.current = startPolling
+  }, [stopPolling, startPolling])
 
   /**
    * Track component mount status
@@ -379,21 +381,21 @@ export function useCPRWorkflowStatus({
   useEffect(() => {
     if (sessionId && isPolling) {
       // Session changed while polling - restart
-      stopPolling()
+      stopPollingRef.current?.()
       if (autoStart) {
-        startPolling()
+        startPollingRef.current?.()
       }
     }
-  }, [sessionId])
+  }, [sessionId, isPolling, autoStart])
 
   /**
    * Auto-start polling on mount
    */
   useEffect(() => {
     if (autoStart && sessionId && !isPolling) {
-      startPolling()
+      startPollingRef.current?.()
     }
-  }, [autoStart, sessionId, startPolling, isPolling])
+  }, [autoStart, sessionId, isPolling])
 
   /**
    * Stop polling when workflow completes
