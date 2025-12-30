@@ -10,7 +10,7 @@ import {
   Image as ImageIcon,
   Loader2
 } from 'lucide-react'
-import { useEffect, useRef, useState, ChangeEvent } from 'react'
+import { useEffect, useRef, useState, ChangeEvent, useCallback } from 'react'
 import {
   Tooltip,
   TooltipContent,
@@ -22,6 +22,7 @@ import { toast } from 'sonner'
 import { FileUploadModal } from '@/components/v2/FileUpload/FileUploadModal'
 import { useContext } from 'react'
 import { AuthContext } from '@/contexts/AuthContext'
+import { useChatInputRefSafe } from '@/contexts/ChatInputContext'
 import { useCanvasStore } from '@/stores/useCanvasStore'
 import {
   SLASH_COMMANDS,
@@ -94,7 +95,7 @@ export function InputBar({
   const input = setMessage ? message : localInput
   const handleInputChange = (val: string) => {
     // Capture cursor position before state update to avoid race condition
-    const cursorPos = textareaRef.current?.selectionStart ?? val.length
+    const cursorPos = localTextareaRef.current?.selectionStart ?? val.length
     if (setMessage) {
       setMessage(val)
     } else {
@@ -109,15 +110,35 @@ export function InputBar({
   const [attachments, setAttachments] = useState<File[]>([])
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
 
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  // Use context ref if available (for focusChatInput from other components)
+  const contextRef = useChatInputRefSafe()
+  const localTextareaRef = useRef<HTMLTextAreaElement>(null)
+
+  // Callback ref to sync both refs
+  const textareaRef = useCallback(
+    (node: HTMLTextAreaElement | null) => {
+      // Update local ref
+      ;(
+        localTextareaRef as React.MutableRefObject<HTMLTextAreaElement | null>
+      ).current = node
+      // Update context ref if available
+      if (contextRef) {
+        ;(
+          contextRef as React.MutableRefObject<HTMLTextAreaElement | null>
+        ).current = node
+      }
+    },
+    [contextRef]
+  )
+
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Auto-resize textarea
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto'
-      textareaRef.current.style.height = `${Math.min(
-        textareaRef.current.scrollHeight,
+    if (localTextareaRef.current) {
+      localTextareaRef.current.style.height = 'auto'
+      localTextareaRef.current.style.height = `${Math.min(
+        localTextareaRef.current.scrollHeight,
         200
       )}px`
     }
@@ -150,7 +171,7 @@ export function InputBar({
   }
 
   const checkForTrigger = (text: string, cursorPos: number) => {
-    const textarea = textareaRef.current
+    const textarea = localTextareaRef.current
     if (!textarea) return
 
     const textBeforeCursor = text.slice(0, cursorPos)
@@ -205,7 +226,7 @@ export function InputBar({
     }
 
     // Replace text
-    const textarea = textareaRef.current
+    const textarea = localTextareaRef.current
     if (!textarea) return
 
     // Logic: Replace the 'trigger' part with the 'label' or specialized text
@@ -303,11 +324,11 @@ export function InputBar({
 
     handleInputChange('')
     setAttachments([]) // Clear local attachments
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto'
+    if (localTextareaRef.current) {
+      localTextareaRef.current.style.height = 'auto'
       // Restore focus immediately
       setTimeout(() => {
-        textareaRef.current?.focus()
+        localTextareaRef.current?.focus()
       }, 0)
     }
   }

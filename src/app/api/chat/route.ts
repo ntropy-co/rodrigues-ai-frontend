@@ -44,12 +44,20 @@ export interface ChatResponse {
 
 export async function POST(request: NextRequest) {
   try {
-    // Get the Authorization header
-    const authorization = request.headers.get('authorization')
+    // Get the Authorization header or token from cookie
+    let authorization = request.headers.get('authorization')
+
+    // If no Authorization header, try to get token from HttpOnly cookie
+    if (!authorization) {
+      const authToken = request.cookies.get('auth_token')?.value
+      if (authToken) {
+        authorization = `Bearer ${authToken}`
+      }
+    }
 
     if (!authorization) {
       return NextResponse.json(
-        { detail: 'Authorization header required' },
+        { detail: 'Authentication required' },
         { status: 401 }
       )
     }

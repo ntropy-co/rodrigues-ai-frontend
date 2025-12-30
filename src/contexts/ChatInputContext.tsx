@@ -27,3 +27,12 @@ export function useChatInputRef() {
   }
   return context.chatInputRef
 }
+
+/**
+ * Safe version that returns null if used outside ChatInputProvider.
+ * Useful for components that may be used standalone.
+ */
+export function useChatInputRefSafe() {
+  const context = useContext(ChatInputContext)
+  return context?.chatInputRef ?? null
+}
