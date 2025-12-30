@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef, memo } from 'react'
+import { useState, useEffect, useCallback, useRef, memo, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import {
   Search,
@@ -17,6 +17,7 @@ import { Avatar } from './Avatar'
 import { cn } from '@/lib/utils'
 import { useSessions } from '@/hooks/useSessions'
 import { useProjects, type Project } from '@/hooks/useProjects'
+import { useDebounce } from '@/hooks/useDebounce'
 import { formatRelativeTime } from '@/lib/utils/time'
 import type { SessionEntry } from '@/types/playground'
 import {
@@ -24,6 +25,16 @@ import {
   trackSearch,
   trackProjectSelected
 } from '@/lib/analytics'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog'
 // Spring animation config (Claude-inspired)
 const sidebarSpring = {
   type: 'spring' as const,
@@ -139,6 +150,31 @@ export function ConversationsSidebar({
     setIsProjectDialogOpen(true)
   }, [])
 
+  // Memoized handlers to prevent re-renders from inline functions
+  const handleSelectAndClose = useCallback(
+    (id: string) => {
+      onSelectConversation?.(id)
+      onToggle?.()
+    },
+    [onSelectConversation, onToggle]
+  )
+
+  const handleDeleteSession = useCallback(
+    async (id: string) => {
+      await deleteSession(id)
+      fetchSessions(selectedProjectId).then(setSessions)
+    },
+    [deleteSession, fetchSessions, selectedProjectId]
+  )
+
+  const handleDeleteProject = useCallback(
+    async (id: string) => {
+      await deleteProject(id)
+      fetchProjects().then(setProjects)
+    },
+    [deleteProject, fetchProjects]
+  )
+
   const handleNewAnalysis = useCallback(async () => {
     if (selectedProjectId) {
       const newSession = await createSession(undefined, selectedProjectId)
@@ -194,10 +230,7 @@ export function ConversationsSidebar({
             onToggle={onToggle}
             onNewConversation={handleNewAnalysis}
             activeConversationId={activeConversationId}
-            onSelectConversation={(id) => {
-              onSelectConversation?.(id)
-              onToggle?.()
-            }}
+            onSelectConversation={handleSelectAndClose}
             showCloseButton={true}
             sessions={sessions}
             projects={projects}
@@ -207,14 +240,8 @@ export function ConversationsSidebar({
             projectsLoading={projectsLoading}
             onUpdateSession={handleUpdateSession}
             onUpdateProject={handleUpdateProject}
-            onDeleteSession={async (id) => {
-              await deleteSession(id)
-              fetchSessions(selectedProjectId).then(setSessions)
-            }}
-            onDeleteProject={async (id) => {
-              await deleteProject(id)
-              fetchProjects().then(setProjects)
-            }}
+            onDeleteSession={handleDeleteSession}
+            onDeleteProject={handleDeleteProject}
             onOpenProjectDialog={handleOpenProjectDialog}
           />
         </motion.aside>
@@ -253,14 +280,8 @@ export function ConversationsSidebar({
           projectsLoading={projectsLoading}
           onUpdateSession={handleUpdateSession}
           onUpdateProject={handleUpdateProject}
-          onDeleteSession={async (id) => {
-            await deleteSession(id)
-            fetchSessions(selectedProjectId).then(setSessions)
-          }}
-          onDeleteProject={async (id) => {
-            await deleteProject(id)
-            fetchProjects().then(setProjects)
-          }}
+          onDeleteSession={handleDeleteSession}
+          onDeleteProject={handleDeleteProject}
           onOpenProjectDialog={handleOpenProjectDialog}
         />
 
@@ -275,27 +296,7 @@ export function ConversationsSidebar({
   )
 }
 
-// Inner content component to avoid duplication
-function SidebarContent({
-  searchQuery,
-  setSearchQuery,
-  onToggle,
-  onNewConversation,
-  activeConversationId,
-  onSelectConversation,
-  showCloseButton,
-  sessions,
-  projects,
-  selectedProjectId,
-  onSelectProject,
-  sessionsLoading,
-  projectsLoading,
-  onUpdateSession,
-  onUpdateProject,
-  onDeleteSession,
-  onDeleteProject,
-  onOpenProjectDialog
-}: {
+interface SidebarContentProps {
   searchQuery: string
   setSearchQuery: (q: string) => void
   onToggle?: () => void
@@ -314,9 +315,44 @@ function SidebarContent({
   onDeleteSession: (id: string) => Promise<void>
   onDeleteProject: (id: string) => Promise<void>
   onOpenProjectDialog: () => void
-}) {
+}
+
+// Inner content component to avoid duplication - memoized to prevent re-renders
+const SidebarContent = memo(function SidebarContent({
+  searchQuery,
+  setSearchQuery,
+  onToggle,
+  onNewConversation,
+  activeConversationId,
+  onSelectConversation,
+  showCloseButton,
+  sessions,
+  projects,
+  selectedProjectId,
+  onSelectProject,
+  sessionsLoading,
+  projectsLoading,
+  onUpdateSession,
+  onUpdateProject,
+  onDeleteSession,
+  onDeleteProject,
+  onOpenProjectDialog
+}: SidebarContentProps) {
+  // Debounce the search query for filtering (300ms delay)
+  const debouncedSearchQuery = useDebounce(searchQuery, 300)
+
   // Debounced search tracking (1s delay, min 2 chars)
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Filter sessions based on debounced search query
+  const filteredSessions = useMemo(() => {
+    if (!debouncedSearchQuery.trim()) {
+      return sessions
+    }
+    return sessions.filter((session) =>
+      session.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
+    )
+  }, [sessions, debouncedSearchQuery])
 
   useEffect(() => {
     // Clear previous timeout
@@ -325,14 +361,10 @@ function SidebarContent({
     }
 
     // Only track if query has at least 2 characters
-    if (searchQuery.length >= 2) {
+    if (debouncedSearchQuery.length >= 2) {
       searchTimeoutRef.current = setTimeout(() => {
-        // Filter sessions to get results count
-        const filteredSessions = sessions.filter((session) =>
-          session.title.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-        trackSearch(searchQuery, filteredSessions.length)
-      }, 1000) // 1 second debounce
+        trackSearch(debouncedSearchQuery, filteredSessions.length)
+      }, 700) // Additional 700ms debounce for analytics tracking
     }
 
     return () => {
@@ -340,7 +372,7 @@ function SidebarContent({
         clearTimeout(searchTimeoutRef.current)
       }
     }
-  }, [searchQuery, sessions])
+  }, [debouncedSearchQuery, filteredSessions.length])
 
   // Wrapper to track project selection
   const handleProjectSelect = useCallback(
@@ -481,17 +513,23 @@ function SidebarContent({
             <div className="flex items-center justify-center py-8">
               <Loader2 className="h-5 w-5 animate-spin text-verity-600" />
             </div>
-          ) : sessions.length === 0 ? (
+          ) : filteredSessions.length === 0 ? (
             <div className="px-3 py-4 text-center">
               <MessageSquare className="mx-auto h-8 w-8 text-verity-300" />
               <p className="mt-2 text-sm text-verity-500">
-                Nenhuma conversa ainda
+                {debouncedSearchQuery
+                  ? 'Nenhuma conversa encontrada'
+                  : 'Nenhuma conversa ainda'}
               </p>
-              <p className="text-xs text-verity-400">Inicie uma nova análise</p>
+              {!debouncedSearchQuery && (
+                <p className="text-xs text-verity-400">
+                  Inicie uma nova análise
+                </p>
+              )}
             </div>
           ) : (
             <div className="space-y-1">
-              {sessions.map((session) => (
+              {filteredSessions.map((session) => (
                 <ConversationCard
                   key={session.session_id}
                   id={session.session_id}
@@ -514,7 +552,7 @@ function SidebarContent({
       </div>
     </>
   )
-}
+})
 
 interface ConversationCardProps {
   id: string
@@ -542,11 +580,22 @@ const ConversationCard = memo(function ConversationCard({
 }: ConversationCardProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editTitle, setEditTitle] = useState(title)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
   // Update editTitle when title prop changes
   useEffect(() => {
     setEditTitle(title)
   }, [title])
+
+  const handleDeleteClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    setIsDeleteDialogOpen(true)
+  }, [])
+
+  const handleConfirmDelete = useCallback(() => {
+    onDelete?.()
+    setIsDeleteDialogOpen(false)
+  }, [onDelete])
 
   const handleSave = useCallback(
     async (e?: React.FormEvent) => {
@@ -656,12 +705,7 @@ const ConversationCard = memo(function ConversationCard({
               {onDelete && (
                 <button
                   type="button"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    if (confirm('Tem certeza que deseja excluir?')) {
-                      onDelete()
-                    }
-                  }}
+                  onClick={handleDeleteClick}
                   className="rounded p-1 text-red-500 opacity-0 transition-opacity hover:bg-red-100 group-hover:opacity-100"
                   title="Excluir"
                 >
@@ -689,6 +733,31 @@ const ConversationCard = memo(function ConversationCard({
         {/* Timestamp */}
         <p className="text-xs font-light text-verity-500">{timestamp}</p>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
+        <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar exclusao</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir &quot;{title}&quot;? Esta acao nao
+              pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              className="bg-red-600 text-white hover:bg-red-700"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </motion.div>
   )
 })
