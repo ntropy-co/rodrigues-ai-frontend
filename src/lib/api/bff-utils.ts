@@ -7,6 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { getAuthorizationFromRequest } from '@/lib/api/auth-header'
 
 // ============================================================================
 // Constants
@@ -43,7 +44,7 @@ export const ERROR_MESSAGES = {
  * @returns Authorization header value or null
  */
 export function getAuthHeader(request: NextRequest): string | null {
-  return request.headers.get('authorization')
+  return getAuthorizationFromRequest(request)
 }
 
 /**

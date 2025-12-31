@@ -52,9 +52,10 @@ export async function POST(request: NextRequest) {
 
     // Map backend response to frontend expected format
     // Backend returns: { access_token, token_type, refresh_token? }
-    // Frontend expects: { token, refreshToken?, user, organization, expiresAt }
+    // Frontend expects: { user, organization, expiresAt } (tokens in HttpOnly cookies)
     if (response.ok && data.access_token) {
       const accessToken = data.access_token as string
+      const refreshToken = data.refresh_token as string | undefined
 
       // Fetch user data using the new token (same contract as /api/auth/login)
       const userResponse = await fetch(`${BACKEND_URL}/api/v1/auth/me`, {
@@ -75,21 +76,39 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // Calculate expiration (8 days from now, matching backend)
-      const expiresAt = new Date(
-        Date.now() + 8 * 24 * 60 * 60 * 1000
-      ).toISOString()
+      // Calculate expiration (30 minutes for access token, matching backend config)
+      const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString()
 
-      return NextResponse.json(
+      const jsonResponse = NextResponse.json(
         {
-          token: accessToken,
-          refreshToken: data.refresh_token,
           user,
           organization: null,
           expiresAt
         },
         { status: response.status }
       )
+
+      // Set HttpOnly cookie with the access token
+      jsonResponse.cookies.set('verity_access_token', accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 30 * 60
+      })
+
+      // Also set refresh token if available
+      if (refreshToken) {
+        jsonResponse.cookies.set('verity_refresh_token', refreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          path: '/',
+          maxAge: 30 * 24 * 60 * 60
+        })
+      }
+
+      return jsonResponse
     }
 
     // Return error response as-is

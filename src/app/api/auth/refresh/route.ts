@@ -35,7 +35,9 @@ export async function POST(request: NextRequest) {
       body = {}
     }
 
-    const cookieRefreshToken = request.cookies.get('refresh_token')?.value
+    const cookieRefreshToken = request.cookies.get(
+      'verity_refresh_token'
+    )?.value
     const refreshToken =
       body.refresh_token || body.refreshToken || cookieRefreshToken
 
@@ -73,18 +75,42 @@ export async function POST(request: NextRequest) {
         refresh_token?: string
       }
 
-      const expiresAt = new Date(
-        Date.now() + 8 * 24 * 60 * 60 * 1000
-      ).toISOString()
+      const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString()
 
-      return NextResponse.json(
-        {
-          token: tokenData.access_token,
-          refreshToken: tokenData.refresh_token,
-          expiresAt
-        },
+      const jsonResponse = NextResponse.json(
+        { expiresAt },
         { status: response.status }
       )
+
+      if (tokenData.access_token) {
+        jsonResponse.cookies.set(
+          'verity_access_token',
+          tokenData.access_token,
+          {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            path: '/',
+            maxAge: 30 * 60
+          }
+        )
+      }
+
+      if (tokenData.refresh_token) {
+        jsonResponse.cookies.set(
+          'verity_refresh_token',
+          tokenData.refresh_token,
+          {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            path: '/',
+            maxAge: 30 * 24 * 60 * 60
+          }
+        )
+      }
+
+      return jsonResponse
     }
 
     return NextResponse.json(data, { status: response.status })

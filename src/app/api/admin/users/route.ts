@@ -31,10 +31,13 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { getAuthorizationFromRequest } from '@/lib/api/auth-header'
 
 // Use server-side env var first, fallback to public for development
 const BACKEND_URL =
-  process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+  process.env.BACKEND_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  'http://localhost:8000'
 
 export interface UserSummary {
   id: string
@@ -55,7 +58,7 @@ export interface UsersListResponse {
 
 export async function GET(request: NextRequest) {
   try {
-    const authorization = request.headers.get('authorization')
+    const authorization = getAuthorizationFromRequest(request)
 
     if (!authorization) {
       return NextResponse.json(
@@ -74,7 +77,10 @@ export async function GET(request: NextRequest) {
 
     // Validate and sanitize pagination params
     const skip = Math.max(0, isNaN(skipParam) ? 0 : skipParam)
-    const limit = Math.min(100, Math.max(1, isNaN(limitParam) ? 50 : limitParam))
+    const limit = Math.min(
+      100,
+      Math.max(1, isNaN(limitParam) ? 50 : limitParam)
+    )
 
     // Build backend URL with query params
     const backendUrl = new URL(`${BACKEND_URL}/api/v1/admin/users`)

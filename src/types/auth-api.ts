@@ -40,8 +40,6 @@ export interface PasswordResetResponse {
 }
 
 export interface RefreshTokenResponse {
-  token: string
-  refreshToken?: string
   expiresAt: string
 }
 

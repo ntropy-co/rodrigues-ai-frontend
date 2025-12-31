@@ -6,6 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { BFFErrorType, createErrorResponse, ErrorResponse } from './errors'
+import { getAuthorizationFromRequest } from '@/lib/api/auth-header'
 
 /**
  * Validate that request has Authorization header.
@@ -27,7 +28,7 @@ export function validateAuth(
   request: NextRequest,
   context?: Record<string, unknown>
 ): NextResponse<ErrorResponse> | null {
-  const authorization = request.headers.get('authorization')
+  const authorization = getAuthorizationFromRequest(request)
 
   if (!authorization) {
     return createErrorResponse(
