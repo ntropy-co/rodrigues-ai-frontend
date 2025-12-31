@@ -32,7 +32,9 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+// Use server-side env var first, fallback to public for development
+const BACKEND_URL =
+  process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 export interface UserSummary {
   id: string
@@ -64,16 +66,20 @@ export async function GET(request: NextRequest) {
 
     // Get query params for pagination and filtering
     const { searchParams } = new URL(request.url)
-    const skip = searchParams.get('skip') || '0'
-    const limit = searchParams.get('limit') || '50'
+    const skipParam = parseInt(searchParams.get('skip') || '0', 10)
+    const limitParam = parseInt(searchParams.get('limit') || '50', 10)
     const search = searchParams.get('search')
     const role = searchParams.get('role')
     const status = searchParams.get('status')
 
+    // Validate and sanitize pagination params
+    const skip = Math.max(0, isNaN(skipParam) ? 0 : skipParam)
+    const limit = Math.min(100, Math.max(1, isNaN(limitParam) ? 50 : limitParam))
+
     // Build backend URL with query params
     const backendUrl = new URL(`${BACKEND_URL}/api/v1/admin/users`)
-    backendUrl.searchParams.set('skip', skip)
-    backendUrl.searchParams.set('limit', limit)
+    backendUrl.searchParams.set('skip', String(skip))
+    backendUrl.searchParams.set('limit', String(limit))
     if (search) backendUrl.searchParams.set('search', search)
     if (role) backendUrl.searchParams.set('role', role)
     if (status) backendUrl.searchParams.set('status', status)
@@ -104,11 +110,11 @@ export async function GET(request: NextRequest) {
 
     const data: UsersListResponse = await response.json()
 
-    // Add cache headers for GET requests
+    // Admin data should not be cached to ensure fresh data
     return NextResponse.json(data, {
       status: 200,
       headers: {
-        'Cache-Control': 'private, max-age=30, stale-while-revalidate=60'
+        'Cache-Control': 'private, no-cache, must-revalidate'
       }
     })
   } catch (error) {
