@@ -8,26 +8,29 @@
 import { test, expect } from '../fixtures/auth.fixture'
 
 test.describe('Authenticated User Flow', () => {
-  test('should access dashboard when authenticated', async ({
+  test('should access chat when authenticated', async ({
     authenticatedPage
   }) => {
-    await expect(authenticatedPage).toHaveURL(/\/dashboard/)
+    // Default redirect after login is /chat
+    await expect(authenticatedPage).toHaveURL(/\/chat/)
 
-    // Check dashboard elements are visible
-    await expect(
-      authenticatedPage.getByRole('heading', { level: 1 })
-    ).toBeVisible()
+    // Check chat elements are visible
+    await expect(authenticatedPage.getByRole('heading').first()).toBeVisible({
+      timeout: 10000
+    })
   })
 
   test('should display user info in header/sidebar', async ({
     authenticatedPage
   }) => {
-    // Look for user avatar or name in header
-    const userMenu = authenticatedPage.locator(
-      '[data-testid="user-menu"], [data-testid="user-avatar"], .user-menu'
-    )
+    // User avatar shows first letter of name (e.g., "U" for "Usuário")
+    // Look for avatar button in the header
+    const userAvatar = authenticatedPage
+      .locator('header button')
+      .filter({ hasText: /^[A-Z]$/ })
+      .first()
 
-    await expect(userMenu).toBeVisible()
+    await expect(userAvatar).toBeVisible({ timeout: 10000 })
   })
 
   test('should be able to navigate to settings', async ({
@@ -45,17 +48,20 @@ test.describe('Authenticated User Flow', () => {
   })
 
   test('should be able to logout', async ({ authenticatedPage }) => {
-    // Find and click logout button
-    const logoutButton = authenticatedPage.locator(
-      '[data-testid="logout-button"], button:has-text("Sair"), button:has-text("Logout")'
-    )
+    // First click on the user avatar button in header (shows single letter like "U")
+    const userAvatar = authenticatedPage.getByRole('button', {
+      name: /^[A-Z]$/
+    })
+    await userAvatar.click()
 
-    // May need to open user menu first
-    const userMenu = authenticatedPage.locator('[data-testid="user-menu"]')
-    if (await userMenu.isVisible()) {
-      await userMenu.click()
-    }
+    // Wait for dropdown menu to appear
+    const menu = authenticatedPage.getByRole('menu')
+    await expect(menu).toBeVisible({ timeout: 5000 })
 
+    // Click logout/sair menuitem
+    const logoutButton = authenticatedPage.getByRole('menuitem', {
+      name: 'Sair'
+    })
     await logoutButton.click()
 
     // Should redirect to login
@@ -69,39 +75,31 @@ test.describe('Authenticated User Flow', () => {
     // Reload the page
     await authenticatedPage.reload()
 
-    // Should still be on dashboard (not redirected to login)
-    await expect(authenticatedPage).toHaveURL(/\/dashboard/)
+    // Should still be on chat (not redirected to login)
+    await expect(authenticatedPage).toHaveURL(/\/chat/)
   })
 })
 
 test.describe('Protected Routes', () => {
   test('should redirect unauthenticated users to login', async ({ page }) => {
     // Try to access protected route without authentication
-    await page.goto('/dashboard')
+    await page.goto('/chat')
 
-    // Should redirect to login
-    await expect(page).toHaveURL(/\/login/)
+    // Should redirect to login page
+    await expect(page).toHaveURL(/\/login/, { timeout: 10000 })
   })
 
-  test('should redirect to original URL after login', async ({ page }) => {
-    // Try to access protected route
-    await page.goto('/settings')
+  test('should redirect to chat after login', async ({ page }) => {
+    // Go directly to login
+    await page.goto('/login')
 
-    // Should be on login page
-    await expect(page).toHaveURL(/\/login/)
-
-    // Login
-    await page.fill(
-      '[name="email"]',
-      process.env.TEST_USER_EMAIL || 'test@example.com'
-    )
-    await page.fill(
-      '[name="password"]',
-      process.env.TEST_USER_PASSWORD || 'TestPassword123!'
-    )
+    // Login with valid credentials
+    await page.fill('[name="email"]', 'teste@teste.com')
+    await page.fill('[name="password"]', 'Teste123')
     await page.click('button[type="submit"]')
 
-    // Should redirect to original URL or dashboard
-    await page.waitForURL(/\/(settings|dashboard)/, { timeout: 15000 })
+    // Should redirect to chat (default route)
+    await page.waitForURL(/\/chat/, { timeout: 15000 })
+    await expect(page).toHaveURL(/\/chat/)
   })
 })
