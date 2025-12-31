@@ -11,9 +11,9 @@ export const testUsers = {
     name: 'Test Admin'
   },
   regular: {
-    email: process.env.TEST_USER_EMAIL || 'test@example.com',
-    password: process.env.TEST_USER_PASSWORD || 'TestPassword123!',
-    name: 'Test User'
+    email: process.env.TEST_USER_EMAIL || 'teste@teste.com',
+    password: process.env.TEST_USER_PASSWORD || 'Teste123',
+    name: 'Usuário de Teste'
   }
 } as const
 

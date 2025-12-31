@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
+    "dev:e2e": "cross-env NEXT_PUBLIC_API_URL=https://rodrigues-ai-backend-production.up.railway.app next dev -p 3000",
     "build": "next build",
     "analyze": "cross-env ANALYZE=true next build",
     "start": "next start",

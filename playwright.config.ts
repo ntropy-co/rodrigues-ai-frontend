@@ -18,8 +18,14 @@ export default defineConfig({
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: 'npm run dev',
+    // Use dev:e2e which sets NEXT_PUBLIC_API_URL to production backend
+    command: 'npm run dev:e2e',
     url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI
+    reuseExistingServer: !process.env.CI,
+    timeout: 120000, // 2 minutes for server startup
+    env: {
+      NEXT_PUBLIC_API_URL:
+        'https://rodrigues-ai-backend-production.up.railway.app'
+    }
   }
 })

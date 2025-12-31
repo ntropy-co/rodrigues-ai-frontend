@@ -17,14 +17,17 @@ export const test = base.extend<AuthFixtures>({
     await page.goto('/login')
     await page.fill(
       '[name="email"]',
-      process.env.TEST_USER_EMAIL || 'test@example.com'
+      process.env.TEST_USER_EMAIL || 'teste@teste.com'
     )
     await page.fill(
       '[name="password"]',
-      process.env.TEST_USER_PASSWORD || 'TestPassword123!'
+      process.env.TEST_USER_PASSWORD || 'Teste123'
     )
     await page.click('button[type="submit"]')
-    await page.waitForURL('/dashboard', { timeout: 10000 })
+    // Default redirect is /chat, not /dashboard
+    await page.waitForURL((url) => !url.pathname.includes('/login'), {
+      timeout: 15000
+    })
     await use(page)
   },
 
@@ -40,7 +43,10 @@ export const test = base.extend<AuthFixtures>({
       process.env.TEST_ADMIN_PASSWORD || 'AdminPassword123!'
     )
     await page.click('button[type="submit"]')
-    await page.waitForURL('/dashboard', { timeout: 10000 })
+    // Default redirect is /chat, not /dashboard
+    await page.waitForURL((url) => !url.pathname.includes('/login'), {
+      timeout: 15000
+    })
     await use(page)
   }
 })

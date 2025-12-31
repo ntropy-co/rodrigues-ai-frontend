@@ -13,8 +13,11 @@ const nextConfig: NextConfig = {
         key: 'Content-Security-Policy',
         value: [
           "default-src 'self'",
-          // Next.js precisa de 'unsafe-inline' para funcionar (unsafe-eval removido quando possível)
-          "script-src 'self' 'unsafe-inline'",
+          // Next.js precisa de 'unsafe-inline' para funcionar
+          // Em desenvolvimento, 'unsafe-eval' é necessário para React Refresh (hot reload)
+          process.env.NODE_ENV === 'development'
+            ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
+            : "script-src 'self' 'unsafe-inline'",
           // Permitir Google Fonts CSS
           "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
           "img-src 'self' data: https: blob:",
