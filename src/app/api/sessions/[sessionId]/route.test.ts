@@ -280,6 +280,7 @@ describe('PATCH /api/sessions/[sessionId]', () => {
     })
 
     const response = await PATCH(request, params)
+    const data = await response.json()
 
     expect(response.status).toBe(200)
     expect(data.title).toBe('Updated Title')
