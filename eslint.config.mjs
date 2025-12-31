@@ -10,6 +10,10 @@ const compat = new FlatCompat({
 })
 
 const eslintConfig = [
+  // Ignore E2E test files (Playwright fixtures use 'use' which conflicts with React hooks rule)
+  {
+    ignores: ['e2e/**/*', 'playwright-report/**/*', 'test-results/**/*']
+  },
   ...compat.extends('next/core-web-vitals', 'next/typescript')
 ]
 

@@ -120,3 +120,8 @@ storybook-static/
 # Agent
 .claude/
 .codex-git/
+
+# Playwright E2E
+playwright-report/
+test-results/
+playwright/.cache/
