@@ -1,11 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { Moon, Sun, LogOut } from 'lucide-react'
+import { Moon, Sun, LogOut, Settings, Shield } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { getInitialLetter } from '@/lib/utils/format'
+import type { UserRole } from '@/types/auth'
 
 export function UserAvatar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -25,24 +26,32 @@ export function UserAvatar() {
     router.push('/login')
   }
 
+  // Check if user is admin
+  const isAdmin = user && (user.role as UserRole) === 'admin'
+
   const menuItems = [
-    // Temporariamente desabilitado - será implementado futuramente
-    // {
-    //   icon: Settings,
-    //   label: 'Configurações',
-    //   onClick: () => console.log('Configurações')
-    // },
+    // Admin Panel - only visible for admins
+    ...(isAdmin
+      ? [
+          {
+            icon: Shield,
+            label: 'Administração',
+            onClick: () => router.push('/admin'),
+            className: 'text-purple-600 hover-hover:bg-purple-50 dark:text-purple-400 dark:hover-hover:bg-purple-950'
+          }
+        ]
+      : []),
+    // Settings - now enabled
+    {
+      icon: Settings,
+      label: 'Configurações',
+      onClick: () => router.push('/settings')
+    },
     {
       icon: theme === 'dark' ? Sun : Moon,
       label: theme === 'dark' ? 'Modo Claro' : 'Modo Escuro',
       onClick: () => setTheme(theme === 'dark' ? 'light' : 'dark')
     },
-    // Temporariamente desabilitado - será implementado futuramente
-    // {
-    //   icon: Info,
-    //   label: 'Sobre',
-    //   onClick: () => console.log('Sobre')
-    // },
     {
       icon: LogOut,
       label: 'Sair',
