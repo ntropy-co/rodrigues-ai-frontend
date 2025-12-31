@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useAdminUsers, type UsersListResponse } from '@/hooks/useAdminUsers'
+import Link from 'next/link'
+import { useAdminUsers } from '@/hooks/useAdminUsers'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Users, UserCheck, UserX, Clock } from 'lucide-react'
@@ -141,7 +142,7 @@ export default function AdminDashboard() {
             <CardTitle className="text-lg">Ações Rápidas</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <a
+            <Link
               href="/admin/users"
               className="flex items-center gap-3 rounded-lg border border-gray-200 p-3 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
             >
@@ -154,7 +155,7 @@ export default function AdminDashboard() {
                   Visualize, edite e gerencie usuários
                 </div>
               </div>
-            </a>
+            </Link>
           </CardContent>
         </Card>
 
