@@ -7,6 +7,7 @@ import { motion } from 'framer-motion'
 import { Loader2, CheckCircle, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { toast } from 'sonner'
 import { durations } from '@/lib/animations'
 
 // Reuse the existing background image constant
@@ -15,16 +16,46 @@ const BACKGROUND_IMAGE = '/images/auth-background.jpg'
 export default function ContactPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  
+  // Form state
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [company, setCompany] = useState('')
+  const [message, setMessage] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    setErrorMessage(null)
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          company,
+          message,
+          subject: 'Solicitação de Acesso - Verity Agro'
+        })
+      })
 
-    setIsSuccess(true)
-    setIsLoading(false)
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.detail || 'Erro ao enviar mensagem')
+      }
+
+      setIsSuccess(true)
+      toast.success('Mensagem enviada com sucesso!')
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : 'Erro ao enviar mensagem'
+      setErrorMessage(msg)
+      toast.error(msg)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -100,7 +131,12 @@ export default function ContactPage() {
                   <label className="text-sm font-medium text-verity-900">
                     Nome Completo
                   </label>
-                  <Input required placeholder="Ex: João Silva" />
+                  <Input 
+                    required 
+                    placeholder="Ex: João Silva"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -111,6 +147,8 @@ export default function ContactPage() {
                     type="email"
                     required
                     placeholder="nome@empresa.com.br"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
 
@@ -118,7 +156,12 @@ export default function ContactPage() {
                   <label className="text-sm font-medium text-verity-900">
                     Empresa
                   </label>
-                  <Input required placeholder="Nome da sua empresa" />
+                  <Input 
+                    required 
+                    placeholder="Nome da sua empresa"
+                    value={company}
+                    onChange={(e) => setCompany(e.target.value)}
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -129,6 +172,8 @@ export default function ContactPage() {
                     required
                     className="flex min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                     placeholder="Descreva seu interesse na plataforma..."
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
                   />
                 </div>
 
