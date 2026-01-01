@@ -2,43 +2,13 @@
 
 import React, { useState, useEffect } from 'react'
 import { CPRWizardData } from './schema'
+import { StepProdutor } from './steps/StepProdutor'
+import { StepPropriedade } from './steps/StepPropriedade'
+import { StepCultura } from './steps/StepCultura'
 import { StepValues } from './steps/StepValues'
 import { StepGuarantees } from './steps/StepGuarantees'
 import { StepReview } from './steps/StepReview'
 import { cn } from '@/lib/utils'
-
-// =============================================================================
-// Placeholder Steps (1-3)
-// =============================================================================
-
-function PlaceholderStep({
-  title,
-  step,
-  onNext
-}: {
-  title: string
-  step: number
-  onNext: () => void
-}) {
-  return (
-    <div className="space-y-4 py-8 text-center animate-in fade-in">
-      <div className="text-sm uppercase tracking-wide text-muted-foreground">
-        Step {step} (Placeholder)
-      </div>
-      <h3 className="text-xl font-semibold">{title}</h3>
-      <p className="mx-auto max-w-md text-sm text-muted-foreground">
-        Este passo já foi implementado anteriormente ou é apenas ilustrativo
-        para este fluxo.
-      </p>
-      <button
-        onClick={onNext}
-        className="mt-6 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-      >
-        Simular Conclusão e Avançar
-      </button>
-    </div>
-  )
-}
 
 // =============================================================================
 // Main Component
@@ -153,24 +123,26 @@ export function CPRWizard() {
         ) : (
           <>
             {currentStep === 1 && (
-              <PlaceholderStep
-                title="Identificação do Produtor"
-                step={1}
+              <StepProdutor
+                data={data}
+                updateData={updateData}
                 onNext={next}
               />
             )}
             {currentStep === 2 && (
-              <PlaceholderStep
-                title="Seleção da Propriedade"
-                step={2}
+              <StepPropriedade
+                data={data}
+                updateData={updateData}
                 onNext={next}
+                onBack={back}
               />
             )}
             {currentStep === 3 && (
-              <PlaceholderStep
-                title="Definição da Cultura"
-                step={3}
+              <StepCultura
+                data={data}
+                updateData={updateData}
                 onNext={next}
+                onBack={back}
               />
             )}
 
