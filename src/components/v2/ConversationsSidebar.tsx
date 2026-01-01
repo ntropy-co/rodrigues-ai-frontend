@@ -17,7 +17,8 @@ import {
   History,
   FileText,
   HelpCircle,
-  FilePlus2
+  FilePlus2,
+  LayoutDashboard
 } from 'lucide-react'
 import { ProjectDialog } from './ProjectDialog'
 import { Avatar } from './Avatar'
@@ -563,6 +564,13 @@ const SidebarContent = memo(function SidebarContent({
             Ferramentas
           </h3>
           <div className="space-y-1">
+            <Link
+              href="/dashboard"
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-verity-700 transition-colors hover:bg-verity-50 hover:text-verity-900"
+            >
+              <LayoutDashboard className="h-4 w-4" />
+              Dashboard
+            </Link>
             <Link
               href="/quotes"
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-verity-700 transition-colors hover:bg-verity-50 hover:text-verity-900"
