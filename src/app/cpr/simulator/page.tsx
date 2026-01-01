@@ -1,17 +1,18 @@
 import { CPRSimulator } from '@/components/v2/CPRSimulator/CPRSimulator'
+import { InternalHeader } from '@/components/v2/Header/InternalHeader'
 
 export default function CPRSimulatorPage() {
   return (
-    <div className="container mx-auto px-4 py-10">
-      <div className="mb-8">
-        <h1 className="mb-2 text-3xl font-bold tracking-tight">
-          Simulador de CPR
-        </h1>
-        <p className="text-muted-foreground">
-          Ferramenta para cálculo rápido de custos e taxas de CPR Financeira.
-        </p>
+    <div className="min-h-screen">
+      <InternalHeader
+        title="Simulador de CPR"
+        subtitle="Calculo rapido de custos e taxas de CPR financeira."
+        backHref="/chat"
+        containerClassName="max-w-5xl"
+      />
+      <div className="container mx-auto max-w-5xl px-4 py-10">
+        <CPRSimulator />
       </div>
-      <CPRSimulator />
     </div>
   )
 }
