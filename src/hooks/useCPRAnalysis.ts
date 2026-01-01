@@ -18,10 +18,10 @@
  *   reset
  * } = useCPRAnalysis()
  *
- * // Start new analysis
+ * // Iniciar nova análise
  * await startAnalysis()
  *
- * // Send user message (document text, confirmation, etc.)
+ * // Enviar mensagem do usuário (texto do documento, confirmação, etc.)
  * await continueAnalysis("Sim, os dados estão corretos")
  * ```
  */
@@ -148,7 +148,7 @@ export function useCPRAnalysis() {
     (response: WorkflowResponse, userMessage?: string) => {
       const newMessages: WorkflowMessage[] = []
 
-      // Add user message if provided
+      // Adicionar mensagem do usuário se fornecida
       if (userMessage) {
         newMessages.push({
           id: `user-${Date.now()}`,
@@ -158,7 +158,7 @@ export function useCPRAnalysis() {
         })
       }
 
-      // Add assistant response
+      // Adicionar resposta do assistente
       newMessages.push({
         id: `assistant-${Date.now()}`,
         role: 'assistant',

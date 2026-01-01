@@ -108,12 +108,12 @@ function deriveWorkflowState(
   isWaitingInput: boolean,
   workflowType: WorkflowType
 ): WorkflowState {
-  // Check if workflow is complete
+  // Verificar se o workflow está completo
   if (currentStep === 'finalizado') {
     return 'completed'
   }
 
-  // Check for analysis completion (last step before finalizado)
+  // Verificar conclusão da análise (último passo antes de finalizado)
   if (
     workflowType === 'analise_cpr' &&
     currentStep === 'calcular_risco' &&
@@ -122,7 +122,7 @@ function deriveWorkflowState(
     return 'completed'
   }
 
-  // Check for creation completion (last step before finalizado)
+  // Verificar conclusão da criação (último passo antes de finalizado)
   if (
     workflowType === 'criar_cpr' &&
     currentStep === 'gerar_documento' &&
@@ -131,12 +131,12 @@ function deriveWorkflowState(
     return 'completed'
   }
 
-  // If waiting for user input, workflow is running but paused
+  // Se estiver aguardando entrada do usuário, o workflow está em execução mas pausado
   if (isWaitingInput) {
     return 'running'
   }
 
-  // If not waiting and not complete, actively processing
+  // Se não estiver aguardando e não estiver completo, está processando ativamente
   return 'processing'
 }
 
@@ -208,7 +208,7 @@ export function useCPRWorkflowStatus({
       abortControllerRef.current = null
     }
 
-    // Reset retry counter
+    // Resetar contador de tentativas
     retryCountRef.current = 0
 
     if (isMountedRef.current) {
@@ -237,7 +237,7 @@ export function useCPRWorkflowStatus({
       abortControllerRef.current.abort()
     }
 
-    // Create new AbortController for this request
+    // Criar novo AbortController para esta requisição
     abortControllerRef.current = new AbortController()
 
     try {
@@ -251,7 +251,7 @@ export function useCPRWorkflowStatus({
         headers: {
           'Content-Type': 'application/json'
         },
-        credentials: 'include', // Send cookies
+        credentials: 'include', // Enviar cookies
         signal: abortControllerRef.current.signal
       })
 
@@ -269,7 +269,7 @@ export function useCPRWorkflowStatus({
       const data = await response.json()
       const newStatus = parseWorkflowStatus(data, workflowType)
 
-      // Reset retry count on success
+      // Resetar contagem de tentativas em sucesso
       retryCountRef.current = 0
 
       if (isMountedRef.current) {
@@ -317,7 +317,7 @@ export function useCPRWorkflowStatus({
       setStatus(newStatus)
       onStatusChange?.(newStatus)
 
-      // Check if workflow completed
+      // Verificar se o workflow foi concluído
       if (newStatus.state === 'completed') {
         stopPollingRef.current?.()
         onComplete?.(newStatus)
@@ -343,7 +343,7 @@ export function useCPRWorkflowStatus({
     // Immediate first fetch
     refresh()
 
-    // Set up interval
+    // Configurar intervalo
     intervalRef.current = setInterval(() => {
       refresh()
     }, pollingInterval)
@@ -367,7 +367,7 @@ export function useCPRWorkflowStatus({
    */
   useEffect(() => {
     return () => {
-      // Clear interval when sessionId changes
+      // Limpar intervalo quando sessionId mudar
       if (intervalRef.current) {
         clearInterval(intervalRef.current)
         intervalRef.current = null
@@ -399,7 +399,7 @@ export function useCPRWorkflowStatus({
       startPolling()
     }
 
-    // Cleanup on unmount
+    // Limpeza ao desmontar
     return () => {
       stopPollingRef.current?.()
     }

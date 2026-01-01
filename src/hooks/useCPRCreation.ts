@@ -19,7 +19,7 @@
  *   reset
  * } = useCPRCreation()
  *
- * // Start with initial wizard data
+ * // Iniciar com dados iniciais do wizard
  * await startCreation({ emitente: {...}, produto: {...} })
  *
  * // Submit wizard step data
@@ -136,7 +136,7 @@ export function useCPRCreation() {
     (response: WorkflowResponse, userMessage?: string) => {
       const newMessages: WorkflowMessage[] = []
 
-      // Add user message if provided
+      // Adicionar mensagem do usuário se fornecida
       if (userMessage) {
         newMessages.push({
           id: `user-${Date.now()}`,
@@ -146,7 +146,7 @@ export function useCPRCreation() {
         })
       }
 
-      // Add assistant response
+      // Adicionar resposta do assistente
       newMessages.push({
         id: `assistant-${Date.now()}`,
         role: 'assistant',
