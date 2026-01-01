@@ -15,7 +15,7 @@ const CPRWizard = dynamic(
 
 export default function CPRWizardPage() {
   return (
-    <div className="container mx-auto px-4 py-10">
+    <div className="container mx-auto px-4 py-6">
       <div className="mb-6 flex items-center gap-4">
         <Link
           href="/chat"
@@ -36,6 +36,7 @@ export default function CPRWizardPage() {
             <path d="m15 18-6-6 6-6" />
           </svg>
         </Link>
+        <h1 className="text-2xl font-bold text-gray-900">Emissão de CPR</h1>
       </div>
       <CPRWizard />
     </div>

@@ -4,15 +4,17 @@
  * Centralized test data for consistent testing across all E2E specs.
  */
 
+const getEnv = (name: string) => process.env[name] || ''
+
 export const testUsers = {
   admin: {
-    email: process.env.TEST_ADMIN_EMAIL || 'admin@example.com',
-    password: process.env.TEST_ADMIN_PASSWORD || 'AdminPassword123!',
+    email: getEnv('TEST_ADMIN_EMAIL'),
+    password: getEnv('TEST_ADMIN_PASSWORD'),
     name: 'Test Admin'
   },
   regular: {
-    email: process.env.TEST_USER_EMAIL || 'teste@teste.com',
-    password: process.env.TEST_USER_PASSWORD || 'Teste123',
+    email: getEnv('TEST_USER_EMAIL'),
+    password: getEnv('TEST_USER_PASSWORD'),
     name: 'Usuário de Teste'
   }
 } as const

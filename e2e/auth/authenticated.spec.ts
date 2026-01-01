@@ -6,8 +6,17 @@
  */
 
 import { test, expect } from '../fixtures/auth.fixture'
+import { testUsers } from '../fixtures/test-data'
+
+const hasRegularCreds = Boolean(
+  testUsers.regular.email && testUsers.regular.password
+)
 
 test.describe('Authenticated User Flow', () => {
+  test.skip(
+    !hasRegularCreds,
+    'Set TEST_USER_EMAIL and TEST_USER_PASSWORD to run these tests.'
+  )
   test('should access chat when authenticated', async ({
     authenticatedPage
   }) => {
@@ -90,12 +99,17 @@ test.describe('Protected Routes', () => {
   })
 
   test('should redirect to chat after login', async ({ page }) => {
+    test.skip(
+      !hasRegularCreds,
+      'Set TEST_USER_EMAIL and TEST_USER_PASSWORD to run this test.'
+    )
+
     // Go directly to login
     await page.goto('/login')
 
     // Login with valid credentials
-    await page.fill('[name="email"]', 'teste@teste.com')
-    await page.fill('[name="password"]', 'Teste123')
+    await page.fill('[name="email"]', testUsers.regular.email)
+    await page.fill('[name="password"]', testUsers.regular.password)
     await page.click('button[type="submit"]')
 
     // Should redirect to chat (default route)

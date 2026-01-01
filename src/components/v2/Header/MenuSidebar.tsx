@@ -3,7 +3,18 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import { X, Trash2, Plus, AlertTriangle, Search, Loader2 } from 'lucide-react'
+import {
+  X,
+  Trash2,
+  Plus,
+  AlertTriangle,
+  Search,
+  Loader2,
+  TrendingUp,
+  Calculator,
+  History,
+  HelpCircle
+} from 'lucide-react'
 import { usePlaygroundStore } from '@/store'
 import { useSessions } from '@/hooks/useSessions'
 import {
@@ -222,17 +233,69 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
               <Plus className="h-4 w-4" />
               Nova Conversa
             </motion.button>
-            
+
             <button
-               onClick={() => {
-                   router.push('/documents')
-                   onClose()
-               }}
-               className="mt-3 flex w-full items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+              onClick={() => {
+                router.push('/documents')
+                onClose()
+              }}
+              className="mt-3 flex w-full items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
             >
-               <Search className="h-4 w-4" />
-               Meus Documentos
+              <Search className="h-4 w-4" />
+              Meus Documentos
             </button>
+          </div>
+
+          {/* Ferramentas / Navegação */}
+          <div className="border-b border-gray-200 p-4 dark:border-gray-800">
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+              Ferramentas
+            </h3>
+            <div className="space-y-1">
+              <button
+                onClick={() => {
+                  router.push('/quotes')
+                  onClose()
+                }}
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+              >
+                <TrendingUp className="h-4 w-4 text-gray-500" />
+                Cotações
+              </button>
+
+              <button
+                onClick={() => {
+                  router.push('/cpr/simulator')
+                  onClose()
+                }}
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+              >
+                <Calculator className="h-4 w-4 text-gray-500" />
+                Simulador CPR
+              </button>
+
+              <button
+                onClick={() => {
+                  router.push('/cpr/historico')
+                  onClose()
+                }}
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+              >
+                <History className="h-4 w-4 text-gray-500" />
+                Histórico CPR
+              </button>
+
+              <button
+                onClick={() => {
+                  router.push('/contact')
+                  onClose()
+                }}
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+              >
+                <HelpCircle className="h-4 w-4 text-gray-500" />
+                Contato / Suporte
+              </button>
+            </div>
           </div>
 
           {/* Search */}
