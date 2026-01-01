@@ -29,8 +29,6 @@ export function Header({
   const { ui } = useUIConfig()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-  const lastAnalysisTime = 'há 2 horas'
-
   return (
     <>
       <header
@@ -82,10 +80,6 @@ export function Header({
 
         {/* Right Section: Context, Files Toggle & User */}
         <nav className="flex items-center gap-3">
-          <span className="hidden text-xs text-verity-600 md:inline-block">
-            Última análise: {lastAnalysisTime}
-          </span>
-
           {/* Files Toggle */}
           {onToggleFiles && (
             <button
