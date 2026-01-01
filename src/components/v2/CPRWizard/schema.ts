@@ -1,6 +1,49 @@
 import { z } from 'zod'
 
 // =============================================================================
+// Step 1: Produtor
+// =============================================================================
+
+export const stepProdutorSchema = z.object({
+  producerName: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
+  producerCpfCnpj: z
+    .string()
+    .min(11, 'CPF/CNPJ inválido')
+    .max(18, 'CPF/CNPJ inválido'),
+  producerPhone: z.string().min(10, 'Telefone inválido'),
+  producerEmail: z.string().email('Email inválido'),
+  producerAddress: z.string().min(10, 'Endereço deve ter no mínimo 10 caracteres')
+})
+
+// =============================================================================
+// Step 2: Propriedade
+// =============================================================================
+
+export const stepPropriedadeSchema = z.object({
+  farmName: z.string().min(3, 'Nome da propriedade deve ter no mínimo 3 caracteres'),
+  farmCar: z.string().optional(),
+  farmArea: z.number({ error: 'Área inválida' }).positive('Área deve ser positiva'),
+  farmState: z.string().min(2, 'Selecione o estado'),
+  farmCity: z.string().min(2, 'Cidade é obrigatória'),
+  farmAddress: z.string().min(10, 'Endereço da propriedade é obrigatório')
+})
+
+// =============================================================================
+// Step 3: Cultura
+// =============================================================================
+
+export const stepCulturaSchema = z.object({
+  commodity: z.string().min(1, 'Selecione a cultura'),
+  safra: z.string().min(1, 'Selecione a safra'),
+  expectedQuantity: z
+    .number({ error: 'Quantidade inválida' })
+    .positive('Quantidade deve ser positiva'),
+  unit: z.string().min(1, 'Selecione a unidade'),
+  plantingDate: z.string().optional(),
+  harvestDate: z.string().optional()
+})
+
+// =============================================================================
 // Step 4: Valores e Prazos
 // =============================================================================
 
@@ -70,16 +113,21 @@ export const stepGuaranteesSchema = z
 // =============================================================================
 
 export const cprWizardSchema = z.object({
-  // Steps 1-3 (Placeholders)
-  product: z.string().optional(),
-  producer: z.string().optional(),
-  farm: z.string().optional(),
+  // Step 1: Produtor
+  ...stepProdutorSchema.shape,
 
-  // Step 4
+  // Step 2: Propriedade
+  ...stepPropriedadeSchema.shape,
+
+  // Step 3: Cultura
+  ...stepCulturaSchema.shape,
+
+  // Step 4: Valores
   ...stepValuesSchema.shape,
 
-  // Step 5
+  // Step 5: Garantias
   ...stepGuaranteesSchema.shape
 })
 
 export type CPRWizardData = z.infer<typeof cprWizardSchema>
+
