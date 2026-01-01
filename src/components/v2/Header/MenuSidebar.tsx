@@ -248,7 +248,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
 
           {/* Ferramentas / Navegação */}
           <div className="border-b border-gray-200 p-4 dark:border-gray-800">
-            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
               Ferramentas
             </h3>
             <div className="space-y-1">
@@ -257,7 +257,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   router.push('/quotes')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
               >
                 <TrendingUp className="h-4 w-4 text-gray-500" />
                 Cotações
@@ -268,7 +268,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   router.push('/cpr/simulator')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
               >
                 <Calculator className="h-4 w-4 text-gray-500" />
                 Simulador CPR
@@ -279,7 +279,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   router.push('/cpr/historico')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
               >
                 <History className="h-4 w-4 text-gray-500" />
                 Histórico CPR
@@ -290,7 +290,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   router.push('/contact')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
               >
                 <HelpCircle className="h-4 w-4 text-gray-500" />
                 Contato / Suporte
@@ -303,12 +303,16 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
               <input
-                type="text"
-                placeholder="Buscar análises..."
+                type="search"
+                placeholder="Buscar analises..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-md border border-gray-200 bg-gray-50 py-1.5 pl-9 pr-3 text-xs text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 placeholder:dark:text-gray-600"
-                aria-label="Buscar análises"
+                inputMode="search"
+                autoComplete="off"
+                autoCorrect="off"
+                spellCheck={false}
+                className="w-full rounded-md border border-gray-200 bg-gray-50 py-2.5 pl-9 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 placeholder:dark:text-gray-600"
+                aria-label="Buscar analises"
               />
             </div>
           </div>
@@ -318,14 +322,14 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
             {isLoadingSessions || sessionsApiLoading ? (
               <div className="flex flex-col items-center justify-center p-4 text-center">
                 <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
-                <div className="mt-2 text-xs text-gray-400">
+                <div className="mt-2 text-sm text-gray-400">
                   Carregando análises...
                 </div>
               </div>
             ) : filteredSessions.length === 0 ? (
               // Empty state
               <div className="flex flex-col items-center justify-center p-8 text-center">
-                <div className="text-xs text-gray-400">
+                <div className="text-sm text-gray-400">
                   {searchQuery
                     ? 'Nenhuma análise encontrada'
                     : 'Histórico vazio'}
@@ -385,7 +389,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
 
           {/* Footer */}
           <div className="border-t border-border p-4">
-            <div className="text-center text-xs text-muted-foreground">
+            <div className="text-center text-sm text-muted-foreground">
               Verity Agro — Análise de CPR e Crédito Rural
             </div>
           </div>
