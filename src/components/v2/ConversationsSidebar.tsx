@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, memo, useMemo } from 'react'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import {
   Search,
   Plus,
@@ -10,7 +11,13 @@ import {
   Loader2,
   SquarePen,
   LayoutGrid,
-  Trash2
+  Trash2,
+  TrendingUp,
+  Calculator,
+  History,
+  FileText,
+  HelpCircle,
+  FilePlus2
 } from 'lucide-react'
 import { ProjectDialog } from './ProjectDialog'
 import { Avatar } from './Avatar'
@@ -549,6 +556,57 @@ const SidebarContent = memo(function SidebarContent({
             </div>
           )}
         </div>
+
+        {/* Ferramentas Section */}
+        <div className="mt-6 border-t border-sand-300/50 pt-4">
+          <h3 className="mb-2 px-2 font-display text-lg font-semibold text-verity-950">
+            Ferramentas
+          </h3>
+          <div className="space-y-1">
+            <Link
+              href="/quotes"
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-verity-700 transition-colors hover:bg-verity-50 hover:text-verity-900"
+            >
+              <TrendingUp className="h-4 w-4" />
+              Cotações
+            </Link>
+            <Link
+              href="/cpr/wizard"
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-verity-700 transition-colors hover:bg-verity-50 hover:text-verity-900"
+            >
+              <FilePlus2 className="h-4 w-4" />
+              Nova CPR
+            </Link>
+            <Link
+              href="/cpr/simulator"
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-verity-700 transition-colors hover:bg-verity-50 hover:text-verity-900"
+            >
+              <Calculator className="h-4 w-4" />
+              Simulador CPR
+            </Link>
+            <Link
+              href="/cpr/historico"
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-verity-700 transition-colors hover:bg-verity-50 hover:text-verity-900"
+            >
+              <History className="h-4 w-4" />
+              Histórico CPR
+            </Link>
+            <Link
+              href="/documents"
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-verity-700 transition-colors hover:bg-verity-50 hover:text-verity-900"
+            >
+              <FileText className="h-4 w-4" />
+              Meus Documentos
+            </Link>
+            <Link
+              href="/contact"
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-verity-700 transition-colors hover:bg-verity-50 hover:text-verity-900"
+            >
+              <HelpCircle className="h-4 w-4" />
+              Contato / Suporte
+            </Link>
+          </div>
+        </div>
       </div>
     </>
   )
@@ -706,8 +764,9 @@ const ConversationCard = memo(function ConversationCard({
                 <button
                   type="button"
                   onClick={handleDeleteClick}
-                  className="rounded p-1 text-red-500 opacity-0 transition-opacity hover:bg-red-100 group-hover:opacity-100"
+                  className="rounded p-1 text-red-500 opacity-100 transition-opacity hover:bg-red-100 sm:opacity-0 sm:group-hover:opacity-100"
                   title="Excluir"
+                  aria-label="Excluir conversa"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
