@@ -21,13 +21,14 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { getAuthorizationFromRequest } from '@/lib/api/auth-header'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 export async function GET(request: NextRequest) {
   try {
     // Get the Authorization header from the request
-    const authorization = request.headers.get('authorization')
+    const authorization = getAuthorizationFromRequest(request)
 
     if (!authorization) {
       return NextResponse.json(
@@ -91,7 +92,8 @@ export async function GET(request: NextRequest) {
       status: 200,
       headers: {
         'Cache-Control': 'private, max-age=30, stale-while-revalidate=60',
-        'Access-Control-Allow-Origin': process.env.NEXT_PUBLIC_APP_URL || 'https://rodriguesagro.com.br',
+        'Access-Control-Allow-Origin':
+          process.env.NEXT_PUBLIC_APP_URL || 'https://rodriguesagro.com.br',
         'Access-Control-Allow-Credentials': 'true'
       }
     })
@@ -102,7 +104,8 @@ export async function GET(request: NextRequest) {
       {
         status: 500,
         headers: {
-          'Access-Control-Allow-Origin': process.env.NEXT_PUBLIC_APP_URL || 'https://rodriguesagro.com.br',
+          'Access-Control-Allow-Origin':
+            process.env.NEXT_PUBLIC_APP_URL || 'https://rodriguesagro.com.br',
           'Access-Control-Allow-Credentials': 'true'
         }
       }
@@ -116,7 +119,8 @@ export async function OPTIONS() {
   return new NextResponse(null, {
     status: 204,
     headers: {
-      'Access-Control-Allow-Origin': process.env.NEXT_PUBLIC_APP_URL || 'https://rodriguesagro.com.br',
+      'Access-Control-Allow-Origin':
+        process.env.NEXT_PUBLIC_APP_URL || 'https://rodriguesagro.com.br',
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       'Access-Control-Allow-Credentials': 'true'

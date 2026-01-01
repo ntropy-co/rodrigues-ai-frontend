@@ -89,18 +89,24 @@ export async function GET(request: NextRequest) {
 
     // Get query params for pagination and filtering
     const { searchParams } = new URL(request.url)
-    const skip = searchParams.get('skip') || '0'
-    const limit = searchParams.get('limit') || '20'
+    const skipRaw = searchParams.get('skip') || '0'
+    const limitRaw = searchParams.get('limit') || '20'
     const type = searchParams.get('type') // 'analise' | 'criar' | 'simulacao' | null
     const status = searchParams.get('status') // 'completed' | 'pending' | 'failed' | null
     const commodity = searchParams.get('commodity')
     const dateFrom = searchParams.get('date_from')
     const dateTo = searchParams.get('date_to')
 
+    const skip = Number(skipRaw)
+    const limit = Number(limitRaw)
+    const pageSize = Number.isFinite(limit) && limit > 0 ? limit : 20
+    const page =
+      Number.isFinite(skip) && skip >= 0 ? Math.floor(skip / pageSize) : 0
+
     // Build backend URL with query params
     const backendUrl = new URL(`${BACKEND_URL}/api/v1/cpr/history`)
-    backendUrl.searchParams.set('skip', skip)
-    backendUrl.searchParams.set('limit', limit)
+    backendUrl.searchParams.set('page', String(page))
+    backendUrl.searchParams.set('page_size', String(pageSize))
 
     if (type && type !== 'all') {
       backendUrl.searchParams.set('type', type)
@@ -132,7 +138,10 @@ export async function GET(request: NextRequest) {
 
     // Add cache headers for GET requests
     const headers = new Headers()
-    headers.set('Cache-Control', 'private, max-age=60, stale-while-revalidate=120')
+    headers.set(
+      'Cache-Control',
+      'private, max-age=60, stale-while-revalidate=120'
+    )
 
     return new NextResponse(backendResponse.body, {
       status: backendResponse.status,
@@ -189,7 +198,10 @@ export async function POST(request: NextRequest) {
       })
     })
 
-    return await handleBackendResponse(response, 'Failed to create CPR history entry')
+    return await handleBackendResponse(
+      response,
+      'Failed to create CPR history entry'
+    )
   } catch (error) {
     logRouteError('/api/cpr/history', 'POST', error)
     return NextResponse.json(

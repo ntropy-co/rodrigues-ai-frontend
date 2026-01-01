@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
       // Set HttpOnly cookie with the access token
       // SECURITY: HttpOnly prevents XSS from stealing tokens
       // maxAge matches backend ACCESS_TOKEN_EXPIRE_MINUTES (30 min)
-      jsonResponse.cookies.set('auth_token', data.access_token, {
+      jsonResponse.cookies.set('verity_access_token', data.access_token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
       // Also set refresh token if available
       // maxAge matches backend REFRESH_TOKEN_EXPIRE_DAYS (30 days)
       if (data.refresh_token) {
-        jsonResponse.cookies.set('refresh_token', data.refresh_token, {
+        jsonResponse.cookies.set('verity_refresh_token', data.refresh_token, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'lax',

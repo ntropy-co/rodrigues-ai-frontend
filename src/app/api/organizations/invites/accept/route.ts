@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
       )
 
       // Set HttpOnly cookie with the access token
-      jsonResponse.cookies.set('auth_token', accessToken, {
+      jsonResponse.cookies.set('verity_access_token', accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
 
       // Also set refresh token if available
       if (refreshToken) {
-        jsonResponse.cookies.set('refresh_token', refreshToken, {
+        jsonResponse.cookies.set('verity_refresh_token', refreshToken, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'lax',

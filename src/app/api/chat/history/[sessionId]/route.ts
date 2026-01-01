@@ -31,6 +31,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { getAuthorizationFromRequest } from '@/lib/api/auth-header'
 import {
   validateAuth,
   isValidSessionId,
@@ -58,7 +59,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       return authError
     }
 
-    const authorization = request.headers.get('authorization')!
+    const authorization = getAuthorizationFromRequest(request)!
     const { sessionId } = await params
 
     // 2. Validate session ID format (must be s_<uuid>)

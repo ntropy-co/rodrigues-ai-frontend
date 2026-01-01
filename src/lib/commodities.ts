@@ -50,3 +50,15 @@ export const COMMODITY_INFO: Record<
   'CT=F': { name: 'Algodão', unit: 'USD/lb' },
   'LE=F': { name: 'Boi Gordo', unit: 'USD/lb' }
 }
+
+export const COMMODITY_BACKEND_CODES: Record<CommoditySymbol, string> = {
+  'ZS=F': 'SOJA',
+  'ZC=F': 'MILHO',
+  'ZW=F': 'TRIGO',
+  'KC=F': 'CAFE',
+  'ZL=F': 'OLEO_SOJA',
+  'ZM=F': 'BSOJA',
+  'SB=F': 'ACUCAR',
+  'CT=F': 'ALGODAO',
+  'LE=F': 'BOI'
+}

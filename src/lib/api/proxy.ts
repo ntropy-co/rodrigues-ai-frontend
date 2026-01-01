@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { handleBackendError } from './errors'
+import { getAuthorizationFromRequest } from '@/lib/api/auth-header'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -57,7 +58,7 @@ export interface ProxyOptions {
  * @returns The authorization header value or null
  */
 export function getAuthHeader(request: NextRequest): string | null {
-  return request.headers.get('authorization')
+  return getAuthorizationFromRequest(request)
 }
 
 /**

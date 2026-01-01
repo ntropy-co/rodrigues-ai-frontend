@@ -30,6 +30,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { getAuthorizationFromRequest } from '@/lib/api/auth-header'
 import {
   validateAuth,
   isValidUUID,
@@ -58,7 +59,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       return authError
     }
 
-    const authorization = request.headers.get('authorization')!
+    const authorization = getAuthorizationFromRequest(request)!
     const { messageId } = await params
 
     // 2. Validate message ID format (must be UUID)
