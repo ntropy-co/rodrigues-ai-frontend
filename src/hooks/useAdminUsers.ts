@@ -93,7 +93,7 @@ export interface UpdateUserRequest {
  * // List users with pagination
  * const result = await listUsers({ skip: 0, limit: 20, search: 'john' })
  *
- * // Update user role
+ * // Atualizar função de usuário
  * await updateUserRole(userId, 'member')
  * ```
  */
@@ -121,7 +121,7 @@ export function useAdminUsers() {
       try {
         const url = new URL('/api/admin/users', window.location.origin)
 
-        // Add query parameters
+        // Adicionar parâmetros de consulta
         if (params.skip !== undefined) {
           url.searchParams.set('skip', params.skip.toString())
         }

@@ -29,15 +29,15 @@ export default function CPRHistoricoPage() {
     refetch
   } = useCPRHistory()
 
-  // Check if any filter is active
+  // Verificar se algum filtro está ativo
   const hasFilters =
     (filters.type && filters.type !== 'all') ||
     (filters.status && filters.status !== 'all') ||
     Boolean(filters.commodity)
 
-  // Handle view item
+  // Lidar com visualização de item
   const handleView = useCallback((item: CPRHistoryItem) => {
-    // Navigate based on type
+    // Navegar baseado no tipo
     if (item.type === 'analise') {
       router.push(`/cpr/analise?session=${item.id}`)
     } else if (item.type === 'criar') {
@@ -47,7 +47,7 @@ export default function CPRHistoricoPage() {
     }
   }, [router])
 
-  // Handle download
+  // Lidar com download
   const handleDownload = useCallback((item: CPRHistoryItem) => {
     if (item.document_url) {
       window.open(item.document_url, '_blank')
@@ -56,7 +56,7 @@ export default function CPRHistoricoPage() {
     }
   }, [])
 
-  // Handle delete
+  // Lidar com exclusão
   const handleDelete = useCallback(async (item: CPRHistoryItem) => {
     const confirmed = window.confirm(
       `Tem certeza que deseja remover "${item.title}"?`
@@ -71,7 +71,7 @@ export default function CPRHistoricoPage() {
     }
   }, [deleteEntry])
 
-  // Handle clear filters
+  // Lidar com limpar filtros
   const handleClearFilters = useCallback(() => {
     setFilters({})
   }, [setFilters])

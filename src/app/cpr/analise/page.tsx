@@ -488,14 +488,14 @@ export default function CPRAnalysisPage() {
   const [file, setFile] = useState<File | null>(null)
   const [isUploading, setIsUploading] = useState(false)
 
-  // Handle errors
+  // Lidar com erros
   useEffect(() => {
     if (error) {
       toast.error(error)
     }
   }, [error])
 
-  // Handle file selection
+  // Lidar com seleção de arquivo
   const handleFileSelect = useCallback((selectedFile: File) => {
     const allowedTypes = [
       'application/pdf',
@@ -520,7 +520,7 @@ export default function CPRAnalysisPage() {
     setFile(selectedFile)
   }, [])
 
-  // Start analysis workflow
+  // Iniciar workflow de análise
   const handleStartAnalysis = useCallback(async () => {
     if (!file) {
       toast.error('Selecione um arquivo primeiro')
@@ -551,12 +551,12 @@ export default function CPRAnalysisPage() {
     }
   }, [file, startAnalysis, continueAnalysis])
 
-  // Handle chat message
+  // Lidar com mensagem de chat
   const handleSendMessage = useCallback(
     async (message: string) => {
       await continueAnalysis(message)
 
-      // Check if analysis is complete
+      // Verificar se a análise está completa
       if (workflowState?.complianceResult && workflowState?.riskResult) {
         setStep('results')
       }
@@ -564,7 +564,7 @@ export default function CPRAnalysisPage() {
     [continueAnalysis, workflowState]
   )
 
-  // Reset everything
+  // Resetar tudo
   const handleReset = useCallback(() => {
     reset()
     setFile(null)
@@ -583,7 +583,7 @@ export default function CPRAnalysisPage() {
     }
   }, [router, workflowState?.extractedData])
 
-  // Check if we have results to show
+  // Verificar se temos resultados para mostrar
   const hasResults =
     workflowState?.complianceResult || workflowState?.riskResult
 

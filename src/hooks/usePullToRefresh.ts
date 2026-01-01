@@ -127,7 +127,7 @@ export function usePullToRefresh({
       setPullDistance(0)
     }
 
-    // Reset
+    // Resetar
     touchStartY.current = 0
     currentTouchY.current = 0
     isAtTop.current = false

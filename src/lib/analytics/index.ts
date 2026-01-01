@@ -13,7 +13,7 @@
  * // Identify a user
  * identify('user-123', { email: 'user@example.com', name: 'John' })
  *
- * // Reset on logout
+ * // Resetar ao fazer logout
  * reset()
  */
 
