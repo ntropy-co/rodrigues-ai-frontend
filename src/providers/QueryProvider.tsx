@@ -86,8 +86,8 @@ interface QueryProviderProps {
 }
 
 export function QueryProvider({ children }: QueryProviderProps) {
-  // Create client once per component instance
-  // Using useState to ensure it's only created once on the client
+  // Criar cliente uma vez por instância do componente
+  // Usando useState para garantir que seja criado apenas uma vez no cliente
   const [queryClient] = useState(() => createQueryClient())
 
   return (

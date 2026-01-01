@@ -55,7 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<ContextUser | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Load token and user on mount
+  // Carregar token e usuário na montagem
   useEffect(() => {
     const loadAuth = async () => {
       try {
@@ -75,8 +75,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Schedule proactive token refresh when authenticated
   useEffect(() => {
-    // Start proactive token refresh (checks periodically)
-    // Only schedule if we have a user (implies authentication attempt succeeded)
+    // Iniciar atualização proativa do token (verifica periodicamente)
+    // Só agendar se tivermos um usuário (implica que a tentativa de autenticação foi bem-sucedida)
     if (!user) return
 
     const cleanup = scheduleTokenRefresh(5 * 60 * 1000)
@@ -106,11 +106,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Cookies are set by backend automatically
 
-      // Fetch user data
+      // Buscar dados do usuário
       const userData = await getCurrentUserApi()
       setUser(userData)
 
-      // Reset rate limiter on successful login
+      // Resetar limitador de taxa em login bem-sucedido
       loginRateLimiter.reset('login')
 
       // Identify user in analytics
@@ -161,7 +161,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           name: data.name
         })
 
-        // Reset rate limiter on successful registration
+        // Resetar limitador de taxa em registro bem-sucedido
         registerRateLimiter.reset('register')
 
         // Track signup event
@@ -202,8 +202,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Dont logout automatically on simple refetch failure, unless 401 (handled by interceptor?)
       // Actually, if refetch fails (e.g. 401), we might be logged out.
       // But let's let the user retry or let the UI handle it.
-      // For now, if we can't get user, we assume logged out?
-      // No, effectively we are logged out if we can't get user.
+      // Por enquanto, se não conseguirmos obter o usuário, assumimos que está desconectado?
+      // Não, efetivamente estamos desconectados se não conseguirmos obter o usuário.
       setUser(null)
     }
   }, [])

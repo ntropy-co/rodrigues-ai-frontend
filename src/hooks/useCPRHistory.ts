@@ -29,7 +29,7 @@
  * // Apply filters
  * setFilters({ type: 'analise', status: 'completed' })
  *
- * // Create new entry
+ * // Criar nova entrada
  * await createEntry({
  *   type: 'analise',
  *   title: 'Análise CPR - Fazenda XYZ',
@@ -278,13 +278,13 @@ export function useCPRHistory(
     }
   })
 
-  // Update filters (resets to first page)
+  // Atualizar filtros (retorna à primeira página)
   const setFilters = useCallback((newFilters: CPRHistoryFilters) => {
     setFiltersState(newFilters)
-    setPage(0) // Reset to first page when filters change
+    setPage(0) // Retornar à primeira página quando os filtros mudarem
   }, [])
 
-  // Create entry wrapper
+  // Wrapper para criar entrada
   const createEntry = useCallback(
     async (data: CPRHistoryCreateRequest): Promise<CPRHistoryItem | null> => {
       try {
@@ -297,7 +297,7 @@ export function useCPRHistory(
     [createMutation]
   )
 
-  // Delete entry wrapper
+  // Wrapper para excluir entrada
   const deleteEntry = useCallback(
     async (id: string): Promise<boolean> => {
       try {

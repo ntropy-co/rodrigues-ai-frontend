@@ -49,7 +49,7 @@ export function useKeyboardHeight() {
       handleResize()
     }
 
-    // Cleanup
+    // Limpeza
     return () => {
       if (window.visualViewport) {
         window.visualViewport.removeEventListener('resize', handleResize)

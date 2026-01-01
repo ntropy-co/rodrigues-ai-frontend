@@ -16,7 +16,7 @@ import { Ratelimit } from '@upstash/ratelimit'
 // Rate Limiting Configuration
 // =============================================================================
 
-// Initialize Ratelimit only if env vars are present
+// Inicializar Ratelimit apenas se as variáveis de ambiente estiverem presentes
 let ratelimit: Ratelimit | null = null
 
 if (

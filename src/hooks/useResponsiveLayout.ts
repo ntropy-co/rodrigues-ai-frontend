@@ -24,7 +24,7 @@ export function useResponsiveLayout() {
       }
     }
 
-    // Execute on mount
+    // Executar na montagem
     updateViewport()
 
     // Listener for resize with debounce

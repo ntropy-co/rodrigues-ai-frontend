@@ -7,8 +7,8 @@ export async function GET() {
   const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
   try {
-    // TODO: Add edge caching for better performance
-    // Replace `cache: 'no-store'` with `next: { revalidate: 60 }` to cache for 60s
+    // TODO: Adicionar cache de borda para melhor desempenho
+    // Substituir `cache: 'no-store'` por `next: { revalidate: 60 }` para cache de 60s
     const res = await fetch(`${backendUrl}/api/v1/quotes/latest`, {
       cache: 'no-store'
     })
