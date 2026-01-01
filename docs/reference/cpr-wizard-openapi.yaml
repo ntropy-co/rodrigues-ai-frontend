@@ -1,0 +1,458 @@
+openapi: 3.0.3
+info:
+  title: CPR Wizard Draft API
+  version: 1.0.0
+  description: >
+    Draft-based CPR wizard API. The browser calls the BFF and the BFF forwards
+    requests to the backend. This spec describes the backend endpoints.
+servers:
+  - url: https://api.example.com
+tags:
+  - name: cpr-drafts
+    description: CPR wizard draft operations
+paths:
+  /api/v1/cpr/drafts:
+    post:
+      tags: [cpr-drafts]
+      summary: Create a new CPR wizard draft
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DraftCreateRequest'
+            examples:
+              empty:
+                summary: Empty draft
+                value:
+                  current_step: 1
+              with_data:
+                summary: Draft with partial data
+                value:
+                  current_step: 2
+                  wizard_data:
+                    producer:
+                      name: Maria Silva
+      responses:
+        '201':
+          description: Draft created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WizardDraft'
+        '400':
+          $ref: '#/components/responses/ApiError'
+        '401':
+          $ref: '#/components/responses/ApiError'
+  /api/v1/cpr/drafts/{draft_id}:
+    get:
+      tags: [cpr-drafts]
+      summary: Get an existing CPR wizard draft
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: draft_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Draft found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WizardDraft'
+        '401':
+          $ref: '#/components/responses/ApiError'
+        '404':
+          $ref: '#/components/responses/ApiError'
+    patch:
+      tags: [cpr-drafts]
+      summary: Update a CPR wizard draft
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: draft_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DraftUpdateRequest'
+      responses:
+        '200':
+          description: Draft updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WizardDraft'
+        '401':
+          $ref: '#/components/responses/ApiError'
+        '404':
+          $ref: '#/components/responses/ApiError'
+        '409':
+          $ref: '#/components/responses/ApiError'
+  /api/v1/cpr/drafts/{draft_id}/submit:
+    post:
+      tags: [cpr-drafts]
+      summary: Submit a CPR wizard draft for document generation
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: draft_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DraftSubmitRequest'
+      responses:
+        '200':
+          description: Draft submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DraftSubmitResponse'
+        '401':
+          $ref: '#/components/responses/ApiError'
+        '404':
+          $ref: '#/components/responses/ApiError'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    ApiError:
+      description: Error response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+        correlation_id:
+          type: string
+      required: [code, message]
+    DraftCreateRequest:
+      type: object
+      properties:
+        wizard_data:
+          $ref: '#/components/schemas/WizardDataPartial'
+        current_step:
+          type: integer
+          minimum: 1
+        source:
+          type: string
+    DraftUpdateRequest:
+      type: object
+      properties:
+        wizard_data:
+          $ref: '#/components/schemas/WizardDataPartial'
+        current_step:
+          type: integer
+          minimum: 1
+        version:
+          type: integer
+          minimum: 0
+    DraftSubmitRequest:
+      type: object
+      properties:
+        confirm:
+          type: boolean
+      required: [confirm]
+    DraftSubmitResponse:
+      type: object
+      properties:
+        draft:
+          $ref: '#/components/schemas/WizardDraft'
+        workflow:
+          $ref: '#/components/schemas/WorkflowResponse'
+      required: [draft]
+    WorkflowResponse:
+      type: object
+      properties:
+        session_id:
+          type: string
+        workflow_type:
+          type: string
+          enum: [criar_cpr]
+        current_step:
+          type: string
+        is_waiting_input:
+          type: boolean
+        document_url:
+          type: string
+      required:
+        - session_id
+        - workflow_type
+        - current_step
+        - is_waiting_input
+    WizardDraft:
+      type: object
+      properties:
+        draft_id:
+          type: string
+        status:
+          type: string
+          enum: [draft, submitted, completed, expired]
+        wizard_data:
+          $ref: '#/components/schemas/WizardDataPartial'
+        current_step:
+          type: integer
+          minimum: 1
+        version:
+          type: integer
+          minimum: 0
+        document_url:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+      required:
+        - draft_id
+        - status
+        - current_step
+        - version
+        - created_at
+        - updated_at
+    WizardData:
+      type: object
+      required: [producer, farm, crop, values, guarantees]
+      properties:
+        producer:
+          $ref: '#/components/schemas/WizardProducer'
+        farm:
+          $ref: '#/components/schemas/WizardFarm'
+        crop:
+          $ref: '#/components/schemas/WizardCrop'
+        values:
+          $ref: '#/components/schemas/WizardValues'
+        guarantees:
+          $ref: '#/components/schemas/WizardGuarantees'
+    WizardDataPartial:
+      type: object
+      properties:
+        producer:
+          $ref: '#/components/schemas/WizardProducerPartial'
+        farm:
+          $ref: '#/components/schemas/WizardFarmPartial'
+        crop:
+          $ref: '#/components/schemas/WizardCropPartial'
+        values:
+          $ref: '#/components/schemas/WizardValuesPartial'
+        guarantees:
+          $ref: '#/components/schemas/WizardGuaranteesPartial'
+    WizardProducer:
+      type: object
+      required: [name, cpf_cnpj, phone, email, address]
+      properties:
+        name:
+          type: string
+        cpf_cnpj:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        address:
+          type: string
+    WizardProducerPartial:
+      type: object
+      properties:
+        name:
+          type: string
+        cpf_cnpj:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        address:
+          type: string
+    WizardFarm:
+      type: object
+      required: [name, area_ha, state, city, address]
+      properties:
+        name:
+          type: string
+        car:
+          type: string
+          nullable: true
+        area_ha:
+          type: number
+        state:
+          type: string
+        city:
+          type: string
+        address:
+          type: string
+    WizardFarmPartial:
+      type: object
+      properties:
+        name:
+          type: string
+        car:
+          type: string
+          nullable: true
+        area_ha:
+          type: number
+        state:
+          type: string
+        city:
+          type: string
+        address:
+          type: string
+    WizardCrop:
+      type: object
+      required: [commodity, safra, expected_quantity, unit]
+      properties:
+        commodity:
+          type: string
+        safra:
+          type: string
+        expected_quantity:
+          type: number
+        unit:
+          type: string
+        planting_date:
+          type: string
+          nullable: true
+        harvest_date:
+          type: string
+          nullable: true
+    WizardCropPartial:
+      type: object
+      properties:
+        commodity:
+          type: string
+        safra:
+          type: string
+        expected_quantity:
+          type: number
+        unit:
+          type: string
+        planting_date:
+          type: string
+          nullable: true
+        harvest_date:
+          type: string
+          nullable: true
+    WizardValues:
+      type: object
+      required:
+        - amount
+        - quantity
+        - issue_date
+        - due_date
+        - delivery_place
+        - correction_index
+      properties:
+        amount:
+          type: number
+        quantity:
+          type: number
+        unit_price:
+          type: number
+          nullable: true
+        issue_date:
+          type: string
+        due_date:
+          type: string
+        delivery_place:
+          type: string
+        correction_index:
+          type: string
+          enum: [IPCA, IGP-M, Nenhum]
+    WizardValuesPartial:
+      type: object
+      properties:
+        amount:
+          type: number
+        quantity:
+          type: number
+        unit_price:
+          type: number
+          nullable: true
+        issue_date:
+          type: string
+        due_date:
+          type: string
+        delivery_place:
+          type: string
+        correction_index:
+          type: string
+          enum: [IPCA, IGP-M, Nenhum]
+    WizardGuarantor:
+      type: object
+      required: [name, cpf_cnpj, address]
+      properties:
+        name:
+          type: string
+        cpf_cnpj:
+          type: string
+        address:
+          type: string
+    WizardGuarantorPartial:
+      type: object
+      properties:
+        name:
+          type: string
+        cpf_cnpj:
+          type: string
+        address:
+          type: string
+    WizardGuarantees:
+      type: object
+      required: [types, description, has_guarantor]
+      properties:
+        types:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        has_guarantor:
+          type: boolean
+        guarantor:
+          $ref: '#/components/schemas/WizardGuarantor'
+    WizardGuaranteesPartial:
+      type: object
+      properties:
+        types:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        has_guarantor:
+          type: boolean
+        guarantor:
+          $ref: '#/components/schemas/WizardGuarantorPartial'

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { CPRWizardData } from './schema'
 import { StepProdutor } from './steps/StepProdutor'
 import { StepPropriedade } from './steps/StepPropriedade'
@@ -8,6 +8,8 @@ import { StepCultura } from './steps/StepCultura'
 import { StepValues } from './steps/StepValues'
 import { StepGuarantees } from './steps/StepGuarantees'
 import { StepReview } from './steps/StepReview'
+import { mapDraftToWizardData, mapWizardDataToDraft } from './mapping'
+import { useCPRCreation } from '@/hooks/useCPRCreation'
 import { cn } from '@/lib/utils'
 
 // =============================================================================
@@ -20,32 +22,95 @@ const STEPS = [
   { id: 3, title: 'Cultura' },
   { id: 4, title: 'Valores' },
   { id: 5, title: 'Garantias' },
-  { id: 6, title: 'Revisão' }
+  { id: 6, title: 'Revisǜo' }
 ]
+
+const DRAFT_STORAGE_KEY = 'cpr_wizard_draft_id'
 
 export function CPRWizard() {
   const [currentStep, setCurrentStep] = useState(1)
   const [data, setData] = useState<Partial<CPRWizardData>>({})
   const [isLoaded, setIsLoaded] = useState(false)
 
-  // Persist State
-  useEffect(() => {
-    const saved = localStorage.getItem('cpr_wizard_state')
-    if (saved) {
-      try {
-        setData(JSON.parse(saved))
-      } catch (e) {
-        console.error('Failed to load wizard state', e)
-      }
-    }
-    setIsLoaded(true)
-  }, [])
+  const draftVersionRef = useRef<number | null>(null)
+
+  const {
+    draft,
+    isSubmitting,
+    error: draftError,
+    createDraft,
+    loadDraft,
+    updateDraft,
+    submitDraft,
+    clearError
+  } = useCPRCreation()
 
   useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem('cpr_wizard_state', JSON.stringify(data))
+    if (draft?.version !== undefined) {
+      draftVersionRef.current = draft.version
     }
-  }, [data, isLoaded])
+  }, [draft?.version])
+
+  useEffect(() => {
+    let isActive = true
+
+    const initDraft = async () => {
+      const savedDraftId = sessionStorage.getItem(DRAFT_STORAGE_KEY)
+
+      if (savedDraftId) {
+        const loaded = await loadDraft(savedDraftId)
+        if (loaded && isActive) {
+          setData(mapDraftToWizardData(loaded.wizardData))
+          setCurrentStep(loaded.currentStep || 1)
+        }
+      } else {
+        const created = await createDraft(undefined, 1)
+        if (created && isActive) {
+          sessionStorage.setItem(DRAFT_STORAGE_KEY, created.draftId)
+        }
+      }
+
+      if (isActive) {
+        setIsLoaded(true)
+      }
+    }
+
+    initDraft()
+
+    return () => {
+      isActive = false
+    }
+  }, [createDraft, loadDraft])
+
+  useEffect(() => {
+    if (draft?.draftId) {
+      sessionStorage.setItem(DRAFT_STORAGE_KEY, draft.draftId)
+    }
+  }, [draft?.draftId])
+
+  useEffect(() => {
+    if (currentStep !== 6 && draftError) {
+      clearError()
+    }
+  }, [clearError, currentStep, draftError])
+
+  useEffect(() => {
+    if (!draft?.draftId || !isLoaded || isSubmitting) {
+      return
+    }
+
+    const timeoutId = setTimeout(() => {
+      updateDraft(
+        draft.draftId,
+        mapWizardDataToDraft(data),
+        currentStep,
+        draftVersionRef.current ?? undefined,
+        { silent: true }
+      )
+    }, 600)
+
+    return () => clearTimeout(timeoutId)
+  }, [currentStep, data, draft?.draftId, isLoaded, isSubmitting, updateDraft])
 
   const updateData = (newData: Partial<CPRWizardData>) => {
     setData((prev) => ({ ...prev, ...newData }))
@@ -53,6 +118,33 @@ export function CPRWizard() {
 
   const next = () => setCurrentStep((prev) => Math.min(prev + 1, 6))
   const back = () => setCurrentStep((prev) => Math.max(prev - 1, 1))
+
+  const handleGenerate = useCallback(async () => {
+    const existingDraftId = draft?.draftId
+    let activeDraftId = existingDraftId
+
+    if (!activeDraftId) {
+      const created = await createDraft(mapWizardDataToDraft(data), currentStep)
+      if (!created) {
+        return null
+      }
+      activeDraftId = created.draftId
+      sessionStorage.setItem(DRAFT_STORAGE_KEY, created.draftId)
+    }
+
+    const updated = await updateDraft(
+      activeDraftId,
+      mapWizardDataToDraft(data),
+      currentStep,
+      draftVersionRef.current ?? undefined
+    )
+
+    if (!updated) {
+      return null
+    }
+
+    return submitDraft(activeDraftId)
+  }, [createDraft, currentStep, data, draft?.draftId, submitDraft, updateDraft])
 
   return (
     <div className="mx-auto w-full max-w-4xl rounded-lg border bg-background shadow-sm">
@@ -123,11 +215,7 @@ export function CPRWizard() {
         ) : (
           <>
             {currentStep === 1 && (
-              <StepProdutor
-                data={data}
-                updateData={updateData}
-                onNext={next}
-              />
+              <StepProdutor data={data} updateData={updateData} onNext={next} />
             )}
             {currentStep === 2 && (
               <StepPropriedade
@@ -169,6 +257,10 @@ export function CPRWizard() {
                 data={data}
                 onBack={back}
                 goToStep={(s) => setCurrentStep(s)}
+                onGenerate={handleGenerate}
+                isGenerating={isSubmitting}
+                cprError={draftError}
+                onClearError={clearError}
               />
             )}
           </>
