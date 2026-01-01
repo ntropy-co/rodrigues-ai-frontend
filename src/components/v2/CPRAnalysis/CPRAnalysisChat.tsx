@@ -630,12 +630,12 @@ export function CPRAnalysisChat({
 
     let messageContent = inputValue.trim()
 
-    // If there's a file, include its name in the message
-    // In a real implementation, you would upload the file and get text
+    // Se houver um arquivo, inclua seu nome na mensagem
+    // Em uma implementação real, você enviaria o arquivo e obteria o texto
     if (selectedFile) {
       messageContent = messageContent || `[Documento: ${selectedFile.name}]`
-      // TODO: Implement file upload and text extraction
-      // For now, we just send the file name as placeholder
+      // TODO: Implementar upload de arquivo e extração de texto
+      // Por enquanto, apenas enviamos o nome do arquivo como marcador
     }
 
     if (!messageContent) return

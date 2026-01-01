@@ -54,8 +54,8 @@ async function authFetch<T>(
     ...fetchOptions.headers
   }
 
-  // NOTE: Authorization header is NO LONGER needed.
-  // We use HttpOnly cookies which are automatically sent by the browser.
+  // NOTA: O cabeçalho Authorization NÃO É MAIS necessário.
+  // Usamos cookies HttpOnly que são enviados automaticamente pelo navegador.
 
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -63,7 +63,7 @@ async function authFetch<T>(
       headers
     })
 
-    // Handle no-content responses
+    // Lidar com respostas sem conteúdo
     if (response.status === 204) {
       return {} as T
     }

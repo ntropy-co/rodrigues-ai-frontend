@@ -80,7 +80,7 @@ export default function AnalysisPage() {
       // const response = await fetch(`/api/documents/${documentId}/analysis`)
       // const data = await response.json()
 
-      // Usando mock data por enquanto
+      // Usando dados simulados por enquanto
       await new Promise((resolve) => setTimeout(resolve, 1000))
       setAnalysisData({ ...mockAnalysisData, documentId })
       setIsLoading(false)
