@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Menu, Settings, HelpCircle, LogOut, PanelRight } from 'lucide-react'
 import {
@@ -92,14 +93,24 @@ export function ChatHeader() {
 
             {/* Actions */}
             <div className="space-y-1">
-              <DropdownMenuItem className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-verity-50">
-                <Settings className="h-4 w-4" />
-                Configurações
+              <DropdownMenuItem asChild>
+                <Link
+                  href="/settings/organization"
+                  className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-verity-50"
+                >
+                  <Settings className="h-4 w-4" />
+                  Configuracoes
+                </Link>
               </DropdownMenuItem>
 
-              <DropdownMenuItem className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-verity-50">
-                <HelpCircle className="h-4 w-4" />
-                Ajuda e Suporte
+              <DropdownMenuItem asChild>
+                <Link
+                  href="/contact"
+                  className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-verity-50"
+                >
+                  <HelpCircle className="h-4 w-4" />
+                  Ajuda e Suporte
+                </Link>
               </DropdownMenuItem>
 
               <DropdownMenuSeparator className="my-1 bg-verity-100" />

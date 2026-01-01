@@ -368,11 +368,12 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                     </div>
 
                     <button
-                      className="p-1 opacity-0 transition-opacity hover:text-red-600 group-hover:opacity-100"
+                      className="p-1 opacity-100 transition-opacity hover:text-red-600 sm:opacity-0 sm:group-hover:opacity-100"
                       onClick={(e) => {
                         e.stopPropagation()
                         handleDeleteClick(session)
                       }}
+                      aria-label="Excluir conversa"
                     >
                       <Trash2 className="h-3.5 w-3.5 text-gray-400 hover:text-red-500" />
                     </button>

@@ -706,8 +706,9 @@ const ConversationCard = memo(function ConversationCard({
                 <button
                   type="button"
                   onClick={handleDeleteClick}
-                  className="rounded p-1 text-red-500 opacity-0 transition-opacity hover:bg-red-100 group-hover:opacity-100"
+                  className="rounded p-1 text-red-500 opacity-100 transition-opacity hover:bg-red-100 sm:opacity-0 sm:group-hover:opacity-100"
                   title="Excluir"
+                  aria-label="Excluir conversa"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
