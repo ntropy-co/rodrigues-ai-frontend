@@ -8,6 +8,10 @@
 import { test, expect } from '@playwright/test'
 import { testUsers, testData } from '../fixtures/test-data'
 
+const hasRegularCreds = Boolean(
+  testUsers.regular.email && testUsers.regular.password
+)
+
 test.describe('Login Flow', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/login')
@@ -77,6 +81,11 @@ test.describe('Login Flow', () => {
   })
 
   test('should login successfully with valid credentials', async ({ page }) => {
+    test.skip(
+      !hasRegularCreds,
+      'Set TEST_USER_EMAIL and TEST_USER_PASSWORD to run this test.'
+    )
+
     await page.fill('[name="email"]', testUsers.regular.email)
     await page.fill('[name="password"]', testUsers.regular.password)
 

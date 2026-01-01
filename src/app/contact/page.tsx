@@ -42,6 +42,14 @@ export default function ContactPage() {
         <div className="absolute inset-0 bg-verity-950/40" />
       </div>
 
+      {/* Floating Back Button */}
+      <Link
+        href="/"
+        className="fixed left-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-verity-900 shadow-lg backdrop-blur-sm transition-transform hover:scale-105 hover:bg-white"
+      >
+        <ArrowLeft className="h-5 w-5" />
+      </Link>
+
       {/* Content Container */}
       <div className="relative z-10 flex min-h-screen items-center justify-center p-4 sm:p-6 md:p-8">
         <motion.div
@@ -79,9 +87,9 @@ export default function ContactPage() {
                   Nossa equipe analisará sua solicitação e entrará em contato em
                   breve através do email fornecido.
                 </p>
-                <Link href="/login" className="w-full">
+                <Link href="/" className="w-full">
                   <Button className="w-full" size="lg">
-                    Voltar para Login
+                    Voltar
                   </Button>
                 </Link>
               </motion.div>
@@ -142,11 +150,11 @@ export default function ContactPage() {
 
                 <div className="mt-4 text-center">
                   <Link
-                    href="/login"
+                    href="/"
                     className="inline-flex items-center text-xs font-medium text-verity-600 hover:text-verity-900"
                   >
                     <ArrowLeft className="mr-1 h-3 w-3" />
-                    Voltar para o login
+                    Voltar
                   </Link>
                 </div>
               </form>
