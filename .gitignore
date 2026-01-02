@@ -78,10 +78,7 @@ public/worker-*.js.map
 
 # IDE - Editores de código
 .vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+
 .idea/
 *.sublime-project
 *.sublime-workspace
