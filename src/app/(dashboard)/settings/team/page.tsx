@@ -19,7 +19,7 @@ import {
   useAdminUsers,
   type UserSummary,
   type UserRole
-} from '@/hooks/useAdminUsers'
+} from '@/features/organization'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -52,7 +52,7 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Avatar } from '@/components/v2/Avatar'
+import { Avatar } from '@/features/chat'
 import { toast } from 'sonner'
 
 // Role display configuration
@@ -63,17 +63,17 @@ const roleConfig: Record<
   admin: {
     label: 'Administrador',
     icon: <ShieldAlert className="h-4 w-4" />,
-    color: 'text-red-600 bg-red-50'
+    color: 'text-error-600 bg-error-50'
   },
   member: {
     label: 'Membro',
     icon: <Shield className="h-4 w-4" />,
-    color: 'text-blue-600 bg-blue-50'
+    color: 'text-verity-600 bg-verity-50'
   },
   viewer: {
     label: 'Visualizador',
     icon: <Eye className="h-4 w-4" />,
-    color: 'text-gray-600 bg-gray-100'
+    color: 'text-verity-500 bg-sand-200'
   }
 }
 
@@ -205,7 +205,7 @@ export default function TeamMembersPage() {
   // Loading state
   if (authLoading || initialLoading) {
     return (
-      <div className="min-h-screen bg-gray-50/50 dark:bg-zinc-900/50">
+      <div className="min-h-screen bg-sand-50/50 dark:bg-zinc-900/50">
         <div className="container mx-auto max-w-5xl px-4 py-8">
           <Skeleton className="mb-8 h-8 w-48" />
           <Card>
@@ -233,7 +233,7 @@ export default function TeamMembersPage() {
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50/50 dark:bg-zinc-900/50">
+      <div className="min-h-screen bg-sand-50/50 dark:bg-zinc-900/50">
         <div className="container mx-auto max-w-5xl px-4 py-8">
           <Button
             variant="ghost"
@@ -258,7 +258,7 @@ export default function TeamMembersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50/50 dark:bg-zinc-900/50">
+    <div className="min-h-screen bg-sand-50/50 dark:bg-zinc-900/50">
       <div className="container mx-auto max-w-5xl px-4 py-8">
         {/* Header */}
         <div className="mb-8">

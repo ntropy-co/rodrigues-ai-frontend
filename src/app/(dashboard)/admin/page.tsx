@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useAdminUsers } from '@/hooks/useAdminUsers'
+import { useAdminUsers } from '@/features/organization'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Users, UserCheck, UserX, Clock } from 'lucide-react'
@@ -30,21 +30,21 @@ function StatCard({
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
+        <CardTitle className="text-sm font-medium text-verity-500 dark:text-verity-300">
           {title}
         </CardTitle>
-        <Icon className="h-4 w-4 text-gray-500" />
+        <Icon className="text-sand-500 h-4 w-4" />
       </CardHeader>
       <CardContent>
         {loading ? (
           <Skeleton className="h-8 w-20" />
         ) : (
-          <div className="text-2xl font-bold text-gray-900 dark:text-white">
+          <div className="text-2xl font-bold text-verity-900 dark:text-white">
             {value}
           </div>
         )}
         {description && (
-          <p className="text-xs text-gray-500 dark:text-gray-400">
+          <p className="text-sand-500 text-xs dark:text-verity-300">
             {description}
           </p>
         )}
@@ -90,18 +90,20 @@ export default function AdminDashboard() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-2xl font-bold text-verity-900 dark:text-white">
           Dashboard Administrativo
         </h1>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-sand-500 mt-1 text-sm dark:text-verity-300">
           Visão geral do sistema e usuários
         </p>
       </div>
 
       {/* Error Message */}
       {fetchError && (
-        <div className="rounded-md bg-red-50 p-4 dark:bg-red-900/20">
-          <p className="text-sm text-red-600 dark:text-red-400">{fetchError}</p>
+        <div className="rounded-md bg-error-50 p-4 dark:bg-error-900/20">
+          <p className="text-sm text-error-600 dark:text-error-400">
+            {fetchError}
+          </p>
         </div>
       )}
 
@@ -144,14 +146,14 @@ export default function AdminDashboard() {
           <CardContent className="space-y-2">
             <Link
               href="/admin/users"
-              className="flex items-center gap-3 rounded-lg border border-gray-200 p-3 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
+              className="flex items-center gap-3 rounded-lg border border-sand-300 p-3 transition-colors hover:bg-sand-50 dark:border-verity-600 dark:hover:bg-verity-800"
             >
               <Users className="h-5 w-5 text-verity-600" />
               <div>
-                <div className="font-medium text-gray-900 dark:text-white">
+                <div className="font-medium text-verity-900 dark:text-white">
                   Gerenciar Usuários
                 </div>
-                <div className="text-sm text-gray-500">
+                <div className="text-sand-500 text-sm">
                   Visualize, edite e gerencie usuários
                 </div>
               </div>
@@ -164,10 +166,10 @@ export default function AdminDashboard() {
             <CardTitle className="text-lg">Documentação</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-verity-500 dark:text-verity-300">
               Esta é a área administrativa do sistema. Aqui você pode:
             </p>
-            <ul className="ml-4 list-disc text-sm text-gray-600 dark:text-gray-400">
+            <ul className="ml-4 list-disc text-sm text-verity-500 dark:text-verity-300">
               <li>Gerenciar usuários e permissões</li>
               <li>Visualizar estatísticas de uso</li>
               <li>Configurar a organização</li>

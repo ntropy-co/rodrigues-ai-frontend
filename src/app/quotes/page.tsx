@@ -3,15 +3,12 @@
 import React from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Skeleton } from '@/components/ui/skeleton'
-import { InternalHeader } from '@/components/v2/Header/InternalHeader'
+import { InternalHeader } from '@/components/layout/InternalHeader'
 import dynamic from 'next/dynamic'
 
 // Lazy load the chart component
 const QuotesChart = dynamic(
-  () =>
-    import('@/components/v2/QuotesChart/QuotesChart').then(
-      (mod) => mod.QuotesChart
-    ),
+  () => import('@/features/quotes').then((mod) => mod.QuotesChart),
   {
     loading: () => <Skeleton className="h-[400px] w-full rounded-xl" />,
     ssr: false

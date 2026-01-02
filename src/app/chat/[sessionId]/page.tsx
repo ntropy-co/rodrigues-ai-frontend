@@ -3,7 +3,7 @@
 import { Suspense, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
-import { ChatLayout } from '@/components/v2/ChatLayout'
+import { ChatLayout } from '@/features/chat'
 
 export default function ChatSessionPage() {
   const router = useRouter()
@@ -19,8 +19,8 @@ export default function ChatSessionPage() {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-verde-50">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-verde-600 border-t-transparent"></div>
+      <div className="bg-verde-50 flex h-screen items-center justify-center">
+        <div className="border-verde-600 h-8 w-8 animate-spin rounded-full border-4 border-t-transparent"></div>
       </div>
     )
   }
@@ -30,8 +30,8 @@ export default function ChatSessionPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex h-screen items-center justify-center bg-verde-50">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-verde-600 border-t-transparent"></div>
+        <div className="bg-verde-50 flex h-screen items-center justify-center">
+          <div className="border-verde-600 h-8 w-8 animate-spin rounded-full border-4 border-t-transparent"></div>
         </div>
       }
     >

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { InternalHeader } from '@/components/v2/Header/InternalHeader'
+import { InternalHeader } from '@/components/layout/InternalHeader'
 import {
   Search,
   BookOpen,
@@ -104,8 +104,8 @@ function ContactSupportCard() {
         <div className="max-w-md">
           <div className="mb-4 inline-flex items-center rounded-full border border-verity-700 bg-verity-800/50 px-3 py-1 text-xs font-medium text-verity-100 backdrop-blur-md">
             <span className="relative mr-1.5 flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500"></span>
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-verity-400 opacity-75"></span>
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-verity-500"></span>
             </span>
             Suporte Premium Ativo
           </div>

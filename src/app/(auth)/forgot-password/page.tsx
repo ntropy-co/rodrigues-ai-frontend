@@ -10,8 +10,8 @@ import {
   CheckCircle,
   AlertCircle
 } from 'lucide-react'
-import { useAuth } from '@/hooks/useAuthHook'
-import { useAuthForm } from '@/hooks/useAuthForm'
+import { useAuth } from '@/features/auth'
+import { useAuthForm } from '@/features/auth'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
@@ -108,9 +108,9 @@ export default function ForgotPasswordPage() {
             exit={{ opacity: 0, height: 0, marginBottom: 0 }}
             className="overflow-hidden"
           >
-            <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
-              <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600" />
-              <p className="text-sm text-red-700">{authError}</p>
+            <div className="flex items-start gap-3 rounded-lg border border-error-200 bg-error-50 p-4">
+              <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-error-600" />
+              <p className="text-sm text-error-700">{authError}</p>
             </div>
           </motion.div>
         )}
@@ -138,12 +138,12 @@ export default function ForgotPasswordPage() {
               className={cn(
                 'h-12 border-verity-200 bg-verity-50/50 px-4 text-verity-950 transition-all placeholder:text-verity-400/70',
                 'focus:border-verity-600 focus:bg-white focus:ring-4 focus:ring-verity-600/10',
-                errors.email && touched.email && 'border-red-300'
+                errors.email && touched.email && 'border-error-300'
               )}
             />
           </motion.div>
           {errors.email && touched.email && (
-            <p className="ml-1 text-xs text-red-600">{errors.email}</p>
+            <p className="ml-1 text-xs text-error-600">{errors.email}</p>
           )}
         </div>
 

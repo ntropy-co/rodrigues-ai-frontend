@@ -1,6 +1,6 @@
 'use client'
 
-import { DiffViewer } from '@/components/v2/DiffViewer'
+import { DiffViewer } from '@/features/chat'
 
 const ORIGINAL_TEXT = `CÉDULA DE PRODUTO RURAL (CPR)
 
@@ -51,7 +51,7 @@ Assinatura do Avalista`
 
 export default function DiffViewerTestPage() {
   return (
-    <div className="container mx-auto max-w-6xl py-10 px-4">
+    <div className="container mx-auto max-w-6xl px-4 py-10">
       <h1 className="mb-2 text-2xl font-bold">Comparador de Documentos</h1>
       <p className="mb-6 text-muted-foreground">
         Visualize as diferenças entre versões de contratos e minutas.

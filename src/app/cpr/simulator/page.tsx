@@ -1,5 +1,5 @@
-import { CPRSimulator } from '@/components/v2/CPRSimulator/CPRSimulator'
-import { InternalHeader } from '@/components/v2/Header/InternalHeader'
+import { CPRSimulator } from '@/features/cpr'
+import { InternalHeader } from '@/components/layout/InternalHeader'
 
 export default function CPRSimulatorPage() {
   return (
