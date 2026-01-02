@@ -65,10 +65,6 @@ export default {
           foreground: 'hsl(var(--card-foreground))'
         },
 
-        // Semantic Layers (Verity Organic)
-        'bg-primary': '#F9F8F6', // Sand-100
-        surface: '#FFFFFF', // Branco puro
-
         // Verity Gradient Spectrum (Deep Green)
         verity: {
           950: '#05110D', // Darkest
