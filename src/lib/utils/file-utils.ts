@@ -15,7 +15,7 @@ import {
   FileAudio,
   type LucideIcon
 } from 'lucide-react'
-import type { FileCategory } from '@/types/chat-files'
+import type { FileCategory } from '@/features/chat'
 
 // ============================================================================
 // File Size Formatting

@@ -91,16 +91,32 @@ export default {
 
         // Ouro (Champagne Metallic)
         ouro: {
-          600: '#A68A56', // Updated: Bronze
-          500: '#BFA070', // Updated: Champagne
-          400: '#E0B14E'
+          950: '#1A1405',
+          900: '#33290A',
+          800: '#4D3E0F',
+          700: '#665214',
+          600: '#A68A56',
+          500: '#BFA070',
+          400: '#E0B14E',
+          300: '#ECCB85',
+          200: '#F5E4BD',
+          100: '#FAF2DE',
+          50: '#FDFBF4'
         },
 
-        // Feedback colors
+        // Feedback colors (Error/Red)
         error: {
+          950: '#2D0606',
+          900: '#4A0B0B',
+          800: '#6E1212',
+          700: '#9B1C1C',
           600: '#C53030',
           500: '#E53E3E',
-          400: '#FC8181'
+          400: '#FC8181',
+          300: '#FEB2B2',
+          200: '#FED7D7',
+          100: '#FFF5F5',
+          50: '#FFF8F8'
         },
 
         // Shortcuts (aliases)

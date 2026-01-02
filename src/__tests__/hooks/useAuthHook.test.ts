@@ -47,7 +47,7 @@ vi.mock('@/lib/auth/errors', () => ({
 
 // Import mocked modules and hook AFTER mocks are set up
 import * as authApi from '@/lib/auth/api'
-import { useAuth } from '@/hooks/useAuthHook'
+import { useAuth } from '@/features/auth'
 
 // =============================================================================
 // Test Setup

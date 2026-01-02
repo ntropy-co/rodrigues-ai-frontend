@@ -3,7 +3,7 @@
 import { Suspense, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
-import { ChatLayout } from '@/components/v2/ChatLayout'
+import { ChatLayout } from '@/features/chat'
 
 export default function ChatPage() {
   const router = useRouter()

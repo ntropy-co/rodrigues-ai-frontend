@@ -6,9 +6,8 @@ import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { CPRStats } from '@/components/v2/Dashboard/CPRStats'
-import { StatsCard } from '@/components/v2/Dashboard/StatsCard'
-import { InternalHeader } from '@/components/v2/Header/InternalHeader'
+import { CPRStats, StatsCard } from '@/features/dashboard'
+import { InternalHeader } from '@/components/layout/InternalHeader'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   MessageSquare,
@@ -22,11 +21,10 @@ import {
   Upload,
   Sparkles
 } from 'lucide-react'
-import { useDocuments } from '@/hooks/useDocuments'
-import { useCPRHistory } from '@/hooks/useCPRHistory'
+import { useDocuments } from '@/features/documents'
+import { useCPRHistory } from '@/features/cpr'
 import { cn } from '@/lib/utils'
-import { TourTrigger } from '@/components/v2/Tour/TourTrigger'
-import { WELCOME_STEPS } from '@/components/v2/Tour/WelcomeTour'
+import { TourTrigger, WELCOME_STEPS } from '@/features/tour'
 
 // =============================================================================
 // Zero-UI Components (Atmospheric Design)
@@ -97,10 +95,12 @@ function QuickAction({
         className="group relative flex h-full flex-col justify-between rounded-xl bg-sand-50 p-4 transition-all hover:bg-white hover:shadow-lg hover:shadow-verity-900/5 dark:bg-verity-900 dark:hover:bg-verity-800"
       >
         <div className="mb-3 flex items-start justify-between">
-          <div className={cn(
-            "rounded-lg p-2 transition-colors",
-            variantStyles[variant]
-          )}>
+          <div
+            className={cn(
+              'rounded-lg p-2 transition-colors',
+              variantStyles[variant]
+            )}
+          >
             <Icon className="h-5 w-5" strokeWidth={1.5} />
           </div>
           <ArrowRight className="h-4 w-4 text-verity-300 opacity-0 transition-all group-hover:text-verity-500 group-hover:opacity-100" />
@@ -190,7 +190,7 @@ function RecentActivity() {
                 item.status === 'pending' &&
                   'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400',
                 item.status === 'failed' &&
-                  'bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400'
+                  'bg-error-50 text-error-700 dark:bg-error-950/30 dark:text-error-400'
               )}
             >
               {item.status === 'completed'

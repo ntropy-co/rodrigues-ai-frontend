@@ -211,9 +211,9 @@ export function getPasswordStrengthColor(
   strength: 'weak' | 'medium' | 'strong'
 ): string {
   const colors = {
-    weak: 'text-red-500',
-    medium: 'text-yellow-500',
-    strong: 'text-green-500'
+    weak: 'text-error-500',
+    medium: 'text-ouro-500',
+    strong: 'text-verity-500'
   }
   return colors[strength]
 }

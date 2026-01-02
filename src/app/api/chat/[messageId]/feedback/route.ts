@@ -42,7 +42,7 @@ import {
   logRouteError,
   ERROR_MESSAGES
 } from '@/lib/api/bff-utils'
-import type { FeedbackRequest } from '@/types/chat'
+import type { FeedbackRequest } from '@/features/chat'
 
 type RouteParams = { params: Promise<{ messageId: string }> }
 
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
     // 4. Validate feedback value
     const validFeedbackValues = ['like', 'dislike', 'none']
-    if (!validFeedbackValues.includes(feedback)) {
+    if (!feedback || !validFeedbackValues.includes(feedback)) {
       return createErrorResponse(
         `Invalid feedback value. Must be one of: ${validFeedbackValues.join(', ')}`,
         400

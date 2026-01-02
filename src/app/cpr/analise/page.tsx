@@ -37,22 +37,16 @@ import {
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { InternalHeader } from '@/components/v2/Header/InternalHeader'
+import { InternalHeader } from '@/components/layout/InternalHeader'
 import { Card, CardContent } from '@/components/ui/card'
-import {
-  ComplianceVerifier,
-  type ExtractedData
-} from '@/components/v2/Compliance'
-import {
-  RiskCalculator,
-  type RiskCalculatorData
-} from '@/components/v2/RiskCalculator/RiskCalculator'
+import { ComplianceVerifier, type ExtractedData } from '@/features/compliance'
+import { RiskCalculator, type RiskCalculatorData } from '@/features/risk'
 import {
   useCPRAnalysis,
   type WorkflowMessage,
   type ComplianceResult,
   type RiskResult
-} from '@/hooks/useCPRAnalysis'
+} from '@/features/cpr'
 import { cn } from '@/lib/utils'
 
 // =============================================================================

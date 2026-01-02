@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Eye, EyeOff, Loader2, AlertCircle, ArrowRight } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
-import { useAuthForm } from '@/hooks/useAuthForm'
+import { useAuthForm } from '@/features/auth'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -140,7 +140,7 @@ function LoginContent() {
                     exit={{ opacity: 0, height: 0 }}
                     className="mb-6 overflow-hidden"
                   >
-                    <div className="flex items-start gap-3 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-200 backdrop-blur-sm">
+                    <div className="flex items-start gap-3 rounded-xl border border-error-500/20 bg-error-500/10 p-4 text-error-200 backdrop-blur-sm">
                       <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                       <p className="text-sm font-medium">{authError}</p>
                     </div>
@@ -176,11 +176,13 @@ function LoginContent() {
                       'border-white/10 bg-white/5 text-white placeholder:text-verity-500 focus:border-verity-400/50 focus:bg-white/10 focus:ring-0',
                       errors.email &&
                         touched.email &&
-                        'border-red-500/50 bg-red-900/10'
+                        'border-error-500/50 bg-error-900/10'
                     )}
                   />
                   {errors.email && touched.email && (
-                    <p className="mt-1 text-xs text-red-300">{errors.email}</p>
+                    <p className="mt-1 text-xs text-error-300">
+                      {errors.email}
+                    </p>
                   )}
                 </motion.div>
 
@@ -209,7 +211,7 @@ function LoginContent() {
                         'border-white/10 bg-white/5 pr-10 text-white placeholder:text-verity-500 focus:border-verity-400/50 focus:bg-white/10 focus:ring-0',
                         errors.password &&
                           touched.password &&
-                          'border-red-500/50 bg-red-900/10'
+                          'border-error-500/50 bg-error-900/10'
                       )}
                     />
                     <button
@@ -225,7 +227,7 @@ function LoginContent() {
                     </button>
                   </div>
                   {errors.password && touched.password && (
-                    <p className="mt-1 text-xs text-red-300">
+                    <p className="mt-1 text-xs text-error-300">
                       {errors.password}
                     </p>
                   )}
