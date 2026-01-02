@@ -4,12 +4,11 @@ import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Upload, FileText, Loader2, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { InternalHeader } from '@/components/v2/Header/InternalHeader'
+import { InternalHeader } from '@/components/layout/InternalHeader'
 import { Card, CardContent } from '@/components/ui/card'
-import { AnalysisResult } from '@/components/v2/Analysis/AnalysisResult'
-import { AnalysisResultData } from '@/types/analysis'
-import { AgentStateIndicator } from '@/components/v2/ChatArea/AgentStateIndicator'
-// import { useAuth } from '@/hooks/useAuthHook'
+import { AnalysisResult, AgentStateIndicator } from '@/features/chat'
+import { type AnalysisResultData } from '@/features/cpr'
+// import { useAuth } from '@/features/auth'
 
 // Mock Data for demonstration
 const MOCK_ANALYSIS_RESULT: AnalysisResultData = {

@@ -11,8 +11,8 @@ import { inlineComponents } from './inlineStyles'
 import { components } from './styles'
 
 // Smart Blocks
-import { ThinkingBlock } from '@/components/v2/SmartBlocks/ThinkingBlock'
-import { CitationCard } from '@/components/v2/SmartBlocks/CitationCard'
+import { ThinkingBlock } from '@/features/chat'
+import { CitationCard } from '@/features/chat'
 
 const MarkdownRenderer: FC<MarkdownRendererProps> = ({
   children,

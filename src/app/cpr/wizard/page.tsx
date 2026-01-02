@@ -2,9 +2,9 @@
 
 import dynamic from 'next/dynamic'
 import { Skeleton } from '@/components/ui/skeleton'
-import { InternalHeader } from '@/components/v2/Header/InternalHeader'
+import { InternalHeader } from '@/components/layout/InternalHeader'
 
-import { TourTrigger } from '@/components/v2/Tour/TourTrigger'
+import { TourTrigger } from '@/features/tour'
 import { TourStep } from '@/contexts/TourContext'
 
 const WIZARD_STEPS: TourStep[] = [
@@ -31,8 +31,7 @@ const WIZARD_STEPS: TourStep[] = [
 ]
 
 const CPRWizard = dynamic(
-  () =>
-    import('@/components/v2/CPRWizard/CPRWizard').then((mod) => mod.CPRWizard),
+  () => import('@/features/cpr').then((mod) => mod.CPRWizard),
   {
     loading: () => <Skeleton className="h-[600px] w-full rounded-xl" />,
     ssr: false // Wizard is client-heavy and likely behind auth/interaction

@@ -13,9 +13,10 @@
     font-optical-sizing: auto;
   }
 
-  .numbers-tabular {
+  .numbers-tabular,
+  .tabular-nums {
     font-variant-numeric: tabular-nums;
-    font-feature-settings: var(--font-tabular-features);
+    font-feature-settings: var(--font-tabular-features), "tnum" 1;
   }
 
   .heading-luxury {

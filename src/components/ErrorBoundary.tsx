@@ -74,9 +74,9 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="flex min-h-[400px] items-center justify-center p-8">
           <div className="max-w-md text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-error-100">
               <svg
-                className="h-8 w-8 text-red-600"
+                className="h-8 w-8 text-error-600"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -89,18 +89,18 @@ export class ErrorBoundary extends Component<Props, State> {
                 />
               </svg>
             </div>
-            <h2 className="mb-2 text-xl font-semibold text-gray-900">
+            <h2 className="mb-2 text-xl font-semibold text-verity-900">
               Algo deu errado
             </h2>
-            <p className="mb-6 text-gray-600">
+            <p className="mb-6 text-verity-500">
               Ocorreu um erro inesperado. Por favor, tente recarregar a página.
             </p>
             {process.env.NODE_ENV === 'development' && this.state.error && (
-              <details className="mb-4 rounded bg-gray-100 p-3 text-left text-sm">
-                <summary className="cursor-pointer font-medium text-gray-700">
+              <details className="mb-4 rounded bg-sand-200 p-3 text-left text-sm">
+                <summary className="cursor-pointer font-medium text-verity-600">
                   Detalhes do erro (dev only)
                 </summary>
-                <pre className="mt-2 overflow-auto whitespace-pre-wrap text-xs text-red-600">
+                <pre className="mt-2 overflow-auto whitespace-pre-wrap text-xs text-error-600">
                   {this.state.error.message}
                   {'\n\n'}
                   {this.state.error.stack}
@@ -110,7 +110,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="flex justify-center gap-3">
               <button
                 onClick={this.handleReset}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                className="rounded-lg border border-sand-400 px-4 py-2 text-sm font-medium text-verity-600 transition-colors hover:bg-sand-50"
               >
                 Tentar novamente
               </button>

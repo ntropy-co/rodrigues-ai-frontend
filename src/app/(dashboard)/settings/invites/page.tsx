@@ -17,7 +17,11 @@ import {
   AlertCircle
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
-import { useInvites, type Invite, type InviteStatus } from '@/hooks/useInvites'
+import {
+  useInvites,
+  type Invite,
+  type InviteStatus
+} from '@/features/organization'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -65,17 +69,17 @@ const statusConfig: Record<
   accepted: {
     label: 'Aceito',
     icon: <CheckCircle className="h-4 w-4" />,
-    color: 'text-green-600 bg-green-50'
+    color: 'text-verity-600 bg-verity-50'
   },
   expired: {
     label: 'Expirado',
     icon: <AlertCircle className="h-4 w-4" />,
-    color: 'text-gray-600 bg-gray-100'
+    color: 'text-verity-500 bg-sand-200'
   },
   revoked: {
     label: 'Cancelado',
     icon: <XCircle className="h-4 w-4" />,
-    color: 'text-red-600 bg-red-50'
+    color: 'text-error-600 bg-error-50'
   }
 }
 
@@ -217,7 +221,7 @@ export default function InvitesPage() {
   // Loading state
   if (authLoading || initialLoading) {
     return (
-      <div className="min-h-screen bg-gray-50/50 dark:bg-zinc-900/50">
+      <div className="min-h-screen bg-sand-50/50 dark:bg-zinc-900/50">
         <div className="container mx-auto max-w-4xl px-4 py-8">
           <Skeleton className="mb-8 h-8 w-48" />
           <Card>
@@ -245,7 +249,7 @@ export default function InvitesPage() {
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50/50 dark:bg-zinc-900/50">
+      <div className="min-h-screen bg-sand-50/50 dark:bg-zinc-900/50">
         <div className="container mx-auto max-w-4xl px-4 py-8">
           <Button
             variant="ghost"
@@ -270,7 +274,7 @@ export default function InvitesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50/50 dark:bg-zinc-900/50">
+    <div className="min-h-screen bg-sand-50/50 dark:bg-zinc-900/50">
       <div className="container mx-auto max-w-4xl px-4 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -401,7 +405,7 @@ export default function InvitesPage() {
 
                       <div
                         className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
-                          expired ? 'bg-red-50 text-red-600' : status.color
+                          expired ? 'bg-error-50 text-error-600' : status.color
                         }`}
                       >
                         {expired ? (

@@ -11,6 +11,14 @@ export default defineConfig({
     setupFiles: ['./vitest.setup.tsx'],
     include: ['**/*.{test,spec}.{ts,tsx}'],
     exclude: ['node_modules', '.next', 'e2e'],
+    pool: 'threads',
+    poolOptions: {
+      threads: {
+        minThreads: 1,
+        maxThreads: 1
+      }
+    },
+    maxConcurrency: 1,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
@@ -21,13 +29,13 @@ export default defineConfig({
         'src/**/*.spec.{ts,tsx}',
         'src/app/**/layout.tsx',
         'src/app/**/loading.tsx',
-        'src/app/**/error.tsx',
-      ],
-    },
+        'src/app/**/error.tsx'
+      ]
+    }
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
-  },
+      '@': path.resolve(__dirname, './src')
+    }
+  }
 })

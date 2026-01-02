@@ -13,8 +13,8 @@ import {
   RefreshCw
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
-import { useCompliance } from '@/hooks/useCompliance'
-import { InternalHeader } from '@/components/v2/Header/InternalHeader'
+import { useCompliance } from '@/features/compliance'
+import { InternalHeader } from '@/components/layout/InternalHeader'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -35,7 +35,7 @@ const GRADE_COLORS: Record<
   },
   C: { bg: 'bg-sand-200', text: 'text-verity-600', border: 'border-sand-300' },
   D: { bg: 'bg-sand-300', text: 'text-verity-700', border: 'border-sand-400' },
-  F: { bg: 'bg-red-100', text: 'text-red-700', border: 'border-red-200' }
+  F: { bg: 'bg-error-100', text: 'text-error-700', border: 'border-error-200' }
 }
 
 export default function CompliancePage() {
@@ -85,9 +85,9 @@ export default function CompliancePage() {
 
         {/* Error State */}
         {error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center">
-            <AlertTriangle className="mx-auto h-8 w-8 text-red-500" />
-            <p className="mt-2 text-sm font-medium text-red-700">{error}</p>
+          <div className="rounded-xl border border-error-200 bg-error-50 p-6 text-center">
+            <AlertTriangle className="mx-auto h-8 w-8 text-error-500" />
+            <p className="mt-2 text-sm font-medium text-error-700">{error}</p>
             <Button
               variant="outline"
               size="sm"

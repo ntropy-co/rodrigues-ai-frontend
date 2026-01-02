@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: 'Gerencie as configurações da sua organização'
 }
 
-import { WelcomeTour } from '@/components/v2/Tour/WelcomeTour'
+import { WelcomeTour } from '@/features/tour'
 
 export default function DashboardLayout({
   children
