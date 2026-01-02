@@ -1,8 +1,14 @@
 import { useRouter } from 'next/navigation'
 import { Greeting } from './Greeting'
-import { CPRStats } from '@/components/v2/Dashboard/CPRStats'
 import { Button } from '@/components/ui/button'
 import { useLayoutStore } from '@/stores/layoutStore'
+import {
+  Upload,
+  MessageSquarePlus,
+  FileSearch,
+  Calculator,
+  History
+} from 'lucide-react'
 
 interface MainContentProps {
   onSuggestionClick?: (suggestion: string) => void
@@ -15,67 +21,63 @@ export function MainContent({
   const router = useRouter()
 
   return (
-    <main className="flex flex-1 flex-col justify-center px-4 py-8 md:px-12 lg:px-24">
-      <div className="mx-auto mb-8 w-full max-w-4xl space-y-8">
+    <main className="flex flex-1 flex-col items-center justify-center px-4 py-4 md:px-8">
+      <div className="mx-auto w-full max-w-2xl space-y-6">
         <Greeting />
-        <CPRStats />
-        <div className="rounded-2xl border border-verity-100 bg-white p-6 shadow-sm">
-          <div className="space-y-1">
-            <h2 className="font-display text-lg font-semibold text-verity-950">
-              Comece uma analise
-            </h2>
-            <p className="text-sm text-verity-600">
-              Envie um documento ou inicie uma conversa com a assistente.
-            </p>
-          </div>
-          <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-            <Button
-              type="button"
-              onClick={() => openFilesSidebar()}
-              className="w-full sm:w-auto"
-            >
-              Enviar documento
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => _onSuggestionClick?.('Quero analisar uma CPR.')}
-              className="w-full sm:w-auto"
-            >
-              Nova analise
-            </Button>
-          </div>
+
+        {/* Action Chips - Compact horizontal layout */}
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          <Button
+            size="sm"
+            onClick={() => openFilesSidebar()}
+            className="gap-2"
+          >
+            <Upload className="h-4 w-4" />
+            Enviar documento
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => _onSuggestionClick?.('Quero analisar uma CPR.')}
+            className="gap-2"
+          >
+            <MessageSquarePlus className="h-4 w-4" />
+            Nova análise
+          </Button>
         </div>
-        <div className="rounded-2xl border border-verity-100 bg-white p-6 shadow-sm">
-          <div className="space-y-1">
-            <h3 className="font-display text-base font-semibold text-verity-950">
-              Atalhos rapidos
-            </h3>
-            <p className="text-sm text-verity-600">
-              Acesse fluxos comuns sem sair do chat.
-            </p>
-          </div>
-          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+
+        {/* Quick Actions - Compact grid */}
+        <div className="rounded-xl border border-verity-100 bg-white/60 p-4 backdrop-blur-sm">
+          <p className="mb-3 text-center text-xs font-medium uppercase tracking-wide text-verity-500">
+            Atalhos rápidos
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-2">
             <Button
-              type="button"
-              variant="outline"
+              size="sm"
+              variant="ghost"
               onClick={() => router.push('/cpr/analise')}
+              className="h-8 gap-1.5 text-xs"
             >
+              <FileSearch className="h-3.5 w-3.5" />
               Analisar CPR
             </Button>
             <Button
-              type="button"
-              variant="outline"
+              size="sm"
+              variant="ghost"
               onClick={() => router.push('/cpr/simulator')}
+              className="h-8 gap-1.5 text-xs"
             >
+              <Calculator className="h-3.5 w-3.5" />
               Simular CPR
             </Button>
             <Button
-              type="button"
-              variant="outline"
+              size="sm"
+              variant="ghost"
               onClick={() => router.push('/cpr/historico')}
+              className="h-8 gap-1.5 text-xs"
             >
-              Historico CPR
+              <History className="h-3.5 w-3.5" />
+              Histórico
             </Button>
           </div>
         </div>

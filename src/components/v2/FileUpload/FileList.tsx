@@ -1,6 +1,6 @@
 'use client'
 
-import { FileText, Download, X, Loader2 } from 'lucide-react'
+import { FileText, Download, Trash2, Loader2, Calendar } from 'lucide-react'
 
 export interface UserDocument {
   id: string
@@ -26,8 +26,8 @@ export function FileList({
 }: FileListProps) {
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-4">
-        <Loader2 className="text-gemini-gray-400 h-5 w-5 animate-spin" />
+      <div className="flex items-center justify-center py-8">
+        <Loader2 className="h-5 w-5 animate-spin text-verity-400" />
       </div>
     )
   }
@@ -42,6 +42,15 @@ export function FileList({
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
   }
 
+  const formatDate = (dateStr: string): string => {
+    const date = new Date(dateStr)
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    })
+  }
+
   const getFileTypeLabel = (mimeType: string): string => {
     if (mimeType.includes('pdf')) return 'PDF'
     if (mimeType.includes('word') || mimeType.includes('document'))
@@ -52,67 +61,69 @@ export function FileList({
   }
 
   return (
-    <div className="space-y-2">
-      <p className="text-gemini-gray-600 text-xs font-medium">
-        Documentos anexados ({documents.length})
-      </p>
-
-      <div className="space-y-2">
-        {documents.map((doc) => (
-          <div
-            key={doc.id}
-            className="border-gemini-gray-200 flex items-center gap-3 rounded-lg border bg-white p-3 shadow-sm"
-          >
-            {/* Icon */}
-            <div className="flex-shrink-0">
-              <div className="bg-gemini-blue/10 flex h-10 w-10 items-center justify-center rounded-lg">
-                <FileText className="text-gemini-blue h-5 w-5" />
-              </div>
+    <div className="divide-y divide-verity-100">
+      {documents.map((doc) => (
+        <div
+          key={doc.id}
+          className="flex items-center gap-4 px-4 py-3 transition-colors hover:bg-verity-50/50"
+        >
+          {/* Icon */}
+          <div className="flex-shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-verity-100">
+              <FileText className="h-5 w-5 text-verity-600" />
             </div>
+          </div>
 
-            {/* Info */}
-            <div className="min-w-0 flex-1">
-              <p className="text-gemini-gray-900 truncate text-sm font-medium">
-                {doc.filename}
-              </p>
-              <div className="text-gemini-gray-500 mt-1 flex items-center gap-2 text-xs">
-                <span>{getFileTypeLabel(doc.mime_type)}</span>
-                <span>•</span>
-                <span>{formatFileSize(doc.file_size)}</span>
-                {doc.processed && (
-                  <>
-                    <span>•</span>
-                    <span className="text-green-600">Processado</span>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="flex gap-1">
-              {onDownload && (
-                <button
-                  onClick={() => onDownload(doc.id)}
-                  className="text-gemini-gray-600 hover-hover:bg-gemini-gray-100 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 transition-colors"
-                  aria-label="Baixar documento"
-                >
-                  <Download className="h-4 w-4" />
-                </button>
-              )}
-
-              {onRemove && (
-                <button
-                  onClick={() => onRemove(doc.id)}
-                  className="text-gemini-gray-600 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 transition-colors hover-hover:bg-red-100 hover-hover:text-red-600"
-                  aria-label="Remover documento"
-                >
-                  <X className="h-4 w-4" />
-                </button>
+          {/* Info - Main column */}
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-medium text-verity-900">
+              {doc.filename}
+            </p>
+            <div className="mt-0.5 flex items-center gap-2 text-xs text-verity-500">
+              <span className="rounded bg-verity-100 px-1.5 py-0.5 font-medium">
+                {getFileTypeLabel(doc.mime_type)}
+              </span>
+              {doc.processed && (
+                <span className="text-verity-600">Processado</span>
               )}
             </div>
           </div>
-        ))}
-      </div>
+
+          {/* Size column */}
+          <div className="hidden w-20 text-right text-xs text-verity-500 sm:block">
+            {formatFileSize(doc.file_size)}
+          </div>
+
+          {/* Date column */}
+          <div className="hidden w-28 items-center gap-1 text-xs text-verity-500 md:flex">
+            <Calendar className="h-3 w-3" />
+            {formatDate(doc.created_at)}
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-1">
+            {onDownload && (
+              <button
+                onClick={() => onDownload(doc.id)}
+                className="flex h-8 w-8 items-center justify-center rounded-md text-verity-600 transition-colors hover:bg-verity-100 hover:text-verity-900"
+                aria-label="Baixar documento"
+              >
+                <Download className="h-4 w-4" />
+              </button>
+            )}
+
+            {onRemove && (
+              <button
+                onClick={() => onRemove(doc.id)}
+                className="flex h-8 w-8 items-center justify-center rounded-md text-verity-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                aria-label="Remover documento"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+        </div>
+      ))}
     </div>
   )
 }
