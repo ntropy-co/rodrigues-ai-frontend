@@ -50,7 +50,7 @@ function SectionHeader({
 }
 
 // =============================================================================
-// Quick Action Card (with variant support from PR #256)
+// Quick Action Card (with Editorial variant styles from PR #256)
 // =============================================================================
 
 type QuickActionVariant =
@@ -61,13 +61,14 @@ type QuickActionVariant =
   | 'ai'
   | 'simulator'
 
+// Estilo "Editorial": Fundo Suave + Ícone Forte (no blue/purple)
 const variantStyles: Record<QuickActionVariant, string> = {
-  primary: 'bg-verity-600 text-white', // Verity Standard
-  money: 'bg-ouro-500 text-white', // Financial/Gold
-  history: 'bg-verity-800 text-white', // Deep History
-  docs: 'bg-verity-400 text-white', // Documents
-  ai: 'bg-verity-700 text-white', // AI Feature
-  simulator: 'bg-verity-500 text-white' // Tools
+  primary: 'bg-verity-50 text-verity-700',
+  money: 'bg-ouro-50 text-ouro-600',
+  history: 'bg-sand-100 text-verity-600',
+  docs: 'bg-sand-100 text-verity-600',
+  ai: 'bg-verity-100 text-verity-800',
+  simulator: 'bg-ouro-50 text-ouro-700'
 }
 
 interface QuickActionProps {
