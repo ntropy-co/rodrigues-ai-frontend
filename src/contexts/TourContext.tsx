@@ -79,6 +79,16 @@ export function TourProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
+  const endTour = useCallback(() => {
+    if (currentTourId) {
+      markAsSeen(currentTourId)
+    }
+    setIsActive(false)
+    setCurrentTourId(null)
+    setSteps([])
+    setCurrentStepIndex(0)
+  }, [currentTourId, markAsSeen])
+
   const nextStep = useCallback(() => {
     if (currentStepIndex < steps.length - 1) {
       const nextIndex = currentStepIndex + 1
@@ -92,16 +102,6 @@ export function TourProvider({ children }: { children: React.ReactNode }) {
       endTour()
     }
   }, [currentStepIndex, steps, endTour])
-
-  const endTour = useCallback(() => {
-    if (currentTourId) {
-      markAsSeen(currentTourId)
-    }
-    setIsActive(false)
-    setCurrentTourId(null)
-    setSteps([])
-    setCurrentStepIndex(0)
-  }, [currentTourId, markAsSeen])
 
   const hasSeenTour = useCallback(
     (tourId: string) => {

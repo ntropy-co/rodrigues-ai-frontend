@@ -9,7 +9,11 @@ import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
 
 // Animation Config
-const springTransition = { type: 'spring', stiffness: 100, damping: 20 }
+const springTransition = {
+  type: 'spring' as const,
+  stiffness: 100,
+  damping: 20
+}
 const staggerContainer = {
   hidden: { opacity: 0 },
   visible: {
