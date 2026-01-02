@@ -17,11 +17,7 @@ import { z } from 'zod'
 // Constants
 // =============================================================================
 
-const SAFRAS = [
-  '2024/2025',
-  '2025/2026',
-  '2026/2027'
-]
+const SAFRAS = ['2024/2025', '2025/2026', '2026/2027']
 
 const UNITS = [
   { value: 'kg', label: 'Quilogramas (kg)' },
@@ -67,10 +63,12 @@ export function StepCultura({
   const [errors, setErrors] = React.useState<Record<string, string>>({})
 
   // Get commodity options from COMMODITY_INFO
-  const commodityOptions = Object.entries(COMMODITY_INFO).map(([key, info]) => ({
-    value: key,
-    label: info.name
-  }))
+  const commodityOptions = Object.entries(COMMODITY_INFO).map(
+    ([key, info]) => ({
+      value: key,
+      label: info.name
+    })
+  )
 
   const validate = () => {
     try {
@@ -143,9 +141,9 @@ export function StepCultura({
           {errors.commodity && (
             <span className="text-xs text-red-500">{errors.commodity}</span>
           )}
-          {selectedCommodity && (
+          {selectedCommodity && data.commodity && (
             <span className="text-xs text-muted-foreground">
-              Símbolo: {selectedCommodity.symbol} | Moeda: {selectedCommodity.currency}
+              Símbolo: {data.commodity} | Unidade: {selectedCommodity.unit}
             </span>
           )}
         </div>
@@ -192,7 +190,9 @@ export function StepCultura({
             className={errors.expectedQuantity ? 'border-red-500' : ''}
           />
           {errors.expectedQuantity && (
-            <span className="text-xs text-red-500">{errors.expectedQuantity}</span>
+            <span className="text-xs text-red-500">
+              {errors.expectedQuantity}
+            </span>
           )}
         </div>
 

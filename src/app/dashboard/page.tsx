@@ -50,8 +50,26 @@ function SectionHeader({
 }
 
 // =============================================================================
-// Quick Action Card (Refactored: Zero-UI)
+// Quick Action Card (with Editorial variant styles from PR #256)
 // =============================================================================
+
+type QuickActionVariant =
+  | 'primary'
+  | 'money'
+  | 'history'
+  | 'docs'
+  | 'ai'
+  | 'simulator'
+
+// Estilo "Editorial": Fundo Suave + Ícone Forte (no blue/purple)
+const variantStyles: Record<QuickActionVariant, string> = {
+  primary: 'bg-verity-50 text-verity-700',
+  money: 'bg-ouro-50 text-ouro-600',
+  history: 'bg-sand-100 text-verity-600',
+  docs: 'bg-sand-100 text-verity-600',
+  ai: 'bg-verity-100 text-verity-800',
+  simulator: 'bg-ouro-50 text-ouro-700'
+}
 
 interface QuickActionProps {
   title: string
@@ -59,6 +77,7 @@ interface QuickActionProps {
   href: string
   icon: React.ElementType
   layoutId?: string
+  variant?: QuickActionVariant
 }
 
 function QuickAction({
@@ -66,18 +85,22 @@ function QuickAction({
   description,
   href,
   icon: Icon,
-  layoutId
+  layoutId,
+  variant = 'primary'
 }: QuickActionProps) {
   return (
     <Link href={href}>
       <motion.div
-        layoutId={layoutId} // Framer Motion shared layout
+        layoutId={layoutId}
         whileHover={{ y: -2, scale: 1.01 }}
         whileTap={{ scale: 0.98 }}
         className="group relative flex h-full flex-col justify-between rounded-xl bg-sand-50 p-4 transition-all hover:bg-white hover:shadow-lg hover:shadow-verity-900/5 dark:bg-verity-900 dark:hover:bg-verity-800"
       >
         <div className="mb-3 flex items-start justify-between">
-          <div className="rounded-lg bg-sand-200/50 p-2 text-verity-700 transition-colors group-hover:bg-verity-100 group-hover:text-verity-900 dark:bg-verity-800 dark:text-verity-400 dark:group-hover:bg-verity-700 dark:group-hover:text-verity-100">
+          <div className={cn(
+            "rounded-lg p-2 transition-colors",
+            variantStyles[variant]
+          )}>
             <Icon className="h-5 w-5" strokeWidth={1.5} />
           </div>
           <ArrowRight className="h-4 w-4 text-verity-300 opacity-0 transition-all group-hover:text-verity-500 group-hover:opacity-100" />
@@ -256,10 +279,8 @@ function DashboardContent() {
             <SectionHeader title="Visão Geral" icon={TrendingUp} />
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <CPRStats className="sm:col-span-2" />{' '}
-              {/* Takes full width of this subgrid */}
+              <CPRStats className="sm:col-span-2" />
               <DocumentsStats />
-              {/* Future Stat Card can go here */}
             </div>
 
             {/* Recent Activity Feed */}
@@ -280,36 +301,42 @@ function DashboardContent() {
                 description="Consultoria jurídica"
                 href="/chat"
                 icon={MessageSquare}
+                variant="ai"
               />
               <QuickAction
                 title="Nova CPR"
                 description="Emissão guiada"
                 href="/cpr/wizard"
                 icon={FilePlus2}
+                variant="primary"
               />
               <QuickAction
                 title="Cotações"
                 description="Mercado em tempo real"
                 href="/quotes"
                 icon={TrendingUp}
+                variant="money"
               />
               <QuickAction
                 title="Simulador"
                 description="Calcular custos"
                 href="/cpr/simulator"
                 icon={Calculator}
+                variant="simulator"
               />
               <QuickAction
                 title="Meus Documentos"
                 description="Gestão de arquivos"
                 href="/documents"
                 icon={FileText}
+                variant="docs"
               />
               <QuickAction
                 title="Central de Ajuda"
                 description="Tutoriais e suporte"
                 href="/help"
                 icon={History}
+                variant="history"
               />
             </div>
 
