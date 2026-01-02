@@ -401,11 +401,15 @@ const SidebarContent = memo(function SidebarContent({
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-verity-500" />
           <input
-            type="text"
+            type="search"
             placeholder="Buscar"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-lg border border-sand-300 bg-white/50 px-4 py-2 pl-10 text-sm text-verity-950 transition-all duration-200 placeholder:text-verity-500 focus:border-verity-600 focus:outline-none focus:ring-0 focus:ring-verity-600/15"
+            inputMode="search"
+            autoComplete="off"
+            autoCorrect="off"
+            spellCheck={false}
+            className="h-10 w-full rounded-lg border border-sand-300 bg-white/50 px-4 pl-10 text-sm text-verity-950 transition-all duration-200 placeholder:text-verity-500 focus:border-verity-600 focus:outline-none focus:ring-0 focus:ring-verity-600/15"
           />
         </div>
 
