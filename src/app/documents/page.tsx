@@ -2,10 +2,11 @@
 
 import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { FileText, Search, ArrowLeft } from 'lucide-react'
+import { FileText, Loader2, Search } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useDocuments } from '@/hooks/useDocuments'
 import { FileList } from '@/components/v2/FileUpload/FileList'
+import { InternalHeader } from '@/components/v2/Header/InternalHeader'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -86,28 +87,13 @@ export default function DocumentsHistoryPage() {
 
   return (
     <div className="min-h-screen bg-gray-50/50 dark:bg-zinc-900/50">
+      <InternalHeader
+        title="Meus documentos"
+        subtitle="Gerencie todos os arquivos enviados para analise."
+        backHref="/chat"
+        containerClassName="max-w-5xl"
+      />
       <div className="container mx-auto max-w-5xl px-4 py-8">
-        {/* Header */}
-        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="-ml-2 mb-2 text-muted-foreground"
-              onClick={() => router.back()}
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Voltar
-            </Button>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
-              Meus Documentos
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              Gerencie todos os arquivos enviados para análise.
-            </p>
-          </div>
-        </div>
-
         {/* Filters */}
         <div className="mb-6 flex flex-col gap-4 sm:flex-row">
           <div className="relative flex-1">
@@ -140,7 +126,8 @@ export default function DocumentsHistoryPage() {
           <CardContent className="p-0">
             {authLoading || docsLoading ? (
               <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground">
-                <p>Carregando documentos...</p>
+                <Loader2 className="h-6 w-6 animate-spin text-verity-600" />
+                <p className="mt-3 text-sm">Carregando documentos...</p>
               </div>
             ) : (
               <div className="p-4">
@@ -153,13 +140,35 @@ export default function DocumentsHistoryPage() {
                       Nenhum documento encontrado
                     </h3>
                     <p className="mx-auto mt-2 max-w-xs text-sm">
-                      Seus documentos enviados aparecerão aqui. Envie arquivos
-                      através do chat para começar.
+                      Seus documentos enviados aparecerao aqui. Envie arquivos
+                      pelo chat para comecar.
                     </p>
+                    <Button
+                      variant="outline"
+                      className="mt-6"
+                      onClick={() => router.push('/chat')}
+                    >
+                      Ir para o chat
+                    </Button>
                   </div>
                 ) : filteredDocuments.length === 0 ? (
-                  <div className="py-12 text-center text-muted-foreground">
-                    <p>Nenhum resultado para &ldquo;{searchQuery}&rdquo;</p>
+                  <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground">
+                    <div className="mb-4 rounded-full bg-muted/50 p-4">
+                      <Search className="h-8 w-8 text-muted-foreground/50" />
+                    </div>
+                    <h3 className="text-lg font-medium text-foreground">
+                      Nenhum resultado encontrado
+                    </h3>
+                    <p className="mx-auto mt-2 max-w-xs text-sm">
+                      Nao encontramos documentos para &quot;{searchQuery}&quot;.
+                    </p>
+                    <Button
+                      variant="outline"
+                      className="mt-6"
+                      onClick={() => setSearchQuery('')}
+                    >
+                      Limpar busca
+                    </Button>
                   </div>
                 ) : (
                   <FileList

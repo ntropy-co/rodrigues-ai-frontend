@@ -1,8 +1,8 @@
 'use client'
 
-import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { Skeleton } from '@/components/ui/skeleton'
+import { InternalHeader } from '@/components/v2/Header/InternalHeader'
 
 const CPRWizard = dynamic(
   () =>
@@ -15,30 +15,16 @@ const CPRWizard = dynamic(
 
 export default function CPRWizardPage() {
   return (
-    <div className="container mx-auto px-4 py-6">
-      <div className="mb-6 flex items-center gap-4">
-        <Link
-          href="/chat"
-          className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="lucide lucide-chevron-left h-5 w-5"
-          >
-            <path d="m15 18-6-6 6-6" />
-          </svg>
-        </Link>
-        <h1 className="text-2xl font-bold text-gray-900">Emissão de CPR</h1>
+    <div className="min-h-screen">
+      <InternalHeader
+        title="Emissao de CPR"
+        subtitle="Preencha os dados para gerar a CPR."
+        backHref="/chat"
+        containerClassName="max-w-5xl"
+      />
+      <div className="container mx-auto max-w-5xl px-4 py-6">
+        <CPRWizard />
       </div>
-      <CPRWizard />
     </div>
   )
 }

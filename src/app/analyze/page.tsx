@@ -3,8 +3,8 @@
 import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Upload, FileText, Loader2, ArrowLeft } from 'lucide-react'
-import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { InternalHeader } from '@/components/v2/Header/InternalHeader'
 import { Card, CardContent } from '@/components/ui/card'
 import { AnalysisResult } from '@/components/v2/Analysis/AnalysisResult'
 import { AnalysisResultData } from '@/types/analysis'
@@ -111,27 +111,14 @@ export default function AnalysisPage() {
   }
 
   return (
-    <div className="min-h-screen bg-verity-50/50 p-6 md:p-12">
-      <div className="mx-auto max-w-5xl space-y-8">
-        {/* Header */}
-        <div className="flex items-center gap-4">
-          <Link
-            href="/"
-            className="rounded-full p-2 text-verity-700 transition-colors hover:bg-verity-100"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-          <div>
-            <h1 className="font-display text-3xl font-bold text-verity-950">
-              Análise de CPR
-            </h1>
-            <p className="text-verity-700">
-              Faça upload do documento para identificar erros e sugestões de
-              melhoria.
-            </p>
-          </div>
-        </div>
-
+    <div className="min-h-screen bg-verity-50/50">
+      <InternalHeader
+        title="Analise de CPR"
+        subtitle="Envie o documento para identificar riscos e melhorias."
+        backHref="/chat"
+        containerClassName="max-w-5xl"
+      />
+      <div className="mx-auto max-w-5xl space-y-8 px-6 py-8 md:px-12 md:py-12">
         <AnimatePresence mode="wait">
           {status === 'idle' || status === 'uploading' ? (
             <motion.div
