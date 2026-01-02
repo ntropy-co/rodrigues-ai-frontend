@@ -86,3 +86,6 @@ export const MOCK_MENTIONS: AgentMention[] = [
     trigger: '@lei'
   }
 ]
+
+// Alias for backward compatibility
+export const STATIC_MENTIONS = MOCK_MENTIONS

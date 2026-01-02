@@ -101,7 +101,7 @@ function mapWizardDataToDocumentData(
           : undefined
     },
     produto: {
-      descricao: data.product,
+      descricao: data.commodity,
       quantidade: data.quantity,
       local_entrega: data.deliveryPlace
     },
@@ -175,7 +175,7 @@ export function StepReview({ data, onBack, goToStep }: StepReviewProps) {
     const hasGuarantees = (data.guaranteeType?.length ?? 0) > 0
 
     return {
-      commodity: data.product || 'soja', // Default to soja if not specified
+      commodity: data.commodity || 'soja', // Default to soja if not specified
       quantity: data.quantity,
       unit: 'sacas', // Default unit - could be enhanced if wizard stores unit
       total_value: data.amount,
