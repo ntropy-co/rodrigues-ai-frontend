@@ -85,14 +85,14 @@ export default {
           400: '#E5E5E5',
           300: '#EBE9E1',
           200: '#F3F1EB',
-          100: '#F9F8F6', // Main BG
+          100: '#FDFCF8', // Updated: Warm Cream (Paper)
           50: '#FDFCFB'
         },
 
-        // Ouro (apenas para R$)
+        // Ouro (Champagne Metallic)
         ouro: {
-          600: '#C9922A',
-          500: '#D4A034',
+          600: '#A68A56', // Updated: Bronze
+          500: '#BFA070', // Updated: Champagne
           400: '#E0B14E'
         },
 

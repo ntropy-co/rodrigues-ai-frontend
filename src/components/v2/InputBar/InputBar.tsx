@@ -412,7 +412,7 @@ export function InputBar({
             duration: 0.8,
             ease: [0.25, 0.46, 0.45, 0.94] // Easing butter
           }}
-          className="relative mx-auto max-w-4xl"
+          className="relative mx-auto max-w-3xl"
           style={{
             transformStyle: 'preserve-3d',
             backfaceVisibility: 'hidden',
@@ -430,7 +430,7 @@ export function InputBar({
 
           {/* Layer 5: Sombra Profunda */}
           <div
-            className="absolute inset-0 rounded-2xl bg-verity-900/10 blur-2xl"
+            className="absolute inset-0 rounded-2xl bg-verity-900/5 blur-2xl"
             style={{
               transform: 'translateZ(-30px) scale(0.95) translateY(20px)'
             }}
@@ -453,9 +453,9 @@ export function InputBar({
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: index * 0.05 }}
-                  className="relative flex items-center gap-2 overflow-hidden rounded-lg border border-verity-100 bg-white/90 py-1.5 pl-3 pr-8 text-xs text-verity-900 shadow-sm backdrop-blur-sm"
+                  className="relative flex items-center gap-2 overflow-hidden rounded-lg border border-sand-200 bg-sand-50/90 py-1.5 pl-3 pr-8 text-xs text-verity-900 shadow-sm backdrop-blur-sm"
                 >
-                  <div className="flex h-5 w-5 items-center justify-center rounded bg-verity-50 text-verity-600">
+                  <div className="flex h-5 w-5 items-center justify-center rounded bg-sand-200 text-verity-600">
                     {(file.type || '').startsWith('image/') ? (
                       <ImageIcon className="h-3 w-3" />
                     ) : (
@@ -487,7 +487,7 @@ export function InputBar({
                         if (localIndex !== -1) removeAttachment(localIndex)
                       }
                     }}
-                    className="absolute right-1 top-1/2 z-20 -translate-y-1/2 rounded-full p-1 text-verity-400 transition-colors hover:bg-verity-100 hover:text-verity-700"
+                    className="absolute right-1 top-1/2 z-20 -translate-y-1/2 rounded-full p-1 text-verity-400 transition-colors hover:bg-red-50 hover:text-red-500"
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -498,7 +498,7 @@ export function InputBar({
 
           {/* Layer 4: Container Principal */}
           <motion.div
-            className="group relative flex items-end gap-3 rounded-2xl border-2 border-verity-300 bg-gradient-to-b from-white to-verity-50/20 px-5 py-4 backdrop-blur-xl"
+            className="group relative flex items-end gap-3 rounded-2xl border border-sand-300 bg-gradient-to-b from-sand-50 to-sand-100/50 px-5 py-4 backdrop-blur-xl"
             style={{
               transform: 'translateZ(0)',
               transformStyle: 'preserve-3d'

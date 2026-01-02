@@ -611,11 +611,11 @@ const SidebarContent = memo(function SidebarContent({
               Meus Documentos
             </Link>
             <Link
-              href="/contact"
+              href="/help"
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-verity-700 transition-colors hover:bg-verity-50 hover:text-verity-900"
             >
               <HelpCircle className="h-4 w-4" />
-              Contato / Suporte
+              Central de Ajuda
             </Link>
           </div>
         </div>

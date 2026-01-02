@@ -5,10 +5,17 @@ export const metadata: Metadata = {
   description: 'Gerencie as configurações da sua organização'
 }
 
+import { WelcomeTour } from '@/components/v2/Tour/WelcomeTour'
+
 export default function DashboardLayout({
   children
 }: {
   children: React.ReactNode
 }) {
-  return <>{children}</>
+  return (
+    <>
+      <WelcomeTour />
+      {children}
+    </>
+  )
 }
