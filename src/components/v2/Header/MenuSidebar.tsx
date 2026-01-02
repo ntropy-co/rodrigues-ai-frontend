@@ -13,7 +13,8 @@ import {
   TrendingUp,
   Calculator,
   History,
-  HelpCircle
+  HelpCircle,
+  ShieldCheck
 } from 'lucide-react'
 import { usePlaygroundStore } from '@/store'
 import { useSessions } from '@/hooks/useSessions'
@@ -223,7 +224,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
           </div>
 
           {/* Nova Conversa (Enterprise) */}
-          <div className="border-b border-gray-200 p-4 dark:border-gray-800">
+          <div className="border-b border-verity-200 p-4 dark:border-verity-800">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -239,7 +240,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                 router.push('/documents')
                 onClose()
               }}
-              className="mt-3 flex w-full items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+              className="mt-3 flex w-full items-center gap-2 rounded-lg border border-verity-200 px-3 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-50 dark:border-verity-700 dark:text-verity-300 dark:hover:bg-verity-800"
             >
               <Search className="h-4 w-4" />
               Meus Documentos
@@ -247,8 +248,8 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
           </div>
 
           {/* Ferramentas / Navegação */}
-          <div className="border-b border-gray-200 p-4 dark:border-gray-800">
-            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+          <div className="border-b border-verity-200 p-4 dark:border-verity-800">
+            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wider text-verity-400 dark:text-verity-500">
               Ferramentas
             </h3>
             <div className="space-y-1">
@@ -257,10 +258,21 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   router.push('/quotes')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-100 dark:text-verity-300 dark:hover:bg-verity-800"
               >
-                <TrendingUp className="h-4 w-4 text-gray-500" />
+                <TrendingUp className="h-4 w-4 text-verity-500" />
                 Cotações
+              </button>
+
+              <button
+                onClick={() => {
+                  router.push('/compliance')
+                  onClose()
+                }}
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-100 dark:text-verity-300 dark:hover:bg-verity-800"
+              >
+                <ShieldCheck className="h-4 w-4 text-verity-500" />
+                Compliance
               </button>
 
               <button
@@ -268,9 +280,9 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   router.push('/cpr/simulator')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-100 dark:text-verity-300 dark:hover:bg-verity-800"
               >
-                <Calculator className="h-4 w-4 text-gray-500" />
+                <Calculator className="h-4 w-4 text-verity-500" />
                 Simulador CPR
               </button>
 
@@ -279,9 +291,9 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   router.push('/cpr/historico')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-100 dark:text-verity-300 dark:hover:bg-verity-800"
               >
-                <History className="h-4 w-4 text-gray-500" />
+                <History className="h-4 w-4 text-verity-500" />
                 Histórico CPR
               </button>
 
@@ -290,18 +302,18 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   router.push('/contact')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-100 dark:text-verity-300 dark:hover:bg-verity-800"
               >
-                <HelpCircle className="h-4 w-4 text-gray-500" />
+                <HelpCircle className="h-4 w-4 text-verity-500" />
                 Contato / Suporte
               </button>
             </div>
           </div>
 
           {/* Search */}
-          <div className="border-b border-gray-200 p-4 dark:border-gray-800">
+          <div className="border-b border-verity-200 p-4 dark:border-verity-800">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-verity-400" />
               <input
                 type="search"
                 placeholder="Buscar analises..."
@@ -311,7 +323,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                 autoComplete="off"
                 autoCorrect="off"
                 spellCheck={false}
-                className="w-full rounded-md border border-gray-200 bg-gray-50 py-2.5 pl-9 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 placeholder:dark:text-gray-600"
+                className="w-full rounded-md border border-verity-200 bg-verity-50 py-2.5 pl-9 pr-3 text-sm text-verity-900 placeholder:text-verity-400 focus:border-verity-400 focus:outline-none focus:ring-0 dark:border-verity-700 dark:bg-verity-900 dark:text-verity-100 placeholder:dark:text-verity-600"
                 aria-label="Buscar analises"
               />
             </div>
@@ -321,15 +333,15 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
           <div className="flex-1 overflow-y-auto">
             {isLoadingSessions || sessionsApiLoading ? (
               <div className="flex flex-col items-center justify-center p-4 text-center">
-                <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
-                <div className="mt-2 text-sm text-gray-400">
+                <Loader2 className="h-5 w-5 animate-spin text-verity-400" />
+                <div className="mt-2 text-sm text-verity-400">
                   Carregando análises...
                 </div>
               </div>
             ) : filteredSessions.length === 0 ? (
               // Empty state
               <div className="flex flex-col items-center justify-center p-8 text-center">
-                <div className="text-sm text-gray-400">
+                <div className="text-sm text-verity-400">
                   {searchQuery
                     ? 'Nenhuma análise encontrada'
                     : 'Histórico vazio'}
@@ -338,7 +350,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
             ) : (
               <div className="p-2">
                 {/* Time section header */}
-                <div className="px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+                <div className="px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-verity-400 dark:text-verity-500">
                   Esta Semana
                 </div>
 
@@ -346,9 +358,9 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   <div
                     key={session.id}
                     onClick={() => handleSessionClick(session.id)}
-                    className={`group mb-0.5 flex cursor-pointer items-center justify-between rounded-md px-3 py-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 ${
+                    className={`group mb-0.5 flex cursor-pointer items-center justify-between rounded-md px-3 py-2 transition-colors hover:bg-verity-100 dark:hover:bg-verity-800 ${
                       sessionId === session.id
-                        ? 'bg-gray-100 dark:bg-gray-800'
+                        ? 'bg-verity-100 dark:bg-verity-800'
                         : ''
                     }`}
                   >
@@ -356,14 +368,14 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                       <h3
                         className={`truncate text-sm ${
                           sessionId === session.id
-                            ? 'font-medium text-gray-900 dark:text-gray-100'
-                            : 'text-gray-700 dark:text-gray-300'
+                            ? 'font-medium text-verity-900 dark:text-verity-100'
+                            : 'text-verity-700 dark:text-verity-300'
                         }`}
                       >
                         {session.title}
                       </h3>
                       <div className="mt-0.5 flex items-center gap-2">
-                        <span className="text-[10px] text-gray-400">
+                        <span className="text-[10px] text-verity-400">
                           {session.timestamp}
                         </span>
                         {/* Status badge simulado para dar tom enterprise */}
@@ -379,7 +391,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                       }}
                       aria-label="Excluir conversa"
                     >
-                      <Trash2 className="h-3.5 w-3.5 text-gray-400 hover:text-red-500" />
+                      <Trash2 className="h-3.5 w-3.5 text-verity-400 hover:text-red-500" />
                     </button>
                   </div>
                 ))}

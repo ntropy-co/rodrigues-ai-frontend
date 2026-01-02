@@ -31,8 +31,10 @@ export default function QuotesPage() {
           backHref="/chat"
           containerClassName="max-w-4xl"
         />
-        <div className="container mx-auto max-w-4xl py-6">
-          <QuotesChart />
+        <div className="container mx-auto max-w-4xl px-4 py-6">
+          <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-verity-100">
+            <QuotesChart />
+          </div>
         </div>
       </div>
     </QueryClientProvider>
