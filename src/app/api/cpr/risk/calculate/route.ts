@@ -37,7 +37,6 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthorizationFromRequest } from '@/lib/api/auth-header'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -96,7 +95,7 @@ function validateRequest(body: Partial<RiskCalculateRequest>): string | null {
 export async function POST(request: NextRequest) {
   try {
     // Get the Authorization header
-    const authorization = getAuthorizationFromRequest(request)
+    const authorization = request.headers.get('authorization')
 
     if (!authorization) {
       return NextResponse.json(

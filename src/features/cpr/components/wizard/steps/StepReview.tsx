@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useMemo, useCallback } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { CPRWizardData } from '../schema'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -16,24 +16,20 @@ import {
   useRiskCalculator,
   type RiskCalculateRequest,
   type RiskCalculateResponse,
-  type APIRiskFactor
+  type RiskFactor as APIRiskFactor
 } from '@/features/risk'
 import {
   RiskCalculator,
   type RiskCalculatorData,
   type RiskFactor,
   type RiskLevel
-} from '@/features/risk'
-import type { DraftSubmitResponse } from '@/features/cpr'
+} from '@/features/risk/components/RiskCalculator'
+import { useCPRCreation, type DocumentData } from '@/features/cpr/hooks/useCPRCreation'
 
 interface StepReviewProps {
   data: Partial<CPRWizardData>
   onBack: () => void
   goToStep: (step: number) => void
-  onGenerate: () => Promise<DraftSubmitResponse | null>
-  isGenerating: boolean
-  cprError: string | null
-  onClearError: () => void
 }
 
 // =============================================================================
@@ -89,6 +85,46 @@ function formatDateToBR(date: string): string {
   return `${day}/${month}/${year}`
 }
 
+/**
+ * Map wizard data to DocumentData format expected by the CPR creation API
+ */
+function mapWizardDataToDocumentData(
+  data: Partial<CPRWizardData>
+): DocumentData {
+  return {
+    valores: {
+      valor_total: data.amount,
+      preco_unitario: data.unitPrice,
+      forma_pagamento:
+        data.correctionIndex !== 'Nenhum'
+          ? `Correção: ${data.correctionIndex}`
+          : undefined
+    },
+    produto: {
+      descricao: data.commodity,
+      quantidade: data.quantity,
+      local_entrega: data.deliveryPlace
+    },
+    datas: {
+      emissao: data.issueDate,
+      vencimento: data.dueDate
+    },
+    garantias: {
+      tipo: data.guaranteeType?.join(', '),
+      descricao: data.guaranteeDescription
+    },
+    // Include guarantor info if available
+    ...(data.hasGuarantor &&
+      data.guarantorName && {
+        avalista: {
+          nome: data.guarantorName,
+          cpf_cnpj: data.guarantorCpfCnpj,
+          endereco: data.guarantorAddress
+        }
+      })
+  }
+}
+
 // Generation progress steps for user feedback
 const GENERATION_STEPS = [
   'Iniciando geração...',
@@ -102,20 +138,22 @@ const GENERATION_STEPS = [
 // Component
 // =============================================================================
 
-export function StepReview({
-  data,
-  onBack,
-  goToStep,
-  onGenerate,
-  isGenerating,
-  cprError,
-  onClearError
-}: StepReviewProps) {
+export function StepReview({ data, onBack, goToStep }: StepReviewProps) {
   const [confirmed, setConfirmed] = useState(false)
   const [generated, setGenerated] = useState(false)
   const [riskCalculated, setRiskCalculated] = useState(false)
   const [progressStep, setProgressStep] = useState(0)
   const [documentUrl, setDocumentUrl] = useState<string | null>(null)
+
+  // CPR creation hook
+  const {
+    state: cprState,
+    isLoading: isGenerating,
+    error: cprError,
+    startCreation,
+    continueCreation,
+    reset: resetCPRCreation
+  } = useCPRCreation()
 
   // Risk calculator hook
   const {
@@ -128,10 +166,8 @@ export function StepReview({
 
   // Transform wizard data to risk calculation request
   const riskRequest = useMemo((): RiskCalculateRequest | null => {
-    const quantity = data.quantity ?? data.expectedQuantity
-
     // Check if we have minimum required data
-    if (!data.amount || !quantity || !data.issueDate || !data.dueDate) {
+    if (!data.amount || !data.quantity || !data.issueDate || !data.dueDate) {
       return null
     }
 
@@ -139,14 +175,14 @@ export function StepReview({
     const hasGuarantees = (data.guaranteeType?.length ?? 0) > 0
 
     return {
-      commodity: data.commodity || 'soja',
-      quantity,
-      unit: data.unit || 'saca',
+      commodity: data.commodity || 'soja', // Default to soja if not specified
+      quantity: data.quantity,
+      unit: 'sacas', // Default unit - could be enhanced if wizard stores unit
       total_value: data.amount,
       issue_date: formatDateToBR(data.issueDate),
       maturity_date: formatDateToBR(data.dueDate),
       has_guarantees: hasGuarantees,
-      guarantee_value: hasGuarantees ? data.amount * 0.5 : undefined,
+      guarantee_value: hasGuarantees ? data.amount * 0.5 : undefined, // Estimate 50% of value as guarantee
       unit_price: data.unitPrice
     }
   }, [data])
@@ -187,6 +223,15 @@ export function StepReview({
     }
   }, [isGenerating])
 
+  // Handle document URL from API response
+  useEffect(() => {
+    if (cprState?.documentUrl) {
+      setDocumentUrl(cprState.documentUrl)
+      setGenerated(true)
+      toast.success('Minuta da CPR gerada com sucesso!')
+    }
+  }, [cprState?.documentUrl])
+
   // Transform API result to display format
   const riskDisplayData = useMemo(() => {
     if (!riskResult) return null
@@ -208,38 +253,57 @@ export function StepReview({
   const handleGenerate = useCallback(async () => {
     if (!confirmed) return
 
+    // Reset any previous error state
+    resetCPRCreation()
     setProgressStep(0)
 
-    const response = await onGenerate()
-    if (!response) {
+    // Convert wizard data to API format
+    const documentData = mapWizardDataToDocumentData(data)
+
+    // Start the CPR creation workflow
+    const startResponse = await startCreation(documentData)
+
+    if (!startResponse) {
+      // Error is handled by the hook and displayed in the UI
       return
     }
 
-    const hasDocument = !!(
-      response.workflow?.documentUrl || response.draft.documentUrl
-    )
+    // If the workflow is waiting for confirmation, continue with confirmation
+    if (startResponse.is_waiting_input) {
+      const confirmResponse = await continueCreation(
+        'Confirmo todos os dados e desejo gerar o documento da CPR.',
+        { confirmed: true, wizard_data: data }
+      )
 
-    if (hasDocument) {
-      const downloadBaseUrl = `/api/cpr/drafts/${response.draft.draftId}/download`
-      setDocumentUrl(downloadBaseUrl)
+      if (!confirmResponse) {
+        return
+      }
+
+      // Check if document was generated
+      if (confirmResponse.document_url) {
+        setDocumentUrl(confirmResponse.document_url)
+        setGenerated(true)
+        toast.success('Minuta da CPR gerada com sucesso!')
+      } else if (!confirmResponse.is_waiting_input) {
+        // Generation complete but no URL - might need another step
+        setGenerated(true)
+        toast.success('CPR processada com sucesso!')
+      }
+    } else if (startResponse.document_url) {
+      // Document was generated in the start call
+      setDocumentUrl(startResponse.document_url)
       setGenerated(true)
       toast.success('Minuta da CPR gerada com sucesso!')
-      return
     }
-
-    if (!response.workflow || !response.workflow.isWaitingInput) {
-      setGenerated(true)
-      toast.success('CPR processada com sucesso!')
-    }
-  }, [confirmed, onGenerate])
+  }, [confirmed, data, startCreation, continueCreation, resetCPRCreation])
 
   // Handle retry after error
   const handleRetry = useCallback(() => {
-    onClearError()
+    resetCPRCreation()
     setGenerated(false)
     setDocumentUrl(null)
     setConfirmed(false)
-  }, [onClearError])
+  }, [resetCPRCreation])
 
   // Handle download with actual URL
   const handleDownload = useCallback(
@@ -263,8 +327,8 @@ export function StepReview({
   if (generated) {
     return (
       <div className="space-y-6 py-10 text-center duration-500 animate-in fade-in zoom-in-95">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-verity-100">
-          <FileTextIcon className="h-8 w-8 text-verity-600" />
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+          <FileTextIcon className="h-8 w-8 text-green-600" />
         </div>
         <h2 className="text-2xl font-bold">Documento Pronto!</h2>
         <p className="text-muted-foreground">
@@ -386,14 +450,14 @@ export function StepReview({
         )}
 
         {riskError && (
-          <Card className="border-error-200 bg-error-50">
+          <Card className="border-red-200 bg-red-50">
             <CardContent className="flex items-center gap-3 py-4">
-              <AlertTriangle className="h-5 w-5 shrink-0 text-error-600" />
+              <AlertTriangle className="h-5 w-5 shrink-0 text-red-600" />
               <div className="flex-1">
-                <p className="text-sm font-medium text-error-800">
+                <p className="text-sm font-medium text-red-800">
                   Erro ao calcular risco
                 </p>
-                <p className="text-xs text-error-600">{riskError}</p>
+                <p className="text-xs text-red-600">{riskError}</p>
               </div>
               <Button
                 variant="outline"
@@ -418,13 +482,13 @@ export function StepReview({
 
         {/* High Risk Warning */}
         {isHighRisk && (
-          <div className="flex items-start gap-3 rounded-lg border border-ouro-200 bg-ouro-50 p-4">
-            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-ouro-600" />
+          <div className="flex items-start gap-3 rounded-lg border border-orange-200 bg-orange-50 p-4">
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-orange-600" />
             <div>
-              <p className="text-sm font-semibold text-ouro-800">
+              <p className="text-sm font-semibold text-orange-800">
                 Atenção: Operação de Alto Risco
               </p>
-              <p className="mt-1 text-xs text-ouro-700">
+              <p className="mt-1 text-xs text-orange-700">
                 Esta operação foi classificada como alto risco. Recomendamos
                 revisar as garantias e condições antes de prosseguir com a
                 geração do documento.
@@ -436,14 +500,14 @@ export function StepReview({
 
       {/* CPR Generation Error */}
       {cprError && (
-        <Card className="border-error-200 bg-error-50">
+        <Card className="border-red-200 bg-red-50">
           <CardContent className="flex items-center gap-3 py-4">
-            <AlertCircle className="h-5 w-5 shrink-0 text-error-600" />
+            <AlertCircle className="h-5 w-5 shrink-0 text-red-600" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-error-800">
+              <p className="text-sm font-medium text-red-800">
                 Erro ao gerar documento
               </p>
-              <p className="text-xs text-error-600">{cprError}</p>
+              <p className="text-xs text-red-600">{cprError}</p>
             </div>
             <Button
               variant="outline"

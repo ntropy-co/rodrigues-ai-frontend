@@ -3,8 +3,9 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { useShallow } from 'zustand/react/shallow'
 
-import { useChatActions } from './useChatActions'
+import useChatActions from '@/features/chat/hooks/useChatActions'
 import { usePlaygroundStore } from '../stores/playgroundStore'
+import { useAuth } from '@/contexts/AuthContext'
 import { trackEvent } from '@/components/providers/PostHogProvider'
 
 /**
@@ -60,9 +61,7 @@ function parseSSELine(line: string): SSEEvent | null {
   try {
     return JSON.parse(data) as SSEEvent
   } catch {
-    if (process.env.NODE_ENV !== 'production') {
-      console.warn('[SSE] Failed to parse:', data)
-    }
+    console.warn('[SSE] Failed to parse:', data)
     return null
   }
 }
@@ -77,7 +76,7 @@ function parseSSELine(line: string): SSEEvent | null {
  * Streaming is used when session_id exists (existing session).
  * Non-streaming is used for new sessions (to get session_id first).
  */
-export const useAIStreamHandler = () => {
+const useAIChatStreamHandler = () => {
   const router = useRouter()
   const abortControllerRef = useRef<AbortController | null>(null)
 
@@ -104,6 +103,7 @@ export const useAIStreamHandler = () => {
 
   const { addMessage, focusChatInput, saveSessionIdToStorage } =
     useChatActions()
+  const { token } = useAuth()
 
   const updateMessagesWithErrorState = useCallback(() => {
     setMessages((prevMessages) => {
@@ -145,9 +145,9 @@ export const useAIStreamHandler = () => {
       const response = await fetch('/api/chat/stream', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
         },
-        credentials: 'include',
         body: JSON.stringify({
           message: message.trim(),
           session_id: currentSessionId
@@ -202,17 +202,13 @@ export const useAIStreamHandler = () => {
                 break
 
               case 'usage':
-                // Log usage stats in development only
-                if (process.env.NODE_ENV !== 'production') {
-                  console.debug('[SSE] Usage:', event.usage)
-                }
+                // Log usage stats (optional)
+                console.debug('[SSE] Usage:', event.usage)
                 break
 
               case 'done':
                 // Stream complete
-                if (process.env.NODE_ENV !== 'production') {
-                  console.debug('[SSE] Stream complete')
-                }
+                console.debug('[SSE] Stream complete')
                 break
 
               case 'error':
@@ -230,7 +226,7 @@ export const useAIStreamHandler = () => {
         message_length: message.trim().length
       })
     },
-    [appendToLastMessage]
+    [token, appendToLastMessage]
   )
 
   /**
@@ -245,9 +241,9 @@ export const useAIStreamHandler = () => {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
         },
-        credentials: 'include',
         body: JSON.stringify({
           message: message.trim(),
           session_id: currentSessionId
@@ -268,7 +264,7 @@ export const useAIStreamHandler = () => {
 
       return response.json()
     },
-    []
+    [token]
   )
 
   /**
@@ -345,6 +341,10 @@ export const useAIStreamHandler = () => {
         explicitSessionId !== undefined ? explicitSessionId : sessionId
 
       try {
+        if (!token) {
+          throw new Error('Usuário não autenticado')
+        }
+
         // Use streaming if we have a session ID, otherwise use non-streaming
         // (streaming requires session_id to be set first)
         if (sessionIdToUse) {
@@ -429,9 +429,7 @@ export const useAIStreamHandler = () => {
       } catch (error) {
         // Ignore abort errors
         if (error instanceof Error && error.name === 'AbortError') {
-          if (process.env.NODE_ENV !== 'production') {
-            console.debug('[Chat] Request aborted')
-          }
+          console.debug('[Chat] Request aborted')
           return
         }
 
@@ -464,24 +462,19 @@ export const useAIStreamHandler = () => {
       }
     },
     [
-      // Zustand store actions
       setMessages,
+      addMessage,
+      updateMessagesWithErrorState,
       setStreamingErrorMessage,
       setIsStreaming,
-      setSessionsData,
-      setSessionId,
-      addLocallyCreatedSessionId,
-      // Zustand store state
-      sessionId,
-      // Custom hook actions
-      addMessage,
       focusChatInput,
       saveSessionIdToStorage,
-      // Error handling
-      updateMessagesWithErrorState,
-      // Navigation
+      setSessionsData,
+      sessionId,
+      setSessionId,
+      addLocallyCreatedSessionId,
+      token,
       router,
-      // API handlers
       handleStreamingChat,
       handleNonStreamingChat,
       cancelStream
@@ -490,3 +483,5 @@ export const useAIStreamHandler = () => {
 
   return { handleStreamResponse, cancelStream }
 }
+
+export default useAIChatStreamHandler

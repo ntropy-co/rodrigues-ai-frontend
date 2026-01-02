@@ -1,10 +1,10 @@
 import {
+  MessageSquare,
+  Sparkles,
   FileText,
   Settings,
-  LucideIcon,
-  Eraser,
-  HelpCircle,
-  Upload
+  RefreshCw,
+  LucideIcon
 } from 'lucide-react'
 
 export type CommandType = 'slash' | 'mention'
@@ -29,44 +29,36 @@ export interface AgentMention {
 
 export const SLASH_COMMANDS: AgentCommand[] = [
   {
-    id: 'clean',
-    label: 'Limpar Chat',
-    description: 'Começar uma nova conversa',
-    icon: Eraser,
+    id: 'gpt-4o',
+    label: 'GPT-4o',
+    description: 'Mudar para modelo GPT-4o (OpenAI)',
+    icon: Sparkles,
     type: 'slash',
-    trigger: '/limpar'
+    trigger: '/gpt4'
   },
   {
-    id: 'upload',
-    label: 'Enviar Arquivo',
-    description: 'Anexar documentos',
-    icon: Upload,
+    id: 'claude-3-5-sonnet',
+    label: 'Claude 3.5 Sonnet',
+    description: 'Mudar para Claude 3.5 Sonnet (Anthropic)',
+    icon: MessageSquare,
     type: 'slash',
-    trigger: '/upload'
+    trigger: '/claude'
   },
   {
     id: 'canvas',
-    label: 'Modo Canvas',
-    description: 'Abrir editor de texto',
+    label: 'Canvas Mode',
+    description: 'Abrir workspace de edição',
     icon: FileText,
     type: 'slash',
     trigger: '/canvas'
   },
   {
-    id: 'help',
-    label: 'Ajuda / Comandos',
-    description: 'Lista todos os comandos disponíveis',
-    icon: HelpCircle,
+    id: 'reset',
+    label: 'Reset Thread',
+    description: 'Limpar contexto atual',
+    icon: RefreshCw,
     type: 'slash',
-    trigger: '/comandos' // Changed from /ajuda to satisfy user request directly, or support both via input logic
-  },
-  {
-    id: 'juris',
-    label: 'Jurisprudência',
-    description: 'Pesquisar em base legal',
-    icon: FileText, // Using generic file icon or similar
-    type: 'slash',
-    trigger: '/juris'
+    trigger: '/reset'
   },
   {
     id: 'settings',
@@ -78,12 +70,22 @@ export const SLASH_COMMANDS: AgentCommand[] = [
   }
 ]
 
-export const STATIC_MENTIONS: AgentMention[] = [
+export const MOCK_MENTIONS: AgentMention[] = [
   {
-    id: 'web-search',
-    label: 'Web Search',
-    description: 'Pesquisar na internet',
+    id: 'doc-1',
+    label: 'Contrato Safra 2025.pdf',
+    description: 'Documento PDF',
     type: 'mention',
-    trigger: '@web'
+    trigger: '@contrato'
+  },
+  {
+    id: 'kb-cpr',
+    label: 'Base: Lei da CPR',
+    description: 'Knowledge Base',
+    type: 'mention',
+    trigger: '@lei'
   }
 ]
+
+// Alias for backward compatibility
+export const STATIC_MENTIONS = MOCK_MENTIONS

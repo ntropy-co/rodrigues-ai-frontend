@@ -3,12 +3,56 @@
 import { useState, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { trackEvent } from '@/components/providers/PostHogProvider'
-import {
-  ComplianceVerifyRequest,
-  ComplianceVerifyResponse,
-  ComplianceDashboard
-} from '../types'
-import { complianceApi } from '../api'
+
+/**
+ * Compliance requirement status
+ */
+export interface ComplianceRequirement {
+  id: string
+  name: string
+  status: 'passed' | 'failed' | 'warning'
+  description?: string
+  severity: 'critical' | 'major' | 'minor'
+}
+
+/**
+ * Request data for compliance verification
+ */
+export interface ComplianceVerifyRequest {
+  document_id?: string
+  extracted_data: Record<string, unknown>
+}
+
+/**
+ * Response from compliance verification
+ */
+export interface ComplianceVerifyResponse {
+  score: number // 0-100
+  grade: 'A' | 'B' | 'C' | 'D' | 'F'
+  requirements: ComplianceRequirement[]
+  recommendations: string[]
+  details: Record<string, unknown>
+}
+
+/**
+ * Recent verification entry
+ */
+export interface RecentVerification {
+  id: string
+  document_id: string
+  score: number
+  grade: 'A' | 'B' | 'C' | 'D' | 'F'
+  verified_at: string
+}
+
+/**
+ * Dashboard data
+ */
+export interface ComplianceDashboard {
+  total_verified: number
+  compliance_rate: number // 0-100
+  recent_verifications: RecentVerification[]
+}
 
 /**
  * Hook state
@@ -22,9 +66,29 @@ interface UseComplianceState {
 
 /**
  * Hook for compliance verification
+ *
+ * Usage:
+ * ```tsx
+ * const { result, dashboard, isLoading, error, verify, getDashboard, reset } = useCompliance()
+ *
+ * const handleVerify = async () => {
+ *   await verify({
+ *     document_id: 'doc-123',
+ *     extracted_data: {
+ *       emitente: 'Fazenda XYZ',
+ *       produto: 'Soja',
+ *       quantidade: 1000
+ *     }
+ *   })
+ * }
+ *
+ * const handleLoadDashboard = async () => {
+ *   await getDashboard()
+ * }
+ * ```
  */
 export function useCompliance() {
-  const { user } = useAuth()
+  const { token } = useAuth()
 
   const [state, setState] = useState<UseComplianceState>({
     result: null,
@@ -40,19 +104,10 @@ export function useCompliance() {
     async (
       data: ComplianceVerifyRequest
     ): Promise<ComplianceVerifyResponse | null> => {
-      if (!user) {
+      if (!token) {
         setState((prev) => ({
           ...prev,
           error: 'Usuário não autenticado',
-          isLoading: false
-        }))
-        return null
-      }
-
-      if (!data.document_id) {
-        setState((prev) => ({
-          ...prev,
-          error: 'Campo obrigatório ausente: document_id',
           isLoading: false
         }))
         return null
@@ -66,7 +121,27 @@ export function useCompliance() {
       }))
 
       try {
-        const result = await complianceApi.verify(data)
+        const response = await fetch('/api/compliance/verify', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(data)
+        })
+
+        if (!response.ok) {
+          let errorMessage = 'Erro ao verificar compliance'
+          try {
+            const errorData = await response.json()
+            errorMessage = errorData.detail || errorMessage
+          } catch {
+            errorMessage = `Erro ${response.status}: ${response.statusText}`
+          }
+          throw new Error(errorMessage)
+        }
+
+        const result: ComplianceVerifyResponse = await response.json()
 
         setState((prev) => ({ ...prev, result, isLoading: false, error: null }))
 
@@ -103,7 +178,7 @@ export function useCompliance() {
         return null
       }
     },
-    [user]
+    [token]
   )
 
   /**
@@ -111,7 +186,7 @@ export function useCompliance() {
    */
   const getDashboard =
     useCallback(async (): Promise<ComplianceDashboard | null> => {
-      if (!user) {
+      if (!token) {
         setState((prev) => ({
           ...prev,
           error: 'Usuário não autenticado',
@@ -128,7 +203,26 @@ export function useCompliance() {
       }))
 
       try {
-        const dashboard = await complianceApi.getDashboard()
+        const response = await fetch('/api/compliance/dashboard', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          }
+        })
+
+        if (!response.ok) {
+          let errorMessage = 'Erro ao obter dashboard'
+          try {
+            const errorData = await response.json()
+            errorMessage = errorData.detail || errorMessage
+          } catch {
+            errorMessage = `Erro ${response.status}: ${response.statusText}`
+          }
+          throw new Error(errorMessage)
+        }
+
+        const dashboard: ComplianceDashboard = await response.json()
 
         setState((prev) => ({
           ...prev,
@@ -162,7 +256,7 @@ export function useCompliance() {
 
         return null
       }
-    }, [user])
+    }, [token])
 
   /**
    * Reset state to initial values
@@ -178,3 +272,5 @@ export function useCompliance() {
     reset
   }
 }
+
+export default useCompliance

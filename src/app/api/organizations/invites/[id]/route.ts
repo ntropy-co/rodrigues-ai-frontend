@@ -18,7 +18,6 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthorizationFromRequest } from '@/lib/api/auth-header'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -29,7 +28,7 @@ type RouteParams = { params: Promise<{ id: string }> }
  */
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
-    const authorization = getAuthorizationFromRequest(request)
+    const authorization = request.headers.get('authorization')
     const { id } = await params
 
     if (!authorization) {

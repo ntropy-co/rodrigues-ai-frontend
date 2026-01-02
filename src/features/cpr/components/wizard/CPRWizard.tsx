@@ -1,16 +1,44 @@
 'use client'
 
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { CPRWizardData } from './schema'
-import { StepProdutor } from './steps/StepProdutor'
-import { StepPropriedade } from './steps/StepPropriedade'
-import { StepCultura } from './steps/StepCultura'
 import { StepValues } from './steps/StepValues'
 import { StepGuarantees } from './steps/StepGuarantees'
 import { StepReview } from './steps/StepReview'
-import { mapDraftToWizardData, mapWizardDataToDraft } from './mapping'
-import { useCPRCreation } from '@/features/cpr'
 import { cn } from '@/lib/utils'
+
+// =============================================================================
+// Placeholder Steps (1-3)
+// =============================================================================
+
+function PlaceholderStep({
+  title,
+  step,
+  onNext
+}: {
+  title: string
+  step: number
+  onNext: () => void
+}) {
+  return (
+    <div className="space-y-4 py-8 text-center animate-in fade-in">
+      <div className="text-sm uppercase tracking-wide text-muted-foreground">
+        Step {step} (Placeholder)
+      </div>
+      <h3 className="text-xl font-semibold">{title}</h3>
+      <p className="mx-auto max-w-md text-sm text-muted-foreground">
+        Este passo já foi implementado anteriormente ou é apenas ilustrativo
+        para este fluxo.
+      </p>
+      <button
+        onClick={onNext}
+        className="mt-6 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+      >
+        Simular Conclusão e Avançar
+      </button>
+    </div>
+  )
+}
 
 // =============================================================================
 // Main Component
@@ -22,95 +50,32 @@ const STEPS = [
   { id: 3, title: 'Cultura' },
   { id: 4, title: 'Valores' },
   { id: 5, title: 'Garantias' },
-  { id: 6, title: 'Revisǜo' }
+  { id: 6, title: 'Revisão' }
 ]
-
-const DRAFT_STORAGE_KEY = 'cpr_wizard_draft_id'
 
 export function CPRWizard() {
   const [currentStep, setCurrentStep] = useState(1)
   const [data, setData] = useState<Partial<CPRWizardData>>({})
   const [isLoaded, setIsLoaded] = useState(false)
 
-  const draftVersionRef = useRef<number | null>(null)
-
-  const {
-    draft,
-    isSubmitting,
-    error: draftError,
-    createDraft,
-    loadDraft,
-    updateDraft,
-    submitDraft,
-    clearError
-  } = useCPRCreation()
-
+  // Persist State
   useEffect(() => {
-    if (draft?.version !== undefined) {
-      draftVersionRef.current = draft.version
-    }
-  }, [draft?.version])
-
-  useEffect(() => {
-    let isActive = true
-
-    const initDraft = async () => {
-      const savedDraftId = sessionStorage.getItem(DRAFT_STORAGE_KEY)
-
-      if (savedDraftId) {
-        const loaded = await loadDraft(savedDraftId)
-        if (loaded && isActive) {
-          setData(mapDraftToWizardData(loaded.wizardData))
-          setCurrentStep(loaded.currentStep || 1)
-        }
-      } else {
-        const created = await createDraft(undefined, 1)
-        if (created && isActive) {
-          sessionStorage.setItem(DRAFT_STORAGE_KEY, created.draftId)
-        }
-      }
-
-      if (isActive) {
-        setIsLoaded(true)
+    const saved = localStorage.getItem('cpr_wizard_state')
+    if (saved) {
+      try {
+        setData(JSON.parse(saved))
+      } catch (e) {
+        console.error('Failed to load wizard state', e)
       }
     }
-
-    initDraft()
-
-    return () => {
-      isActive = false
-    }
-  }, [createDraft, loadDraft])
+    setIsLoaded(true)
+  }, [])
 
   useEffect(() => {
-    if (draft?.draftId) {
-      sessionStorage.setItem(DRAFT_STORAGE_KEY, draft.draftId)
+    if (isLoaded) {
+      localStorage.setItem('cpr_wizard_state', JSON.stringify(data))
     }
-  }, [draft?.draftId])
-
-  useEffect(() => {
-    if (currentStep !== 6 && draftError) {
-      clearError()
-    }
-  }, [clearError, currentStep, draftError])
-
-  useEffect(() => {
-    if (!draft?.draftId || !isLoaded || isSubmitting) {
-      return
-    }
-
-    const timeoutId = setTimeout(() => {
-      updateDraft(
-        draft.draftId,
-        mapWizardDataToDraft(data),
-        currentStep,
-        draftVersionRef.current ?? undefined,
-        { silent: true }
-      )
-    }, 600)
-
-    return () => clearTimeout(timeoutId)
-  }, [currentStep, data, draft?.draftId, isLoaded, isSubmitting, updateDraft])
+  }, [data, isLoaded])
 
   const updateData = (newData: Partial<CPRWizardData>) => {
     setData((prev) => ({ ...prev, ...newData }))
@@ -118,33 +83,6 @@ export function CPRWizard() {
 
   const next = () => setCurrentStep((prev) => Math.min(prev + 1, 6))
   const back = () => setCurrentStep((prev) => Math.max(prev - 1, 1))
-
-  const handleGenerate = useCallback(async () => {
-    const existingDraftId = draft?.draftId
-    let activeDraftId = existingDraftId
-
-    if (!activeDraftId) {
-      const created = await createDraft(mapWizardDataToDraft(data), currentStep)
-      if (!created) {
-        return null
-      }
-      activeDraftId = created.draftId
-      sessionStorage.setItem(DRAFT_STORAGE_KEY, created.draftId)
-    }
-
-    const updated = await updateDraft(
-      activeDraftId,
-      mapWizardDataToDraft(data),
-      currentStep,
-      draftVersionRef.current ?? undefined
-    )
-
-    if (!updated) {
-      return null
-    }
-
-    return submitDraft(activeDraftId)
-  }, [createDraft, currentStep, data, draft?.draftId, submitDraft, updateDraft])
 
   return (
     <div className="mx-auto w-full max-w-4xl rounded-lg border bg-background shadow-sm">
@@ -215,22 +153,24 @@ export function CPRWizard() {
         ) : (
           <>
             {currentStep === 1 && (
-              <StepProdutor data={data} updateData={updateData} onNext={next} />
+              <PlaceholderStep
+                title="Identificação do Produtor"
+                step={1}
+                onNext={next}
+              />
             )}
             {currentStep === 2 && (
-              <StepPropriedade
-                data={data}
-                updateData={updateData}
+              <PlaceholderStep
+                title="Seleção da Propriedade"
+                step={2}
                 onNext={next}
-                onBack={back}
               />
             )}
             {currentStep === 3 && (
-              <StepCultura
-                data={data}
-                updateData={updateData}
+              <PlaceholderStep
+                title="Definição da Cultura"
+                step={3}
                 onNext={next}
-                onBack={back}
               />
             )}
 
@@ -257,10 +197,6 @@ export function CPRWizard() {
                 data={data}
                 onBack={back}
                 goToStep={(s) => setCurrentStep(s)}
-                onGenerate={handleGenerate}
-                isGenerating={isSubmitting}
-                cprError={draftError}
-                onClearError={clearError}
               />
             )}
           </>

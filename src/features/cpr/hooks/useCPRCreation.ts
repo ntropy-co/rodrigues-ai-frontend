@@ -1,76 +1,118 @@
 'use client'
 
 /**
- * useCPRCreation Hook (draft-based)
+ * useCPRCreation Hook
  *
- * Manages CPR wizard drafts using BFF endpoints:
- * - POST /api/cpr/drafts
- * - GET /api/cpr/drafts/:id
- * - PATCH /api/cpr/drafts/:id
- * - POST /api/cpr/drafts/:id/submit
+ * Hook for CPR document creation workflow with LangGraph.
+ * Integrates with CPRWizard to generate CPR documents step-by-step.
+ *
+ * Usage:
+ * ```tsx
+ * const {
+ *   state,
+ *   messages,
+ *   isLoading,
+ *   error,
+ *   startCreation,
+ *   continueCreation,
+ *   submitStepData,
+ *   reset
+ * } = useCPRCreation()
+ *
+ * // Start with initial wizard data
+ * await startCreation({ emitente: {...}, produto: {...} })
+ *
+ * // Submit wizard step data
+ * await submitStepData('emitente', { nome: 'João', cpf: '...' })
+ *
+ * // Continue with confirmation
+ * await continueCreation("Confirmo os dados")
+ * ```
  */
 
-import { useCallback, useState } from 'react'
+import { useState, useCallback } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
 import { trackEvent } from '@/components/providers/PostHogProvider'
-import type {
-  DraftCreateRequest,
-  DraftSubmitRequest,
-  DraftSubmitResponse,
-  DraftSubmitResponseApi,
-  DraftUpdateRequest,
-  WorkflowResponse,
-  WorkflowResponseApi,
-  WizardData,
-  WizardDraft,
-  WizardDraftResponse
-} from '@/features/cpr'
 
 // =============================================================================
-// Helpers
+// Types
 // =============================================================================
 
-const DEFAULT_HEADERS = {
-  'Content-Type': 'application/json'
+export interface WorkflowMessage {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
+  timestamp: Date
 }
 
-type Operation = 'idle' | 'loading' | 'saving' | 'submitting'
-
-function mapDraftResponse(draft: WizardDraftResponse): WizardDraft {
-  return {
-    draftId: draft.draft_id,
-    status: draft.status,
-    wizardData: draft.wizard_data || {},
-    currentStep: draft.current_step,
-    version: draft.version,
-    documentUrl: draft.document_url,
-    createdAt: draft.created_at,
-    updatedAt: draft.updated_at,
-    expiresAt: draft.expires_at
+export interface DocumentData {
+  emitente?: {
+    nome?: string
+    cpf_cnpj?: string
+    rg?: string
+    endereco?: string
+    municipio?: string
+    uf?: string
+    cep?: string
   }
+  credor?: {
+    nome?: string
+    cpf_cnpj?: string
+    endereco?: string
+    municipio?: string
+    uf?: string
+  }
+  produto?: {
+    descricao?: string
+    quantidade?: number
+    unidade?: string
+    safra?: string
+    local_entrega?: string
+  }
+  valores?: {
+    preco_unitario?: number
+    valor_total?: number
+    forma_pagamento?: string
+  }
+  datas?: {
+    emissao?: string
+    vencimento?: string
+    entrega?: string
+  }
+  garantias?: {
+    tipo?: string
+    descricao?: string
+    valor?: number
+    matricula_imovel?: string
+  }
+  clausulas_especiais?: string[]
+  [key: string]: unknown
 }
 
-function mapWorkflowResponse(workflow: WorkflowResponseApi): WorkflowResponse {
-  return {
-    sessionId: workflow.session_id,
-    workflowType: workflow.workflow_type,
-    currentStep: workflow.current_step,
-    isWaitingInput: workflow.is_waiting_input,
-    documentUrl: workflow.document_url
-  }
+export interface WorkflowState {
+  sessionId: string
+  workflowType: 'criar_cpr'
+  currentStep: string
+  isWaitingInput: boolean
+  documentData?: DocumentData
+  documentUrl?: string
 }
 
-async function parseError(response: Response): Promise<string> {
-  try {
-    const data = await response.json()
-    return (
-      data?.message ||
-      data?.detail ||
-      data?.error?.message ||
-      `Request failed (${response.status})`
-    )
-  } catch {
-    return `Request failed (${response.status})`
-  }
+interface WorkflowResponse {
+  text: string
+  session_id: string
+  workflow_type: 'analise_cpr' | 'criar_cpr'
+  is_waiting_input: boolean
+  current_step: string
+  document_url?: string
+  document_data?: DocumentData
+}
+
+interface UseCPRCreationState {
+  state: WorkflowState | null
+  messages: WorkflowMessage[]
+  isLoading: boolean
+  error: string | null
 }
 
 // =============================================================================
@@ -78,274 +120,257 @@ async function parseError(response: Response): Promise<string> {
 // =============================================================================
 
 export function useCPRCreation() {
-  const [draft, setDraft] = useState<WizardDraft | null>(null)
-  const [operation, setOperation] = useState<Operation>('idle')
-  const [error, setError] = useState<string | null>(null)
+  const { token } = useAuth()
 
-  const isLoading = operation === 'loading'
-  const isSaving = operation === 'saving'
-  const isSubmitting = operation === 'submitting'
+  const [hookState, setHookState] = useState<UseCPRCreationState>({
+    state: null,
+    messages: [],
+    isLoading: false,
+    error: null
+  })
 
-  const clearError = useCallback(() => setError(null), [])
+  /**
+   * Process workflow response and update state
+   */
+  const processResponse = useCallback(
+    (response: WorkflowResponse, userMessage?: string) => {
+      const newMessages: WorkflowMessage[] = []
 
-  const createDraft = useCallback(
-    async (
-      wizardData?: WizardData,
-      currentStep = 1
-    ): Promise<WizardDraft | null> => {
-      setOperation('loading')
-      setError(null)
-
-      try {
-        const body: DraftCreateRequest = {}
-        if (wizardData) {
-          body.wizard_data = wizardData
-        }
-        if (currentStep) {
-          body.current_step = currentStep
-        }
-
-        const response = await fetch('/api/cpr/drafts', {
-          method: 'POST',
-          headers: DEFAULT_HEADERS,
-          credentials: 'include',
-          body: JSON.stringify(body)
+      // Add user message if provided
+      if (userMessage) {
+        newMessages.push({
+          id: `user-${Date.now()}`,
+          role: 'user',
+          content: userMessage,
+          timestamp: new Date()
         })
-
-        if (!response.ok) {
-          throw new Error(await parseError(response))
-        }
-
-        const data: WizardDraftResponse = await response.json()
-        const mapped = mapDraftResponse(data)
-        setDraft(mapped)
-        setOperation('idle')
-
-        trackEvent('cpr_draft_created', {
-          draft_id: mapped.draftId,
-          current_step: mapped.currentStep
-        })
-
-        return mapped
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : 'Draft create failed'
-        setError(message)
-        setOperation('idle')
-
-        trackEvent('cpr_draft_error', {
-          error: message,
-          step: 'create'
-        })
-
-        return null
       }
+
+      // Add assistant response
+      newMessages.push({
+        id: `assistant-${Date.now()}`,
+        role: 'assistant',
+        content: response.text,
+        timestamp: new Date()
+      })
+
+      setHookState((prev) => ({
+        state: {
+          sessionId: response.session_id,
+          workflowType: 'criar_cpr',
+          currentStep: response.current_step,
+          isWaitingInput: response.is_waiting_input,
+          documentData: response.document_data || prev.state?.documentData,
+          documentUrl: response.document_url || prev.state?.documentUrl
+        },
+        messages: [...prev.messages, ...newMessages],
+        isLoading: false,
+        error: null
+      }))
     },
     []
   )
 
-  const loadDraft = useCallback(async (draftId: string) => {
-    if (!draftId) {
-      setError('Draft id required')
-      return null
-    }
-
-    setOperation('loading')
-    setError(null)
-
-    try {
-      const response = await fetch(`/api/cpr/drafts/${draftId}`, {
-        method: 'GET',
-        credentials: 'include'
-      })
-
-      if (!response.ok) {
-        throw new Error(await parseError(response))
-      }
-
-      const data: WizardDraftResponse = await response.json()
-      const mapped = mapDraftResponse(data)
-      setDraft(mapped)
-      setOperation('idle')
-
-      trackEvent('cpr_draft_loaded', {
-        draft_id: mapped.draftId,
-        current_step: mapped.currentStep
-      })
-
-      return mapped
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Draft load failed'
-      setError(message)
-      setOperation('idle')
-
-      trackEvent('cpr_draft_error', {
-        error: message,
-        step: 'load'
-      })
-
-      return null
-    }
-  }, [])
-
-  const updateDraft = useCallback(
+  /**
+   * Start a new CPR creation workflow
+   */
+  const startCreation = useCallback(
     async (
-      draftId: string,
-      wizardData: WizardData,
-      currentStep: number,
-      version?: number,
-      options?: { silent?: boolean }
-    ): Promise<WizardDraft | null> => {
-      if (!draftId) {
-        if (!options?.silent) {
-          setError('Draft id required')
-        }
+      initialData?: DocumentData,
+      sessionId?: string
+    ): Promise<WorkflowResponse | null> => {
+      if (!token) {
+        setHookState((prev) => ({
+          ...prev,
+          error: 'Usuário não autenticado',
+          isLoading: false
+        }))
         return null
       }
 
-      if (!options?.silent) {
-        setOperation('saving')
-        setError(null)
-      }
+      setHookState((prev) => ({
+        ...prev,
+        isLoading: true,
+        error: null,
+        messages: [],
+        state: null
+      }))
 
       try {
-        const body: DraftUpdateRequest = {
-          wizard_data: wizardData,
-          current_step: currentStep
-        }
-        if (typeof version === 'number') {
-          body.version = version
-        }
-
-        const response = await fetch(`/api/cpr/drafts/${draftId}`, {
-          method: 'PATCH',
-          headers: DEFAULT_HEADERS,
-          credentials: 'include',
-          body: JSON.stringify(body)
-        })
-
-        if (!response.ok) {
-          throw new Error(await parseError(response))
-        }
-
-        const data: WizardDraftResponse = await response.json()
-        const mapped = mapDraftResponse(data)
-        setDraft(mapped)
-
-        if (!options?.silent) {
-          setOperation('idle')
-        }
-
-        if (!options?.silent) {
-          trackEvent('cpr_draft_updated', {
-            draft_id: mapped.draftId,
-            current_step: mapped.currentStep,
-            version: mapped.version
+        const response = await fetch('/api/cpr/criar/start', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            session_id: sessionId,
+            initial_data: initialData
           })
-        }
-
-        return mapped
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : 'Draft update failed'
-
-        if (!options?.silent) {
-          setError(message)
-          setOperation('idle')
-        }
-
-        trackEvent('cpr_draft_error', {
-          error: message,
-          step: 'update'
-        })
-
-        return null
-      }
-    },
-    []
-  )
-
-  const submitDraft = useCallback(
-    async (draftId: string): Promise<DraftSubmitResponse | null> => {
-      if (!draftId) {
-        setError('Draft id required')
-        return null
-      }
-
-      setOperation('submitting')
-      setError(null)
-
-      try {
-        const body: DraftSubmitRequest = { confirm: true }
-
-        const response = await fetch(`/api/cpr/drafts/${draftId}/submit`, {
-          method: 'POST',
-          headers: DEFAULT_HEADERS,
-          credentials: 'include',
-          body: JSON.stringify(body)
         })
 
         if (!response.ok) {
-          throw new Error(await parseError(response))
+          let errorMessage = 'Erro ao iniciar criação de CPR'
+          try {
+            const errorData = await response.json()
+            errorMessage = errorData.detail || errorMessage
+          } catch {
+            errorMessage = `Erro ${response.status}: ${response.statusText}`
+          }
+          throw new Error(errorMessage)
         }
 
-        const data: DraftSubmitResponseApi = await response.json()
-        const mappedDraft = mapDraftResponse(data.draft)
-        const mappedWorkflow = data.workflow
-          ? mapWorkflowResponse(data.workflow)
-          : undefined
+        const data: WorkflowResponse = await response.json()
+        processResponse(data)
 
-        if (mappedWorkflow?.documentUrl) {
-          mappedDraft.documentUrl = mappedWorkflow.documentUrl
-        }
-
-        setDraft(mappedDraft)
-        setOperation('idle')
-
-        trackEvent('cpr_draft_submitted', {
-          draft_id: mappedDraft.draftId,
-          status: mappedDraft.status,
-          document_url: mappedDraft.documentUrl
+        // Track analytics
+        trackEvent('cpr_creation_started', {
+          session_id: data.session_id,
+          current_step: data.current_step,
+          has_initial_data: !!initialData
         })
 
-        return {
-          draft: mappedDraft,
-          workflow: mappedWorkflow
-        }
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : 'Draft submit failed'
-        setError(message)
-        setOperation('idle')
+        return data
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Erro desconhecido'
 
-        trackEvent('cpr_draft_error', {
-          error: message,
-          step: 'submit'
+        setHookState((prev) => ({
+          ...prev,
+          isLoading: false,
+          error: errorMessage
+        }))
+
+        trackEvent('cpr_creation_error', {
+          error: errorMessage,
+          step: 'start'
         })
 
         return null
       }
     },
-    []
+    [token, processResponse]
   )
 
+  /**
+   * Continue the creation workflow with user response
+   */
+  const continueCreation = useCallback(
+    async (
+      message: string,
+      stepData?: Record<string, unknown>
+    ): Promise<WorkflowResponse | null> => {
+      if (!token) {
+        setHookState((prev) => ({
+          ...prev,
+          error: 'Usuário não autenticado',
+          isLoading: false
+        }))
+        return null
+      }
+
+      if (!hookState.state?.sessionId) {
+        setHookState((prev) => ({
+          ...prev,
+          error: 'Nenhuma sessão ativa. Inicie uma nova criação.',
+          isLoading: false
+        }))
+        return null
+      }
+
+      setHookState((prev) => ({ ...prev, isLoading: true, error: null }))
+
+      try {
+        const response = await fetch('/api/cpr/criar/continue', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            session_id: hookState.state.sessionId,
+            message,
+            step_data: stepData
+          })
+        })
+
+        if (!response.ok) {
+          let errorMessage = 'Erro ao continuar criação'
+          try {
+            const errorData = await response.json()
+            errorMessage = errorData.detail || errorMessage
+          } catch {
+            errorMessage = `Erro ${response.status}: ${response.statusText}`
+          }
+          throw new Error(errorMessage)
+        }
+
+        const data: WorkflowResponse = await response.json()
+        processResponse(data, message)
+
+        // Track step completion
+        trackEvent('cpr_creation_step_completed', {
+          session_id: data.session_id,
+          current_step: data.current_step,
+          is_complete: !data.is_waiting_input,
+          has_document: !!data.document_url
+        })
+
+        return data
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Erro desconhecido'
+
+        setHookState((prev) => ({
+          ...prev,
+          isLoading: false,
+          error: errorMessage
+        }))
+
+        trackEvent('cpr_creation_error', {
+          error: errorMessage,
+          step: hookState.state?.currentStep,
+          session_id: hookState.state?.sessionId
+        })
+
+        return null
+      }
+    },
+    [token, hookState.state, processResponse]
+  )
+
+  /**
+   * Submit wizard step data
+   */
+  const submitStepData = useCallback(
+    async (
+      stepName: string,
+      data: Record<string, unknown>
+    ): Promise<WorkflowResponse | null> => {
+      return continueCreation(`Dados de ${stepName} preenchidos`, {
+        [stepName]: data
+      })
+    },
+    [continueCreation]
+  )
+
+  /**
+   * Reset the hook state
+   */
   const reset = useCallback(() => {
-    setDraft(null)
-    setOperation('idle')
-    setError(null)
+    setHookState({
+      state: null,
+      messages: [],
+      isLoading: false,
+      error: null
+    })
   }, [])
 
   return {
-    draft,
-    isLoading,
-    isSaving,
-    isSubmitting,
-    error,
-    createDraft,
-    loadDraft,
-    updateDraft,
-    submitDraft,
-    clearError,
+    ...hookState,
+    startCreation,
+    continueCreation,
+    submitStepData,
     reset
   }
 }

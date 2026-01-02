@@ -73,7 +73,7 @@ interface UseRiskCalculatorState {
  * ```
  */
 export function useRiskCalculator() {
-  const { user } = useAuth()
+  const { token } = useAuth()
 
   const [state, setState] = useState<UseRiskCalculatorState>({
     result: null,
@@ -88,7 +88,7 @@ export function useRiskCalculator() {
     async (
       data: RiskCalculateRequest
     ): Promise<RiskCalculateResponse | null> => {
-      if (!user) {
+      if (!token) {
         setState((prev) => ({
           ...prev,
           error: 'Usuário não autenticado',
@@ -103,7 +103,8 @@ export function useRiskCalculator() {
         const response = await fetch('/api/cpr/risk/calculate', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
           },
           body: JSON.stringify(data)
         })
@@ -147,7 +148,7 @@ export function useRiskCalculator() {
         return null
       }
     },
-    [user]
+    [token]
   )
 
   /**

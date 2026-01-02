@@ -1,5 +1,5 @@
 /**
- * Tests for useCPRCreation hook (draft-based)
+ * Tests for useCPRCreation hook
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
@@ -9,6 +9,11 @@ import { useCPRCreation } from './useCPRCreation'
 // =============================================================================
 // Mocks
 // =============================================================================
+
+const mockToken = 'test-jwt-token'
+vi.mock('@/contexts/AuthContext', () => ({
+  useAuth: () => ({ token: mockToken })
+}))
 
 vi.mock('@/components/providers/PostHogProvider', () => ({
   trackEvent: vi.fn()
@@ -21,36 +26,36 @@ global.fetch = mockFetch
 // Test Data
 // =============================================================================
 
-const mockDraftResponse = {
-  draft_id: 'draft-123',
-  status: 'draft',
-  wizard_data: {
-    producer: { name: 'Maria' }
-  },
-  current_step: 1,
-  version: 1,
-  created_at: '2026-01-01T00:00:00Z',
-  updated_at: '2026-01-01T00:00:00Z'
+const mockStartResponse = {
+  text: 'Vamos criar sua CPR. Por favor, informe os dados do emitente.',
+  session_id: 'session-456',
+  workflow_type: 'criar_cpr',
+  is_waiting_input: true,
+  current_step: 'emitente'
 }
 
-const mockDraftUpdateResponse = {
-  ...mockDraftResponse,
-  current_step: 2,
-  version: 2
+const mockContinueResponse = {
+  text: 'Dados do emitente registrados. Agora informe os dados do credor.',
+  session_id: 'session-456',
+  workflow_type: 'criar_cpr',
+  is_waiting_input: true,
+  current_step: 'credor',
+  document_data: {
+    emitente: { nome: 'Maria Santos', cpf_cnpj: '987.654.321-00' }
+  }
 }
 
-const mockSubmitResponse = {
-  draft: {
-    ...mockDraftResponse,
-    status: 'submitted',
-    version: 3
-  },
-  workflow: {
-    session_id: 'session-456',
-    workflow_type: 'criar_cpr',
-    current_step: 'finalizado',
-    is_waiting_input: false,
-    document_url: 'https://storage.example.com/cpr-123.pdf'
+const mockFinalResponse = {
+  text: 'CPR gerada com sucesso! Clique no link para baixar.',
+  session_id: 'session-456',
+  workflow_type: 'criar_cpr',
+  is_waiting_input: false,
+  current_step: 'concluido',
+  document_url: 'https://storage.example.com/cpr-123.pdf',
+  document_data: {
+    emitente: { nome: 'Maria Santos', cpf_cnpj: '987.654.321-00' },
+    credor: { nome: 'Banco Agro', cpf_cnpj: '00.000.000/0001-00' },
+    produto: { descricao: 'Milho', quantidade: 500, unidade: 'toneladas' }
   }
 }
 
@@ -68,189 +73,291 @@ describe('useCPRCreation', () => {
   })
 
   describe('initial state', () => {
-    it('should start with null draft and no errors', () => {
+    it('should start with null state and empty messages', () => {
       const { result } = renderHook(() => useCPRCreation())
 
-      expect(result.current.draft).toBeNull()
+      expect(result.current.state).toBeNull()
+      expect(result.current.messages).toEqual([])
       expect(result.current.isLoading).toBe(false)
-      expect(result.current.isSaving).toBe(false)
-      expect(result.current.isSubmitting).toBe(false)
       expect(result.current.error).toBeNull()
     })
 
     it('should provide all required functions', () => {
       const { result } = renderHook(() => useCPRCreation())
 
-      expect(typeof result.current.createDraft).toBe('function')
-      expect(typeof result.current.loadDraft).toBe('function')
-      expect(typeof result.current.updateDraft).toBe('function')
-      expect(typeof result.current.submitDraft).toBe('function')
+      expect(typeof result.current.startCreation).toBe('function')
+      expect(typeof result.current.continueCreation).toBe('function')
+      expect(typeof result.current.submitStepData).toBe('function')
       expect(typeof result.current.reset).toBe('function')
     })
   })
 
-  describe('createDraft()', () => {
+  describe('startCreation()', () => {
     it('should call API with correct endpoint', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve(mockDraftResponse)
+        json: () => Promise.resolve(mockStartResponse)
       })
 
       const { result } = renderHook(() => useCPRCreation())
 
       await act(async () => {
-        await result.current.createDraft()
+        await result.current.startCreation()
       })
 
-      expect(mockFetch).toHaveBeenCalledWith('/api/cpr/drafts', {
+      expect(mockFetch).toHaveBeenCalledWith('/api/cpr/criar/start', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${mockToken}`
         },
-        credentials: 'include',
-        body: JSON.stringify({ current_step: 1 })
+        body: JSON.stringify({})
       })
     })
 
-    it('should update draft on success', async () => {
+    it('should update state on successful start', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve(mockDraftResponse)
+        json: () => Promise.resolve(mockStartResponse)
       })
 
       const { result } = renderHook(() => useCPRCreation())
 
       await act(async () => {
-        await result.current.createDraft()
+        await result.current.startCreation()
       })
 
-      expect(result.current.draft?.draftId).toBe('draft-123')
-      expect(result.current.draft?.currentStep).toBe(1)
+      expect(result.current.state).not.toBeNull()
+      expect(result.current.state?.sessionId).toBe('session-456')
+      expect(result.current.state?.workflowType).toBe('criar_cpr')
+      expect(result.current.state?.currentStep).toBe('emitente')
+    })
+
+    it('should pass initial_data when provided', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockStartResponse)
+      })
+
+      const initialData = {
+        emitente: { nome: 'Test User' },
+        produto: { descricao: 'Soja' }
+      }
+
+      const { result } = renderHook(() => useCPRCreation())
+
+      await act(async () => {
+        await result.current.startCreation(initialData)
+      })
+
+      expect(mockFetch).toHaveBeenCalledWith('/api/cpr/criar/start', {
+        method: 'POST',
+        headers: expect.any(Object),
+        body: JSON.stringify({ initial_data: initialData })
+      })
     })
 
     it('should handle API error', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 400,
-        json: () => Promise.resolve({ detail: 'Invalid data' })
+        json: () => Promise.resolve({ detail: 'Dados inválidos' })
       })
 
       const { result } = renderHook(() => useCPRCreation())
 
       await act(async () => {
-        await result.current.createDraft()
+        await result.current.startCreation()
       })
 
-      expect(result.current.error).toBe('Invalid data')
-      expect(result.current.draft).toBeNull()
+      expect(result.current.error).toBe('Dados inválidos')
+      expect(result.current.state).toBeNull()
     })
   })
 
-  describe('loadDraft()', () => {
-    it('should fetch and load draft by id', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve(mockDraftResponse)
-      })
-
+  describe('continueCreation()', () => {
+    it('should fail without active session', async () => {
       const { result } = renderHook(() => useCPRCreation())
 
       await act(async () => {
-        await result.current.loadDraft('draft-123')
+        await result.current.continueCreation('confirm')
       })
 
-      expect(mockFetch).toHaveBeenCalledWith('/api/cpr/drafts/draft-123', {
-        method: 'GET',
-        credentials: 'include'
-      })
-      expect(result.current.draft?.draftId).toBe('draft-123')
+      expect(result.current.error).toBe(
+        'Nenhuma sessão ativa. Inicie uma nova criação.'
+      )
     })
-  })
 
-  describe('updateDraft()', () => {
-    it('should call API with patch payload', async () => {
+    it('should call API with session_id, message and step_data', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve(mockDraftUpdateResponse)
+        json: () => Promise.resolve(mockStartResponse)
       })
 
       const { result } = renderHook(() => useCPRCreation())
-      const wizardData = { producer: { name: 'Maria' } }
 
       await act(async () => {
-        await result.current.updateDraft('draft-123', wizardData, 2, 1)
+        await result.current.startCreation()
       })
 
-      expect(mockFetch).toHaveBeenCalledWith('/api/cpr/drafts/draft-123', {
-        method: 'PATCH',
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockContinueResponse)
+      })
+
+      const stepData = { emitente: { nome: 'Test', cpf_cnpj: '123' } }
+
+      await act(async () => {
+        await result.current.continueCreation('Dados preenchidos', stepData)
+      })
+
+      expect(mockFetch).toHaveBeenLastCalledWith('/api/cpr/criar/continue', {
+        method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${mockToken}`
         },
-        credentials: 'include',
         body: JSON.stringify({
-          wizard_data: wizardData,
-          current_step: 2,
-          version: 1
+          session_id: 'session-456',
+          message: 'Dados preenchidos',
+          step_data: stepData
         })
       })
-      expect(result.current.draft?.version).toBe(2)
     })
-  })
 
-  describe('submitDraft()', () => {
-    it('should submit draft and return workflow', async () => {
+    it('should update document_data when provided', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve(mockSubmitResponse)
+        json: () => Promise.resolve(mockStartResponse)
       })
 
       const { result } = renderHook(() => useCPRCreation())
 
-      let response
       await act(async () => {
-        response = await result.current.submitDraft('draft-123')
+        await result.current.startCreation()
       })
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        '/api/cpr/drafts/draft-123/submit',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          credentials: 'include',
-          body: JSON.stringify({ confirm: true })
-        }
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockContinueResponse)
+      })
+
+      await act(async () => {
+        await result.current.continueCreation('next')
+      })
+
+      expect(result.current.state?.documentData).toBeDefined()
+      expect(result.current.state?.documentData?.emitente?.nome).toBe(
+        'Maria Santos'
       )
-      expect(response?.workflow?.documentUrl).toBe(
-        'https://storage.example.com/cpr-123.pdf'
-      )
-      expect(result.current.draft?.documentUrl).toBe(
+    })
+  })
+
+  describe('submitStepData()', () => {
+    it('should call continueCreation with formatted message', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockStartResponse)
+      })
+
+      const { result } = renderHook(() => useCPRCreation())
+
+      await act(async () => {
+        await result.current.startCreation()
+      })
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockContinueResponse)
+      })
+
+      const emitenteData = { nome: 'Test', cpf_cnpj: '123.456.789-00' }
+
+      await act(async () => {
+        await result.current.submitStepData('emitente', emitenteData)
+      })
+
+      expect(mockFetch).toHaveBeenLastCalledWith('/api/cpr/criar/continue', {
+        method: 'POST',
+        headers: expect.any(Object),
+        body: JSON.stringify({
+          session_id: 'session-456',
+          message: 'Dados de emitente preenchidos',
+          step_data: { emitente: emitenteData }
+        })
+      })
+    })
+  })
+
+  describe('full workflow', () => {
+    it('should complete full creation flow with document URL', async () => {
+      const { result } = renderHook(() => useCPRCreation())
+
+      // Step 1: Start
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockStartResponse)
+      })
+
+      await act(async () => {
+        await result.current.startCreation()
+      })
+
+      expect(result.current.state?.currentStep).toBe('emitente')
+
+      // Step 2: Submit emitente data
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockContinueResponse)
+      })
+
+      await act(async () => {
+        await result.current.submitStepData('emitente', {
+          nome: 'Maria Santos'
+        })
+      })
+
+      expect(result.current.state?.currentStep).toBe('credor')
+
+      // Step 3: Finish and get document
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockFinalResponse)
+      })
+
+      await act(async () => {
+        await result.current.continueCreation('Gerar documento')
+      })
+
+      expect(result.current.state?.currentStep).toBe('concluido')
+      expect(result.current.state?.isWaitingInput).toBe(false)
+      expect(result.current.state?.documentUrl).toBe(
         'https://storage.example.com/cpr-123.pdf'
       )
     })
   })
 
   describe('reset()', () => {
-    it('should clear state', async () => {
+    it('should clear all state', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve(mockDraftResponse)
+        json: () => Promise.resolve(mockStartResponse)
       })
 
       const { result } = renderHook(() => useCPRCreation())
 
       await act(async () => {
-        await result.current.createDraft()
+        await result.current.startCreation()
       })
 
-      expect(result.current.draft).not.toBeNull()
+      expect(result.current.state).not.toBeNull()
 
       act(() => {
         result.current.reset()
       })
 
-      expect(result.current.draft).toBeNull()
+      expect(result.current.state).toBeNull()
+      expect(result.current.messages).toEqual([])
       expect(result.current.error).toBeNull()
     })
   })

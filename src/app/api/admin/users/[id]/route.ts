@@ -22,13 +22,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthorizationFromRequest } from '@/lib/api/auth-header'
 
-// Use server-side env var first, fallback to public for development
-const BACKEND_URL =
-  process.env.BACKEND_URL ||
-  process.env.NEXT_PUBLIC_API_URL ||
-  'http://localhost:8000'
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 type RouteParams = { params: Promise<{ id: string }> }
 
@@ -55,7 +50,7 @@ export interface UpdateRoleRequest {
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
-    const authorization = getAuthorizationFromRequest(request)
+    const authorization = request.headers.get('authorization')
     const { id } = await params
 
     if (!authorization) {
@@ -112,7 +107,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
  */
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
   try {
-    const authorization = getAuthorizationFromRequest(request)
+    const authorization = request.headers.get('authorization')
     const { id } = await params
 
     if (!authorization) {
@@ -201,7 +196,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
  */
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
-    const authorization = getAuthorizationFromRequest(request)
+    const authorization = request.headers.get('authorization')
     const { id } = await params
 
     if (!authorization) {
@@ -245,13 +240,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     // Handle JSON response if backend returns one
     const contentType = response.headers.get('content-type') || ''
     if (contentType.includes('application/json')) {
-      const data = await response.json().catch((err) => {
-        console.warn(
-          '[API /api/admin/users/[id]] Response not JSON:',
-          err.message
-        )
-        return null
-      })
+      const data = await response.json().catch(() => null)
       if (data !== null) {
         return NextResponse.json(data, { status: response.status })
       }
