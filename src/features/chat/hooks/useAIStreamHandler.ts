@@ -3,71 +3,15 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { useShallow } from 'zustand/react/shallow'
 
-import useChatActions from '@/features/chat/hooks/useChatActions'
+import { useChatActions } from '@/features/chat/hooks/useChatActions'
 import { usePlaygroundStore } from '../stores/playgroundStore'
 import { useAuth } from '@/contexts/AuthContext'
 import { trackEvent } from '@/components/providers/PostHogProvider'
 
-/**
- * Chat response from backend (non-streaming)
- */
-interface ChatResponse {
-  text: string
-  session_id: string
-  message_id?: string
-}
+// ... existing code ...
 
 /**
- * SSE event types from backend streaming endpoint
- */
-interface SSEContentEvent {
-  type: 'content'
-  content: string
-}
-
-interface SSEUsageEvent {
-  type: 'usage'
-  usage: {
-    prompt_tokens: number
-    completion_tokens: number
-    total_tokens: number
-  }
-}
-
-interface SSEDoneEvent {
-  type: 'done'
-}
-
-interface SSEErrorEvent {
-  type: 'error'
-  error: string
-}
-
-type SSEEvent = SSEContentEvent | SSEUsageEvent | SSEDoneEvent | SSEErrorEvent
-
-/**
- * Parse SSE line into event object
- */
-function parseSSELine(line: string): SSEEvent | null {
-  if (!line.startsWith('data: ')) return null
-
-  const data = line.slice(6).trim()
-
-  // Handle terminal event
-  if (data === '[DONE]') {
-    return { type: 'done' }
-  }
-
-  try {
-    return JSON.parse(data) as SSEEvent
-  } catch {
-    console.warn('[SSE] Failed to parse:', data)
-    return null
-  }
-}
-
-/**
- * useAIChatStreamHandler is responsible for making API calls to the chat endpoint.
+ * useAIStreamHandler is responsible for making API calls to the chat endpoint.
  *
  * Supports two modes:
  * 1. Streaming (SSE) - Real-time streaming via POST /api/chat/stream
@@ -76,8 +20,10 @@ function parseSSELine(line: string): SSEEvent | null {
  * Streaming is used when session_id exists (existing session).
  * Non-streaming is used for new sessions (to get session_id first).
  */
-const useAIChatStreamHandler = () => {
+export const useAIStreamHandler = () => {
   const router = useRouter()
+// ... existing code ...
+
   const abortControllerRef = useRef<AbortController | null>(null)
 
   // Consolidated Zustand selectors with shallow equality to prevent unnecessary re-renders
@@ -484,4 +430,4 @@ const useAIChatStreamHandler = () => {
   return { handleStreamResponse, cancelStream }
 }
 
-export default useAIChatStreamHandler
+
