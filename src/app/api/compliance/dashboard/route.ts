@@ -66,9 +66,47 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Return successful response
-    const data = await response.json()
-    return NextResponse.json(data, { status: 200 })
+    const data: {
+      total_documents?: number
+      approved?: number
+      documents?: Array<{
+        document_id: string
+        score: number
+        grade: string
+        verified_at: string
+      }>
+    } = await response.json()
+
+    const totalVerified = data.total_documents ?? 0
+    const approved = data.approved ?? 0
+    const complianceRate =
+      totalVerified > 0 ? (approved / totalVerified) * 100 : 0
+
+    const recentVerifications = Array.isArray(data.documents)
+      ? data.documents
+          .slice()
+          .sort(
+            (a, b) =>
+              new Date(b.verified_at).getTime() -
+              new Date(a.verified_at).getTime()
+          )
+          .map((doc) => ({
+            id: doc.document_id,
+            document_id: doc.document_id,
+            score: doc.score,
+            grade: doc.grade,
+            verified_at: doc.verified_at
+          }))
+      : []
+
+    return NextResponse.json(
+      {
+        total_verified: totalVerified,
+        compliance_rate: complianceRate,
+        recent_verifications: recentVerifications
+      },
+      { status: 200 }
+    )
   } catch (error) {
     console.error('[API /api/compliance/dashboard] Error:', error)
     return NextResponse.json(

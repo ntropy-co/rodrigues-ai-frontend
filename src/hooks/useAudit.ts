@@ -55,15 +55,17 @@ export interface AuditFilters {
 export function useAudit() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const { token } = useAuth()
+  const { user } = useAuth()
 
   /**
    * Fetch audit logs for the current user
    */
   const fetchMyLogs = useCallback(
     async (filters?: AuditFilters): Promise<AuditLogList | null> => {
-      if (!token) {
-        console.log('[useAudit] No token available, skipping fetch')
+      if (!user) {
+        console.log(
+          '[useAudit] No authenticated user available, skipping fetch'
+        )
         return null
       }
 
@@ -113,7 +115,7 @@ export function useAudit() {
         setLoading(false)
       }
     },
-    [token]
+    [user]
   )
 
   /**
@@ -124,8 +126,10 @@ export function useAudit() {
       userId: string,
       filters?: AuditFilters
     ): Promise<AuditLogList | null> => {
-      if (!token) {
-        console.log('[useAudit] No token available, skipping fetch')
+      if (!user) {
+        console.log(
+          '[useAudit] No authenticated user available, skipping fetch'
+        )
         return null
       }
 
@@ -178,7 +182,7 @@ export function useAudit() {
         setLoading(false)
       }
     },
-    [token]
+    [user]
   )
 
   /**
@@ -190,8 +194,10 @@ export function useAudit() {
       resourceId: string,
       limit?: number
     ): Promise<AuditLog[] | null> => {
-      if (!token) {
-        console.log('[useAudit] No token available, skipping fetch')
+      if (!user) {
+        console.log(
+          '[useAudit] No authenticated user available, skipping fetch'
+        )
         return null
       }
 
@@ -239,7 +245,7 @@ export function useAudit() {
         setLoading(false)
       }
     },
-    [token]
+    [user]
   )
 
   /**
@@ -247,8 +253,10 @@ export function useAudit() {
    */
   const fetchRecentActivity = useCallback(
     async (hours?: number, limit?: number): Promise<AuditLog[] | null> => {
-      if (!token) {
-        console.log('[useAudit] No token available, skipping fetch')
+      if (!user) {
+        console.log(
+          '[useAudit] No authenticated user available, skipping fetch'
+        )
         return null
       }
 
@@ -294,7 +302,7 @@ export function useAudit() {
         setLoading(false)
       }
     },
-    [token]
+    [user]
   )
 
   /**
@@ -302,8 +310,10 @@ export function useAudit() {
    */
   const fetchSecurityEvents = useCallback(
     async (hours?: number): Promise<AuditLog[] | null> => {
-      if (!token) {
-        console.log('[useAudit] No token available, skipping fetch')
+      if (!user) {
+        console.log(
+          '[useAudit] No authenticated user available, skipping fetch'
+        )
         return null
       }
 
@@ -348,15 +358,15 @@ export function useAudit() {
         setLoading(false)
       }
     },
-    [token]
+    [user]
   )
 
   /**
    * Fetch all available audit action types
    */
   const fetchAuditActions = useCallback(async (): Promise<string[] | null> => {
-    if (!token) {
-      console.log('[useAudit] No token available, skipping fetch')
+    if (!user) {
+      console.log('[useAudit] No authenticated user available, skipping fetch')
       return null
     }
 
@@ -386,14 +396,14 @@ export function useAudit() {
     } finally {
       setLoading(false)
     }
-  }, [token])
+  }, [user])
 
   /**
    * Fetch all available resource types
    */
   const fetchResourceTypes = useCallback(async (): Promise<string[] | null> => {
-    if (!token) {
-      console.log('[useAudit] No token available, skipping fetch')
+    if (!user) {
+      console.log('[useAudit] No authenticated user available, skipping fetch')
       return null
     }
 
@@ -423,7 +433,7 @@ export function useAudit() {
     } finally {
       setLoading(false)
     }
-  }, [token])
+  }, [user])
 
   return {
     loading,

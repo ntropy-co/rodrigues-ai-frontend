@@ -234,17 +234,37 @@ export const MessageBubble = memo(function MessageBubble({
               <div className="h-4 w-px bg-verity-200" />
               <button
                 onClick={() => onFeedback?.(message.id || 'unknown', 'up')}
-                className="rounded-lg p-1.5 text-verity-700 transition-colors hover:bg-verity-50"
+                className={cn(
+                  'rounded-lg p-1.5 transition-colors',
+                  message.feedback === 'like'
+                    ? 'bg-green-100 text-green-700'
+                    : 'text-verity-700 hover:bg-verity-50'
+                )}
                 aria-label="Útil"
               >
-                <ThumbsUp className="h-4 w-4" />
+                <ThumbsUp
+                  className={cn(
+                    'h-4 w-4',
+                    message.feedback === 'like' && 'fill-current'
+                  )}
+                />
               </button>
               <button
                 onClick={() => onFeedback?.(message.id || 'unknown', 'down')}
-                className="rounded-lg p-1.5 text-verity-700 transition-colors hover:bg-verity-50"
+                className={cn(
+                  'rounded-lg p-1.5 transition-colors',
+                  message.feedback === 'dislike'
+                    ? 'bg-red-100 text-red-700'
+                    : 'text-verity-700 hover:bg-verity-50'
+                )}
                 aria-label="Não útil"
               >
-                <ThumbsDown className="h-4 w-4" />
+                <ThumbsDown
+                  className={cn(
+                    'h-4 w-4',
+                    message.feedback === 'dislike' && 'fill-current'
+                  )}
+                />
               </button>
             </motion.div>
           )}

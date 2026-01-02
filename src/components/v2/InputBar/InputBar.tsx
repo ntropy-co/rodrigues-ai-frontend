@@ -26,7 +26,7 @@ import { useChatInputRefSafe } from '@/contexts/ChatInputContext'
 import { useCanvasStore } from '@/stores/useCanvasStore'
 import {
   SLASH_COMMANDS,
-  MOCK_MENTIONS,
+  STATIC_MENTIONS,
   AgentCommand,
   AgentMention,
   CommandType
@@ -159,7 +159,17 @@ export function InputBar({
           c.trigger.toLowerCase().startsWith(suggestionQuery.toLowerCase())
         )
       : suggestionMode === 'mention'
-        ? MOCK_MENTIONS.filter((m) =>
+        ? [
+            ...STATIC_MENTIONS,
+            // Dynamic file mentions from externalAttachments and attachments
+            ...[...externalAttachments, ...attachments].map((file, idx) => ({
+              id: `file-${idx}`,
+              label: file.name,
+              description: formatFileSize(file.size), // Using utility
+              type: 'mention' as const,
+              trigger: `@${file.name.replace(/\s+/g, '_')}` // Normalize trigger
+            }))
+          ].filter((m) =>
             m.trigger.toLowerCase().includes(suggestionQuery.toLowerCase())
           )
         : []
@@ -212,8 +222,8 @@ export function InputBar({
     useCanvasStore
       .getState()
       .openCanvas(
-        '# Canvas Mode Active\n\nThis is a persistent workspace.\n',
-        'New Artifact'
+        '# Modo Canvas Ativado\n\nEste é um espaço de trabalho persistente.\n',
+        'Novo Documento'
       )
     handleInputChange('')
     closeSuggestions()
@@ -238,16 +248,34 @@ export function InputBar({
     const cursor = textarea.selectionStart
 
     if (item.type === 'slash') {
-      // Most slash commands are "Actions".
-      // If reset -> call reset logic. (Simulated)
-      if (item.id === 'reset') {
-        toast.info('Contexto limpo!')
+      if (item.id === 'clean') {
+        const confirmClear = window.confirm(
+          'Tem certeza que deseja limpar o chat?'
+        )
+        if (confirmClear) {
+          toast.info('Contexto limpo!')
+          if (onSessionCreated) {
+            // HACK: Start new session via redirect or callback
+            window.location.href = '/chat'
+          }
+        }
         handleInputChange('')
-      } else if (item.id.includes('gpt') || item.id.includes('claude')) {
-        toast.success(`Modelo alterado para: ${item.label}`)
+      } else if (item.id === 'upload') {
+        setIsUploadModalOpen(true)
         handleInputChange('')
+      } else if (item.id === 'help' || item.id === 'commands') {
+        // Alias for help
+        toast.info(
+          'Comandos: /canvas (Editor), /limpar (Novo), /upload (Arq), /juris (Pesquisa Legal)',
+          { duration: 5000 }
+        )
+        handleInputChange('')
+      } else if (item.id === 'juris') {
+        // Prepend specific context trigger for jurisprudence
+        handleInputChange('Pesquisar jurisprudência sobre: ')
+        toast.info('Modo Jurisprudência: Digite sua dúvida legal.')
       } else {
-        // Default action
+        // Default action (like /config)
         handleInputChange('')
       }
     } else {

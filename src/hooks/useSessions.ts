@@ -32,11 +32,11 @@ function mapToSessionEntry(session: BackendSession): SessionEntry {
 export function useSessions() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const { token } = useAuth()
+  const { user } = useAuth()
 
   const fetchSessions = useCallback(
     async (projectId?: string | null): Promise<SessionEntry[]> => {
-      if (!token) {
+      if (!user) {
         return []
       }
 
@@ -72,7 +72,7 @@ export function useSessions() {
         setLoading(false)
       }
     },
-    [token]
+    [user]
   )
 
   const createSession = useCallback(
@@ -80,7 +80,7 @@ export function useSessions() {
       title?: string,
       projectId?: string
     ): Promise<SessionEntry | null> => {
-      if (!token) {
+      if (!user) {
         return null
       }
 
@@ -124,12 +124,12 @@ export function useSessions() {
         setLoading(false)
       }
     },
-    [token]
+    [user]
   )
 
   const deleteSession = useCallback(
     async (sessionId: string): Promise<boolean> => {
-      if (!token) {
+      if (!user) {
         return false
       }
 
@@ -154,7 +154,7 @@ export function useSessions() {
         setLoading(false)
       }
     },
-    [token]
+    [user]
   )
 
   const updateSession = useCallback(
@@ -162,7 +162,7 @@ export function useSessions() {
       sessionId: string,
       data: { title?: string }
     ): Promise<SessionEntry | null> => {
-      if (!token) {
+      if (!user) {
         return null
       }
 
@@ -198,7 +198,7 @@ export function useSessions() {
         setLoading(false)
       }
     },
-    [token]
+    [user]
   )
 
   return {

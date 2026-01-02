@@ -17,9 +17,15 @@ import type {
 // =============================================================================
 
 // Mock AuthContext
-const mockToken = 'test-jwt-token'
+const mockUser = {
+  id: 'user-123',
+  email: 'user@example.com',
+  name: 'Test User',
+  role: 'analyst'
+}
+let authUser: typeof mockUser | null = mockUser
 vi.mock('@/contexts/AuthContext', () => ({
-  useAuth: () => ({ token: mockToken })
+  useAuth: () => ({ user: authUser })
 }))
 
 // Mock PostHog
@@ -82,6 +88,7 @@ const mockResponse: RiskCalculateResponse = {
 describe('useRiskCalculator', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    authUser = mockUser
   })
 
   afterEach(() => {
@@ -149,8 +156,7 @@ describe('useRiskCalculator', () => {
       expect(mockFetch).toHaveBeenCalledWith('/api/cpr/risk/calculate', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${mockToken}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(mockRequest)
       })
@@ -222,20 +228,8 @@ describe('useRiskCalculator', () => {
       expect(result.current.error).toBe('Network error')
     })
 
-    it('should return null when no token available', async () => {
-      // Override mock for this test
-      vi.doMock('@/contexts/AuthContext', () => ({
-        useAuth: () => ({ token: null })
-      }))
-
-      // Need to re-import to get new mock
-      // For simplicity, we test the error path instead
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 401,
-        statusText: 'Unauthorized',
-        json: () => Promise.resolve({ detail: 'Authorization header required' })
-      })
+    it('should return null when no user available', async () => {
+      authUser = null
 
       const { result } = renderHook(() => useRiskCalculator())
 
@@ -243,7 +237,8 @@ describe('useRiskCalculator', () => {
         await result.current.calculate(mockRequest)
       })
 
-      expect(result.current.error).toBe('Authorization header required')
+      expect(mockFetch).not.toHaveBeenCalled()
+      expect(result.current.error).toBe('Usuário não autenticado')
     })
   })
 

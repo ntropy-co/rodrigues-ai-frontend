@@ -10,9 +10,14 @@ import { useSessions } from './useSessions'
 // Mocks
 // =============================================================================
 
-const mockToken = 'test-jwt-token'
+const mockUser = {
+  id: 'user-123',
+  email: 'user@example.com',
+  name: 'Test User',
+  role: 'analyst'
+}
 vi.mock('@/contexts/AuthContext', () => ({
-  useAuth: () => ({ token: mockToken })
+  useAuth: () => ({ user: mockUser })
 }))
 
 const mockFetchWithRefresh = vi.fn()

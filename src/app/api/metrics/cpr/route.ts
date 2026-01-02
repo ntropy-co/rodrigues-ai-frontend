@@ -6,7 +6,7 @@ const PAGE_SIZE = 100
 const MAX_PAGES = 50
 
 type BackendHistoryItem = {
-  extra_data?: Record<string, unknown> | null
+  metadata?: Record<string, unknown> | null
 }
 
 type BackendHistoryResponse = {
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
       totalCount += items.length
 
       for (const item of items) {
-        const value = parseNumber(item.extra_data?.total_value)
+        const value = parseNumber(item.metadata?.total_value)
         if (value !== null) {
           totalValue += value
         }
