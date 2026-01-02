@@ -1,10 +1,10 @@
 import {
-  MessageSquare,
-  Sparkles,
   FileText,
   Settings,
-  RefreshCw,
-  LucideIcon
+  LucideIcon,
+  Eraser,
+  HelpCircle,
+  Upload
 } from 'lucide-react'
 
 export type CommandType = 'slash' | 'mention'
@@ -29,36 +29,44 @@ export interface AgentMention {
 
 export const SLASH_COMMANDS: AgentCommand[] = [
   {
-    id: 'gpt-4o',
-    label: 'GPT-4o',
-    description: 'Mudar para modelo GPT-4o (OpenAI)',
-    icon: Sparkles,
+    id: 'clean',
+    label: 'Limpar Chat',
+    description: 'Começar uma nova conversa',
+    icon: Eraser,
     type: 'slash',
-    trigger: '/gpt4'
+    trigger: '/limpar'
   },
   {
-    id: 'claude-3-5-sonnet',
-    label: 'Claude 3.5 Sonnet',
-    description: 'Mudar para Claude 3.5 Sonnet (Anthropic)',
-    icon: MessageSquare,
+    id: 'upload',
+    label: 'Enviar Arquivo',
+    description: 'Anexar documentos',
+    icon: Upload,
     type: 'slash',
-    trigger: '/claude'
+    trigger: '/upload'
   },
   {
     id: 'canvas',
-    label: 'Canvas Mode',
-    description: 'Abrir workspace de edição',
+    label: 'Modo Canvas',
+    description: 'Abrir editor de texto',
     icon: FileText,
     type: 'slash',
     trigger: '/canvas'
   },
   {
-    id: 'reset',
-    label: 'Reset Thread',
-    description: 'Limpar contexto atual',
-    icon: RefreshCw,
+    id: 'help',
+    label: 'Ajuda / Comandos',
+    description: 'Lista todos os comandos disponíveis',
+    icon: HelpCircle,
     type: 'slash',
-    trigger: '/reset'
+    trigger: '/comandos' // Changed from /ajuda to satisfy user request directly, or support both via input logic
+  },
+  {
+    id: 'juris',
+    label: 'Jurisprudência',
+    description: 'Pesquisar em base legal',
+    icon: FileText, // Using generic file icon or similar
+    type: 'slash',
+    trigger: '/juris'
   },
   {
     id: 'settings',
@@ -70,19 +78,12 @@ export const SLASH_COMMANDS: AgentCommand[] = [
   }
 ]
 
-export const MOCK_MENTIONS: AgentMention[] = [
+export const STATIC_MENTIONS: AgentMention[] = [
   {
-    id: 'doc-1',
-    label: 'Contrato Safra 2025.pdf',
-    description: 'Documento PDF',
+    id: 'web-search',
+    label: 'Web Search',
+    description: 'Pesquisar na internet',
     type: 'mention',
-    trigger: '@contrato'
-  },
-  {
-    id: 'kb-cpr',
-    label: 'Base: Lei da CPR',
-    description: 'Knowledge Base',
-    type: 'mention',
-    trigger: '@lei'
+    trigger: '@web'
   }
 ]

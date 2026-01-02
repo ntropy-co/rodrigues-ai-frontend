@@ -10,9 +10,14 @@ import { useCPRAnalysis } from './useCPRAnalysis'
 // Mocks
 // =============================================================================
 
-const mockToken = 'test-jwt-token'
+const mockUser = {
+  id: 'user-123',
+  email: 'user@example.com',
+  name: 'Test User',
+  role: 'analyst'
+}
 vi.mock('@/contexts/AuthContext', () => ({
-  useAuth: () => ({ token: mockToken })
+  useAuth: () => ({ user: mockUser })
 }))
 
 vi.mock('@/components/providers/PostHogProvider', () => ({
@@ -116,8 +121,7 @@ describe('useCPRAnalysis', () => {
       expect(mockFetch).toHaveBeenCalledWith('/api/cpr/analise/start', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${mockToken}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({})
       })
@@ -220,8 +224,7 @@ describe('useCPRAnalysis', () => {
       expect(mockFetch).toHaveBeenLastCalledWith('/api/cpr/analise/continue', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${mockToken}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           session_id: 'session-123',

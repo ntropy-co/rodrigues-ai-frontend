@@ -23,11 +23,13 @@ export interface Project {
 export function useProjects() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const { token } = useAuth()
+  const { user } = useAuth()
 
   const fetchProjects = useCallback(async (): Promise<Project[]> => {
-    if (!token) {
-      console.log('[useProjects] No token available, skipping fetch')
+    if (!user) {
+      console.log(
+        '[useProjects] No authenticated user available, skipping fetch'
+      )
       return []
     }
 
@@ -62,14 +64,14 @@ export function useProjects() {
     } finally {
       setLoading(false)
     }
-  }, [token])
+  }, [user])
 
   const createProject = useCallback(
     async (data: {
       title: string
       description?: string
     }): Promise<Project | null> => {
-      if (!token) {
+      if (!user) {
         return null
       }
 
@@ -99,7 +101,7 @@ export function useProjects() {
         setLoading(false)
       }
     },
-    [token]
+    [user]
   )
 
   const updateProject = useCallback(
@@ -107,7 +109,7 @@ export function useProjects() {
       id: string,
       data: { title?: string; description?: string }
     ): Promise<Project | null> => {
-      if (!token) return null
+      if (!user) return null
 
       setLoading(true)
       setError(null)
@@ -135,12 +137,12 @@ export function useProjects() {
         setLoading(false)
       }
     },
-    [token]
+    [user]
   )
 
   const deleteProject = useCallback(
     async (id: string): Promise<boolean> => {
-      if (!token) return false
+      if (!user) return false
 
       setLoading(true)
       setError(null)
@@ -163,7 +165,7 @@ export function useProjects() {
         setLoading(false)
       }
     },
-    [token]
+    [user]
   )
 
   return {

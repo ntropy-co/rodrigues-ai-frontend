@@ -132,7 +132,7 @@ interface UseCPRAnalysisState {
 // =============================================================================
 
 export function useCPRAnalysis() {
-  const { token } = useAuth()
+  const { user } = useAuth()
 
   const [hookState, setHookState] = useState<UseCPRAnalysisState>({
     state: null,
@@ -190,7 +190,7 @@ export function useCPRAnalysis() {
    */
   const startAnalysis = useCallback(
     async (sessionId?: string): Promise<WorkflowResponse | null> => {
-      if (!token) {
+      if (!user) {
         setHookState((prev) => ({
           ...prev,
           error: 'Usuário não autenticado',
@@ -211,8 +211,7 @@ export function useCPRAnalysis() {
         const response = await fetch('/api/cpr/analise/start', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({ session_id: sessionId })
         })
@@ -256,7 +255,7 @@ export function useCPRAnalysis() {
         return null
       }
     },
-    [token, processResponse]
+    [user, processResponse]
   )
 
   /**
@@ -264,7 +263,7 @@ export function useCPRAnalysis() {
    */
   const continueAnalysis = useCallback(
     async (message: string): Promise<WorkflowResponse | null> => {
-      if (!token) {
+      if (!user) {
         setHookState((prev) => ({
           ...prev,
           error: 'Usuário não autenticado',
@@ -288,8 +287,7 @@ export function useCPRAnalysis() {
         const response = await fetch('/api/cpr/analise/continue', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             session_id: hookState.state.sessionId,
@@ -338,7 +336,7 @@ export function useCPRAnalysis() {
         return null
       }
     },
-    [token, hookState.state, processResponse]
+    [user, hookState.state, processResponse]
   )
 
   /**
