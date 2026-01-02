@@ -2,20 +2,39 @@
 
 import React, { useState, Suspense } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react'
+import { Eye, EyeOff, Loader2, AlertCircle, ArrowRight } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useAuthForm } from '@/hooks/useAuthForm'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
-import { staggerContainer, staggerItem, durations } from '@/lib/animations'
 
-// Placeholder for the agriculture background image
-const BACKGROUND_IMAGE = '/images/auth-background.jpg'
+// Animation Configurations (Spring Physics)
+const springTransition = {
+  type: 'spring',
+  stiffness: 100,
+  damping: 20,
+  mass: 1
+}
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2
+    }
+  }
+}
+
+const staggerItem = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: springTransition }
+}
 
 function getSafeRedirectPath(value: string | null): string | null {
   if (!value) return null
@@ -39,7 +58,6 @@ function LoginContent() {
   const [showPassword, setShowPassword] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
   const redirect = getSafeRedirectPath(searchParams.get('redirect')) || '/chat'
-  // Motion preferences available via useReducedMotion() if needed
 
   const {
     values,
@@ -64,266 +82,233 @@ function LoginContent() {
   }
 
   return (
-    <>
+    <div className="relative min-h-screen w-full overflow-hidden bg-verity-950 font-sans selection:bg-verity-500/30 selection:text-verity-100">
       {/* 
-        Z-Index Stack:
-        0: Background Image (Fixed, covers viewport)
-        1: Dark Overlay (For contrast)
-        2: Glass Card (Centered content)
-        3: Text and Form Elements
+        Verity Noir: Aurora Background 
+        Concept: "Financial Northern Lights"
       */}
+      <div className="absolute inset-0 z-0">
+        {/* Deep Field Gradient */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-verity-900 via-verity-950 to-black"></div>
 
-      {/* Layer 0: Full-screen Background Image */}
-      <div className="fixed inset-0 z-0">
-        <Image
-          src={BACKGROUND_IMAGE}
-          alt="Paisagem agrícola"
-          fill
-          priority
-          className="object-cover"
-          sizes="100vw"
-        />
-        {/* Layer 1: Subtle Dark Overlay for Text Contrast */}
-        <div className="absolute inset-0 bg-verity-950/40" />
+        {/* Animated Aurora Orbs */}
+        <div className="animate-pulse-slow absolute -left-[10%] -top-[20%] h-[800px] w-[800px] rounded-full bg-verity-800/20 blur-[120px]"></div>
+        <div className="absolute bottom-[10%] right-[10%] h-[600px] w-[600px] animate-pulse rounded-full bg-verity-500/10 blur-[100px] delay-1000"></div>
+
+        {/* Grid Texture Overlay (Subtle Tech Feel) */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_80%)]"></div>
       </div>
 
-      {/* Layer 2 & 3: Centered Glass Card Container */}
-      <div className="relative z-10 flex min-h-screen items-center justify-center p-4 sm:p-6 md:p-8">
+      <div className="relative z-10 flex min-h-screen items-center justify-center p-4">
         <motion.div
-          initial={{ opacity: 0, y: 20, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: durations.slow, ease: [0.16, 1, 0.3, 1] }}
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} // Apple ease
           className="w-full max-w-md"
         >
-          {/* The Glass Card */}
-          <div className="glass-panel rounded-2xl p-6 shadow-2xl sm:p-8 lg:p-10">
-            {/* Logo/Branding */}
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1, duration: durations.normal }}
-              className="mb-8 text-center"
-            >
-              <h1 className="font-display text-3xl font-semibold tracking-tight text-verity-900 sm:text-4xl">
-                Verity Agro
-              </h1>
-              <p className="mt-1 text-sm text-verity-600">
-                Análise Inteligente de CPR
-              </p>
-            </motion.div>
+          {/* Glass Card: Frosted Crystal */}
+          {/* border-white/5 for subtle edge, bg-white/5 for body */}
+          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-2xl shadow-black/50 backdrop-blur-[24px]">
+            {/* Top Highlight Gradient */}
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
 
-            {/* Welcome Text */}
-            <motion.div
-              variants={staggerContainer}
-              initial="hidden"
-              animate="visible"
-              className="mb-6 text-center"
-            >
-              <motion.h2
-                variants={staggerItem}
-                className="font-display text-2xl font-semibold tracking-tight text-verity-950"
-              >
-                Bem-vindo
-              </motion.h2>
-              <motion.p
-                variants={staggerItem}
-                className="mt-1 text-sm text-verity-700"
-              >
-                Entre com suas credenciais corporativas
-              </motion.p>
-            </motion.div>
-
-            {/* Auth Error Alert */}
-            <AnimatePresence>
-              {authError && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="mb-6 overflow-hidden"
-                >
-                  <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50/80 p-4 backdrop-blur-sm">
-                    <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600" />
-                    <div>
-                      <p className="text-sm font-medium text-red-900">
-                        Erro ao entrar
-                      </p>
-                      <p className="text-sm text-red-700">{authError}</p>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Login Form */}
-            <motion.form
-              variants={staggerContainer}
-              initial="hidden"
-              animate="visible"
-              onSubmit={(e: React.FormEvent) => {
-                e.preventDefault()
-                handleSubmit(onSubmit)
-              }}
-              className="space-y-5"
-            >
-              {/* Email Field */}
-              <motion.div variants={staggerItem}>
-                <label className="mb-2 block text-sm font-medium text-verity-900">
-                  Email corporativo
-                </label>
-                <Input
-                  type="email"
-                  name="email"
-                  value={values.email}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    handleChange('email', e.target.value)
-                  }
-                  onBlur={() => handleBlur('email')}
-                  placeholder="seu.email@empresa.com.br"
-                  className={cn(
-                    errors.email &&
-                      touched.email &&
-                      'border-red-300 focus:border-red-500 focus:ring-red-500/10'
-                  )}
-                />
-                {errors.email && touched.email && (
-                  <p className="ml-1 mt-1 text-xs text-red-600">
-                    {errors.email}
-                  </p>
-                )}
-              </motion.div>
-
-              {/* Password Field */}
-              <motion.div variants={staggerItem}>
-                <div className="mb-2 flex items-center justify-between">
-                  <label className="block text-sm font-medium text-verity-900">
-                    Senha
-                  </label>
-                  <Link
-                    href="/forgot-password"
-                    className="text-xs font-medium text-verity-700 underline-offset-2 transition-colors hover:text-verity-900 hover:underline"
-                  >
-                    Esqueceu a senha?
-                  </Link>
-                </div>
-                <div className="relative">
-                  <Input
-                    type={showPassword ? 'text' : 'password'}
-                    name="password"
-                    value={values.password}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      handleChange('password', e.target.value)
-                    }
-                    onBlur={() => handleBlur('password')}
-                    placeholder="••••••••"
-                    className={cn(
-                      'pr-12',
-                      errors.password &&
-                        touched.password &&
-                        'border-red-300 focus:border-red-500 focus:ring-red-500/10'
-                    )}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-verity-600 transition-colors hover:text-verity-900"
-                    aria-label={
-                      showPassword ? 'Ocultar senha' : 'Mostrar senha'
-                    }
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-                {errors.password && touched.password && (
-                  <p className="ml-1 mt-1 text-xs text-red-600">
-                    {errors.password}
-                  </p>
-                )}
-              </motion.div>
-
-              {/* Remember Me */}
+            <div className="p-8 sm:p-10">
+              {/* Branding */}
               <motion.div
-                variants={staggerItem}
-                className="flex items-center space-x-2"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="mb-10 text-center"
               >
-                <Checkbox
-                  id="remember"
-                  checked={values.rememberMe}
-                  onCheckedChange={(checked: boolean) =>
-                    handleChange('rememberMe', checked === true)
-                  }
-                  className="border-verity-300 data-[state=checked]:border-verity-900 data-[state=checked]:bg-verity-900"
-                />
-                <label
-                  htmlFor="remember"
-                  className="cursor-pointer select-none text-sm text-verity-700"
-                >
-                  Manter conectado
-                </label>
-              </motion.div>
-
-              {/* Submit Button */}
-              <motion.div variants={staggerItem}>
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full"
-                  size="lg"
-                >
-                  {isSubmitting ? (
-                    <span className="flex items-center gap-2">
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                      Validando...
-                    </span>
-                  ) : (
-                    'Entrar na plataforma'
-                  )}
-                </Button>
-              </motion.div>
-
-              {/* Signup CTA */}
-              <motion.div variants={staggerItem}>
-                <div className="relative my-6">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-verity-200/50" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase tracking-wider">
-                    <span className="rounded-full bg-white/60 px-4 text-verity-500 backdrop-blur-sm">
-                      Ainda não tem conta?
-                    </span>
-                  </div>
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-verity-500/20 text-verity-100 ring-1 ring-white/10 backdrop-blur-md">
+                  <span className="font-display text-2xl font-bold">V</span>
                 </div>
-
-                <p className="text-center text-sm text-verity-700">
-                  O acesso é exclusivo para convidados.{' '}
-                  <Link
-                    href="/contact"
-                    className="font-medium text-verity-900 underline decoration-verity-900/30 underline-offset-4 transition-all hover:text-verity-800 hover:decoration-verity-900"
-                  >
-                    Solicitar acesso
-                  </Link>
+                <h1 className="text-shadow-sm font-display text-3xl font-medium tracking-tight text-white sm:text-4xl">
+                  Verity Agro
+                </h1>
+                <p className="mt-2 text-sm font-light text-verity-200/80">
+                  Inteligência Financeira para o Campo
                 </p>
               </motion.div>
-            </motion.form>
+
+              {/* Error Alert */}
+              <AnimatePresence>
+                {authError && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mb-6 overflow-hidden"
+                  >
+                    <div className="flex items-start gap-3 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-200 backdrop-blur-sm">
+                      <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                      <p className="text-sm font-medium">{authError}</p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Form */}
+              <motion.form
+                variants={staggerContainer}
+                initial="hidden"
+                animate="visible"
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  handleSubmit(onSubmit)
+                }}
+                className="space-y-5"
+              >
+                {/* Email */}
+                <motion.div variants={staggerItem} className="group">
+                  <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-verity-300 transition-colors group-focus-within:text-verity-100">
+                    Email Corporativo
+                  </label>
+                  <Input
+                    type="email"
+                    name="email"
+                    value={values.email}
+                    onChange={(e) => handleChange('email', e.target.value)}
+                    onBlur={() => handleBlur('email')}
+                    placeholder="nome@empresa.com" // Placeholder
+                    // Dark theme input styles
+                    className={cn(
+                      'border-white/10 bg-white/5 text-white placeholder:text-verity-500 focus:border-verity-400/50 focus:bg-white/10 focus:ring-0',
+                      errors.email &&
+                        touched.email &&
+                        'border-red-500/50 bg-red-900/10'
+                    )}
+                  />
+                  {errors.email && touched.email && (
+                    <p className="mt-1 text-xs text-red-300">{errors.email}</p>
+                  )}
+                </motion.div>
+
+                {/* Password */}
+                <motion.div variants={staggerItem} className="group">
+                  <div className="mb-1.5 flex items-center justify-between">
+                    <label className="text-xs font-medium uppercase tracking-wider text-verity-300 transition-colors group-focus-within:text-verity-100">
+                      Senha
+                    </label>
+                    <Link
+                      href="/forgot-password"
+                      className="text-xs text-verity-400 transition-colors hover:text-white hover:underline"
+                    >
+                      Esqueceu?
+                    </Link>
+                  </div>
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? 'text' : 'password'}
+                      name="password"
+                      value={values.password}
+                      onChange={(e) => handleChange('password', e.target.value)}
+                      onBlur={() => handleBlur('password')}
+                      placeholder="••••••••"
+                      className={cn(
+                        'border-white/10 bg-white/5 pr-10 text-white placeholder:text-verity-500 focus:border-verity-400/50 focus:bg-white/10 focus:ring-0',
+                        errors.password &&
+                          touched.password &&
+                          'border-red-500/50 bg-red-900/10'
+                      )}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-verity-500 transition-colors hover:text-white"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                  {errors.password && touched.password && (
+                    <p className="mt-1 text-xs text-red-300">
+                      {errors.password}
+                    </p>
+                  )}
+                </motion.div>
+
+                {/* Actions */}
+                <motion.div
+                  variants={staggerItem}
+                  className="flex items-center justify-between pt-2"
+                >
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="remember"
+                      checked={values.rememberMe}
+                      onCheckedChange={(c) =>
+                        handleChange('rememberMe', c === true)
+                      }
+                      className="border-verity-500 data-[state=checked]:bg-verity-400 data-[state=checked]:text-verity-950"
+                    />
+                    <label
+                      htmlFor="remember"
+                      className="cursor-pointer select-none text-sm text-verity-300"
+                    >
+                      Manter conectado
+                    </label>
+                  </div>
+                </motion.div>
+
+                {/* Submit Button (Champagne Gold Touch or Verity Green?) 
+                    Decision: Use Verity Green Light for button to pop against dark bg 
+                */}
+                <motion.div variants={staggerItem} className="pt-2">
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="group relative w-full overflow-hidden bg-verity-100 text-verity-950 transition-all duration-300 hover:bg-white hover:shadow-[0_0_20px_rgba(209,231,221,0.3)]"
+                    size="lg"
+                  >
+                    {isSubmitting ? (
+                      <span className="flex items-center gap-2">
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        Validando...
+                      </span>
+                    ) : (
+                      <span className="flex items-center justify-center gap-2 font-semibold">
+                        Acessar Plataforma
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </span>
+                    )}
+                  </Button>
+                </motion.div>
+
+                {/* Secondary CTA */}
+                <motion.div variants={staggerItem} className="pt-4 text-center">
+                  <p className="text-sm text-verity-400">
+                    Acesso exclusivo para convidados. <br />
+                    <Link
+                      href="/contact"
+                      className="mt-1 inline-block font-medium text-verity-200 transition-colors hover:text-white"
+                    >
+                      Solicitar acesso →
+                    </Link>
+                  </p>
+                </motion.div>
+              </motion.form>
+            </div>
+
+            {/* Bottom Gradient Line */}
+            <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-verity-800 via-verity-400 to-verity-800 opacity-50"></div>
           </div>
 
-          {/* Footer Text (Outside Glass Card) */}
+          {/* Footer */}
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="mt-6 text-center text-xs text-white/70"
+            transition={{ delay: 1 }}
+            className="mt-8 text-center text-xs font-medium text-verity-600/50"
           >
-            © {new Date().getFullYear()} Verity Agro. Todos os direitos
-            reservados.
+            © {new Date().getFullYear()} Verity Agro Intelligence
           </motion.p>
         </motion.div>
       </div>
-    </>
+    </div>
   )
 }
 
@@ -331,8 +316,8 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-verity-900">
-          <Loader2 className="h-8 w-8 animate-spin text-white" />
+        <div className="flex min-h-screen items-center justify-center bg-verity-950">
+          <Loader2 className="h-6 w-6 animate-spin text-verity-500" />
         </div>
       }
     >

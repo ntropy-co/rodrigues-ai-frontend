@@ -1,3 +1,4 @@
+import { useRouter } from 'next/navigation'
 import { Greeting } from './Greeting'
 import { CPRStats } from '@/components/v2/Dashboard/CPRStats'
 import { Button } from '@/components/ui/button'
@@ -11,6 +12,7 @@ export function MainContent({
   onSuggestionClick: _onSuggestionClick
 }: MainContentProps) {
   const { openFilesSidebar } = useLayoutStore()
+  const router = useRouter()
 
   return (
     <main className="flex flex-1 flex-col justify-center px-4 py-8 md:px-12 lg:px-24">
@@ -41,6 +43,39 @@ export function MainContent({
               className="w-full sm:w-auto"
             >
               Nova analise
+            </Button>
+          </div>
+        </div>
+        <div className="rounded-2xl border border-verity-100 bg-white p-6 shadow-sm">
+          <div className="space-y-1">
+            <h3 className="font-display text-base font-semibold text-verity-950">
+              Atalhos rapidos
+            </h3>
+            <p className="text-sm text-verity-600">
+              Acesse fluxos comuns sem sair do chat.
+            </p>
+          </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push('/cpr/analise')}
+            >
+              Analisar CPR
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push('/cpr/simulator')}
+            >
+              Simular CPR
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push('/cpr/historico')}
+            >
+              Historico CPR
             </Button>
           </div>
         </div>

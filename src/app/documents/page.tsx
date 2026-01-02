@@ -25,7 +25,6 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import { toast } from 'sonner'
-import { Card, CardContent } from '@/components/ui/card'
 
 export default function DocumentsHistoryPage() {
   const router = useRouter()
@@ -86,7 +85,7 @@ export default function DocumentsHistoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50/50 dark:bg-zinc-900/50">
+    <div className="min-h-screen bg-sand-100 dark:bg-verity-950">
       <InternalHeader
         title="Meus documentos"
         subtitle="Gerencie todos os arquivos enviados para analise."
@@ -97,12 +96,12 @@ export default function DocumentsHistoryPage() {
         {/* Filters */}
         <div className="mb-6 flex flex-col gap-4 sm:flex-row">
           <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-verity-400" />
             <Input
               placeholder="Buscar por nome..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-background pl-9"
+              className="border-sand-300 bg-white pl-9 placeholder:text-verity-300 focus-visible:ring-verity-400 dark:border-verity-800 dark:bg-verity-900"
             />
           </div>
           <div className="w-full sm:w-[180px]">
@@ -110,7 +109,7 @@ export default function DocumentsHistoryPage() {
               value={sortOrder}
               onValueChange={(v: 'asc' | 'desc') => setSortOrder(v)}
             >
-              <SelectTrigger className="bg-background">
+              <SelectTrigger className="border-sand-300 bg-white dark:border-verity-800 dark:bg-verity-900">
                 <SelectValue placeholder="Ordenar por" />
               </SelectTrigger>
               <SelectContent>
@@ -121,66 +120,64 @@ export default function DocumentsHistoryPage() {
           </div>
         </div>
 
-        {/* List content */}
-        <Card>
-          <CardContent className="p-0">
-            {authLoading || docsLoading ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground">
-                <Loader2 className="h-6 w-6 animate-spin text-verity-600" />
-                <p className="mt-3 text-sm">Carregando documentos...</p>
-              </div>
-            ) : (
-              <div className="p-4">
-                {documents.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground">
-                    <div className="mb-4 rounded-full bg-muted/50 p-4">
-                      <FileText className="h-8 w-8 text-muted-foreground/50" />
-                    </div>
-                    <h3 className="text-lg font-medium text-foreground">
-                      Nenhum documento encontrado
-                    </h3>
-                    <p className="mx-auto mt-2 max-w-xs text-sm">
-                      Seus documentos enviados aparecerao aqui. Envie arquivos
-                      pelo chat para comecar.
-                    </p>
-                    <Button
-                      variant="outline"
-                      className="mt-6"
-                      onClick={() => router.push('/chat')}
-                    >
-                      Ir para o chat
-                    </Button>
+        {/* List content (Zero-UI) */}
+        <div className="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-black/5 dark:bg-verity-900/50 dark:ring-white/10">
+          {authLoading || docsLoading ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center text-verity-500">
+              <Loader2 className="h-6 w-6 animate-spin text-verity-600" />
+              <p className="mt-3 text-sm">Carregando documentos...</p>
+            </div>
+          ) : (
+            <div className="p-0">
+              {documents.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16 text-center text-verity-500">
+                  <div className="mb-4 rounded-full bg-sand-100 p-4 dark:bg-verity-800">
+                    <FileText className="h-8 w-8 text-verity-300 dark:text-verity-600" />
                   </div>
-                ) : filteredDocuments.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground">
-                    <div className="mb-4 rounded-full bg-muted/50 p-4">
-                      <Search className="h-8 w-8 text-muted-foreground/50" />
-                    </div>
-                    <h3 className="text-lg font-medium text-foreground">
-                      Nenhum resultado encontrado
-                    </h3>
-                    <p className="mx-auto mt-2 max-w-xs text-sm">
-                      Nao encontramos documentos para &quot;{searchQuery}&quot;.
-                    </p>
-                    <Button
-                      variant="outline"
-                      className="mt-6"
-                      onClick={() => setSearchQuery('')}
-                    >
-                      Limpar busca
-                    </Button>
+                  <h3 className="text-lg font-medium text-verity-900 dark:text-verity-100">
+                    Nenhum documento encontrado
+                  </h3>
+                  <p className="mx-auto mt-2 max-w-xs text-sm">
+                    Seus documentos enviados aparecerao aqui. Envie arquivos
+                    pelo chat para comecar.
+                  </p>
+                  <Button
+                    variant="outline"
+                    className="mt-6 border-verity-200 hover:bg-verity-50 hover:text-verity-900"
+                    onClick={() => router.push('/chat')}
+                  >
+                    Ir para o chat
+                  </Button>
+                </div>
+              ) : filteredDocuments.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16 text-center text-verity-500">
+                  <div className="mb-4 rounded-full bg-sand-100 p-4 dark:bg-verity-800">
+                    <Search className="h-8 w-8 text-verity-300 dark:text-verity-600" />
                   </div>
-                ) : (
-                  <FileList
-                    documents={filteredDocuments}
-                    onRemove={(id) => setDeleteId(id)}
-                    onDownload={handleDownload}
-                  />
-                )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                  <h3 className="text-lg font-medium text-verity-900 dark:text-verity-100">
+                    Nenhum resultado encontrado
+                  </h3>
+                  <p className="mx-auto mt-2 max-w-xs text-sm">
+                    Nao encontramos documentos para &quot;{searchQuery}&quot;.
+                  </p>
+                  <Button
+                    variant="outline"
+                    className="mt-6 border-verity-200 hover:bg-verity-50 hover:text-verity-900"
+                    onClick={() => setSearchQuery('')}
+                  >
+                    Limpar busca
+                  </Button>
+                </div>
+              ) : (
+                <FileList
+                  documents={filteredDocuments}
+                  onRemove={(id) => setDeleteId(id)}
+                  onDownload={handleDownload}
+                />
+              )}
+            </div>
+          )}
+        </div>
 
         {/* Delete Confirmation Dialog */}
         <Dialog

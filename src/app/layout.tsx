@@ -16,6 +16,9 @@ import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { InstallPrompt } from '@/components/v2/InstallPrompt'
 import { QueryProvider } from '@/providers/QueryProvider'
 import { WebVitalsReporterWrapper } from '@/components/v2/Monitoring/WebVitalsReporterWrapper'
+import { TourProvider } from '@/contexts/TourContext'
+import { TourOverlay } from '@/components/v2/Tour/TourOverlay'
+import { VerityGuide } from '@/components/v2/Tour/VerityGuide'
 import './globals.css'
 
 const inter = Inter({
@@ -96,14 +99,18 @@ export default function RootLayout({
           <PostHogProvider>
             <AuthProvider>
               <ChatInputProvider>
-                <QueryProvider>
-                  <ErrorBoundary>
-                    <NuqsAdapter>{children}</NuqsAdapter>
-                  </ErrorBoundary>
-                  <Toaster />
-                  <InstallPrompt />
-                  <WebVitalsReporterWrapper />
-                </QueryProvider>
+                <TourProvider>
+                  <QueryProvider>
+                    <ErrorBoundary>
+                      <NuqsAdapter>{children}</NuqsAdapter>
+                    </ErrorBoundary>
+                    <Toaster />
+                    <InstallPrompt />
+                    <WebVitalsReporterWrapper />
+                    <TourOverlay />
+                    <VerityGuide />
+                  </QueryProvider>
+                </TourProvider>
               </ChatInputProvider>
             </AuthProvider>
           </PostHogProvider>
