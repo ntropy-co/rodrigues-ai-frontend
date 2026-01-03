@@ -95,17 +95,18 @@ export const stepGuaranteesSchema = z
   .refine(
     (data) => {
       if (data.hasGuarantor) {
+        // Require minimum lengths for guarantor fields
         return (
-          !!data.guarantorName &&
-          !!data.guarantorCpfCnpj &&
-          !!data.guarantorAddress
+          !!data.guarantorName && data.guarantorName.length >= 3 &&
+          !!data.guarantorCpfCnpj && data.guarantorCpfCnpj.length >= 11 &&
+          !!data.guarantorAddress && data.guarantorAddress.length >= 5
         )
       }
       return true
     },
     {
-      message: 'Dados do avalista são obrigatórios quando marcado',
-      path: ['guarantorName'] // Aponta para o nome mas afeta o bloco
+      message: 'Preencha nome (min 3 chars), CPF/CNPJ (min 11 chars) e endereço (min 5 chars) do avalista',
+      path: ['guarantorName']
     }
   )
 

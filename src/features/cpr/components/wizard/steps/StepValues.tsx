@@ -27,12 +27,27 @@ export function StepValues({
 }: StepValuesProps) {
   const [errors, setErrors] = React.useState<Record<string, string>>({})
 
-  // Auto-calculate unit price
+  // Clear specific error when field value changes
+  const clearError = (field: string) => {
+    if (errors[field]) {
+      setErrors((prev) => {
+        const next = { ...prev }
+        delete next[field]
+        return next
+      })
+    }
+  }
+
+  // Auto-calculate unit price whenever amount or quantity changes
   useEffect(() => {
-    if (data.amount && data.quantity && data.quantity > 0 && !data.unitPrice) {
+    if (data.amount && data.quantity && data.quantity > 0) {
       const calculated = data.amount / data.quantity
       // Keep 2 decimals to avoid weird floats
-      updateData({ unitPrice: parseFloat(calculated.toFixed(2)) })
+      const newPrice = parseFloat(calculated.toFixed(2))
+      // Only update if the value actually changed to avoid infinite loops
+      if (newPrice !== data.unitPrice) {
+        updateData({ unitPrice: newPrice })
+      }
     }
   }, [data.amount, data.quantity, updateData, data.unitPrice])
 
@@ -183,7 +198,10 @@ export function StepValues({
             id="issueDate"
             type="date"
             value={data.issueDate || ''}
-            onChange={(e) => updateData({ issueDate: e.target.value })}
+            onChange={(e) => {
+              updateData({ issueDate: e.target.value })
+              clearError('issueDate')
+            }}
             className={errors.issueDate ? 'border-error-500' : ''}
           />
           {errors.issueDate && (
@@ -197,7 +215,10 @@ export function StepValues({
             id="dueDate"
             type="date"
             value={data.dueDate || ''}
-            onChange={(e) => updateData({ dueDate: e.target.value })}
+            onChange={(e) => {
+              updateData({ dueDate: e.target.value })
+              clearError('dueDate')
+            }}
             className={errors.dueDate ? 'border-error-500' : ''}
           />
           {errors.dueDate && (
@@ -212,7 +233,10 @@ export function StepValues({
             id="deliveryPlace"
             placeholder="Ex: Fazenda Santa Maria, Rodovia BR-163, Km 500"
             value={data.deliveryPlace || ''}
-            onChange={(e) => updateData({ deliveryPlace: e.target.value })}
+            onChange={(e) => {
+              updateData({ deliveryPlace: e.target.value })
+              clearError('deliveryPlace')
+            }}
             className={errors.deliveryPlace ? 'border-error-500' : ''}
           />
           {errors.deliveryPlace && (

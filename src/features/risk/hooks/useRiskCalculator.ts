@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
 import { trackEvent } from '@/components/providers/PostHogProvider'
 
 /**
@@ -73,7 +72,7 @@ interface UseRiskCalculatorState {
  * ```
  */
 export function useRiskCalculator() {
-  const { token } = useAuth()
+  // Note: Auth is handled via HttpOnly cookies, no need to extract token
 
   const [state, setState] = useState<UseRiskCalculatorState>({
     result: null,
@@ -88,24 +87,15 @@ export function useRiskCalculator() {
     async (
       data: RiskCalculateRequest
     ): Promise<RiskCalculateResponse | null> => {
-      if (!token) {
-        setState((prev) => ({
-          ...prev,
-          error: 'Usuário não autenticado',
-          isLoading: false
-        }))
-        return null
-      }
-
       setState({ result: null, isLoading: true, error: null })
 
       try {
         const response = await fetch('/api/cpr/risk/calculate', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
+            'Content-Type': 'application/json'
           },
+          credentials: 'include', // Use HttpOnly cookies for auth
           body: JSON.stringify(data)
         })
 
@@ -148,7 +138,7 @@ export function useRiskCalculator() {
         return null
       }
     },
-    [token]
+    []  // No dependencies since auth is via cookies
   )
 
   /**
