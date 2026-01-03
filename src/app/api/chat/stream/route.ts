@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
 
     // If no Authorization header, try to get token from HttpOnly cookie
     if (!authorization) {
-      const accessToken = request.cookies.get('access_token')?.value
+      const accessToken = request.cookies.get('verity_access_token')?.value
       if (accessToken) {
         authorization = `Bearer ${accessToken}`
       }
