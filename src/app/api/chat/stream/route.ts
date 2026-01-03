@@ -38,8 +38,16 @@ export interface StreamChatRequest {
 
 export async function POST(request: NextRequest) {
   try {
-    // Get the Authorization header
-    const authorization = request.headers.get('authorization')
+    // Get the Authorization header or extract from HttpOnly cookie
+    let authorization = request.headers.get('authorization')
+
+    // If no Authorization header, try to get token from HttpOnly cookie
+    if (!authorization) {
+      const accessToken = request.cookies.get('access_token')?.value
+      if (accessToken) {
+        authorization = `Bearer ${accessToken}`
+      }
+    }
 
     if (!authorization) {
       return new Response(
