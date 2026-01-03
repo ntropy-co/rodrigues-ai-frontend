@@ -27,7 +27,7 @@ const nextConfig: NextConfig = {
           // Permitir Google Fonts arquivos de fonte
           "font-src 'self' data: https://fonts.gstatic.com",
           // Permitir conexões com a API backend, Sentry e PostHog
-          "connect-src 'self' https://rodrigues-ai-backend-production.up.railway.app https://api.rodriguesagro.com.br https://*.ingest.sentry.io https://*.sentry.io https://us.i.posthog.com https://us.posthog.com",
+          "connect-src 'self' https://api.verityagro.com https://*.ingest.sentry.io https://*.sentry.io https://us.i.posthog.com https://us.posthog.com",
           "frame-ancestors 'none'",
           "base-uri 'self'",
           "form-action 'self'",
