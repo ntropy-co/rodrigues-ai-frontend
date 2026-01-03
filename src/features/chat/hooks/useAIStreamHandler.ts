@@ -5,7 +5,6 @@ import { useShallow } from 'zustand/react/shallow'
 
 import { useChatActions } from '@/features/chat/hooks/useChatActions'
 import { usePlaygroundStore } from '../stores/playgroundStore'
-import { useAuth } from '@/contexts/AuthContext'
 import { trackEvent } from '@/components/providers/PostHogProvider'
 
 // ... existing code ...
@@ -101,7 +100,6 @@ export const useAIStreamHandler = () => {
 
   const { addMessage, focusChatInput, saveSessionIdToStorage } =
     useChatActions()
-  const { token } = useAuth()
 
   const updateMessagesWithErrorState = useCallback(() => {
     setMessages((prevMessages) => {
@@ -143,9 +141,9 @@ export const useAIStreamHandler = () => {
       const response = await fetch('/api/chat/stream', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
+        credentials: 'include', // Use HttpOnly cookies for auth
         body: JSON.stringify({
           message: message.trim(),
           session_id: currentSessionId
@@ -224,7 +222,7 @@ export const useAIStreamHandler = () => {
         message_length: message.trim().length
       })
     },
-    [token, appendToLastMessage]
+    [appendToLastMessage]
   )
 
   /**
@@ -239,9 +237,9 @@ export const useAIStreamHandler = () => {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
+        credentials: 'include', // Use HttpOnly cookies for auth
         body: JSON.stringify({
           message: message.trim(),
           session_id: currentSessionId
@@ -262,7 +260,7 @@ export const useAIStreamHandler = () => {
 
       return response.json()
     },
-    [token]
+    []
   )
 
   /**
@@ -339,10 +337,6 @@ export const useAIStreamHandler = () => {
         explicitSessionId !== undefined ? explicitSessionId : sessionId
 
       try {
-        if (!token) {
-          throw new Error('Usuário não autenticado')
-        }
-
         // Use streaming if we have a session ID, otherwise use non-streaming
         // (streaming requires session_id to be set first)
         if (sessionIdToUse) {
@@ -471,7 +465,6 @@ export const useAIStreamHandler = () => {
       sessionId,
       setSessionId,
       addLocallyCreatedSessionId,
-      token,
       router,
       handleStreamingChat,
       handleNonStreamingChat,
