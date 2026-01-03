@@ -16,7 +16,7 @@ import {
   useRiskCalculator,
   type RiskCalculateRequest,
   type RiskCalculateResponse,
-  type RiskFactor as APIRiskFactor
+  type APIRiskFactor
 } from '@/features/risk'
 import {
   RiskCalculator,

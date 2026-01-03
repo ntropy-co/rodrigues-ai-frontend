@@ -4,6 +4,9 @@ import { withSentryConfig } from '@sentry/nextjs'
 import bundleAnalyzer from '@next/bundle-analyzer'
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    root: __dirname
+  },
   devIndicators: false,
 
   // Security headers

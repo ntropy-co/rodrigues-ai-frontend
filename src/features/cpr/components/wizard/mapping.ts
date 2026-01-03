@@ -1,5 +1,8 @@
 import type { CPRWizardData } from './schema'
-import type { WizardData, WizardGuarantor } from '@/types/cpr-wizard'
+import type {
+  WizardData,
+  WizardGuarantor
+} from '@/features/cpr/types/cpr-wizard'
 
 export function mapWizardDataToDraft(data: Partial<CPRWizardData>): WizardData {
   const guarantor: WizardGuarantor | undefined =

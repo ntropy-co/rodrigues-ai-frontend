@@ -1,73 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { Download, X } from 'lucide-react'
-import { useHaptic } from '@/hooks/useHaptic'
 
-interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
+interface InstallPromptProps {
+  onInstall: () => void
+  onDismiss: () => void
 }
 
-export function InstallPrompt() {
-  const [deferredPrompt, setDeferredPrompt] =
-    useState<BeforeInstallPromptEvent | null>(null)
-  const [showPrompt, setShowPrompt] = useState(false)
-  const { trigger: triggerHaptic } = useHaptic()
-
-  useEffect(() => {
-    const handler = (e: Event) => {
-      e.preventDefault()
-      setDeferredPrompt(e as BeforeInstallPromptEvent)
-
-      // Mostrar prompt após 30s de uso (engajamento)
-      setTimeout(() => {
-        const hasInstalled = localStorage.getItem('pwa-installed')
-        const hasDismissed = localStorage.getItem('pwa-dismissed')
-
-        if (!hasInstalled && !hasDismissed) {
-          setShowPrompt(true)
-        }
-      }, 30000) // 30 segundos
-    }
-
-    window.addEventListener('beforeinstallprompt', handler)
-
-    // Detectar quando app foi instalado
-    window.addEventListener('appinstalled', () => {
-      localStorage.setItem('pwa-installed', 'true')
-      setShowPrompt(false)
-    })
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handler)
-    }
-  }, [])
-
-  const handleInstall = async () => {
-    if (!deferredPrompt) return
-
-    triggerHaptic('medium')
-    deferredPrompt.prompt()
-    const { outcome } = await deferredPrompt.userChoice
-
-    if (outcome === 'accepted') {
-      localStorage.setItem('pwa-installed', 'true')
-      triggerHaptic('success')
-    }
-
-    setDeferredPrompt(null)
-    setShowPrompt(false)
-  }
-
-  const handleDismiss = () => {
-    triggerHaptic('light')
-    localStorage.setItem('pwa-dismissed', 'true')
-    setShowPrompt(false)
-  }
-
-  if (!showPrompt) return null
-
+export function InstallPrompt({ onInstall, onDismiss }: InstallPromptProps) {
   return (
     <div className="fixed bottom-20 left-4 right-4 z-50 md:left-auto md:right-8 md:w-96">
       <div className="rounded-xl border border-border bg-card p-4 shadow-lg duration-300 animate-in slide-in-from-bottom-4">
@@ -89,13 +29,13 @@ export function InstallPrompt() {
             {/* Ações */}
             <div className="mt-3 flex gap-2">
               <button
-                onClick={handleInstall}
+                onClick={onInstall}
                 className="flex-1 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors active:scale-95 hover-hover:bg-primary/90"
               >
                 Instalar
               </button>
               <button
-                onClick={handleDismiss}
+                onClick={onDismiss}
                 className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg px-3 py-2 text-muted-foreground transition-colors active:scale-95 hover-hover:bg-muted"
                 aria-label="Fechar"
               >

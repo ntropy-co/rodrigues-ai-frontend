@@ -10,6 +10,58 @@ import { trackEvent } from '@/components/providers/PostHogProvider'
 
 // ... existing code ...
 
+type SSEEvent =
+  | { type: 'content'; content: string }
+  | { type: 'usage'; usage: unknown }
+  | { type: 'done' }
+  | { type: 'error'; error: string }
+
+type ChatResponse = {
+  session_id: string
+  text: string
+  message_id?: string
+}
+
+function parseSSELine(line: string): SSEEvent | null {
+  if (!line) return null
+
+  const normalized = line.startsWith('data:') ? line.slice(5).trim() : line
+
+  if (!normalized) return null
+  if (normalized === '[DONE]') return { type: 'done' }
+
+  try {
+    const payload = JSON.parse(normalized) as Record<string, unknown>
+    if (payload && typeof payload.type === 'string') {
+      if (payload.type === 'content' && typeof payload.content === 'string') {
+        return { type: 'content', content: payload.content }
+      }
+      if (payload.type === 'usage') {
+        return { type: 'usage', usage: payload.usage }
+      }
+      if (payload.type === 'done') {
+        return { type: 'done' }
+      }
+      if (payload.type === 'error') {
+        return {
+          type: 'error',
+          error:
+            typeof payload.error === 'string'
+              ? payload.error
+              : 'Unknown error'
+        }
+      }
+    }
+    if (typeof payload === 'string') {
+      return { type: 'content', content: payload }
+    }
+  } catch {
+    return { type: 'content', content: normalized }
+  }
+
+  return null
+}
+
 /**
  * useAIStreamHandler is responsible for making API calls to the chat endpoint.
  *
@@ -429,5 +481,3 @@ export const useAIStreamHandler = () => {
 
   return { handleStreamResponse, cancelStream }
 }
-
-
