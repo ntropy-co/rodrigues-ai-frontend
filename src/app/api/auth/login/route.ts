@@ -8,7 +8,10 @@
  *
  * Backend:
  * - `POST ${BACKEND_URL}/api/v1/auth/login` (OAuth2PasswordRequestForm)
- * - `GET  ${BACKEND_URL}/api/v1/auth/me` (buscar dados do usuário após login)
+ *   Returns: { access_token, refresh_token, token_type, user }
+ *
+ * OPTIMIZED: User data is now included in login response, eliminating
+ * the need for a separate /auth/me call (saves ~300ms).
  *
  * Transformações de contrato:
  * - Frontend envia JSON: `{ email, password }`
@@ -27,9 +30,6 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-
-import { transformBackendUser } from '@/types/auth'
-import type { BackendUser } from '@/types/auth'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -57,22 +57,28 @@ export async function POST(request: NextRequest) {
     // Get the response data
     const data = await response.json()
 
-    // If login successful, fetch user data and build complete response
-    // Backend returns: { access_token, token_type }
-    // Frontend expects: { token, user, organization, expiresAt }
+    // If login successful, build complete response
+    // Backend now returns: { access_token, token_type, user }
+    // Frontend expects: { user, organization, expiresAt }
     if (response.ok && data.access_token) {
-      // Fetch user data using the new token
-      const userResponse = await fetch(`${BACKEND_URL}/api/v1/auth/me`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${data.access_token}`
-        }
-      })
-
+      // Use user data directly from backend response (no separate /auth/me call needed)
       let user = null
-      if (userResponse.ok) {
-        const userData: BackendUser = await userResponse.json()
-        user = transformBackendUser(userData)
+      if (data.user) {
+        // Backend already returns UserPublic, transform to frontend format
+        user = {
+          id: data.user.id,
+          organizationId: data.user.organization_id,
+          name: data.user.full_name || 'Usuário',
+          fullName: data.user.full_name,
+          role: 'analyst', // Default role, backend should add this
+          phoneNumber: data.user.phone_number,
+          jobTitle: data.user.job_title,
+          avatarUrl: data.user.avatar_url,
+          companyName: data.user.company_name,
+          createdAt: data.user.created_at,
+          status: 'active',
+          emailVerified: true
+        }
       }
 
       // Calculate expiration (30 minutes for access token, matching backend config)
