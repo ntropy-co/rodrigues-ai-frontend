@@ -60,7 +60,8 @@ async function authFetch<T>(
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...fetchOptions,
-      headers
+      headers,
+      credentials: fetchOptions.credentials ?? 'include'
     })
 
     // Handle no-content responses
@@ -228,13 +229,36 @@ export async function getCurrentUserApi(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   token?: string // Deprecated param, kept for signature compat
 ): Promise<{ id: string; email: string; name: string; role: string }> {
-  return authFetch<{ id: string; email: string; name: string; role: string }>(
-    '/auth/me',
-    {
+  try {
+    return await authFetch<{
+      id: string
+      email: string
+      name: string
+      role: string
+    }>('/auth/me', {
       method: 'GET'
       // No explicit headers needed, cookies are sent automatically
+    })
+  } catch (error) {
+    if (error instanceof AuthError && error.statusCode === 401) {
+      // Access token might be expired; try refresh once and retry.
+      try {
+        await refreshToken()
+        return await authFetch<{
+          id: string
+          email: string
+          name: string
+          role: string
+        }>('/auth/me', {
+          method: 'GET'
+        })
+      } catch {
+        // Fall through to original error.
+      }
     }
-  )
+
+    throw error
+  }
 }
 
 export default authApi
