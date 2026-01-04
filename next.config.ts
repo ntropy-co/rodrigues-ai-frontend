@@ -152,24 +152,41 @@ const pwaConfig = withPWA({
         }
       },
       {
-        // Navegações (HTML) - cache seguro apenas para o próprio site (evita cachear chamadas externas)
+        // Navegações (HTML) - cache apenas para rotas públicas
         urlPattern: ({ request, url }: { request: Request; url: URL }) => {
           const origin = (
             globalThis as unknown as { location?: { origin?: string } }
           ).location?.origin
 
-          return (
-            request.mode === 'navigate' &&
-            url.origin === origin &&
-            !url.pathname.startsWith('/api') &&
-            !url.pathname.startsWith('/_next')
-          )
+          if (
+            request.mode !== 'navigate' ||
+            url.origin !== origin ||
+            url.pathname.startsWith('/api') ||
+            url.pathname.startsWith('/_next')
+          ) {
+            return false
+          }
+
+          const publicPaths = [
+            '/',
+            '/login',
+            '/signup',
+            '/forgot-password',
+            '/reset-password',
+            '/contact'
+          ]
+
+          if (publicPaths.includes(url.pathname)) {
+            return true
+          }
+
+          return url.pathname.startsWith('/invite/')
         },
         handler: 'NetworkFirst',
         options: {
-          cacheName: 'pages',
+          cacheName: 'public-pages',
           expiration: {
-            maxEntries: 32,
+            maxEntries: 16,
             maxAgeSeconds: 86400
           }
         }

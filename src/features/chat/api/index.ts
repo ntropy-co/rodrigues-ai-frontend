@@ -79,7 +79,7 @@ export const chatApi = {
 
   async updateSession(
     sessionId: string,
-    data: { title?: string }
+    data: { title?: string; project_id?: string | null }
   ): Promise<SessionEntry> {
     const response = await fetchWithRefresh(`/api/sessions/${sessionId}`, {
       method: 'PATCH',
@@ -158,6 +158,12 @@ export const chatApi = {
       if (response.status === 401 || response.status === 404) return []
       throw new Error('Erro ao carregar projetos')
     }
+    return response.json()
+  },
+
+  async getProject(id: string): Promise<Project> {
+    const response = await fetchWithRefresh(`/api/projects/${id}`)
+    if (!response.ok) throw new Error('Erro ao carregar projeto')
     return response.json()
   },
 

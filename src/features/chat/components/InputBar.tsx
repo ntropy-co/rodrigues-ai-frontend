@@ -440,7 +440,7 @@ export function InputBar({
             duration: 0.8,
             ease: [0.25, 0.46, 0.45, 0.94] // Easing butter
           }}
-          className="relative mx-auto max-w-3xl"
+          className="relative mx-auto max-w-2xl"
           style={{
             transformStyle: 'preserve-3d',
             backfaceVisibility: 'hidden',
@@ -449,18 +449,18 @@ export function InputBar({
         >
           {/* Layer 6: Reflexo Inferior (Chão) */}
           <div
-            className="absolute -bottom-10 left-0 right-0 h-10 rounded-[100%] bg-gradient-to-b from-verity-900/5 to-transparent blur-lg"
+            className="absolute -bottom-10 left-0 right-0 h-10 rounded-[100%] bg-gradient-to-b from-verity-900/10 to-transparent blur-xl"
             style={{
-              transform: 'translateZ(-40px) scaleY(0.3)',
+              transform: 'translateZ(-40px) scaleY(0.4)',
               transformOrigin: 'top'
             }}
           />
 
           {/* Layer 5: Sombra Profunda */}
           <div
-            className="absolute inset-0 rounded-2xl bg-verity-900/5 blur-2xl"
+            className="absolute inset-0 rounded-[2.5rem] bg-verity-950/20 blur-2xl transition-all duration-500 group-hover:bg-verity-950/25"
             style={{
-              transform: 'translateZ(-30px) scale(0.95) translateY(20px)'
+              transform: 'translateZ(-30px) scale(0.9) translateY(25px)'
             }}
           />
 
@@ -469,7 +469,7 @@ export function InputBar({
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-4 flex flex-wrap gap-2 px-1"
+              className="mb-4 flex flex-wrap gap-2 px-4"
               style={{ transform: 'translateZ(10px)' }}
             >
               {[
@@ -481,9 +481,9 @@ export function InputBar({
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: index * 0.05 }}
-                  className="relative flex items-center gap-2 overflow-hidden rounded-lg border border-sand-200 bg-sand-50/90 py-1.5 pl-3 pr-8 text-xs text-verity-900 shadow-sm backdrop-blur-sm"
+                  className="relative flex items-center gap-2 overflow-hidden rounded-xl border border-sand-200 bg-sand-50/90 py-1.5 pl-3 pr-8 text-xs text-verity-900 shadow-lg backdrop-blur-md"
                 >
-                  <div className="flex h-5 w-5 items-center justify-center rounded bg-sand-200 text-verity-600">
+                  <div className="flex h-5 w-5 items-center justify-center rounded-md bg-sand-200 text-verity-600">
                     {(file.type || '').startsWith('image/') ? (
                       <ImageIcon className="h-3 w-3" />
                     ) : (
@@ -526,7 +526,7 @@ export function InputBar({
 
           {/* Layer 4: Container Principal */}
           <motion.div
-            className="group relative flex items-end gap-3 rounded-2xl border border-sand-300 bg-gradient-to-b from-sand-50 to-sand-100/50 px-5 py-4 backdrop-blur-xl"
+            className="group relative flex items-end gap-3 rounded-[2rem] border border-sand-300 bg-sand-50/80 px-6 py-5 backdrop-blur-2xl transition-all duration-300 hover:border-verity-300"
             style={{
               transform: 'translateZ(0)',
               transformStyle: 'preserve-3d'
@@ -538,31 +538,31 @@ export function InputBar({
                 scale: 1,
                 rotateX: 0,
                 boxShadow:
-                  '0 1px 2px rgba(45, 90, 69, 0.06), 0 4px 12px rgba(45, 90, 69, 0.10), 0 16px 32px rgba(45, 90, 69, 0.14), inset 0 1px 1px rgba(255, 255, 255, 0.5), inset 0 -1px 2px rgba(45, 90, 69, 0.05)',
-                borderColor: '#9DC4B0'
+                  '0 1px 2px rgba(45, 90, 69, 0.05), 0 8px 32px rgba(45, 90, 69, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.8)',
+                borderColor: '#D4D4D0' // sand-300
               },
               focus: {
-                scale: 1.01,
-                rotateX: -0.5,
+                scale: 1.02,
+                rotateX: -1,
                 boxShadow:
-                  '0 2px 4px rgba(45, 90, 69, 0.08), 0 8px 16px rgba(45, 90, 69, 0.12), 0 20px 40px rgba(45, 90, 69, 0.16), inset 0 1px 1px rgba(255, 255, 255, 0.6), 0 0 0 3px rgba(90, 149, 119, 0.15)',
-                borderColor: '#2D5A45'
+                  '0 4px 8px rgba(45, 90, 69, 0.06), 0 12px 48px rgba(45, 90, 69, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.9), 0 0 0 2px rgba(90, 149, 119, 0.1)',
+                borderColor: '#9DC4B0' // verity-300
               }
             }}
-            transition={{ duration: 0.3, ease: easings.butter }}
+            transition={{ duration: 0.4, ease: easings.butter }}
           >
             {/* Layer 2: Shimmer Effect */}
-            <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
+            <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2rem]">
               <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
                 style={{ transform: 'translateZ(3px) skewX(-20deg)' }}
                 animate={{
                   x: ['-200%', '200%']
                 }}
                 transition={{
-                  duration: 3,
+                  duration: 4,
                   repeat: Infinity,
-                  repeatDelay: 5,
+                  repeatDelay: 6,
                   ease: 'easeInOut'
                 }}
               />

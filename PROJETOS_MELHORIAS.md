@@ -130,3 +130,86 @@ padronizar estados e microcopy.
 - Projeto deve agrupar tambem documentos fora do chat?
 - Qual o criterio para arquivamento automatico?
 
+## Backlog priorizado (epicos e historias)
+
+Premissas: sem visao compartilhada, governanca alta, sem integracoes externas.
+
+### P0 - Fundacao e governanca
+**Epico: Modelo de governanca e auditoria**
+- Historia: definir politicas de governanca (permissoes, acoes criticas, retencao, arquivamento).
+  - Aceite: documento de regras aprovado; lista de acoes criticas mapeada.
+- Historia: registrar eventos de governanca (criar, renomear, arquivar, mover conversa).
+  - Aceite: eventos disponiveis no log local da aplicacao e exportaveis por suporte interno.
+
+**Epico: Consistencia de contexto**
+- [x] Historia: persistir projeto selecionado (URL + store + localStorage).
+  - Aceite: ao recarregar, projeto permanece selecionado; URL reflete o contexto.
+- [ ] Historia: sincronizar projeto ativo com /chat/:id.
+  - Aceite: abrir uma conversa ajusta o projeto automaticamente.
+
+**Epico: Confiabilidade da criacao de conversas**
+- [x] Historia: incluir project_id em toda nova conversa criada pelo chat.
+  - Aceite: 100% das novas conversas possuem project_id.
+- Historia: tratar erros de API com mensagens claras e retry.
+  - Aceite: 401/404/timeout exibem mensagem e acao de tentar novamente.
+
+**Epico: Base de UX e acessibilidade**
+- Historia: estados completos (loading, vazio, erro, foco, ativo, hover, arquivado).
+  - Aceite: todos os estados definidos e consistentes no sidebar e hub.
+- Historia: acessibilidade essencial (teclado, foco visivel, aria-label).
+  - Aceite: navega por teclado e leitor de tela sem perda de contexto.
+
+### P1 - Organizacao e visao dedicada
+**Epico: Project Hub**
+- [x] Historia: criar pagina dedicada com overview e acoes principais.
+  - Aceite: hub mostra descricao, conversas recentes e acoes de gestao.
+- Historia: exibir e editar descricao do projeto.
+  - Aceite: descricao visivel no hub e editavel com confirmacao.
+
+**Epico: Organizacao e busca**
+- Historia: busca por nome/descricao com debounce.
+  - Aceite: resultados em tempo real com atraso controlado.
+- Historia: filtros e ordenacao (nome, atividade, status).
+  - Aceite: preferencia persistida por usuario.
+- Historia: favoritos/pin de projetos.
+  - Aceite: projetos fixados aparecem no topo.
+
+**Epico: Reorganizacao de conversas**
+- Historia: mover conversa entre projetos.
+  - Aceite: conversa muda de projeto e aparece na lista correta.
+- Historia: undo imediato para mover/arquivar.
+  - Aceite: desfazer disponivel por alguns segundos apos a acao.
+
+**Epico: Instrumentacao basica**
+- Historia: eventos de criacao, selecao e troca de projeto.
+  - Aceite: eventos registrados com timestamp e id de usuario.
+
+### P2 - Escala e produtividade
+**Epico: Acoes em massa**
+- Historia: selecionar varias conversas para mover/arquivar.
+  - Aceite: operacao em lote com confirmacao e feedback.
+
+**Epico: Performance de listas grandes**
+- Historia: virtualizacao de listas.
+  - Aceite: scroll fluido com centenas de itens.
+- Historia: prefetch de conversas recentes.
+  - Aceite: abertura de conversas recentes mais rapida.
+
+**Epico: Fluxos de melhoria**
+- Historia: banner para conversas sem projeto.
+  - Aceite: banner com CTA para atribuir projeto.
+- Historia: templates de projeto (campos e estrutura).
+  - Aceite: criar projeto a partir de template preenche campos basicos.
+
+### P3 - Experiencia avancada
+**Epico: Contexto estruturado**
+- Historia: brief estruturado do projeto (objetivo, escopo, status).
+  - Aceite: campos obrigatorios e validacao simples.
+
+**Epico: Sugestao local**
+- Historia: sugerir projeto ao iniciar chat por heuristica local.
+  - Aceite: sugestao baseada em ultima atividade e palavras-chave.
+
+**Epico: Onboarding**
+- Historia: onboarding leve na primeira criacao de projeto.
+  - Aceite: walkthrough curto com opcao de pular.

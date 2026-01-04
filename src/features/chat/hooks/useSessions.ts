@@ -93,7 +93,7 @@ export function useSessions() {
   const updateSession = useCallback(
     async (
       sessionId: string,
-      data: { title?: string }
+      data: { title?: string; project_id?: string | null }
     ): Promise<SessionEntry | null> => {
       if (!user) return null
 

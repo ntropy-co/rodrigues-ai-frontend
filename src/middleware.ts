@@ -44,15 +44,7 @@ if (
 const MUTATION_METHODS = ['POST', 'PUT', 'DELETE', 'PATCH']
 
 // Paths that don't require CSRF validation (public endpoints)
-const CSRF_EXEMPT_PATHS = [
-  '/api/auth/register',
-  '/api/auth/login',
-  '/api/auth/forgot-password',
-  '/api/auth/reset-password',
-  '/api/contact',
-  '/api/health',
-  '/api/webhooks'
-] as const
+const CSRF_EXEMPT_PATHS = ['/api/health', '/api/webhooks'] as const
 
 export async function middleware(request: NextRequest) {
   const { method, headers, nextUrl } = request

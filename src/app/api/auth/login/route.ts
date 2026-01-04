@@ -31,7 +31,27 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+const BACKEND_URL =
+  process.env.API_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  'http://localhost:8000'
+
+type BackendUser = {
+  id: string
+  organization_id?: string | null
+  full_name?: string | null
+  phone_number?: string | null
+  job_title?: string | null
+  avatar_url?: string | null
+  company_name?: string | null
+  created_at?: string | null
+}
+
+type BackendLoginResponse = {
+  access_token: string
+  refresh_token?: string
+  user?: BackendUser
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -54,28 +74,41 @@ export async function POST(request: NextRequest) {
       body: formData.toString()
     })
 
-    // Get the response data
-    const data = await response.json()
+    const contentType = response.headers.get('content-type') || ''
+    let data: unknown = null
+
+    if (contentType.includes('application/json')) {
+      data = await response.json()
+    } else {
+      const text = await response.text()
+      data = { detail: text || 'Unexpected response from backend' }
+    }
 
     // If login successful, build complete response
     // Backend now returns: { access_token, token_type, user }
     // Frontend expects: { user, organization, expiresAt }
-    if (response.ok && data.access_token) {
+    if (
+      response.ok &&
+      typeof data === 'object' &&
+      data !== null &&
+      'access_token' in data
+    ) {
       // Use user data directly from backend response (no separate /auth/me call needed)
       let user = null
-      if (data.user) {
+      const payload = data as BackendLoginResponse
+      if (payload.user) {
         // Backend already returns UserPublic, transform to frontend format
         user = {
-          id: data.user.id,
-          organizationId: data.user.organization_id,
-          name: data.user.full_name || 'Usuário',
-          fullName: data.user.full_name,
+          id: payload.user.id,
+          organizationId: payload.user.organization_id,
+          name: payload.user.full_name || 'Usuário',
+          fullName: payload.user.full_name,
           role: 'analyst', // Default role, backend should add this
-          phoneNumber: data.user.phone_number,
-          jobTitle: data.user.job_title,
-          avatarUrl: data.user.avatar_url,
-          companyName: data.user.company_name,
-          createdAt: data.user.created_at,
+          phoneNumber: payload.user.phone_number,
+          jobTitle: payload.user.job_title,
+          avatarUrl: payload.user.avatar_url,
+          companyName: payload.user.company_name,
+          createdAt: payload.user.created_at,
           status: 'active',
           emailVerified: true
         }
@@ -98,7 +131,7 @@ export async function POST(request: NextRequest) {
       // Set HttpOnly cookie with the access token
       // SECURITY: HttpOnly prevents XSS from stealing tokens
       // maxAge matches backend ACCESS_TOKEN_EXPIRE_MINUTES (30 min)
-      jsonResponse.cookies.set('verity_access_token', data.access_token, {
+      jsonResponse.cookies.set('verity_access_token', payload.access_token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
@@ -108,8 +141,8 @@ export async function POST(request: NextRequest) {
 
       // Also set refresh token if available
       // maxAge matches backend REFRESH_TOKEN_EXPIRE_DAYS (30 days)
-      if (data.refresh_token) {
-        jsonResponse.cookies.set('verity_refresh_token', data.refresh_token, {
+      if (payload.refresh_token) {
+        jsonResponse.cookies.set('verity_refresh_token', payload.refresh_token, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'lax',
@@ -121,7 +154,11 @@ export async function POST(request: NextRequest) {
       return jsonResponse
     }
 
-    // Return error response as-is
+    console.error('[Auth Login] Backend error', {
+      status: response.status,
+      contentType,
+      data
+    })
     return NextResponse.json(data, { status: response.status })
   } catch {
     return NextResponse.json(

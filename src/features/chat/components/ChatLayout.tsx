@@ -152,7 +152,7 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
   }
 
   return (
-    <div className="flex h-screen w-screen flex-col bg-sand-200 dark:bg-background">
+    <div className="flex h-screen w-screen flex-col bg-sand-100 dark:bg-background">
       <ChatHeader />
 
       <div className="relative flex flex-1 overflow-hidden">
