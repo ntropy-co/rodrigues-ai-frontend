@@ -131,13 +131,18 @@ export function CPRHistoryCard({
       exit={{ opacity: 0, y: -10 }}
       layout
     >
-      <Card className="group border-verity-200 transition-shadow hover:shadow-md">
+      <Card className="group border-sand-200 bg-white/60 shadow-sm backdrop-blur-sm transition-all hover:border-verity-300 hover:bg-white hover:shadow-md dark:bg-verity-900/60 dark:hover:bg-verity-900">
         <CardContent className="p-4">
           <div className="flex items-start justify-between gap-4">
             {/* Left: Type icon and content */}
             <div className="flex min-w-0 flex-1 items-start gap-3">
               {/* Type badge */}
-              <div className={cn('shrink-0 rounded-lg p-2', typeConfig.color)}>
+              <div
+                className={cn(
+                  'shrink-0 rounded-xl border border-sand-300 bg-white p-2.5 shadow-sm dark:border-verity-700 dark:bg-verity-800',
+                  typeConfig.color.replace('bg-', 'text-') // Keep text color but force white bg
+                )}
+              >
                 <TypeIcon className="h-5 w-5" />
               </div>
 

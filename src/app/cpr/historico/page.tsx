@@ -84,7 +84,7 @@ export default function CPRHistoricoPage() {
   }, [setFilters])
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-sand-100 dark:bg-verity-950">
       <InternalHeader
         title="Historico de CPRs"
         subtitle="Visualize e gerencie analises e emissoes de CPR."
@@ -116,8 +116,8 @@ export default function CPRHistoricoPage() {
 
         {/* Error state */}
         {error && (
-          <div className="mb-6 rounded-lg border border-error-200 bg-error-50 p-4">
-            <p className="text-error-600">{error}</p>
+          <div className="mb-6 rounded-xl border border-error-200 bg-error-50/80 p-4 backdrop-blur-sm">
+            <p className="text-sm font-medium text-error-800">{error}</p>
             <Button
               variant="outline"
               size="sm"
