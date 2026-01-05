@@ -1,6 +1,6 @@
 'use client'
 
-import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react'
+import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 import Underline from '@tiptap/extension-underline'
@@ -248,40 +248,6 @@ export function RichEditor({
       <div className="flex-1 overflow-y-auto bg-white">
         <EditorContent editor={editor} className="h-full" />
       </div>
-
-      {/* Bubble Menu (Floating toolbar on selection) */}
-      {editor && (
-        <BubbleMenu
-          editor={editor}
-          tippyOptions={{ duration: 150 }}
-          className="flex items-center gap-1 rounded-lg border border-sand-200 bg-white p-1 shadow-lg"
-        >
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleBold().run()}
-            isActive={editor.isActive('bold')}
-            icon={Bold}
-            title="Negrito"
-          />
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleItalic().run()}
-            isActive={editor.isActive('italic')}
-            icon={Italic}
-            title="Itálico"
-          />
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleUnderline().run()}
-            isActive={editor.isActive('underline')}
-            icon={UnderlineIcon}
-            title="Sublinhado"
-          />
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleHighlight().run()}
-            isActive={editor.isActive('highlight')}
-            icon={Highlighter}
-            title="Destacar"
-          />
-        </BubbleMenu>
-      )}
     </div>
   )
 }

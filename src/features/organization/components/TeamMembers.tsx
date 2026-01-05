@@ -337,7 +337,7 @@ function MemberRow({
   }
 
   return (
-    <tr className="border-b border-border transition-colors hover:bg-muted/50">
+    <tr className="border-b border-[hsl(var(--border-subtle))] transition-colors hover:bg-[hsl(var(--surface-subtle))]">
       {/* User Info */}
       <td className="px-4 py-3">
         <div className="flex items-center gap-3">
@@ -352,10 +352,12 @@ function MemberRow({
               : member.email[0].toUpperCase()}
           </div>
           <div>
-            <p className="font-medium text-foreground">
+            <p className="font-medium text-[hsl(var(--text-primary))]">
               {member.full_name || 'Sem nome'}
             </p>
-            <p className="text-sm text-muted-foreground">{member.email}</p>
+            <p className="text-sm text-[hsl(var(--text-secondary))]">
+              {member.email}
+            </p>
           </div>
         </div>
       </td>
@@ -371,7 +373,7 @@ function MemberRow({
       </td>
 
       {/* Last Login */}
-      <td className="px-4 py-3 text-sm text-muted-foreground">
+      <td className="px-4 py-3 text-sm tabular-nums text-[hsl(var(--text-secondary))]">
         {formatDate(member.last_login_at)}
       </td>
 
@@ -627,10 +629,10 @@ export function TeamMembers({
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto rounded-lg border border-border">
+        <div className="overflow-x-auto rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]">
           <table className="w-full">
-            <thead className="bg-muted/50">
-              <tr className="border-b border-border text-left text-sm font-medium text-muted-foreground">
+            <thead className="bg-[hsl(var(--surface-subtle))]">
+              <tr className="border-b border-[hsl(var(--border-subtle))] text-left text-sm font-medium text-[hsl(var(--text-muted))]">
                 <th className="px-4 py-3">Usuario</th>
                 <th className="px-4 py-3">Cargo</th>
                 <th className="px-4 py-3">Status</th>
@@ -643,7 +645,7 @@ export function TeamMembers({
                 <tr>
                   <td
                     colSpan={5}
-                    className="px-4 py-8 text-center text-muted-foreground"
+                    className="px-4 py-8 text-center text-[hsl(var(--text-muted))]"
                   >
                     {search || roleFilter !== 'all' || statusFilter !== 'all'
                       ? 'Nenhum membro encontrado com os filtros selecionados'

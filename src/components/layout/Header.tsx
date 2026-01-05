@@ -32,7 +32,7 @@ export function Header({
   return (
     <>
       <header
-        className="sticky top-0 z-30 flex h-14 w-full items-center justify-between border-b border-sand-300/50 bg-sand-100/80 px-4 backdrop-blur-md dark:border-verity-800 dark:bg-card/80"
+        className="sticky top-0 z-30 flex h-14 w-full items-center justify-between border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-base))]/80 px-4 backdrop-blur-md"
         role="banner"
       >
         {/* Left Section: Toggles & Logo */}
@@ -65,14 +65,17 @@ export function Header({
           )}
 
           {/* Divider */}
-          <div className="mx-2 h-6 w-px bg-sand-300" aria-hidden="true" />
+          <div
+            className="mx-2 h-6 w-px bg-[hsl(var(--border-subtle))]"
+            aria-hidden="true"
+          />
 
           {/* Logo */}
           <div className="flex items-center gap-2.5">
             <div className="flex items-center justify-center rounded-lg bg-verity-900 p-1.5">
               <Hexagon className="h-4 w-4 text-white" strokeWidth={2.5} />
             </div>
-            <span className="font-display text-base font-semibold text-verity-950">
+            <span className="font-display text-base font-semibold text-[hsl(var(--text-primary))]">
               {ui.branding.appName}
             </span>
           </div>
@@ -96,7 +99,10 @@ export function Header({
             </button>
           )}
 
-          <div className="h-6 w-px bg-sand-300" aria-hidden="true" />
+          <div
+            className="h-6 w-px bg-[hsl(var(--border-subtle))]"
+            aria-hidden="true"
+          />
           <UserAvatar />
         </nav>
       </header>

@@ -206,25 +206,27 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
       {/* Sidebar */}
       <aside
         id="navigation-sidebar"
-        className="fixed left-0 top-0 z-50 h-full w-full max-w-[280px] transform border-r border-border bg-background shadow-xl transition-transform duration-300 sm:w-80 sm:max-w-none"
+        className="fixed left-0 top-0 z-50 h-full w-full max-w-[280px] transform border-r border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-base))] text-[hsl(var(--text-primary))] shadow-xl transition-transform duration-300 sm:w-80 sm:max-w-none"
         role="navigation"
         aria-label="Menu de navegação e conversas"
       >
         <div className="flex h-full flex-col">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-border p-4">
-            <h2 className="text-lg font-semibold text-foreground">Histórico</h2>
+          <div className="flex items-center justify-between border-b border-[hsl(var(--border-subtle))] p-4">
+            <h2 className="text-lg font-semibold text-[hsl(var(--text-primary))]">
+              Histórico
+            </h2>
             <button
               onClick={onClose}
-              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 transition-colors hover-hover:bg-muted"
+              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 transition-colors hover-hover:bg-[hsl(var(--surface-subtle))]"
               aria-label="Fechar menu"
             >
-              <X className="h-5 w-5 text-muted-foreground" />
+              <X className="h-5 w-5 text-[hsl(var(--text-muted))]" />
             </button>
           </div>
 
           {/* Nova Conversa (Enterprise) */}
-          <div className="border-b border-sand-200 p-4 dark:border-verity-800">
+          <div className="border-b border-[hsl(var(--border-subtle))] p-4">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -238,8 +240,8 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
 
           {/* Ferramentas / Navegação */}
           {/* Mercado & Crédito Section */}
-          <div className="border-b border-sand-200 p-4 dark:border-verity-800">
-            <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-verity-400 dark:text-verity-500">
+          <div className="border-b border-[hsl(var(--border-subtle))] p-4">
+            <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-[hsl(var(--text-muted))]">
               Mercado & Crédito
             </h3>
             <div className="space-y-0.5">
@@ -248,7 +250,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   router.push('/quotes')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-sand-200 dark:text-verity-300 dark:hover:bg-verity-800"
+                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-[hsl(var(--surface-subtle))] dark:text-verity-300"
               >
                 <TrendingUp className="h-4 w-4 text-verity-500" />
                 Cotações
@@ -259,7 +261,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   router.push('/cpr/simulator')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-sand-200 dark:text-verity-300 dark:hover:bg-verity-800"
+                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-[hsl(var(--surface-subtle))] dark:text-verity-300"
               >
                 <Calculator className="h-4 w-4 text-verity-500" />
                 Simulador CPR
@@ -270,7 +272,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   router.push('/compliance')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-sand-200 dark:text-verity-300 dark:hover:bg-verity-800"
+                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-[hsl(var(--surface-subtle))] dark:text-verity-300"
               >
                 <ShieldCheck className="h-4 w-4 text-verity-500" />
                 Compliance
@@ -279,8 +281,8 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
           </div>
 
           {/* Gestão Section */}
-          <div className="border-b border-sand-200 p-4 dark:border-verity-800">
-            <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-verity-400 dark:text-verity-500">
+          <div className="border-b border-[hsl(var(--border-subtle))] p-4">
+            <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-[hsl(var(--text-muted))]">
               Gestão
             </h3>
             <div className="space-y-0.5">
@@ -289,7 +291,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   router.push('/documents')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-sand-200 dark:text-verity-300 dark:hover:bg-verity-800"
+                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-[hsl(var(--surface-subtle))] dark:text-verity-300"
               >
                 <Search className="h-4 w-4 text-verity-500" />
                 Meus Documentos
@@ -300,7 +302,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   router.push('/cpr/historico')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-sand-200 dark:text-verity-300 dark:hover:bg-verity-800"
+                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-[hsl(var(--surface-subtle))] dark:text-verity-300"
               >
                 <History className="h-4 w-4 text-verity-500" />
                 Histórico CPR
@@ -311,7 +313,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   router.push('/contact')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-sand-200 dark:text-verity-300 dark:hover:bg-verity-800"
+                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-[hsl(var(--surface-subtle))] dark:text-verity-300"
               >
                 <HelpCircle className="h-4 w-4 text-verity-500" />
                 Suporte
@@ -320,7 +322,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
           </div>
 
           {/* Search */}
-          <div className="border-b border-sand-200 p-4 dark:border-verity-800">
+          <div className="border-b border-[hsl(var(--border-subtle))] p-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-verity-400" />
               <input
@@ -332,7 +334,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                 autoComplete="off"
                 autoCorrect="off"
                 spellCheck={false}
-                className="w-full rounded-md border border-sand-300 bg-verity-50 py-2.5 pl-9 pr-3 text-sm text-verity-900 placeholder:text-verity-400 focus:border-verity-400 focus:outline-none focus:ring-0 dark:border-verity-700 dark:bg-verity-900 dark:text-verity-100 placeholder:dark:text-verity-600"
+                className="w-full rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-subtle))] py-2.5 pl-9 pr-3 text-sm text-[hsl(var(--text-primary))] placeholder:text-[hsl(var(--text-muted))] focus:border-[hsl(var(--border-strong))] focus:outline-none focus:ring-0"
                 aria-label="Buscar analises"
               />
             </div>
@@ -367,9 +369,9 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   <div
                     key={session.id}
                     onClick={() => handleSessionClick(session.id)}
-                    className={`group mb-0.5 flex cursor-pointer items-center justify-between rounded-md px-3 py-2 transition-colors hover:bg-sand-200 dark:hover:bg-verity-800 ${
+                    className={`group mb-0.5 flex cursor-pointer items-center justify-between rounded-md px-3 py-2 transition-colors hover:bg-[hsl(var(--surface-subtle))] ${
                       sessionId === session.id
-                        ? 'bg-sand-300 font-medium dark:bg-verity-800'
+                        ? 'bg-[hsl(var(--surface-subtle))] font-medium'
                         : ''
                     }`}
                   >
@@ -384,7 +386,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                         {session.title}
                       </h3>
                       <div className="mt-0.5 flex items-center gap-2">
-                        <span className="text-[10px] text-verity-400">
+                        <span className="text-[10px] tabular-nums text-[hsl(var(--text-muted))]">
                           {session.timestamp}
                         </span>
                         {/* Status badge simulado para dar tom enterprise */}
@@ -409,8 +411,8 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
           </div>
 
           {/* Footer */}
-          <div className="border-t border-border p-4">
-            <div className="text-center text-sm text-muted-foreground">
+          <div className="border-t border-[hsl(var(--border-subtle))] p-4">
+            <div className="text-center text-sm text-[hsl(var(--text-muted))]">
               Verity Agro — Análise de CPR e Crédito Rural
             </div>
           </div>

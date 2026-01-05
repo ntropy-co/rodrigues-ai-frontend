@@ -358,29 +358,29 @@ export default function AdminUsersPage() {
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="border-b border-sand-300 bg-sand-50 dark:border-verity-600 dark:bg-verity-800">
+              <thead className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-subtle))]">
                 <tr>
-                  <th className="text-sand-500 px-4 py-3 text-left text-xs font-medium uppercase tracking-wider dark:text-verity-300">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[hsl(var(--text-muted))]">
                     Usuário
                   </th>
-                  <th className="text-sand-500 px-4 py-3 text-left text-xs font-medium uppercase tracking-wider dark:text-verity-300">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[hsl(var(--text-muted))]">
                     Email
                   </th>
-                  <th className="text-sand-500 px-4 py-3 text-left text-xs font-medium uppercase tracking-wider dark:text-verity-300">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[hsl(var(--text-muted))]">
                     Função
                   </th>
-                  <th className="text-sand-500 px-4 py-3 text-left text-xs font-medium uppercase tracking-wider dark:text-verity-300">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[hsl(var(--text-muted))]">
                     Status
                   </th>
-                  <th className="text-sand-500 px-4 py-3 text-left text-xs font-medium uppercase tracking-wider dark:text-verity-300">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[hsl(var(--text-muted))]">
                     Criado em
                   </th>
-                  <th className="text-sand-500 px-4 py-3 text-left text-xs font-medium uppercase tracking-wider dark:text-verity-300">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[hsl(var(--text-muted))]">
                     Ações
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-sand-200 dark:divide-verity-800">
+              <tbody className="divide-y divide-[hsl(var(--border-subtle))]">
                 {loading ? (
                   <>
                     <UserRowSkeleton />
@@ -392,7 +392,7 @@ export default function AdminUsersPage() {
                 ) : users.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="px-4 py-8 text-center">
-                      <p className="text-sand-500 dark:text-verity-300">
+                      <p className="text-[hsl(var(--text-muted))]">
                         Nenhum usuário encontrado
                       </p>
                     </td>
@@ -401,14 +401,14 @@ export default function AdminUsersPage() {
                   users.map((user) => (
                     <tr
                       key={user.id}
-                      className="transition-colors hover:bg-sand-50 dark:hover:bg-verity-800/50"
+                      className="transition-colors hover:bg-[hsl(var(--surface-subtle))]"
                     >
                       <td className="whitespace-nowrap px-4 py-3">
-                        <div className="font-medium text-verity-900 dark:text-white">
+                        <div className="font-medium text-[hsl(var(--text-primary))]">
                           {user.full_name || '-'}
                         </div>
                       </td>
-                      <td className="whitespace-nowrap px-4 py-3 text-verity-500 dark:text-verity-300">
+                      <td className="whitespace-nowrap px-4 py-3 text-[hsl(var(--text-secondary))]">
                         {user.email}
                       </td>
                       <td className="whitespace-nowrap px-4 py-3">
@@ -421,7 +421,7 @@ export default function AdminUsersPage() {
                           {STATUS_LABELS[user.status]}
                         </Badge>
                       </td>
-                      <td className="whitespace-nowrap px-4 py-3 tabular-nums text-verity-500 dark:text-verity-300">
+                      <td className="whitespace-nowrap px-4 py-3 tabular-nums text-[hsl(var(--text-secondary))]">
                         {formatDate(user.created_at)}
                       </td>
                       <td className="whitespace-nowrap px-4 py-3">

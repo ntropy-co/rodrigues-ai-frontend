@@ -27,7 +27,7 @@ export function InternalHeader({
   return (
     <header
       className={cn(
-        'sticky top-0 z-30 border-b border-sand-300 bg-sand-100/95 backdrop-blur-xl dark:bg-verity-950/95',
+        'sticky top-0 z-30 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-base))]/95 backdrop-blur-xl',
         className
       )}
       role="banner"
@@ -42,17 +42,19 @@ export function InternalHeader({
           <Link
             href={backHref}
             aria-label={backLabel}
-            className="mt-1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border border-sand-200 bg-white text-verity-600 shadow-sm transition-all hover:border-verity-200 hover:text-verity-900"
+            className="mt-1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--text-secondary))] shadow-sm transition-all hover:border-[hsl(var(--border-strong))] hover:text-[hsl(var(--text-primary))]"
           >
             <ChevronLeft className="h-5 w-5" />
           </Link>
 
           <div className="min-w-0 space-y-1">
-            <h1 className="truncate font-display text-2xl font-semibold tracking-tight text-verity-950 sm:text-3xl">
+            <h1 className="truncate font-display text-2xl font-semibold tracking-tight text-[hsl(var(--text-primary))] sm:text-3xl">
               {title}
             </h1>
             {subtitle ? (
-              <p className="line-clamp-2 text-sm text-verity-600">{subtitle}</p>
+              <p className="line-clamp-2 text-sm text-[hsl(var(--text-secondary))]">
+                {subtitle}
+              </p>
             ) : null}
           </div>
         </div>

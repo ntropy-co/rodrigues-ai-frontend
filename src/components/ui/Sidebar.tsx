@@ -73,18 +73,18 @@ export function Sidebar({
               }}
               style={{ width }}
               className={cn(
-                'fixed top-0 z-50 flex h-screen flex-col overflow-hidden bg-white',
+                'fixed top-0 z-50 flex h-screen flex-col overflow-hidden bg-[hsl(var(--surface-base))] text-[hsl(var(--text-primary))]',
                 isLeft ? 'left-0 border-r-2' : 'right-0 border-l-2',
-                'border-verity-100',
+                'border-[hsl(var(--border-subtle))]',
                 className
               )}
             >
               {/* Header with Close Button */}
-              <div className="flex items-center justify-between border-b border-verity-100 p-4">
+              <div className="flex items-center justify-between border-b border-[hsl(var(--border-subtle))] p-4">
                 {header}
                 <button
                   onClick={onClose}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-verity-600 transition-colors hover:bg-verity-100 hover:text-verity-900"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-[hsl(var(--text-secondary))] transition-colors hover:bg-[hsl(var(--surface-subtle))] hover:text-[hsl(var(--text-primary))]"
                   aria-label="Fechar"
                 >
                   <X className="h-5 w-5" />
@@ -110,15 +110,15 @@ export function Sidebar({
       }}
       transition={sidebarSpring}
       className={cn(
-        'relative h-screen flex-shrink-0 overflow-hidden bg-white',
+        'relative h-screen flex-shrink-0 overflow-hidden bg-[hsl(var(--surface-base))] text-[hsl(var(--text-primary))]',
         isLeft ? 'border-r' : 'border-l',
-        'border-verity-100',
+        'border-[hsl(var(--border-subtle))]',
         className
       )}
     >
       <div className="flex h-full flex-col" style={{ width: `${width}px` }}>
         {header && (
-          <div className="flex-shrink-0 border-b border-verity-100 p-4">
+          <div className="flex-shrink-0 border-b border-[hsl(var(--border-subtle))] p-4">
             {header}
           </div>
         )}
