@@ -524,9 +524,9 @@ export function InputBar({
             </motion.div>
           )}
 
-          {/* Layer 4: Container Principal (Pílula Orgânica) */}
+          {/* Layer 4: Container Principal (Pílula Orgânica Suprema) */}
           <motion.div
-            className="group relative flex items-end gap-3 rounded-[2.5rem] border border-sand-200 bg-white/40 px-6 py-4 backdrop-blur-xl transition-all duration-300 hover:border-verity-200/50 hover:bg-white/60"
+            className="group relative flex items-end gap-3 rounded-[3rem] border border-sand-200 bg-white/40 px-6 py-4 backdrop-blur-xl transition-all duration-300 hover:border-verity-200/50 hover:bg-white/60"
             style={{
               transform: 'translateZ(0)',
               transformStyle: 'preserve-3d'
@@ -538,13 +538,13 @@ export function InputBar({
                 scale: 1,
                 boxShadow:
                   '0 2px 10px rgba(45, 90, 69, 0.03), 0 10px 40px -10px rgba(45, 90, 69, 0.05)',
-                borderColor: 'rgba(212, 212, 208, 0.6)' // sand-300 transparent
+                borderColor: 'rgba(212, 212, 208, 0.6)'
               },
               focus: {
                 scale: 1.01,
                 boxShadow:
                   '0 4px 20px rgba(45, 90, 69, 0.06), 0 20px 60px -20px rgba(45, 90, 69, 0.1)',
-                borderColor: '#9DC4B0' // verity-300
+                borderColor: '#9DC4B0'
               }
             }}
             transition={{ duration: 0.4, ease: easings.butter }}
