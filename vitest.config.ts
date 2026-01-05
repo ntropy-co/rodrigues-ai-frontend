@@ -11,13 +11,14 @@ export default defineConfig({
     setupFiles: ['./vitest.setup.tsx'],
     include: ['**/*.{test,spec}.{ts,tsx}'],
     exclude: ['node_modules', '.next', 'e2e'],
-    pool: 'threads',
+    pool: 'forks',
     poolOptions: {
-      threads: {
-        minThreads: 1,
-        maxThreads: 1
+      forks: {
+        minForks: 1,
+        maxForks: 1
       }
     },
+    fileParallelism: false,
     maxConcurrency: 1,
     coverage: {
       provider: 'v8',
