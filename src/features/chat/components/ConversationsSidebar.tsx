@@ -47,6 +47,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip'
 // Spring animation config (Claude-inspired)
 const sidebarSpring = {
   type: 'spring' as const,
@@ -438,86 +444,87 @@ const SidebarContent = memo(function SidebarContent({
 
   return (
     <>
-      {/* Header Area: Search + New Analysis */}
-      <div className="flex flex-col gap-3 border-b border-sand-300/50 bg-sand-200/50 p-4 backdrop-blur-sm">
+      {/* Header Area: Search + New Analysis (Compact) */}
+      <div className="flex items-center gap-2 border-b border-sand-300/50 bg-sand-200/50 p-3 backdrop-blur-sm">
         {/* Search Bar */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-verity-500" />
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-verity-500" />
           <input
             type="search"
             placeholder="Buscar"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            inputMode="search"
-            autoComplete="off"
-            autoCorrect="off"
-            spellCheck={false}
-            className="h-10 w-full rounded-lg border border-sand-300 bg-white/50 px-4 pl-10 text-sm text-verity-950 transition-all duration-200 placeholder:text-verity-500 focus:border-verity-600 focus:outline-none focus:ring-0 focus:ring-verity-600/15"
+            className="h-9 w-full rounded-lg border border-sand-300 bg-white/50 px-3 pl-9 text-sm text-verity-950 transition-all placeholder:text-verity-500 focus:border-verity-600 focus:outline-none focus:ring-0"
           />
         </div>
 
-        {/* New Analysis Button */}
-        <div className="flex items-center gap-2">
-          <motion.button
-            type="button"
-            whileHover={{
-              scale: 1.02,
-              y: -1,
-              boxShadow: '0 8px 20px rgba(45, 90, 69, 0.30)'
-            }}
-            whileTap={{ scale: 0.98 }}
-            onClick={onNewConversation}
-            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-gradient-to-br from-verity-900 to-verity-800 px-4 py-2.5 text-sm font-medium text-white shadow-md shadow-verity-900/20 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <Plus className="h-4 w-4" />
-            Nova Conversa
-          </motion.button>
+        {/* New Analysis Icon Button */}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <motion.button
+                whileHover={{ scale: 1.05, bg: 'var(--verity-900)' }}
+                whileTap={{ scale: 0.95 }}
+                onClick={onNewConversation}
+                className="flex h-9 w-9 items-center justify-center rounded-lg bg-verity-900 text-white shadow-sm transition-colors hover:bg-verity-800"
+              >
+                <Plus className="h-5 w-5" />
+              </motion.button>
+            </TooltipTrigger>
+            <TooltipContent>Nova Conversa</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
 
-          {showCloseButton && (
-            <button
-              type="button"
-              onClick={onToggle}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-verity-200 text-verity-600 transition-colors hover:bg-verity-50 hover:text-verity-900"
-              aria-label="Fechar sidebar"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-          )}
-        </div>
+        {showCloseButton && (
+          <button
+            onClick={onToggle}
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-verity-200 text-verity-600 hover:bg-verity-50"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+        )}
       </div>
 
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto px-3 pb-4 pt-4">
         {/* Projetos Section */}
         <div className="mb-6">
-          <h3 className="mb-2 px-2 font-display text-lg font-semibold text-verity-950">
-            Projetos
-          </h3>
+          <div className="mb-2 flex items-center justify-between px-2">
+            <h3 className="font-display text-xs font-semibold uppercase tracking-wider text-verity-500">
+              Projetos
+            </h3>
+            <button
+              onClick={onOpenProjectDialog}
+              className="rounded-md p-1 text-verity-500 hover:bg-verity-100 hover:text-verity-900"
+              title="Novo Projeto"
+            >
+              <Plus className="h-3.5 w-3.5" />
+            </button>
+          </div>
+
           {projectsLoading ? (
-            <div className="flex items-center justify-center py-4">
-              <Loader2 className="h-4 w-4 animate-spin text-verity-600" />
+            <div className="flex items-center justify-center py-2">
+              <Loader2 className="h-3 w-3 animate-spin text-verity-600" />
             </div>
           ) : projects.length === 0 ? (
-            <div className="px-3 py-2 text-center">
-              <p className="text-sm text-verity-500">Nenhum projeto ainda</p>
+            <div className="px-3 py-1 text-center">
+              <p className="text-xs text-verity-400">Sem projetos</p>
             </div>
           ) : (
-            <div className="space-y-1">
-              {/* Header de "Todas as Conversas" (para limpar seleção) */}
+            <div className="space-y-0.5">
+              {/* Header de "Todas as Conversas" (Compacto) */}
               <button
                 type="button"
                 onClick={() => handleProjectSelect(null)}
                 className={cn(
-                  'mb-1 flex w-full items-center gap-3 rounded-lg border px-3 py-2 text-left transition-all duration-200',
+                  'mb-1 flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left text-sm transition-all',
                   !selectedProjectId
-                    ? 'border-sand-300 bg-sand-200/50 font-semibold text-verity-950 shadow-sm'
-                    : 'border-transparent text-verity-600 hover:bg-verity-50'
+                    ? 'bg-verity-100 font-medium text-verity-900'
+                    : 'text-verity-600 hover:bg-verity-50'
                 )}
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg">
-                  <LayoutGrid className="h-4 w-4" />
-                </div>
-                <span className="text-sm">Todas as Conversas</span>
+                <LayoutGrid className="h-3.5 w-3.5" />
+                <span>Todas as Conversas</span>
               </button>
 
               {projects.map((project) => (
@@ -543,17 +550,6 @@ const SidebarContent = memo(function SidebarContent({
               ))}
             </div>
           )}
-          <motion.button
-            type="button"
-            whileHover={{ scale: 1.01, x: 2 }}
-            onClick={onOpenProjectDialog}
-            className="flex w-full items-center gap-3 rounded-lg border border-transparent px-3 py-2 text-left text-verity-600 hover:bg-verity-50 hover:text-verity-800"
-          >
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg">
-              <Plus className="h-4 w-4" />
-            </div>
-            <span className="text-sm font-medium">Novo Projeto</span>
-          </motion.button>
         </div>
 
         {/* Conversas Section */}
