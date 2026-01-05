@@ -65,7 +65,7 @@ export function Header({
           )}
 
           {/* Divider */}
-          <div className="mx-2 h-6 w-px bg-verity-200" aria-hidden="true" />
+          <div className="mx-2 h-6 w-px bg-sand-300" aria-hidden="true" />
 
           {/* Logo */}
           <div className="flex items-center gap-2.5">
@@ -96,7 +96,7 @@ export function Header({
             </button>
           )}
 
-          <div className="h-6 w-px bg-verity-200" aria-hidden="true" />
+          <div className="h-6 w-px bg-sand-300" aria-hidden="true" />
           <UserAvatar />
         </nav>
       </header>

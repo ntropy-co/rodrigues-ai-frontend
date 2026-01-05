@@ -224,7 +224,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
           </div>
 
           {/* Nova Conversa (Enterprise) */}
-          <div className="border-b border-verity-200 p-4 dark:border-verity-800">
+          <div className="border-b border-sand-200 p-4 dark:border-verity-800">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -238,7 +238,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
 
           {/* Ferramentas / Navegação */}
           {/* Mercado & Crédito Section */}
-          <div className="border-b border-verity-200 p-4 dark:border-verity-800">
+          <div className="border-b border-sand-200 p-4 dark:border-verity-800">
             <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-verity-400 dark:text-verity-500">
               Mercado & Crédito
             </h3>
@@ -279,7 +279,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
           </div>
 
           {/* Gestão Section */}
-          <div className="border-b border-verity-200 p-4 dark:border-verity-800">
+          <div className="border-b border-sand-200 p-4 dark:border-verity-800">
             <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-verity-400 dark:text-verity-500">
               Gestão
             </h3>
@@ -320,7 +320,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
           </div>
 
           {/* Search */}
-          <div className="border-b border-verity-200 p-4 dark:border-verity-800">
+          <div className="border-b border-sand-200 p-4 dark:border-verity-800">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-verity-400" />
               <input
@@ -332,7 +332,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                 autoComplete="off"
                 autoCorrect="off"
                 spellCheck={false}
-                className="w-full rounded-md border border-verity-200 bg-verity-50 py-2.5 pl-9 pr-3 text-sm text-verity-900 placeholder:text-verity-400 focus:border-verity-400 focus:outline-none focus:ring-0 dark:border-verity-700 dark:bg-verity-900 dark:text-verity-100 placeholder:dark:text-verity-600"
+                className="w-full rounded-md border border-sand-300 bg-verity-50 py-2.5 pl-9 pr-3 text-sm text-verity-900 placeholder:text-verity-400 focus:border-verity-400 focus:outline-none focus:ring-0 dark:border-verity-700 dark:bg-verity-900 dark:text-verity-100 placeholder:dark:text-verity-600"
                 aria-label="Buscar analises"
               />
             </div>
