@@ -32,7 +32,7 @@ export function DocumentTypeSelector({
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-sm font-medium text-slate-700">
+      <label className="text-sm font-medium text-verity-700">
         Tipo de Documento
       </label>
       <Popover open={open} onOpenChange={setOpen}>
@@ -82,7 +82,9 @@ export function DocumentTypeSelector({
         </PopoverContent>
       </Popover>
       {selectedDoc && (
-        <p className="mt-1 text-xs text-slate-500">{selectedDoc.description}</p>
+        <p className="mt-1 text-xs text-verity-500">
+          {selectedDoc.description}
+        </p>
       )}
     </div>
   )

@@ -42,7 +42,7 @@ export function StatsCard({
           {loading ? (
             <div className="mt-2 h-8 w-24 animate-pulse rounded bg-verity-100" />
           ) : (
-            <h3 className="mt-2 text-2xl font-bold tracking-tight text-verity-900">
+            <h3 className="mt-2 text-2xl font-bold tabular-nums tracking-tight text-verity-900">
               {value}
             </h3>
           )}
@@ -57,7 +57,7 @@ export function StatsCard({
           {trend && (
             <span
               className={cn(
-                'flex items-center font-medium',
+                'flex items-center font-medium tabular-nums',
                 trend.isPositive ? 'text-verity-600' : 'text-error-600'
               )}
             >

@@ -28,15 +28,15 @@ export function ClausesSelector({
   )
 
   return (
-    <div className="space-y-4 rounded-lg border bg-slate-50/50 p-4">
-      <h3 className="mb-2 text-sm font-semibold text-slate-900">
+    <div className="space-y-4 rounded-lg border border-sand-300 bg-sand-50/70 p-4">
+      <h3 className="mb-2 text-sm font-semibold text-verity-900">
         Cláusulas Opcionais
       </h3>
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         {applicableClauses.map((clause) => (
           <div
             key={clause.id}
-            className="flex items-start space-x-3 rounded-md p-2 transition-colors hover:bg-slate-100"
+            className="flex items-start space-x-3 rounded-md p-2 transition-colors hover:bg-sand-100"
           >
             <Checkbox
               id={clause.id}

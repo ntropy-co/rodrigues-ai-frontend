@@ -31,7 +31,7 @@ export function DocumentPreview({
   return (
     <div
       id="document-preview-content"
-      className="mx-auto min-h-[800px] w-full max-w-[210mm] border border-slate-200 bg-white p-8 text-justify font-serif text-sm leading-relaxed text-slate-900 shadow-lg"
+      className="mx-auto min-h-[800px] w-full max-w-[210mm] border border-sand-300 bg-white p-8 text-justify font-serif text-sm leading-relaxed text-verity-900 shadow-lg"
     >
       <h1 className="mb-8 border-b-2 border-black pb-4 text-center text-xl font-bold uppercase">
         {getTitle()}
@@ -40,11 +40,11 @@ export function DocumentPreview({
       <div className="space-y-6">
         {/* Renderização Simplificada dos Dados - Em produção seria um template string rico */}
         <div className="section">
-          <h2 className="mb-2 text-xs font-bold uppercase text-slate-500">
+          <h2 className="mb-2 text-xs font-bold uppercase text-verity-500">
             Dados do Documento
           </h2>
           {Object.entries(data).length === 0 ? (
-            <p className="italic text-slate-400">
+            <p className="italic text-verity-400">
               Preencha o formulário para visualizar os dados aqui...
             </p>
           ) : (

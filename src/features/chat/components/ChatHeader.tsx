@@ -3,7 +3,14 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Menu, Settings, HelpCircle, LogOut, PanelRight } from 'lucide-react'
+import {
+  Menu,
+  Settings,
+  HelpCircle,
+  LogOut,
+  PanelRight,
+  FileText
+} from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +20,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Avatar } from '@/components/Avatar'
 import { useLayoutStore } from '@/features/chat'
+import { useCanvasStore } from '@/features/canvas'
 import { useAuth } from '@/contexts/AuthContext'
 
 export function ChatHeader() {
@@ -29,7 +37,7 @@ export function ChatHeader() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={toggleConversationsSidebar}
-          className="flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-verity-50 active:bg-verity-100"
+          className="flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-sand-200 active:bg-sand-300"
           aria-label="Toggle sidebar"
         >
           <Menu className="h-5 w-5 text-verity-700" />
@@ -49,14 +57,26 @@ export function ChatHeader() {
       {/* Direita: Status + Files Toggle + Avatar */}
       <div className="flex items-center gap-4">
         {/* Separator */}
-        <div className="hidden h-8 w-px bg-verity-100 sm:block" />
+        <div className="hidden h-8 w-px bg-sand-300 sm:block" />
+
+        {/* Canvas Toggle */}
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => useCanvasStore.getState().toggleCanvas()}
+          className="flex h-10 w-10 items-center justify-center rounded-lg text-verity-700 transition-colors hover:bg-sand-200 active:bg-sand-300"
+          aria-label="Toggle canvas"
+          title="Abrir/Fechar Canvas"
+        >
+          <FileText className="h-5 w-5" />
+        </motion.button>
 
         {/* Files Sidebar Toggle */}
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={toggleFilesSidebar}
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-verity-700 transition-colors hover:bg-verity-50 active:bg-verity-100"
+          className="flex h-10 w-10 items-center justify-center rounded-lg text-verity-700 transition-colors hover:bg-sand-200 active:bg-sand-300"
           aria-label="Toggle files sidebar"
         >
           <PanelRight className="h-5 w-5" />

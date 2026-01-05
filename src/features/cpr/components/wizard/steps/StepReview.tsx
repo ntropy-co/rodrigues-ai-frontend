@@ -24,7 +24,10 @@ import {
   type RiskFactor,
   type RiskLevel
 } from '@/features/risk/components/RiskCalculator'
-import { useCPRCreation, type DocumentData } from '@/features/cpr/hooks/useCPRCreation'
+import {
+  useCPRCreation,
+  type DocumentData
+} from '@/features/cpr/hooks/useCPRCreation'
 
 interface StepReviewProps {
   data: Partial<CPRWizardData>
@@ -327,8 +330,8 @@ export function StepReview({ data, onBack, goToStep }: StepReviewProps) {
   if (generated) {
     return (
       <div className="space-y-6 py-10 text-center duration-500 animate-in fade-in zoom-in-95">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-          <FileTextIcon className="h-8 w-8 text-green-600" />
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-verity-100">
+          <FileTextIcon className="h-8 w-8 text-verity-700" />
         </div>
         <h2 className="text-2xl font-bold">Documento Pronto!</h2>
         <p className="text-muted-foreground">

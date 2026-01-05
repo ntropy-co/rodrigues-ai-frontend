@@ -34,13 +34,13 @@
     
     /* Brand Colors (Restricted use) */
     --brand-primary: 159 39% 17%; /* #1A3C30 (Verity Deep) */
-    --brand-accent: 40 67% 48%;   /* #C9922A */
+    --brand-accent: 36 38% 59%;   /* #BFA070 */
     
     /* Verity Organic Palette (Warm Sand & Deep Green) */
     
     /* Sand (Backgrounds & Neutrals) */
     --sand-50: 30 20% 99%;    /* #FDFCFB */
-    --sand-100: 30 14% 97%;   /* #F9F8F6 (Converted to HSL 30 14% 97%) */
+    --sand-100: 48 56% 98%;   /* #FDFCF8 */
     --sand-200: 45 18% 94%;   /* #F3F1EB */
     --sand-300: 48 16% 90%;   /* #EBE9E1 */
     --sand-400: 0 0% 90%;     /* #E5E5E5 (Border) */
@@ -64,7 +64,7 @@
     --foreground: var(--verity-900);
     
     --primary: var(--verity-800);
-    --primary-foreground: 30 14% 97%; /* Sand-100 for contrast */
+    --primary-foreground: var(--sand-100);
     
     --muted: var(--sand-200);
     --muted-foreground: var(--verity-600);
@@ -110,7 +110,7 @@
     
     /* Enterprise specific vars - Dark */
     --enterprise-green: 152 33% 40%;
-    --enterprise-gold: 40 67% 55%;
+    --enterprise-gold: 36 38% 59%;
   }
 
   * {

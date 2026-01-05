@@ -97,7 +97,7 @@ export function DocumentForm({ typeId, data, onChange }: DocumentFormProps) {
         <div key={field.name} className="flex flex-col gap-2">
           <Label
             htmlFor={field.name}
-            className="text-sm font-medium text-slate-700"
+            className="text-sm font-medium text-verity-700"
           >
             {field.label}{' '}
             {field.required && <span className="text-error-500">*</span>}

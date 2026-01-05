@@ -48,14 +48,14 @@ export function TemplateGenerator() {
   }
 
   return (
-    <div className="flex h-screen max-h-screen flex-col overflow-hidden bg-slate-50 lg:flex-row">
+    <div className="flex h-screen max-h-screen flex-col overflow-hidden bg-sand-50 lg:flex-row">
       {/* Sidebar de Configuração */}
-      <aside className="z-10 flex h-full w-full flex-col overflow-hidden border-r border-slate-200 bg-white shadow-sm lg:w-[450px]">
-        <div className="border-b border-slate-100 bg-white p-6">
-          <h2 className="mb-1 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-xl font-bold text-transparent">
+      <aside className="z-10 flex h-full w-full flex-col overflow-hidden border-r border-sand-300 bg-white shadow-sm lg:w-[450px]">
+        <div className="border-b border-sand-200 bg-white p-6">
+          <h2 className="mb-1 bg-gradient-to-r from-verity-950 to-verity-700 bg-clip-text text-xl font-bold text-transparent">
             Gerador de Minutas
           </h2>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-verity-500">
             Configure os dados para gerar seu documento.
           </p>
         </div>
@@ -71,7 +71,7 @@ export function TemplateGenerator() {
           <section>
             <div className="mb-4 flex items-center gap-2">
               <div className="h-6 w-1 rounded-full bg-verity-500" />
-              <h3 className="font-semibold text-slate-800">
+              <h3 className="font-semibold text-verity-900">
                 Dados do Contrato
               </h3>
             </div>
@@ -85,7 +85,7 @@ export function TemplateGenerator() {
           <section>
             <div className="mb-4 flex items-center gap-2">
               <div className="h-6 w-1 rounded-full bg-verity-500" />
-              <h3 className="font-semibold text-slate-800">
+              <h3 className="font-semibold text-verity-900">
                 Cláusulas Acessórias
               </h3>
             </div>
@@ -97,7 +97,7 @@ export function TemplateGenerator() {
           </section>
         </div>
 
-        <div className="flex flex-col gap-3 border-t bg-slate-50 p-4 sm:flex-row">
+        <div className="flex flex-col gap-3 border-t border-sand-200 bg-sand-50 p-4 sm:flex-row">
           <Button
             className="flex-1 bg-verity-600 text-white hover:bg-verity-700"
             onClick={handleDownloadDocx}
@@ -122,10 +122,10 @@ export function TemplateGenerator() {
       </aside>
 
       {/* Área de Preview */}
-      <main className="flex flex-1 items-start justify-center overflow-y-auto bg-slate-100/50 p-4 lg:p-8">
+      <main className="flex flex-1 items-start justify-center overflow-y-auto bg-sand-100/60 p-4 lg:p-8">
         <div className="w-full max-w-[210mm] origin-top transform transition-all duration-300 ease-in-out hover:scale-[1.01]">
           <div className="mb-4 flex items-center justify-between lg:hidden">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-verity-500">
               Preview do Documento
             </h3>
           </div>
@@ -145,7 +145,7 @@ export function TemplateGenerator() {
           background: transparent;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background-color: #cbd5e1;
+          background-color: #e5e5e5;
           border-radius: 20px;
         }
         @media print {

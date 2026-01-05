@@ -64,8 +64,8 @@ export function CanvasPanel() {
               variant="ghost"
               size="icon"
               className={cn(
-                'h-8 w-8 rounded-full text-verity-700 hover:bg-verity-100',
-                mode === 'edit' && 'bg-verity-100 text-verity-900'
+                'h-8 w-8 rounded-full text-verity-700 hover:bg-sand-200 hover:text-verity-900',
+                mode === 'edit' && 'bg-sand-300 text-verity-950'
               )}
               onClick={() => setMode(mode === 'view' ? 'edit' : 'view')}
               title={mode === 'view' ? 'Switch to Edit' : 'Switch to Read'}
@@ -81,7 +81,7 @@ export function CanvasPanel() {
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 rounded-full text-verity-700 hover:bg-verity-100"
+              className="h-8 w-8 rounded-full text-verity-700 hover:bg-sand-200 hover:text-verity-900"
               onClick={handleCopy}
               title="Copy to Clipboard"
             >
@@ -98,7 +98,7 @@ export function CanvasPanel() {
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 rounded-full text-verity-700 hover:bg-verity-100"
+              className="h-8 w-8 rounded-full text-verity-700 hover:bg-sand-200 hover:text-verity-900"
               onClick={() => setIsExpanded(!isExpanded)}
               title={isExpanded ? 'Collapse' : 'Expand Focus'}
             >

@@ -205,7 +205,7 @@ export default function TeamMembersPage() {
   // Loading state
   if (authLoading || initialLoading) {
     return (
-      <div className="min-h-screen bg-sand-50/50 dark:bg-zinc-900/50">
+      <div className="min-h-screen bg-sand-50/50 dark:bg-verity-950/50">
         <div className="container mx-auto max-w-5xl px-4 py-8">
           <Skeleton className="mb-8 h-8 w-48" />
           <Card>
@@ -233,7 +233,7 @@ export default function TeamMembersPage() {
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen bg-sand-50/50 dark:bg-zinc-900/50">
+      <div className="min-h-screen bg-sand-50/50 dark:bg-verity-950/50">
         <div className="container mx-auto max-w-5xl px-4 py-8">
           <Button
             variant="ghost"
@@ -258,7 +258,7 @@ export default function TeamMembersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-sand-50/50 dark:bg-zinc-900/50">
+    <div className="min-h-screen bg-sand-50/50 dark:bg-verity-950/50">
       <div className="container mx-auto max-w-5xl px-4 py-8">
         {/* Header */}
         <div className="mb-8">

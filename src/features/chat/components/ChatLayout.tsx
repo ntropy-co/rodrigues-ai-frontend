@@ -254,20 +254,15 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
           </div>
         </motion.div>
 
-        {!isFilesOpen && (
+        {/* Canvas Panel - Always render when open (takes priority over FilesSidebar) */}
+        {isCanvasOpen && (
           <div
             className={cn(
-              'relative z-20 h-full bg-sand-200 shadow-xl transition-all duration-300 ease-in-out',
-              isMobile && isCanvasOpen ? 'absolute inset-0 w-full' : ''
+              'relative z-20 h-full bg-sand-100 shadow-xl transition-all duration-300 ease-in-out',
+              isMobile ? 'absolute inset-0 w-full' : ''
             )}
             style={{
-              width:
-                isCanvasOpen && !isMobile
-                  ? `${canvasWidth}%`
-                  : isMobile && isCanvasOpen
-                    ? '100%'
-                    : '0px',
-              display: !isCanvasOpen ? 'none' : 'block'
+              width: isMobile ? '100%' : `${canvasWidth}%`
             }}
           >
             <CanvasPanel />

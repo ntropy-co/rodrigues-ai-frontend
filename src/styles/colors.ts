@@ -7,49 +7,49 @@
 
 export const colors = {
   // Background layers
-  bgPrimary: '#F5F9F7', // verde-50 aquecido (Claude: #FAFAF8)
+  bgPrimary: '#FDFCFB', // Sand-50 (base)
   surface: '#FFFFFF', // Branco puro
 
-  // Verde spectrum (950 → 50) - Enterprise Palette
+  // Verity spectrum (950 → 50)
   verde: {
-    950: '#1A3A2E', // Text primary
-    900: '#2D5A45', // Accent/CTA
-    800: '#3A6B54', // Hover CTA
-    700: '#478063', // Accent light
-    600: '#5A7A6B', // Text secondary
-    500: '#6D8D7D', // Medium
-    400: '#8BA89B', // Text tertiary
-    300: '#9DC4B0', // Border medium
-    200: '#D1E7DD', // Border
-    100: '#E8F3ED', // Border light
-    50: '#F5F9F7' // Background
+    950: '#05110D', // Darkest
+    900: '#0D211A', // Text primary
+    800: '#1A3C30', // Brand primary
+    700: '#2A4D3E', // Hover CTA
+    600: '#5C6D63', // Text secondary
+    500: '#426154', // Medium
+    400: '#5C8070', // Text tertiary
+    300: '#7A9F8F', // Accent
+    200: '#A3C2B5', // Light accent
+    100: '#D1E7DD', // Border
+    50: '#E8F3EE' // Background
   },
 
   // Semantic Mappings
   text: {
-    primary: '#1A3A2E',
-    secondary: '#5A7A6B',
-    tertiary: '#8BA89B',
+    primary: '#0D211A',
+    secondary: '#5C6D63',
+    tertiary: '#7A9F8F',
     inverse: '#FFFFFF'
   },
 
   border: {
-    light: '#E8F3ED',
-    DEFAULT: '#D1E7DD',
-    medium: '#9DC4B0',
-    active: '#5A7A6B'
+    light: '#F3F1EB',
+    DEFAULT: '#EBE9E1',
+    medium: '#E5E5E5',
+    active: '#5C8070'
   },
 
   action: {
-    primary: '#2D5A45',
-    primaryHover: '#3A6B54',
-    secondary: '#E8F3ED',
-    secondaryHover: '#D1E7DD'
+    primary: '#1A3C30',
+    primaryHover: '#2A4D3E',
+    secondary: '#F3F1EB',
+    secondaryHover: '#EBE9E1'
   },
 
   feedback: {
-    success: '#2D5A45',
-    warning: '#C9922A', // Ouro
+    success: '#1A3C30',
+    warning: '#BFA070', // Ouro Champagne
     error: '#C53030'
   }
 } as const

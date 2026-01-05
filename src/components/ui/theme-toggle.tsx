@@ -39,7 +39,7 @@ export function ThemeToggle() {
       {isDark ? (
         <Icon type="sun" size="xs" className="text-ouro-500" />
       ) : (
-        <Icon type="moon" size="xs" className="text-slate-700" />
+        <Icon type="moon" size="xs" className="text-verity-700" />
       )}
     </Button>
   )
