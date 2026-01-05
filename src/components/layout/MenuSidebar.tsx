@@ -234,31 +234,21 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
               <Plus className="h-4 w-4" />
               Nova Conversa
             </motion.button>
-
-            <button
-              onClick={() => {
-                router.push('/documents')
-                onClose()
-              }}
-              className="mt-3 flex w-full items-center gap-2 rounded-lg border border-verity-200 px-3 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-50 dark:border-verity-700 dark:text-verity-300 dark:hover:bg-verity-800"
-            >
-              <Search className="h-4 w-4" />
-              Meus Documentos
-            </button>
           </div>
 
           {/* Ferramentas / Navegação */}
+          {/* Mercado & Crédito Section */}
           <div className="border-b border-verity-200 p-4 dark:border-verity-800">
-            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wider text-verity-400 dark:text-verity-500">
-              Ferramentas
+            <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-verity-400 dark:text-verity-500">
+              Mercado & Crédito
             </h3>
-            <div className="space-y-1">
+            <div className="space-y-0.5">
               <button
                 onClick={() => {
                   router.push('/quotes')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-100 dark:text-verity-300 dark:hover:bg-verity-800"
+                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-100 dark:text-verity-300 dark:hover:bg-verity-800"
               >
                 <TrendingUp className="h-4 w-4 text-verity-500" />
                 Cotações
@@ -266,21 +256,10 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
 
               <button
                 onClick={() => {
-                  router.push('/compliance')
-                  onClose()
-                }}
-                className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-100 dark:text-verity-300 dark:hover:bg-verity-800"
-              >
-                <ShieldCheck className="h-4 w-4 text-verity-500" />
-                Compliance
-              </button>
-
-              <button
-                onClick={() => {
                   router.push('/cpr/simulator')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-100 dark:text-verity-300 dark:hover:bg-verity-800"
+                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-100 dark:text-verity-300 dark:hover:bg-verity-800"
               >
                 <Calculator className="h-4 w-4 text-verity-500" />
                 Simulador CPR
@@ -288,10 +267,40 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
 
               <button
                 onClick={() => {
+                  router.push('/compliance')
+                  onClose()
+                }}
+                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-100 dark:text-verity-300 dark:hover:bg-verity-800"
+              >
+                <ShieldCheck className="h-4 w-4 text-verity-500" />
+                Compliance
+              </button>
+            </div>
+          </div>
+
+          {/* Gestão Section */}
+          <div className="border-b border-verity-200 p-4 dark:border-verity-800">
+            <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-verity-400 dark:text-verity-500">
+              Gestão
+            </h3>
+            <div className="space-y-0.5">
+              <button
+                onClick={() => {
+                  router.push('/documents')
+                  onClose()
+                }}
+                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-100 dark:text-verity-300 dark:hover:bg-verity-800"
+              >
+                <Search className="h-4 w-4 text-verity-500" />
+                Meus Documentos
+              </button>
+
+              <button
+                onClick={() => {
                   router.push('/cpr/historico')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-100 dark:text-verity-300 dark:hover:bg-verity-800"
+                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-100 dark:text-verity-300 dark:hover:bg-verity-800"
               >
                 <History className="h-4 w-4 text-verity-500" />
                 Histórico CPR
@@ -302,10 +311,10 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   router.push('/contact')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-100 dark:text-verity-300 dark:hover:bg-verity-800"
+                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-100 dark:text-verity-300 dark:hover:bg-verity-800"
               >
                 <HelpCircle className="h-4 w-4 text-verity-500" />
-                Contato / Suporte
+                Suporte
               </button>
             </div>
           </div>
