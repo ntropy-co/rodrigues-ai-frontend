@@ -214,7 +214,7 @@ export function InviteModal({
 
           {/* Quota Warning */}
           {remainingQuota !== undefined && remainingQuota <= 0 && (
-            <div className="flex items-center gap-2 rounded-lg bg-amber-50 p-3 text-sm text-amber-700">
+            <div className="flex items-center gap-2 rounded-lg bg-ouro-50 p-3 text-sm text-ouro-700">
               <AlertCircle className="h-4 w-4 flex-shrink-0" />
               <span>
                 Voce atingiu o limite de convites do seu plano. Entre em contato

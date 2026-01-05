@@ -60,8 +60,7 @@ const ROLE_LABELS: Record<UserRole, string> = {
 }
 
 const ROLE_COLORS: Record<UserRole, string> = {
-  admin:
-    'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
+  admin: 'bg-ouro-100 text-ouro-800 dark:bg-ouro-900/30 dark:text-ouro-400',
   member:
     'bg-verity-100 text-verity-800 dark:bg-verity-900/30 dark:text-verity-400',
   viewer: 'bg-sand-200 text-verity-800 dark:bg-verity-800 dark:text-verity-300'

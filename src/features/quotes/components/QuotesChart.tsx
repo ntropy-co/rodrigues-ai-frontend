@@ -235,7 +235,7 @@ const SimpleLineChart = ({
               y1={padding.top}
               x2={getX(hoveredPoint.date)}
               y2={viewBoxHeight - padding.bottom}
-              stroke="#2563eb"
+              stroke="#1A3C30"
               strokeWidth="1"
               strokeDasharray="2 2"
               opacity="0.5"
@@ -430,7 +430,7 @@ export function QuotesChart() {
               <Card>
                 <CardHeader className="pb-2">
                   <CardDescription>Fechamento Atual</CardDescription>
-                  <CardTitle className="text-2xl">
+                  <CardTitle className="text-2xl tabular-nums">
                     {formatCurrency(stats.last)}
                   </CardTitle>
                 </CardHeader>
@@ -446,7 +446,9 @@ export function QuotesChart() {
                     ) : (
                       <ArrowDownIcon className="mr-1 h-4 w-4" />
                     )}
-                    {Math.abs(stats.changePercent).toFixed(2)}% ({range})
+                    <span className="tabular-nums">
+                      {Math.abs(stats.changePercent).toFixed(2)}% ({range})
+                    </span>
                   </div>
                   <p className="mt-1 text-xs text-muted-foreground">
                     {currentCommodity.unit}
@@ -457,13 +459,13 @@ export function QuotesChart() {
               <div className="grid grid-cols-2 gap-2">
                 <Card className="p-3">
                   <div className="text-xs text-muted-foreground">Mínimo</div>
-                  <div className="font-semibold">
+                  <div className="font-semibold tabular-nums">
                     {formatCurrency(stats.min)}
                   </div>
                 </Card>
                 <Card className="p-3">
                   <div className="text-xs text-muted-foreground">Máximo</div>
-                  <div className="font-semibold">
+                  <div className="font-semibold tabular-nums">
                     {formatCurrency(stats.max)}
                   </div>
                 </Card>
@@ -486,7 +488,7 @@ export function QuotesChart() {
                   <CardContent className="p-3 pt-1">
                     <div
                       className={cn(
-                        'text-lg font-bold',
+                        'text-lg font-bold tabular-nums',
                         comparison.diff >= 0
                           ? 'text-verity-600'
                           : 'text-error-600'
@@ -495,7 +497,7 @@ export function QuotesChart() {
                       {comparison.diff > 0 ? '+' : ''}
                       {formatCurrency(comparison.diff)}
                     </div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-xs tabular-nums text-muted-foreground">
                       {comparison.diff > 0 ? 'Acima do alvo' : 'Abaixo do alvo'}{' '}
                       ({comparison.diffPercent.toFixed(1)}%)
                     </div>

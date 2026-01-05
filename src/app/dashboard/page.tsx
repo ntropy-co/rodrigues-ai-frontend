@@ -188,7 +188,7 @@ function RecentActivity() {
                 item.status === 'completed' &&
                   'bg-verity-50 text-verity-700 dark:bg-verity-900 dark:text-verity-300',
                 item.status === 'pending' &&
-                  'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400',
+                  'bg-ouro-50 text-ouro-700 dark:bg-ouro-950/30 dark:text-ouro-400',
                 item.status === 'failed' &&
                   'bg-error-50 text-error-700 dark:bg-error-950/30 dark:text-error-400'
               )}

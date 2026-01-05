@@ -76,7 +76,7 @@ const ROLE_CONFIG: Record<
   admin: {
     label: 'Administrador',
     icon: <Shield className="h-3.5 w-3.5" />,
-    color: 'bg-purple-100 text-purple-700 border-purple-200'
+    color: 'bg-ouro-100 text-ouro-700 border-ouro-200'
   },
   member: {
     label: 'Membro',
@@ -418,7 +418,7 @@ function MemberRow({
             {member.status === 'active' ? (
               <DropdownMenuItem
                 onClick={() => onStatusChange('inactive')}
-                className="text-amber-600"
+                className="text-ouro-600"
               >
                 <UserX className="mr-2 h-4 w-4" />
                 Desativar Usuario

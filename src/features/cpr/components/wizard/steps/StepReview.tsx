@@ -553,7 +553,7 @@ export function StepReview({ data, onBack, goToStep }: StepReviewProps) {
         </Card>
       )}
 
-      <div className="flex items-center space-x-2 rounded-md border border-amber-100 bg-amber-50/20 p-4">
+      <div className="flex items-center space-x-2 rounded-md border border-ouro-100 bg-ouro-50/20 p-4">
         <Checkbox
           id="confirm"
           checked={confirmed}

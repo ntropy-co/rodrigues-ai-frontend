@@ -38,7 +38,7 @@ export function UserAvatar() {
             label: 'Administração',
             onClick: () => router.push('/admin'),
             className:
-              'text-purple-600 hover-hover:bg-purple-50 dark:text-purple-400 dark:hover-hover:bg-purple-950'
+              'text-ouro-600 hover-hover:bg-ouro-50 dark:text-ouro-400 dark:hover-hover:bg-ouro-950'
           }
         ]
       : []),

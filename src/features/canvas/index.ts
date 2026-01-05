@@ -1,3 +1,5 @@
 export * from './components/CanvasPanel'
 export * from './components/RichEditor'
 export * from './stores/canvasStore'
+export * from './hooks/useCanvasPersistence'
+export * from './hooks/useCanvasExport'

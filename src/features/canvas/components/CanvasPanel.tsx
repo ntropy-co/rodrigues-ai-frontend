@@ -7,18 +7,30 @@ import {
   Minimize2,
   Edit2,
   Eye,
-  Lock
+  Lock,
+  Download,
+  FileText,
+  FileCode,
+  File
 } from 'lucide-react'
 import { useState } from 'react'
 import { useCanvasStore } from '@/features/canvas'
+import { useCanvasExport } from '../hooks/useCanvasExport'
 import MarkdownRenderer from '@/components/ui/typography/MarkdownRenderer'
 import { RichEditor } from './RichEditor'
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 
 export function CanvasPanel() {
   const { isOpen, content, title, mode, closeCanvas, setMode, updateContent } =
     useCanvasStore()
+  const { exportToTxt, exportToHtml, exportToMarkdown } = useCanvasExport()
 
   const [copied, setCopied] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
@@ -28,6 +40,21 @@ export function CanvasPanel() {
       await navigator.clipboard.writeText(content)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
+    }
+  }
+
+  const handleExport = (format: 'txt' | 'html' | 'md') => {
+    const exportData = { content: content || '', title: title || 'Documento' }
+    switch (format) {
+      case 'txt':
+        exportToTxt(exportData)
+        break
+      case 'html':
+        exportToHtml(exportData)
+        break
+      case 'md':
+        exportToMarkdown(exportData)
+        break
     }
   }
 
@@ -92,6 +119,46 @@ export function CanvasPanel() {
                 <Copy className="h-4 w-4" />
               )}
             </Button>
+
+            {/* Export Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-full text-verity-700 hover:bg-sand-200 hover:text-verity-900"
+                  title="Exportar documento"
+                >
+                  <Download className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="w-48 rounded-lg border-sand-200 bg-white shadow-lg"
+              >
+                <DropdownMenuItem
+                  onClick={() => handleExport('txt')}
+                  className="flex cursor-pointer items-center gap-2 hover:bg-sand-100"
+                >
+                  <File className="h-4 w-4" />
+                  <span>Texto (.txt)</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleExport('md')}
+                  className="flex cursor-pointer items-center gap-2 hover:bg-sand-100"
+                >
+                  <FileText className="h-4 w-4" />
+                  <span>Markdown (.md)</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleExport('html')}
+                  className="flex cursor-pointer items-center gap-2 hover:bg-sand-100"
+                >
+                  <FileCode className="h-4 w-4" />
+                  <span>HTML (.html)</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             <div className="mx-1 h-4 w-px bg-sand-300" />
 

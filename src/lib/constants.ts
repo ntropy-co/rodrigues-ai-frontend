@@ -72,13 +72,13 @@ export type SuggestionCategory =
 export const CATEGORY_COLORS: Record<string, string> = {
   [SUGGESTION_CATEGORIES.BASIC]: 'text-verity-600',
   [SUGGESTION_CATEGORIES.ADVANCED]: 'text-verity-600',
-  [SUGGESTION_CATEGORIES.EXPERT]: 'text-purple-600'
+  [SUGGESTION_CATEGORIES.EXPERT]: 'text-ouro-600'
 }
 
 export const CATEGORY_BG_COLORS: Record<string, string> = {
   [SUGGESTION_CATEGORIES.BASIC]: 'bg-verity-500',
   [SUGGESTION_CATEGORIES.ADVANCED]: 'bg-verity-500',
-  [SUGGESTION_CATEGORIES.EXPERT]: 'bg-purple-500'
+  [SUGGESTION_CATEGORIES.EXPERT]: 'bg-ouro-500'
 }
 
 // ============================================

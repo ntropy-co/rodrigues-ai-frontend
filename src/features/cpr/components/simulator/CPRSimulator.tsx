@@ -258,7 +258,7 @@ export function CPRSimulator() {
                     'mt-1 text-xs font-medium tabular-nums',
                     currentResult.marketDelta >= 0
                       ? 'text-verity-600'
-                      : 'text-amber-600'
+                      : 'text-ouro-600'
                   )}
                 >
                   {currentResult.marketDelta >= 0

@@ -178,7 +178,7 @@ export default function AnalysisPage() {
 
                   {status === 'uploading' && (
                     <div className="w-full max-w-md space-y-2">
-                      <div className="flex justify-between text-xs text-verity-700">
+                      <div className="flex justify-between text-xs tabular-nums text-verity-700">
                         <span>Enviando documento...</span>
                         <span>{progress}%</span>
                       </div>
