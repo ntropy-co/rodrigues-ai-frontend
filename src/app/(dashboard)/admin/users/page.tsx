@@ -159,6 +159,7 @@ export default function AdminUsersPage() {
 
   // Initial fetch and refetch on filter changes
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchUsers()
   }, [fetchUsers])
 

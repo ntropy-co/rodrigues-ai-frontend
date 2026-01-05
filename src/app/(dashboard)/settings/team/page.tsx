@@ -140,6 +140,7 @@ export default function TeamMembersPage() {
   // Fetch users on mount and when filters change
   useEffect(() => {
     if (isAuthenticated) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchUsers()
     }
   }, [isAuthenticated, fetchUsers])

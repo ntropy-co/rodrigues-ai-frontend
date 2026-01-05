@@ -4,7 +4,7 @@ import React, { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Eye, EyeOff, Loader2, AlertCircle, ArrowRight, Wheat } from 'lucide-react'
+import { Eye, EyeOff, Loader2, AlertCircle, ArrowRight } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useAuthForm } from '@/features/auth'
 import { Button } from '@/components/ui/button'
@@ -15,7 +15,11 @@ import { cn } from '@/lib/utils'
 // Animation Configurations
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
+  }
 }
 
 const staggerContainer = {
@@ -102,7 +106,8 @@ function LoginContent() {
             "A inteligência que transforma dados em colheita."
           </h2>
           <p className="mt-4 text-lg font-light text-verity-200">
-            A plataforma definitiva para análise de crédito e risco no agronegócio.
+            A plataforma definitiva para análise de crédito e risco no
+            agronegócio.
           </p>
         </div>
 
@@ -124,7 +129,9 @@ function LoginContent() {
             <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-lg bg-verity-900 text-white">
               <span className="font-display text-xl font-bold">V</span>
             </div>
-            <h1 className="font-display text-3xl font-medium text-verity-950">Verity Agro</h1>
+            <h1 className="font-display text-3xl font-medium text-verity-950">
+              Verity Agro
+            </h1>
           </div>
 
           <div className="hidden lg:block">
@@ -177,7 +184,9 @@ function LoginContent() {
                 placeholder="nome@empresa.com"
                 className={cn(
                   'h-11 border-sand-300 bg-white text-verity-950 placeholder:text-verity-400 focus:border-verity-600 focus:ring-1 focus:ring-verity-600',
-                  errors.email && touched.email && 'border-error-300 focus:border-error-500 focus:ring-error-500'
+                  errors.email &&
+                    touched.email &&
+                    'border-error-300 focus:border-error-500 focus:ring-error-500'
                 )}
               />
               {errors.email && touched.email && (
@@ -208,7 +217,9 @@ function LoginContent() {
                   placeholder="••••••••"
                   className={cn(
                     'h-11 border-sand-300 bg-white pr-10 text-verity-950 placeholder:text-verity-400 focus:border-verity-600 focus:ring-1 focus:ring-verity-600',
-                    errors.password && touched.password && 'border-error-300 focus:border-error-500 focus:ring-error-500'
+                    errors.password &&
+                      touched.password &&
+                      'border-error-300 focus:border-error-500 focus:ring-error-500'
                   )}
                 />
                 <button
@@ -229,7 +240,10 @@ function LoginContent() {
             </motion.div>
 
             {/* Actions */}
-            <motion.div variants={fadeInUp} className="flex items-center space-x-2">
+            <motion.div
+              variants={fadeInUp}
+              className="flex items-center space-x-2"
+            >
               <Checkbox
                 id="remember"
                 checked={values.rememberMe}
@@ -238,7 +252,7 @@ function LoginContent() {
               />
               <label
                 htmlFor="remember"
-                className="cursor-pointer select-none text-sm text-verity-700 font-medium"
+                className="cursor-pointer select-none text-sm font-medium text-verity-700"
               >
                 Manter conectado
               </label>
@@ -264,7 +278,10 @@ function LoginContent() {
 
           <p className="text-center text-sm text-verity-600">
             Não tem acesso?{' '}
-            <Link href="/contact" className="font-semibold text-verity-900 hover:underline">
+            <Link
+              href="/contact"
+              className="font-semibold text-verity-900 hover:underline"
+            >
               Solicitar convite
             </Link>
           </p>

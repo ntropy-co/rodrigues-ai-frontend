@@ -6,12 +6,12 @@ import { defineConfig, devices } from '@playwright/test'
  */
 export default defineConfig({
   testDir: './e2e',
-  // Disable full parallelism - tests share the same test user which causes race conditions
-  fullyParallel: false,
+  // Enable parallelism for faster local testing (ensure unique test data if needed)
+  fullyParallel: !process.env.CI,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  // Limit workers to avoid session conflicts when using shared test credentials
-  workers: process.env.CI ? 1 : 2,
+  // Increase local workers for speed, keep 1 for CI safety if needed
+  workers: process.env.CI ? 1 : 4,
   reporter: 'html',
   use: {
     baseURL: 'http://localhost:3000',
@@ -26,8 +26,7 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     timeout: 120000, // 2 minutes for server startup
     env: {
-      NEXT_PUBLIC_API_URL:
-        'https://rodrigues-ai-backend-production.up.railway.app'
+      NEXT_PUBLIC_API_URL: 'http://127.0.0.1:8000'
     }
   }
 })

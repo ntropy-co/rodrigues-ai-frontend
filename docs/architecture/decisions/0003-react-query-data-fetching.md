@@ -1,14 +1,17 @@
 # ADR-0003: React Query for Data Fetching
 
 ## Status
+
 Accepted
 
 ## Date
+
 2024-12-30
 
 ## Context
 
 The application has extensive data fetching requirements:
+
 - User authentication state
 - Document lists and details
 - CPR analysis workflows
@@ -17,6 +20,7 @@ The application has extensive data fetching requirements:
 - Real-time status polling
 
 Challenges:
+
 1. **Cache Management**: Avoid redundant fetches for the same data
 2. **Loading/Error States**: Consistent handling across components
 3. **Stale Data**: Balance freshness with performance
@@ -36,7 +40,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 10,   // 10 minutes (formerly cacheTime)
+      gcTime: 1000 * 60 * 10, // 10 minutes (formerly cacheTime)
       retry: 1,
       refetchOnWindowFocus: false
     }
@@ -71,7 +75,12 @@ export function useDocuments(sessionId?: string) {
     }
   })
 
-  return { documents, loading, error, removeDocument: deleteMutation.mutateAsync }
+  return {
+    documents,
+    loading,
+    error,
+    removeDocument: deleteMutation.mutateAsync
+  }
 }
 ```
 
@@ -83,8 +92,7 @@ Used in CPR analysis status polling:
 const { data: status } = useQuery({
   queryKey: ['cpr', 'status', sessionId],
   queryFn: () => fetchCPRStatus(sessionId),
-  refetchInterval: (data) =>
-    data?.status === 'completed' ? false : 3000, // Poll every 3s until done
+  refetchInterval: (data) => (data?.status === 'completed' ? false : 3000), // Poll every 3s until done
   enabled: !!sessionId
 })
 ```
@@ -120,16 +128,15 @@ const { data: status } = useQuery({
 
 ```typescript
 // Entity lists
-['documents', 'user', sessionId]
-['sessions', 'list']
-['admin', 'users', { page, limit }]
-
-// Single entities
-['documents', 'detail', documentId]
-['cpr', 'status', sessionId]
-
-// Actions
-['cpr', 'analysis', 'result']
+;['documents', 'user', sessionId][('sessions', 'list')][
+  ('admin', 'users', { page, limit })
+][
+  // Single entities
+  ('documents', 'detail', documentId)
+][('cpr', 'status', sessionId)][
+  // Actions
+  ('cpr', 'analysis', 'result')
+]
 ```
 
 ## References

@@ -3,13 +3,12 @@ import { Greeting } from './Greeting'
 import { useLayoutStore } from '@/features/chat'
 import { Upload, FileSearch, Calculator } from 'lucide-react'
 
+// _onSuggestionClick removed
 interface MainContentProps {
   onSuggestionClick?: (suggestion: string) => void
 }
 
-export function MainContent({
-  onSuggestionClick: _onSuggestionClick
-}: MainContentProps) {
+export function MainContent({}: MainContentProps) {
   const { openFilesSidebar } = useLayoutStore()
   const router = useRouter()
 

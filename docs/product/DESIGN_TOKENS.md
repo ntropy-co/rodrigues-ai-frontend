@@ -7,6 +7,7 @@ components to keep the UI consistent and avoid palette drift.
 ## Color Tokens (HSL values)
 
 Light:
+
 - surface.base: `--surface-base` (sand-100)
 - surface.raised: `--surface-raised` (white)
 - surface.subtle: `--surface-subtle` (sand-50)
@@ -22,6 +23,7 @@ Light:
 - status.danger: `--status-danger` (destructive)
 
 Dark:
+
 - surface.base: `--surface-base` (verity-950)
 - surface.raised: `--surface-raised` (verity-900)
 - surface.subtle: `--surface-subtle` (verity-800)
@@ -45,6 +47,7 @@ Dark:
 ## Usage
 
 Prefer CSS usage like:
+
 - `color: hsl(var(--text-primary));`
 - `background: hsl(var(--surface-base));`
 - `border-color: hsl(var(--border-subtle));`

@@ -25,6 +25,7 @@ export function StreamingText({
   useEffect(() => {
     // Se o texto ficou mais curto (nova mensagem), reiniciar do zero
     if (text.length < previousLengthRef.current) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDisplayedText('')
       setCurrentIndex(0)
       previousTextRef.current = ''

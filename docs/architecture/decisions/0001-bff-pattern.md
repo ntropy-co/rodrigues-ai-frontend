@@ -1,14 +1,17 @@
 # ADR-0001: Backend-for-Frontend (BFF) Pattern
 
 ## Status
+
 Accepted
 
 ## Date
+
 2024-12-30
 
 ## Context
 
 The Rodrigues AI application requires communication with a Python FastAPI backend that handles:
+
 - Authentication (JWT tokens)
 - CPR document analysis and creation
 - Document management
@@ -16,6 +19,7 @@ The Rodrigues AI application requires communication with a Python FastAPI backen
 - Risk calculation
 
 Key challenges:
+
 1. **Security**: JWT tokens should not be exposed to client-side JavaScript
 2. **CORS**: Direct client-to-backend calls require complex CORS configuration
 3. **Token Refresh**: Automatic token refresh needs secure cookie handling

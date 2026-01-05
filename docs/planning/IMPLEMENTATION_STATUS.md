@@ -11,50 +11,52 @@
 
 ### 🔴 Críticas (P1-HIGH)
 
-| Issue | Funcionalidade | % | Status | Arquivos |
-|-------|---|---|---|---|
-| #161 | CI/CD GitHub Actions | 90% | ✅ Pronto | `.github/workflows/` (4 files) |
-| #200 | Security Audit Features | 80% | ✅ Pronto | `next.config.ts`, `middleware.ts`, `rate-limiter.ts` |
+| Issue | Funcionalidade          | %   | Status    | Arquivos                                             |
+| ----- | ----------------------- | --- | --------- | ---------------------------------------------------- |
+| #161  | CI/CD GitHub Actions    | 90% | ✅ Pronto | `.github/workflows/` (4 files)                       |
+| #200  | Security Audit Features | 80% | ✅ Pronto | `next.config.ts`, `middleware.ts`, `rate-limiter.ts` |
 
 ### 🟡 Altos (P2-MEDIUM)
 
-| Issue | Funcionalidade | % | Status | Arquivos |
-|-------|---|---|---|---|
-| #136 | TemplateGenerator Component | 85% | ✅ Pronto | `/src/components/v2/TemplateGenerator/` (5 files) |
-| #131 | QuotesChart & Quotations | 70% | ✅ Dados OK (Proxied), Sem Gráfico | `/src/app/api/quotes/` (Proxy), `/src/lib/commodities.ts` |
-| #196 | Agentic Input Bar | 65% | ✅ Funcional | `/src/components/v2/InputBar/InputBar.tsx` (590 linhas) |
-| #195 | Citations System | 75% | ✅ UI Completa | `/src/components/v2/SmartBlocks/CitationCard.tsx` |
-| #144 | Monitoramento de Custos | 50% | ⚠️ Parcial | `/src/app/api/metrics/cpr/route.ts` |
+| Issue | Funcionalidade              | %   | Status                             | Arquivos                                                  |
+| ----- | --------------------------- | --- | ---------------------------------- | --------------------------------------------------------- |
+| #136  | TemplateGenerator Component | 85% | ✅ Pronto                          | `/src/components/v2/TemplateGenerator/` (5 files)         |
+| #131  | QuotesChart & Quotations    | 70% | ✅ Dados OK (Proxied), Sem Gráfico | `/src/app/api/quotes/` (Proxy), `/src/lib/commodities.ts` |
+| #196  | Agentic Input Bar           | 65% | ✅ Funcional                       | `/src/components/v2/InputBar/InputBar.tsx` (590 linhas)   |
+| #195  | Citations System            | 75% | ✅ UI Completa                     | `/src/components/v2/SmartBlocks/CitationCard.tsx`         |
+| #144  | Monitoramento de Custos     | 50% | ⚠️ Parcial                         | `/src/app/api/metrics/cpr/route.ts`                       |
 
 ### 🟢 Baixos (P3-LOW) + Extras
 
-| Issue | Funcionalidade | % | Status | Arquivos |
-|-------|---|---|---|---|
-| #119 | CPRSimulator Component | 60% | ✅ Funcional | `/src/components/v2/RiskCalculator/RiskCalculator.tsx` |
-| #127 | Dark Mode | 95% | ✅ Completo | `theme-provider.tsx`, `theme-toggle.tsx`, `next-themes` |
-| #16 | PostHog Analytics | 90% | ✅ Pronto | `/src/components/providers/PostHogProvider.tsx` |
-| #17 | Sentry Error Tracking | 85% | ✅ Pronto | `/src/instrumentation.ts`, `@sentry/nextjs` |
-| #15 | Rate Limiting | 85% | ✅ Pronto | `/src/lib/utils/rate-limiter.ts` |
-| #18 | Logging Estruturado | 80% | ✅ Pronto | `/src/lib/logger.ts` |
+| Issue | Funcionalidade         | %   | Status       | Arquivos                                                |
+| ----- | ---------------------- | --- | ------------ | ------------------------------------------------------- |
+| #119  | CPRSimulator Component | 60% | ✅ Funcional | `/src/components/v2/RiskCalculator/RiskCalculator.tsx`  |
+| #127  | Dark Mode              | 95% | ✅ Completo  | `theme-provider.tsx`, `theme-toggle.tsx`, `next-themes` |
+| #16   | PostHog Analytics      | 90% | ✅ Pronto    | `/src/components/providers/PostHogProvider.tsx`         |
+| #17   | Sentry Error Tracking  | 85% | ✅ Pronto    | `/src/instrumentation.ts`, `@sentry/nextjs`             |
+| #15   | Rate Limiting          | 85% | ✅ Pronto    | `/src/lib/utils/rate-limiter.ts`                        |
+| #18   | Logging Estruturado    | 80% | ✅ Pronto    | `/src/lib/logger.ts`                                    |
 
 ---
 
 ## ❌ NÃO IMPLEMENTADAS (5 issues)
 
-| Issue | Funcionalidade | % | Próximo Passo |
-|-------|---|---|---|
-| #162 | Testes Automatizados | 0% | Instalar Jest/Vitest, criar testes |
-| #202 | Bundle Analyzer & Optimization | 0% | Instalar @next/bundle-analyzer |
-| #201 | Acessibilidade WCAG 2.1 | 5% | Usar axe-core, adicionar aria labels |
-| #194 | Diff Viewer | 0% | Criar componente com react-diff-viewer |
-| #148-149 | PDF Export Real | 40% | Instalar pdfkit, substituir window.print |
+| Issue    | Funcionalidade                 | %   | Próximo Passo                            |
+| -------- | ------------------------------ | --- | ---------------------------------------- |
+| #162     | Testes Automatizados           | 0%  | Instalar Jest/Vitest, criar testes       |
+| #202     | Bundle Analyzer & Optimization | 0%  | Instalar @next/bundle-analyzer           |
+| #201     | Acessibilidade WCAG 2.1        | 5%  | Usar axe-core, adicionar aria labels     |
+| #194     | Diff Viewer                    | 0%  | Criar componente com react-diff-viewer   |
+| #148-149 | PDF Export Real                | 40% | Instalar pdfkit, substituir window.print |
 
 ---
 
 ## 🎯 Detalhes por Implementação
 
 ### #161 - CI/CD GitHub Actions (90%)
+
 **Arquivos:**
+
 - `.github/workflows/validate.yml` - Lint + Type check em PRs
 - `.github/workflows/build.yml` - Build + Test
 - `.github/workflows/deploy-staging.yml` - Deploy automático develop
@@ -66,7 +68,9 @@
 ---
 
 ### #200 - Security Audit (80%)
+
 **Configurações implementadas:**
+
 - CSP (Content-Security-Policy) headers
 - HSTS (Strict-Transport-Security)
 - X-Frame-Options: DENY
@@ -80,13 +84,16 @@
 ---
 
 ### #136 - TemplateGenerator (85%)
+
 **Componentes:**
+
 - DocumentTypeSelector.tsx
 - DocumentForm.tsx
 - ClausesSelector.tsx
 - DocumentPreview.tsx
 
 **Funcionalidades:**
+
 - Seleção de tipo de documento (CPR Física/Financeira)
 - Geração DOCX nativa
 - Preview em tempo real
@@ -98,7 +105,9 @@
 ---
 
 ### #131 - QuotesChart (70%)
+
 **Implementado:**
+
 - Fetching de 9 commodities via Yahoo Finance
 - Cache Redis 15 minutos
 - API: GET /api/quotes
@@ -106,6 +115,7 @@
 - Dados históricos
 
 **Não implementado:**
+
 - Gráfico visual (Recharts/Chart.js)
 
 **Status:** ⚠️ Dados funcionam, sem renderização gráfica
@@ -113,7 +123,9 @@
 ---
 
 ### #119 - CPRSimulator (60%)
+
 **Implementado:**
+
 - RiskCalculator com gauge animado
 - 4 níveis de risco
 - Mock data realista
@@ -121,6 +133,7 @@
 - Análise de fatores
 
 **Não implementado:**
+
 - Integração com backend real
 - Cálculos dinâmicos baseados em dados
 
@@ -129,7 +142,9 @@
 ---
 
 ### #196 - Agentic Input Bar (65%)
+
 **Implementado:**
+
 - Textarea 3D com efeitos
 - Upload de arquivos modal
 - Slash command: /canvas
@@ -138,6 +153,7 @@
 - Estados de loading
 
 **Não implementado:**
+
 - Sistema completo de slash commands
 - Mentions (@usuario)
 
@@ -146,7 +162,9 @@
 ---
 
 ### #195 - Citations System (75%)
+
 **Implementado:**
+
 - CitationCard component
 - SourceCitation list
 - Integração em MessageBubble
@@ -154,6 +172,7 @@
 - Tooltips
 
 **Não implementado:**
+
 - Backend para retornar citations
 
 **Status:** ⚠️ UI completa, falta backend
@@ -161,7 +180,9 @@
 ---
 
 ### #16 - PostHog Analytics (90%)
+
 **Implementado:**
+
 - Provider setup com session replay
 - Masking de inputs sensíveis
 - Event tracking type-safe
@@ -174,7 +195,9 @@
 ---
 
 ### #17 - Sentry Error Tracking (85%)
+
 **Implementado:**
+
 - Sentry NextJS integration
 - Source maps
 - Trace sampling (10% prod, 100% dev)
@@ -186,7 +209,9 @@
 ---
 
 ### #15 - Rate Limiting (85%)
+
 **Implementado:**
+
 - RateLimiter class
 - Pre-configurado: login, register, passwordReset
 - Upstash Redis backend
@@ -197,7 +222,9 @@
 ---
 
 ### #18 - Logging (80%)
+
 **Implementado:**
+
 - Logger com 4 níveis
 - JSON em produção, pretty em dev
 - Timestamp automático
@@ -208,7 +235,9 @@
 ---
 
 ### #127 - Dark Mode (95%)
+
 **Implementado:**
+
 - next-themes integration
 - ThemeToggle button
 - Provider global
@@ -221,13 +250,16 @@
 ---
 
 ### #144 - Cost Monitoring (50%)
+
 **Implementado:**
+
 - API endpoint /api/metrics/cpr
 - Redis storage (Upstash)
 - GET/POST operações
 - Dashboard UI básico
 
 **Não implementado:**
+
 - Tracking de custos de token/API
 - Integração com LLM providers
 
@@ -238,7 +270,9 @@
 ## ❌ NÃO IMPLEMENTADAS
 
 ### #162 - Testes Automatizados (0%)
+
 **Próximos passos:**
+
 ```bash
 npm install --save-dev vitest @testing-library/react @testing-library/user-event
 npm install --save-dev @playwright/test
@@ -247,7 +281,9 @@ npm install --save-dev @playwright/test
 ---
 
 ### #202 - Bundle Analyzer (0%)
+
 **Próximos passos:**
+
 ```bash
 npm install --save-dev @next/bundle-analyzer
 ANALYZE=true npm run build
@@ -256,12 +292,15 @@ ANALYZE=true npm run build
 ---
 
 ### #201 - WCAG Acessibilidade (5%)
+
 **Status atual:**
+
 - Radix UI (bom padrão)
 - Apenas 3 componentes com ARIA
 - Sem testes de acessibilidade
 
 **Próximos passos:**
+
 ```bash
 npm install --save-dev axe-core @axe-core/react jest-axe
 ```
@@ -269,7 +308,9 @@ npm install --save-dev axe-core @axe-core/react jest-axe
 ---
 
 ### #194 - Diff Viewer (0%)
+
 **Próximos passos:**
+
 ```bash
 npm install react-diff-viewer
 ```
@@ -277,9 +318,11 @@ npm install react-diff-viewer
 ---
 
 ### #148-149 - PDF Export Real (40%)
+
 **Atual:** window.print() apenas
 
 **Próximos passos:**
+
 ```bash
 npm install pdfkit html2pdf
 ```
@@ -288,26 +331,29 @@ npm install pdfkit html2pdf
 
 ## 📈 Resumo Executivo
 
-| Categoria | Implementadas | % |
-|-----------|---|---|
-| **Críticas (P1)** | 2/2 | 100% ✅ |
-| **Altos (P2)** | 5/6 | 83% ⚠️ |
-| **Médios/Baixos (P3+)** | 6/8 | 75% ⚠️ |
-| **Total** | 13/18 | 72% |
+| Categoria               | Implementadas | %       |
+| ----------------------- | ------------- | ------- |
+| **Críticas (P1)**       | 2/2           | 100% ✅ |
+| **Altos (P2)**          | 5/6           | 83% ⚠️  |
+| **Médios/Baixos (P3+)** | 6/8           | 75% ⚠️  |
+| **Total**               | 13/18         | 72%     |
 
 ---
 
 ## 🚀 Recomendação
 
 **Prioridade 1 (Próximos 2 dias):**
+
 - #162 - Testes (infraestrutura básica)
 - #202 - Bundle Analyzer (add ao CI/CD)
 
 **Prioridade 2 (Próxima semana):**
+
 - #148-149 - PDF export real
 - #201 - WCAG audit com axe-core
 
 **Prioridade 3 (Após):**
+
 - #194 - Diff Viewer
 - Completar integrações de backend nas funcionalidades 50-85%
 

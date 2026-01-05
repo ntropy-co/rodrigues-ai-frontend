@@ -1,9 +1,11 @@
 # ADR-0007: TypeScript Strict Mode
 
 ## Status
+
 Accepted
 
 ## Date
+
 2024-12-30
 
 ## Context
@@ -39,9 +41,7 @@ Enable TypeScript strict mode with comprehensive type safety settings.
     "paths": {
       "@/*": ["./src/*"]
     },
-    "plugins": [
-      { "name": "next" }
-    ]
+    "plugins": [{ "name": "next" }]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
@@ -50,15 +50,15 @@ Enable TypeScript strict mode with comprehensive type safety settings.
 
 ### Strict Mode Enables
 
-| Option | Description |
-|--------|-------------|
-| `strictNullChecks` | `null` and `undefined` have distinct types |
-| `strictFunctionTypes` | Stricter function parameter checking |
-| `strictBindCallApply` | Check `bind`, `call`, `apply` arguments |
-| `strictPropertyInitialization` | Class properties must be initialized |
-| `noImplicitAny` | Error on expressions with implied `any` |
-| `noImplicitThis` | Error when `this` has `any` type |
-| `alwaysStrict` | Emit `"use strict"` in all files |
+| Option                         | Description                                |
+| ------------------------------ | ------------------------------------------ |
+| `strictNullChecks`             | `null` and `undefined` have distinct types |
+| `strictFunctionTypes`          | Stricter function parameter checking       |
+| `strictBindCallApply`          | Check `bind`, `call`, `apply` arguments    |
+| `strictPropertyInitialization` | Class properties must be initialized       |
+| `noImplicitAny`                | Error on expressions with implied `any`    |
+| `noImplicitThis`               | Error when `this` has `any` type           |
+| `alwaysStrict`                 | Emit `"use strict"` in all files           |
 
 ### Path Aliases
 
@@ -73,6 +73,7 @@ import { Button } from '@/components/ui/button'
 ### Type Patterns
 
 API Response Types:
+
 ```typescript
 // src/types/api.ts
 export interface APIResponse<T> {
@@ -90,6 +91,7 @@ export interface PaginatedResponse<T> {
 ```
 
 Component Props:
+
 ```typescript
 // Explicit prop types
 interface ButtonProps {
@@ -109,6 +111,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 ```
 
 Hook Return Types:
+
 ```typescript
 interface UseDocumentsReturn {
   documents: UserDocument[]

@@ -10,7 +10,8 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 const InstallPrompt = dynamic(
-  () => import('@/components/ui/InstallPrompt').then((mod) => mod.InstallPrompt),
+  () =>
+    import('@/components/ui/InstallPrompt').then((mod) => mod.InstallPrompt),
   { ssr: false }
 )
 

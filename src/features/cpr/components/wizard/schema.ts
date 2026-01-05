@@ -97,15 +97,19 @@ export const stepGuaranteesSchema = z
       if (data.hasGuarantor) {
         // Require minimum lengths for guarantor fields
         return (
-          !!data.guarantorName && data.guarantorName.length >= 3 &&
-          !!data.guarantorCpfCnpj && data.guarantorCpfCnpj.length >= 11 &&
-          !!data.guarantorAddress && data.guarantorAddress.length >= 5
+          !!data.guarantorName &&
+          data.guarantorName.length >= 3 &&
+          !!data.guarantorCpfCnpj &&
+          data.guarantorCpfCnpj.length >= 11 &&
+          !!data.guarantorAddress &&
+          data.guarantorAddress.length >= 5
         )
       }
       return true
     },
     {
-      message: 'Preencha nome (min 3 chars), CPF/CNPJ (min 11 chars) e endereço (min 5 chars) do avalista',
+      message:
+        'Preencha nome (min 3 chars), CPF/CNPJ (min 11 chars) e endereço (min 5 chars) do avalista',
       path: ['guarantorName']
     }
   )

@@ -5,14 +5,16 @@ Atualizado: 2025-12-26
 Este repo passou por limpeza de prompts. Os arquivos antigos de sprint foram removidos ou arquivados.
 
 Arquivos principais:
+
 - `IMPLEMENTATION_STATUS.md` (status do que ja foi feito e o que falta)
 - `docs/archived/PROMPTS_GEMINI_CLAUDE.md` (backlog pendente + prompts consolidados)
 - `llm-prompts/` (prompts prontos por task)
 
 Inicio rapido
-1) Veja o status em `IMPLEMENTATION_STATUS.md`.
-2) Se houver uma task correspondente em `llm-prompts/`, use aquele arquivo.
-3) Se nao houver task especifica, use o prompt consolidado em `docs/archived/PROMPTS_GEMINI_CLAUDE.md`.
+
+1. Veja o status em `IMPLEMENTATION_STATUS.md`.
+2. Se houver uma task correspondente em `llm-prompts/`, use aquele arquivo.
+3. Se nao houver task especifica, use o prompt consolidado em `docs/archived/PROMPTS_GEMINI_CLAUDE.md`.
 
 Tasks prontas (copie e cole o prompt inteiro do arquivo)
 | Task | Modelo | Objetivo | Arquivo |
@@ -26,9 +28,11 @@ Tasks prontas (copie e cole o prompt inteiro do arquivo)
 | 07 | Claude Opus 4.5 Thinking | Exportacao real de PDF | `llm-prompts/LLM_TASK_07_PDF_EXPORT_REAL_CLAUDE_OPUS_4_5.md` |
 
 Como usar um prompt
+
 - Copie o prompt completo do arquivo.
 - Use o modelo indicado no titulo.
 - Peça saida em patch (unified diff) e comandos de validacao alinhados ao `package.json`.
 
 Observacao
+
 - Se precisar de historico, consulte `docs/archived/`.
