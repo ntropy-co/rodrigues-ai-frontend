@@ -440,7 +440,11 @@ export function InputBar({
             duration: 0.8,
             ease: [0.25, 0.46, 0.45, 0.94] // Easing butter
           }}
-          className="relative mx-auto max-w-2xl"
+          transition={{
+            duration: 0.8,
+            ease: [0.25, 0.46, 0.45, 0.94] // Easing butter
+          }}
+          className="relative mx-auto max-w-xl pb-6"
           style={{
             transformStyle: 'preserve-3d',
             backfaceVisibility: 'hidden',
