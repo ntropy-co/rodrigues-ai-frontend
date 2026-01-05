@@ -248,7 +248,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   router.push('/quotes')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-100 dark:text-verity-300 dark:hover:bg-verity-800"
+                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-sand-200 dark:text-verity-300 dark:hover:bg-verity-800"
               >
                 <TrendingUp className="h-4 w-4 text-verity-500" />
                 Cotações
@@ -259,7 +259,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   router.push('/cpr/simulator')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-100 dark:text-verity-300 dark:hover:bg-verity-800"
+                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-sand-200 dark:text-verity-300 dark:hover:bg-verity-800"
               >
                 <Calculator className="h-4 w-4 text-verity-500" />
                 Simulador CPR
@@ -270,7 +270,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   router.push('/compliance')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-100 dark:text-verity-300 dark:hover:bg-verity-800"
+                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-sand-200 dark:text-verity-300 dark:hover:bg-verity-800"
               >
                 <ShieldCheck className="h-4 w-4 text-verity-500" />
                 Compliance
@@ -289,7 +289,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   router.push('/documents')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-100 dark:text-verity-300 dark:hover:bg-verity-800"
+                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-sand-200 dark:text-verity-300 dark:hover:bg-verity-800"
               >
                 <Search className="h-4 w-4 text-verity-500" />
                 Meus Documentos
@@ -300,7 +300,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   router.push('/cpr/historico')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-100 dark:text-verity-300 dark:hover:bg-verity-800"
+                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-sand-200 dark:text-verity-300 dark:hover:bg-verity-800"
               >
                 <History className="h-4 w-4 text-verity-500" />
                 Histórico CPR
@@ -311,7 +311,7 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   router.push('/contact')
                   onClose()
                 }}
-                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-verity-100 dark:text-verity-300 dark:hover:bg-verity-800"
+                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-sand-200 dark:text-verity-300 dark:hover:bg-verity-800"
               >
                 <HelpCircle className="h-4 w-4 text-verity-500" />
                 Suporte
@@ -367,9 +367,9 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
                   <div
                     key={session.id}
                     onClick={() => handleSessionClick(session.id)}
-                    className={`group mb-0.5 flex cursor-pointer items-center justify-between rounded-md px-3 py-2 transition-colors hover:bg-verity-100 dark:hover:bg-verity-800 ${
+                    className={`group mb-0.5 flex cursor-pointer items-center justify-between rounded-md px-3 py-2 transition-colors hover:bg-sand-200 dark:hover:bg-verity-800 ${
                       sessionId === session.id
-                        ? 'bg-verity-100 dark:bg-verity-800'
+                        ? 'bg-sand-300 font-medium dark:bg-verity-800'
                         : ''
                     }`}
                   >

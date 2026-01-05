@@ -501,8 +501,8 @@ const SidebarContent = memo(function SidebarContent({
                 className={cn(
                   'mb-1 flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left text-sm transition-all',
                   !selectedProjectId
-                    ? 'bg-verity-100 font-medium text-verity-900'
-                    : 'text-verity-600 hover:bg-verity-50'
+                    ? 'bg-sand-300 font-medium text-verity-950'
+                    : 'text-verity-600 hover:bg-sand-200 hover:text-verity-900'
                 )}
               >
                 <LayoutGrid className="h-3.5 w-3.5" />
@@ -535,7 +535,7 @@ const SidebarContent = memo(function SidebarContent({
               {projects.length > 3 && (
                 <Link
                   href="/projects"
-                  className="mt-1 flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium text-verity-500 transition-colors hover:bg-verity-50 hover:text-verity-900"
+                  className="mt-1 flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium text-verity-500 transition-colors hover:bg-sand-200 hover:text-verity-900"
                 >
                   <span className="flex-1">Ver todos os projetos</span>
                   <span className="text-[10px] opacity-70">{'->'}</span>
@@ -553,7 +553,7 @@ const SidebarContent = memo(function SidebarContent({
                 Conversas
               </h3>
               {selectedProjectId && (
-                <span className="rounded-full bg-verity-100 px-1.5 py-0.5 text-[10px] font-medium text-verity-600">
+                <span className="rounded-full bg-sand-300 px-1.5 py-0.5 text-[10px] font-medium text-verity-900">
                   Filtrado
                 </span>
               )}
@@ -564,7 +564,7 @@ const SidebarContent = memo(function SidebarContent({
                 <TooltipTrigger asChild>
                   <button
                     onClick={onNewConversation}
-                    className="rounded-md p-1 text-verity-500 hover:bg-verity-100 hover:text-verity-900"
+                    className="rounded-md p-1 text-verity-500 hover:bg-sand-200 hover:text-verity-900"
                   >
                     <Plus className="h-3.5 w-3.5" />
                   </button>
@@ -795,8 +795,8 @@ const ConversationCard = memo(function ConversationCard({
       className={cn(
         'group relative flex w-full cursor-pointer items-start gap-3 rounded-lg border-l-0 px-3 py-2.5 text-left outline-none transition-all duration-200',
         isActive
-          ? 'bg-verity-800 font-medium text-white shadow-md shadow-verity-900/10'
-          : 'bg-transparent text-verity-900 hover:bg-white/50 hover:text-verity-950'
+          ? 'border-l-2 border-verity-900 bg-sand-300 font-semibold text-verity-950 shadow-sm'
+          : 'border-l-2 border-transparent bg-transparent text-verity-900 hover:bg-sand-200 hover:text-verity-950'
       )}
     >
       {/* Avatar mini */}
@@ -826,7 +826,7 @@ const ConversationCard = memo(function ConversationCard({
                 className={cn(
                   'flex-1 truncate text-sm',
                   isActive
-                    ? 'font-semibold text-white'
+                    ? 'font-semibold text-verity-950'
                     : 'font-medium text-verity-900'
                 )}
               >
@@ -841,7 +841,7 @@ const ConversationCard = memo(function ConversationCard({
                     e.stopPropagation()
                     setIsEditing(true)
                   }}
-                  className="rounded p-1 text-verity-600 opacity-0 transition-opacity hover:bg-verity-200 group-hover:opacity-100"
+                  className="rounded p-1 text-verity-600 opacity-0 transition-opacity hover:bg-sand-200 group-hover:opacity-100"
                   title="Renomear"
                 >
                   <SquarePen className="h-3.5 w-3.5" />
@@ -856,7 +856,7 @@ const ConversationCard = memo(function ConversationCard({
                     e.stopPropagation()
                     onViewDetails()
                   }}
-                  className="rounded p-1 text-verity-600 opacity-0 transition-opacity hover:bg-verity-200 group-hover:opacity-100"
+                  className="rounded p-1 text-verity-600 opacity-0 transition-opacity hover:bg-sand-200 group-hover:opacity-100"
                   title="Abrir Detalhes do Projeto"
                 >
                   <Maximize2 className="h-3.5 w-3.5" />
@@ -871,7 +871,7 @@ const ConversationCard = memo(function ConversationCard({
                     e.stopPropagation()
                     onMove()
                   }}
-                  className="rounded p-1 text-verity-600 opacity-0 transition-opacity hover:bg-verity-200 group-hover:opacity-100"
+                  className="rounded p-1 text-verity-600 opacity-0 transition-opacity hover:bg-sand-200 group-hover:opacity-100"
                   title="Mover para Projeto"
                 >
                   <FolderInput className="h-3.5 w-3.5" />
