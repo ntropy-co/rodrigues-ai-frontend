@@ -63,7 +63,7 @@ const TYPE_CONFIG: Record<
   simulacao: {
     label: 'Simulação',
     icon: TrendingUp,
-    color: 'text-purple-600 bg-purple-50'
+    color: 'text-verity-600 bg-verity-50'
   }
 }
 
@@ -165,7 +165,7 @@ export function CPRHistoryCard({
 
                 {/* Metadata row */}
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-verity-600">
-                  <span className="flex items-center gap-1">
+                  <span className="flex items-center gap-1 tabular-nums">
                     <Calendar className="h-3.5 w-3.5" />
                     {formattedDate} às {formattedTime}
                   </span>
@@ -177,7 +177,7 @@ export function CPRHistoryCard({
                   )}
 
                   {item.metadata.total_value && (
-                    <span className="font-medium text-ouro-600">
+                    <span className="font-medium tabular-nums text-ouro-600">
                       {formatCurrency(item.metadata.total_value)}
                     </span>
                   )}
@@ -185,7 +185,7 @@ export function CPRHistoryCard({
                   {item.metadata.risk_score !== undefined && (
                     <span
                       className={cn(
-                        'rounded px-1.5 py-0.5 text-xs font-medium',
+                        'rounded px-1.5 py-0.5 text-xs font-medium tabular-nums',
                         item.metadata.risk_score < 40
                           ? 'bg-verity-100 text-verity-700'
                           : item.metadata.risk_score < 70

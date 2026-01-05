@@ -384,7 +384,7 @@ export function StepReview({ data, onBack, goToStep }: StepReviewProps) {
           <CardContent className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <span className="block text-muted-foreground">Valor Total</span>
-              <span className="font-semibold">
+              <span className="font-semibold tabular-nums">
                 {new Intl.NumberFormat('pt-BR', {
                   style: 'currency',
                   currency: 'BRL'
@@ -393,7 +393,7 @@ export function StepReview({ data, onBack, goToStep }: StepReviewProps) {
             </div>
             <div>
               <span className="block text-muted-foreground">Vencimento</span>
-              <span className="font-semibold">{data.dueDate}</span>
+              <span className="font-semibold tabular-nums">{data.dueDate}</span>
             </div>
             <div>
               <span className="block text-muted-foreground">

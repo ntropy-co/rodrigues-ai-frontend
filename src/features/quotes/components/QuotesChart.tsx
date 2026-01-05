@@ -180,7 +180,7 @@ const SimpleLineChart = ({
                 y1={cprY}
                 x2={viewBoxWidth - padding.right}
                 y2={cprY}
-                stroke="#f59e0b" // Amber-500
+                stroke="#BFA070" // Ouro-500
                 strokeWidth="2"
                 strokeDasharray="5 5"
               />
@@ -188,7 +188,7 @@ const SimpleLineChart = ({
                 x={viewBoxWidth - padding.right + 5}
                 y={cprY + 4}
                 textAnchor="start"
-                className="fill-amber-600 text-[10px] font-bold"
+                className="fill-ouro-600 text-[10px] font-bold"
               >
                 CPR
               </text>
@@ -198,7 +198,7 @@ const SimpleLineChart = ({
         {/* Main Line */}
         <polyline
           fill="none"
-          stroke="#2563eb" // Blue-600
+          stroke="#1A3C30" // Verity-800
           strokeWidth="2"
           points={points}
           strokeLinejoin="round"
@@ -226,7 +226,7 @@ const SimpleLineChart = ({
               cx={getX(hoveredPoint.date)}
               cy={getY(hoveredPoint.close)}
               r="4"
-              fill="#2563eb"
+              fill="#1A3C30"
               stroke="white"
               strokeWidth="2"
             />
@@ -399,7 +399,7 @@ export function QuotesChart() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-amber-600">
+            <label className="text-sm font-medium text-ouro-600">
               Preço CPR (Alvo)
             </label>
             <div className="relative">
@@ -409,7 +409,7 @@ export function QuotesChart() {
               <Input
                 type="number"
                 placeholder="Ex: 12.50"
-                className="border-amber-200 bg-amber-50/10 pl-7 focus-visible:ring-amber-500"
+                className="border-ouro-200 bg-ouro-50/10 pl-7 focus-visible:ring-ouro-500"
                 value={cprPriceInput}
                 onChange={(e) => setCprPriceInput(e.target.value)}
                 step="0.01"

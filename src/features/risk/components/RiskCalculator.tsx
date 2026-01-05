@@ -156,10 +156,10 @@ function RiskGauge({ score }: RiskGaugeProps) {
           {/* Gradient arcs */}
           <defs>
             <linearGradient id="riskGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#22c55e" />
-              <stop offset="33%" stopColor="#eab308" />
-              <stop offset="66%" stopColor="#f97316" />
-              <stop offset="100%" stopColor="#ef4444" />
+              <stop offset="0%" stopColor="#426154" />
+              <stop offset="33%" stopColor="#BFA070" />
+              <stop offset="66%" stopColor="#E53E3E" />
+              <stop offset="100%" stopColor="#C53030" />
             </linearGradient>
           </defs>
           <path
@@ -187,7 +187,7 @@ function RiskGauge({ score }: RiskGaugeProps) {
       {/* Score display */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 transform text-center">
         <motion.span
-          className="text-2xl font-bold text-verity-900"
+          className="text-2xl font-bold tabular-nums text-verity-900"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
@@ -239,7 +239,7 @@ function FactorList({ factors, type }: FactorListProps) {
                 </p>
               )}
             </div>
-            <span className="shrink-0 text-xs font-medium text-verity-500">
+            <span className="shrink-0 text-xs font-medium tabular-nums text-verity-500">
               {factor.weight}%
             </span>
           </motion.div>
@@ -333,12 +333,16 @@ export function RiskCalculator({
         <div className="flex justify-center gap-6 text-sm">
           <div className="flex items-center gap-1.5 text-verity-600">
             <TrendingUp className="h-4 w-4" />
-            <span className="font-medium">{positiveFactorsWeight}%</span>
+            <span className="font-medium tabular-nums">
+              {positiveFactorsWeight}%
+            </span>
             <span className="text-verity-500">positivo</span>
           </div>
           <div className="flex items-center gap-1.5 text-error-600">
             <TrendingDown className="h-4 w-4" />
-            <span className="font-medium">{negativeFactorsWeight}%</span>
+            <span className="font-medium tabular-nums">
+              {negativeFactorsWeight}%
+            </span>
             <span className="text-verity-500">negativo</span>
           </div>
         </div>
@@ -366,7 +370,7 @@ export function RiskCalculator({
 
         {/* Timestamp */}
         {data.calculatedAt && (
-          <p className="text-center text-xs text-verity-500">
+          <p className="text-center text-xs tabular-nums text-verity-500">
             Calculado em {data.calculatedAt.toLocaleDateString('pt-BR')} às{' '}
             {data.calculatedAt.toLocaleTimeString('pt-BR', {
               hour: '2-digit',

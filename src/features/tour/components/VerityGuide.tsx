@@ -82,7 +82,7 @@ function GlassBubble({
       <div className="mb-4">
         <h3 className="mb-1 flex items-center gap-2 font-display text-lg font-semibold text-verity-950 dark:text-white">
           {title}
-          <Sparkles className="h-4 w-4 text-amber-400" />
+          <Sparkles className="h-4 w-4 text-ouro-400" />
         </h3>
         <p className="text-sm leading-relaxed text-verity-700 dark:text-verity-200">
           {message}

@@ -12,6 +12,7 @@ import {
 import { useState } from 'react'
 import { useCanvasStore } from '@/features/canvas'
 import MarkdownRenderer from '@/components/ui/typography/MarkdownRenderer'
+import { RichEditor } from './RichEditor'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -148,20 +149,21 @@ export function CanvasPanel() {
             </div>
 
             {/* Content Editor/Viewer */}
-            <div className="flex-1 overflow-y-auto px-8 pb-10">
+            <div className="flex-1 overflow-hidden">
               {mode === 'edit' ? (
-                <textarea
-                  className="h-full w-full resize-none border-none bg-transparent p-0 font-display text-lg leading-relaxed text-verity-800 outline-none placeholder:text-verity-300 focus:ring-0"
-                  value={content || ''}
-                  onChange={(e) => updateContent(e.target.value)}
-                  placeholder="Start writing..."
-                  spellCheck="false"
+                <RichEditor
+                  content={content || ''}
+                  onChange={updateContent}
+                  placeholder="Comece a escrever seu documento..."
+                  className="h-full"
                 />
               ) : (
-                <div className="prose-verity prose max-w-none font-display">
-                  <MarkdownRenderer classname="prose-lg text-verity-800 leading-relaxed font-display">
-                    {content || ''}
-                  </MarkdownRenderer>
+                <div className="h-full overflow-y-auto px-8 pb-10">
+                  <div className="prose-verity prose max-w-none font-display">
+                    <MarkdownRenderer classname="prose-lg text-verity-800 leading-relaxed font-display">
+                      {content || ''}
+                    </MarkdownRenderer>
+                  </div>
                 </div>
               )}
             </div>

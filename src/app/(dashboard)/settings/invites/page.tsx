@@ -64,7 +64,7 @@ const statusConfig: Record<
   pending: {
     label: 'Pendente',
     icon: <Clock className="h-4 w-4" />,
-    color: 'text-amber-600 bg-amber-50'
+    color: 'text-ouro-600 bg-ouro-50'
   },
   accepted: {
     label: 'Aceito',

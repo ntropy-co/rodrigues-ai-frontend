@@ -343,7 +343,7 @@ export default function TeamMembersPage() {
               <Users className="h-5 w-5 text-muted-foreground" />
               <CardTitle className="text-lg">Membros</CardTitle>
             </div>
-            <CardDescription>
+            <CardDescription className="tabular-nums">
               {total} {total === 1 ? 'membro' : 'membros'} encontrados
             </CardDescription>
           </CardHeader>
@@ -406,7 +406,7 @@ export default function TeamMembersPage() {
                       </div>
 
                       {user.status !== 'active' && (
-                        <span className="rounded-full bg-amber-50 px-2 py-1 text-xs font-medium text-amber-600">
+                        <span className="rounded-full bg-ouro-50 px-2 py-1 text-xs font-medium text-ouro-600">
                           {user.status === 'inactive' ? 'Inativo' : 'Pendente'}
                         </span>
                       )}

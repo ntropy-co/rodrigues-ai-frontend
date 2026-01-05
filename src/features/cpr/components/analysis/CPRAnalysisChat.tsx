@@ -419,7 +419,7 @@ function ExtractedDataCard({ data }: ExtractedDataCardProps) {
                   {data.valores.preco_unitario && (
                     <div>
                       <span className="text-verity-500">Preco Unitario:</span>{' '}
-                      <span className="font-medium text-verity-900">
+                      <span className="font-medium tabular-nums text-verity-900">
                         R$ {data.valores.preco_unitario.toLocaleString('pt-BR')}
                       </span>
                     </div>
@@ -427,7 +427,7 @@ function ExtractedDataCard({ data }: ExtractedDataCardProps) {
                   {data.valores.valor_total && (
                     <div>
                       <span className="text-verity-500">Valor Total:</span>{' '}
-                      <span className="font-medium text-verity-900">
+                      <span className="font-medium tabular-nums text-verity-900">
                         R$ {data.valores.valor_total.toLocaleString('pt-BR')}
                       </span>
                     </div>
@@ -446,7 +446,7 @@ function ExtractedDataCard({ data }: ExtractedDataCardProps) {
                   {data.datas.emissao && (
                     <div>
                       <span className="text-verity-500">Emissao:</span>{' '}
-                      <span className="font-medium text-verity-900">
+                      <span className="font-medium tabular-nums text-verity-900">
                         {data.datas.emissao}
                       </span>
                     </div>
@@ -454,7 +454,7 @@ function ExtractedDataCard({ data }: ExtractedDataCardProps) {
                   {data.datas.vencimento && (
                     <div>
                       <span className="text-verity-500">Vencimento:</span>{' '}
-                      <span className="font-medium text-verity-900">
+                      <span className="font-medium tabular-nums text-verity-900">
                         {data.datas.vencimento}
                       </span>
                     </div>
@@ -462,7 +462,7 @@ function ExtractedDataCard({ data }: ExtractedDataCardProps) {
                   {data.datas.entrega && (
                     <div>
                       <span className="text-verity-500">Entrega:</span>{' '}
-                      <span className="font-medium text-verity-900">
+                      <span className="font-medium tabular-nums text-verity-900">
                         {data.datas.entrega}
                       </span>
                     </div>

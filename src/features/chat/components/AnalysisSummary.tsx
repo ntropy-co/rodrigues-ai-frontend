@@ -22,7 +22,7 @@ export function AnalysisSummary({
           <h2 className="font-display text-lg font-semibold text-verity-900">
             Resumo da Análise
           </h2>
-          <p className="text-sm text-verity-600">
+          <p className="text-sm tabular-nums text-verity-600">
             {totalIssues === 0
               ? 'Nenhum problema encontrado!'
               : `${totalIssues} problema${totalIssues > 1 ? 's' : ''} encontrado${totalIssues > 1 ? 's' : ''}`}
@@ -41,7 +41,7 @@ export function AnalysisSummary({
                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-error-100">
                   <AlertTriangle className="h-3.5 w-3.5 text-error-500" />
                 </div>
-                <span className="text-sm font-medium text-error-700">
+                <span className="text-sm font-medium tabular-nums text-error-700">
                   {highCount}
                 </span>
               </div>
@@ -51,7 +51,7 @@ export function AnalysisSummary({
                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-ouro-100">
                   <AlertCircle className="h-3.5 w-3.5 text-ouro-500" />
                 </div>
-                <span className="text-sm font-medium text-ouro-700">
+                <span className="text-sm font-medium tabular-nums text-ouro-700">
                   {mediumCount}
                 </span>
               </div>
@@ -61,7 +61,7 @@ export function AnalysisSummary({
                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-verity-100">
                   <Info className="h-3.5 w-3.5 text-verity-500" />
                 </div>
-                <span className="text-sm font-medium text-verity-700">
+                <span className="text-sm font-medium tabular-nums text-verity-700">
                   {lowCount}
                 </span>
               </div>

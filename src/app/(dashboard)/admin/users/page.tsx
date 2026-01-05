@@ -271,7 +271,7 @@ export default function AdminUsersPage() {
           <h1 className="text-2xl font-bold text-verity-900 dark:text-white">
             Gerenciar Usuários
           </h1>
-          <p className="text-sand-500 mt-1 text-sm dark:text-verity-300">
+          <p className="text-sand-500 mt-1 text-sm tabular-nums dark:text-verity-300">
             {total} usuário{total !== 1 ? 's' : ''} encontrado
             {total !== 1 ? 's' : ''}
           </p>
@@ -422,7 +422,7 @@ export default function AdminUsersPage() {
                           {STATUS_LABELS[user.status]}
                         </Badge>
                       </td>
-                      <td className="whitespace-nowrap px-4 py-3 text-verity-500 dark:text-verity-300">
+                      <td className="whitespace-nowrap px-4 py-3 tabular-nums text-verity-500 dark:text-verity-300">
                         {formatDate(user.created_at)}
                       </td>
                       <td className="whitespace-nowrap px-4 py-3">
@@ -496,7 +496,7 @@ export default function AdminUsersPage() {
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="flex items-center justify-between border-t border-sand-300 px-4 py-3 dark:border-verity-600">
-              <div className="text-sand-500 text-sm dark:text-verity-300">
+              <div className="text-sand-500 text-sm tabular-nums dark:text-verity-300">
                 Página {page} de {totalPages}
               </div>
               <div className="flex gap-2">

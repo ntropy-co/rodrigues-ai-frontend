@@ -124,11 +124,11 @@ export function ComplianceScore({
                 x2="100%"
                 y2="0%"
               >
-                <stop offset="0%" stopColor="#22c55e" />
-                <stop offset="25%" stopColor="#84cc16" />
-                <stop offset="50%" stopColor="#eab308" />
-                <stop offset="75%" stopColor="#f97316" />
-                <stop offset="100%" stopColor="#ef4444" />
+                <stop offset="0%" stopColor="#426154" />
+                <stop offset="25%" stopColor="#7A9F8F" />
+                <stop offset="50%" stopColor="#BFA070" />
+                <stop offset="75%" stopColor="#E53E3E" />
+                <stop offset="100%" stopColor="#C53030" />
               </linearGradient>
             </defs>
             {/* Main arc */}
@@ -153,7 +153,7 @@ export function ComplianceScore({
                   y1={y1}
                   x2={x2}
                   y2={y2}
-                  stroke="#94a3b8"
+                  stroke="#E5E5E5"
                   strokeWidth="2"
                 />
               )
@@ -185,7 +185,10 @@ export function ComplianceScore({
         {/* Score display */}
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 transform text-center">
           <motion.span
-            className={cn('font-bold text-verity-900', sizeConfig.scoreText)}
+            className={cn(
+              'font-bold tabular-nums text-verity-900',
+              sizeConfig.scoreText
+            )}
             initial={animated ? { opacity: 0 } : { opacity: 1 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}

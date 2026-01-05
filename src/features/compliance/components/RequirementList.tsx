@@ -310,7 +310,7 @@ function CategoryGroup({
         <div className="flex items-center gap-3">
           <CategoryIcon className="h-5 w-5 text-verity-600" />
           <span className="font-medium text-verity-900">{config.label}</span>
-          <span className="text-sm text-verity-500">
+          <span className="text-sm tabular-nums text-verity-500">
             ({okCount}/{total})
           </span>
         </div>

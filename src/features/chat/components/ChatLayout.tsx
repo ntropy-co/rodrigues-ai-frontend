@@ -10,6 +10,7 @@ import { ChatArea } from './ChatArea'
 import { FilesSidebar } from './FilesSidebar'
 import { ConversationsSidebar } from './ConversationsSidebar'
 import { CanvasPanel } from '@/features/canvas'
+import { ResizeHandle } from '@/features/canvas/components/ResizeHandle'
 import { usePlaygroundStore } from '../stores/playgroundStore'
 import { useLayoutStore } from '@/features/chat'
 import { useCanvasStore } from '@/features/canvas'
@@ -255,6 +256,18 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
         </motion.div>
 
         {/* Canvas Panel - Always render when open (takes priority over FilesSidebar) */}
+        {isCanvasOpen && !isMobile && (
+          <ResizeHandle
+            onResize={(delta) => {
+              const newWidth = Math.min(
+                80,
+                Math.max(20, canvasWidth + (delta / window.innerWidth) * 100)
+              )
+              useCanvasStore.getState().setWidth(newWidth)
+            }}
+          />
+        )}
+
         {isCanvasOpen && (
           <div
             className={cn(

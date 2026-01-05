@@ -244,7 +244,7 @@ export function CPRSimulator() {
                       <RefreshCwIcon className="h-3 w-3 animate-spin" />
                     ) : (
                       <>
-                        <span className="text-muted-foreground">
+                        <span className="tabular-nums text-muted-foreground">
                           Mkt: {formatCurrency(marketData.price)}
                         </span>
                       </>
@@ -255,7 +255,7 @@ export function CPRSimulator() {
               {currentResult?.marketDelta !== undefined && (
                 <p
                   className={cn(
-                    'mt-1 text-xs font-medium',
+                    'mt-1 text-xs font-medium tabular-nums',
                     currentResult.marketDelta >= 0
                       ? 'text-verity-600'
                       : 'text-amber-600'
@@ -297,7 +297,7 @@ export function CPRSimulator() {
                 <p className="text-sm uppercase tracking-wide text-muted-foreground">
                   Valor Bruto
                 </p>
-                <p className="text-2xl font-semibold text-foreground">
+                <p className="text-2xl font-semibold tabular-nums text-foreground">
                   {currentResult
                     ? formatCurrency(currentResult.grossValue)
                     : 'R$ 0,00'}
@@ -307,7 +307,7 @@ export function CPRSimulator() {
                 <p className="text-sm uppercase tracking-wide text-muted-foreground">
                   Desconto Previsto
                 </p>
-                <p className="text-2xl font-semibold text-error-500">
+                <p className="text-2xl font-semibold tabular-nums text-error-500">
                   {currentResult
                     ? `- ${formatCurrency(currentResult.discount)}`
                     : 'R$ 0,00'}
@@ -317,7 +317,7 @@ export function CPRSimulator() {
                 <p className="text-sm uppercase tracking-wide text-muted-foreground">
                   Valor Líquido
                 </p>
-                <p className="text-2xl font-bold text-verity-600">
+                <p className="text-2xl font-bold tabular-nums text-verity-600">
                   {currentResult
                     ? formatCurrency(currentResult.netValue)
                     : 'R$ 0,00'}
@@ -373,11 +373,11 @@ export function CPRSimulator() {
                     <span className="font-medium">
                       {COMMODITY_INFO[item.commodity].name}
                     </span>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs tabular-nums text-muted-foreground">
                       {new Date(item.date).toLocaleDateString()}
                     </span>
                   </div>
-                  <div className="mb-2 text-xs text-muted-foreground">
+                  <div className="mb-2 text-xs tabular-nums text-muted-foreground">
                     {item.quantity} {COMMODITY_INFO[item.commodity].unit} @{' '}
                     {formatCurrency(item.price)}
                   </div>
@@ -386,7 +386,7 @@ export function CPRSimulator() {
                       <span className="block text-[10px] text-muted-foreground">
                         LÍQUIDO
                       </span>
-                      <span className="font-semibold text-verity-600">
+                      <span className="font-semibold tabular-nums text-verity-600">
                         {formatCurrency(item.netValue)}
                       </span>
                     </div>
@@ -394,7 +394,9 @@ export function CPRSimulator() {
                       <span className="block text-[10px] text-muted-foreground">
                         TAXA
                       </span>
-                      <span>{formatPercent(item.rateZ)}</span>
+                      <span className="tabular-nums">
+                        {formatPercent(item.rateZ)}
+                      </span>
                     </div>
                   </div>
                 </div>

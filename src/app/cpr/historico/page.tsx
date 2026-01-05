@@ -146,7 +146,7 @@ export default function CPRHistoricoPage() {
 
         {/* Summary */}
         {!isLoading && total > 0 && (
-          <div className="mt-6 text-center text-sm text-verity-500">
+          <div className="mt-6 text-center text-sm tabular-nums text-verity-500">
             Total: {total} {total === 1 ? 'registro' : 'registros'}
           </div>
         )}

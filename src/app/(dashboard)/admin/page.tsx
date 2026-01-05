@@ -39,12 +39,12 @@ function StatCard({
         {loading ? (
           <Skeleton className="h-8 w-20" />
         ) : (
-          <div className="text-2xl font-bold text-verity-900 dark:text-white">
+          <div className="text-2xl font-bold tabular-nums text-verity-900 dark:text-white">
             {value}
           </div>
         )}
         {description && (
-          <p className="text-sand-500 text-xs dark:text-verity-300">
+          <p className="text-sand-500 text-xs tabular-nums dark:text-verity-300">
             {description}
           </p>
         )}

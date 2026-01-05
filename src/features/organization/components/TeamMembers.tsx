@@ -554,7 +554,7 @@ export function TeamMembers({
             </div>
             <div>
               <CardTitle>Membros da Equipe</CardTitle>
-              <CardDescription>
+              <CardDescription className="tabular-nums">
                 {total} membro{total !== 1 ? 's' : ''} na organizacao
               </CardDescription>
             </div>

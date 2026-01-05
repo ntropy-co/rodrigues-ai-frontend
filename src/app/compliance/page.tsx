@@ -115,7 +115,7 @@ export default function CompliancePage() {
                     <FileCheck className="h-5 w-5 text-verity-600" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-verity-900">
+                    <p className="text-2xl font-bold tabular-nums text-verity-900">
                       {dashboard.total_verified}
                     </p>
                     <p className="text-xs text-verity-500">
@@ -131,7 +131,7 @@ export default function CompliancePage() {
                     <TrendingUp className="h-5 w-5 text-verity-600" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-verity-900">
+                    <p className="text-2xl font-bold tabular-nums text-verity-900">
                       {dashboard.compliance_rate.toFixed(0)}%
                     </p>
                     <p className="text-xs text-verity-500">

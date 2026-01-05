@@ -408,7 +408,9 @@ function ExtractedDataSummary({ data }: ExtractedDataSummaryProps) {
                     item.value && (
                       <div key={item.label} className="text-sm">
                         <span className="text-verity-500">{item.label}:</span>{' '}
-                        <span className="text-verity-900">{item.value}</span>
+                        <span className="tabular-nums text-verity-900">
+                          {item.value}
+                        </span>
                       </div>
                     )
                 )}

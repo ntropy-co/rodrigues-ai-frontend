@@ -118,7 +118,7 @@ export function CPRHistoryList({
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between border-t border-verity-200 pt-4">
-          <p className="text-sm text-verity-600">
+          <p className="text-sm tabular-nums text-verity-600">
             Mostrando {startItem} a {endItem} de {total} resultados
           </p>
           <div className="flex items-center gap-2">
@@ -131,7 +131,7 @@ export function CPRHistoryList({
               <ChevronLeft className="mr-1 h-4 w-4" />
               Anterior
             </Button>
-            <span className="px-2 text-sm text-verity-600">
+            <span className="px-2 text-sm tabular-nums text-verity-600">
               Página {page + 1} de {totalPages}
             </span>
             <Button
