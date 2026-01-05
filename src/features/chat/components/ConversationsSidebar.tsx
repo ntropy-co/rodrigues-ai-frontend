@@ -444,7 +444,7 @@ const SidebarContent = memo(function SidebarContent({
 
   return (
     <>
-      {/* Header Area: Search + New Analysis (Compact) */}
+      {/* Header Area: Search Only */}
       <div className="flex items-center gap-2 border-b border-sand-300/50 bg-sand-200/50 p-3 backdrop-blur-sm">
         {/* Search Bar */}
         <div className="relative flex-1">
@@ -453,35 +453,14 @@ const SidebarContent = memo(function SidebarContent({
             type="search"
             placeholder="Buscar"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
             className="h-9 w-full rounded-lg border border-sand-300 bg-white/50 px-3 pl-9 text-sm text-verity-950 transition-all placeholder:text-verity-500 focus:border-verity-600 focus:outline-none focus:ring-0"
           />
         </div>
 
-        {/* New Analysis Icon Button */}
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <motion.button
-                whileHover={{
-                  scale: 1.05,
-                  backgroundColor: 'var(--verity-900)'
-                }}
-                whileTap={{ scale: 0.95 }}
-                onClick={onNewConversation}
-                className="flex h-9 w-9 items-center justify-center rounded-lg bg-verity-900 text-white shadow-sm transition-colors hover:bg-verity-800"
-              >
-                <Plus className="h-5 w-5" />
-              </motion.button>
-            </TooltipTrigger>
-            <TooltipContent>Nova Conversa</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-
         {showCloseButton && (
           <button
             onClick={onToggle}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-verity-200 text-verity-600 hover:bg-verity-50"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-sand-300 text-verity-600 hover:bg-verity-50"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -530,7 +509,7 @@ const SidebarContent = memo(function SidebarContent({
                 <span>Todas as Conversas</span>
               </button>
 
-              {projects.map((project) => (
+              {projects.slice(0, 3).map((project) => (
                 <ConversationCard
                   key={project.id}
                   id={project.id}
@@ -551,20 +530,49 @@ const SidebarContent = memo(function SidebarContent({
                   }
                 />
               ))}
+
+              {/* View More Projects */}
+              {projects.length > 3 && (
+                <Link
+                  href="/projects"
+                  className="mt-1 flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium text-verity-500 transition-colors hover:bg-verity-50 hover:text-verity-900"
+                >
+                  <span className="flex-1">Ver todos os projetos</span>
+                  <span className="text-[10px] opacity-70">{'->'}</span>
+                </Link>
+              )}
             </div>
           )}
         </div>
 
         {/* Conversas Section */}
         <div>
-          <h3 className="mb-2 flex items-center gap-2 px-2 font-display text-lg font-semibold text-verity-950">
-            Conversas
-            {selectedProjectId && (
-              <span className="rounded-full bg-verity-100 px-2 py-0.5 text-xs font-normal text-verity-500">
-                Filtrado
-              </span>
-            )}
-          </h3>
+          <div className="mb-2 flex items-center justify-between px-2">
+            <div className="flex items-center gap-2">
+              <h3 className="font-display text-xs font-semibold uppercase tracking-wider text-verity-500">
+                Conversas
+              </h3>
+              {selectedProjectId && (
+                <span className="rounded-full bg-verity-100 px-1.5 py-0.5 text-[10px] font-medium text-verity-600">
+                  Filtrado
+                </span>
+              )}
+            </div>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={onNewConversation}
+                    className="rounded-md p-1 text-verity-500 hover:bg-verity-100 hover:text-verity-900"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>Nova Conversa</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
 
           {sessionsLoading ? (
             <div className="flex items-center justify-center py-8">
@@ -586,7 +594,7 @@ const SidebarContent = memo(function SidebarContent({
             </div>
           ) : (
             <div className="space-y-1">
-              {filteredSessions.map((session) => (
+              {filteredSessions.slice(0, 5).map((session) => (
                 <ConversationCard
                   key={session.session_id}
                   id={session.session_id}
@@ -604,6 +612,17 @@ const SidebarContent = memo(function SidebarContent({
                   onMove={() => openMoveDialog(session.session_id)}
                 />
               ))}
+
+              {/* View More History */}
+              {filteredSessions.length > 5 && (
+                <Link
+                  href="/cpr/historico"
+                  className="mt-1 flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium text-verity-500 transition-colors hover:bg-verity-50 hover:text-verity-900"
+                >
+                  <span className="flex-1">Ver histórico completo</span>
+                  <span className="text-[10px] opacity-70">{'->'}</span>
+                </Link>
+              )}
             </div>
           )}
         </div>
