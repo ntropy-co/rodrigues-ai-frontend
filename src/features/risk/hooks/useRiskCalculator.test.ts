@@ -149,9 +149,9 @@ describe('useRiskCalculator', () => {
       expect(mockFetch).toHaveBeenCalledWith('/api/cpr/risk/calculate', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${mockToken}`
+          'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(mockRequest)
       })
     })
