@@ -524,9 +524,9 @@ export function InputBar({
             </motion.div>
           )}
 
-          {/* Layer 4: Container Principal */}
+          {/* Layer 4: Container Principal (Pílula Orgânica) */}
           <motion.div
-            className="group relative flex items-end gap-3 rounded-[2rem] border border-sand-300 bg-sand-50/80 px-6 py-5 backdrop-blur-2xl transition-all duration-300 hover:border-verity-300"
+            className="group relative flex items-end gap-3 rounded-[2.5rem] border border-sand-200 bg-white/40 px-6 py-4 backdrop-blur-xl transition-all duration-300 hover:border-verity-200/50 hover:bg-white/60"
             style={{
               transform: 'translateZ(0)',
               transformStyle: 'preserve-3d'
@@ -536,37 +536,20 @@ export function InputBar({
             variants={{
               rest: {
                 scale: 1,
-                rotateX: 0,
                 boxShadow:
-                  '0 1px 2px rgba(45, 90, 69, 0.05), 0 8px 32px rgba(45, 90, 69, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.8)',
-                borderColor: '#D4D4D0' // sand-300
+                  '0 2px 10px rgba(45, 90, 69, 0.03), 0 10px 40px -10px rgba(45, 90, 69, 0.05)',
+                borderColor: 'rgba(212, 212, 208, 0.6)' // sand-300 transparent
               },
               focus: {
-                scale: 1.02,
-                rotateX: -1,
+                scale: 1.01,
                 boxShadow:
-                  '0 4px 8px rgba(45, 90, 69, 0.06), 0 12px 48px rgba(45, 90, 69, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.9), 0 0 0 2px rgba(90, 149, 119, 0.1)',
+                  '0 4px 20px rgba(45, 90, 69, 0.06), 0 20px 60px -20px rgba(45, 90, 69, 0.1)',
                 borderColor: '#9DC4B0' // verity-300
               }
             }}
             transition={{ duration: 0.4, ease: easings.butter }}
           >
-            {/* Layer 2: Shimmer Effect */}
-            <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2rem]">
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
-                style={{ transform: 'translateZ(3px) skewX(-20deg)' }}
-                animate={{
-                  x: ['-200%', '200%']
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  repeatDelay: 6,
-                  ease: 'easeInOut'
-                }}
-              />
-            </div>
+            {/* Shimmer Removed for Cleaner Organic Look */}
 
             {/* Layer 3: Borda Iluminada Superior */}
             <div

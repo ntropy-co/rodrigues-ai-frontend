@@ -88,31 +88,15 @@ export const MessageBubble = memo(function MessageBubble({
 
         {/* Bubble Container */}
         <motion.div
-          whileHover={{
-            y: -4,
-            rotateX: isUser ? 2 : 1,
-            boxShadow: isUser
-              ? '0 20px 40px rgba(45,90,69,0.25), 0 8px 16px rgba(45,90,69,0.15), inset 0 -2px 4px rgba(45,90,69,0.1)'
-              : '0 12px 30px rgba(45,90,69,0.15), 0 4px 12px rgba(45,90,69,0.08)'
-          }}
-          transition={{ duration: 0.3, ease: 'easeOut' }}
+          transition={{ duration: 0.2 }}
           className={cn(
-            'relative px-6 py-5',
+            'relative px-6 py-4 text-lg leading-relaxed md:px-8',
             isUser
-              ? 'rounded-[1.25rem_1.25rem_0.25rem_1.25rem] bg-gradient-to-br from-[#2D5A45] to-[#3A6B54] text-white shadow-[0_10px_25px_rgba(45,90,69,0.2),0_4px_10px_rgba(45,90,69,0.15),inset_0_-2px_4px_rgba(45,90,69,0.1),inset_0_1px_1px_rgba(255,255,255,0.25)]'
-              : 'rounded-[1.25rem_1.25rem_1.25rem_0.25rem] border border-verity-100 bg-white text-verity-950 shadow-[0_8px_20px_rgba(45,90,69,0.08),0_2px_8px_rgba(45,90,69,0.04)]'
+              ? 'rounded-3xl bg-verity-900 text-sand-50 shadow-sm'
+              : 'rounded-none border-none bg-transparent p-0 text-verity-900 shadow-none'
           )}
-          style={{ transformStyle: 'preserve-3d' }}
         >
-          {/* Tail */}
-          <div
-            className={cn(
-              'absolute bottom-3 h-4 w-4 rotate-45 transform shadow-sm',
-              isUser
-                ? '-right-[6px] rounded-[0_0_0.25rem_0] bg-[#3A6B54]'
-                : '-left-[6px] rounded-[0_0_0_0.25rem] border-b border-l border-verity-100 bg-white'
-            )}
-          />
+          {/* Tail Removed for Cleaner Look */}
 
           {/* Content */}
           <div
