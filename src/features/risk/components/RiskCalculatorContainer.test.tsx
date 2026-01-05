@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { RiskCalculatorContainer } from './RiskCalculatorContainer'
 import type { RiskCalculateResponse } from '@/features/risk'
@@ -103,9 +103,13 @@ describe('RiskCalculatorContainer', () => {
       render(<RiskCalculatorContainer />)
 
       const checkbox = screen.getByLabelText(/Possui garantias/i)
-      await user.click(checkbox)
+      await act(async () => {
+        await user.click(checkbox)
+      })
 
-      expect(screen.getByLabelText(/Valor da Garantia/i)).toBeInTheDocument()
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Valor da Garantia/i)).toBeInTheDocument()
+      })
     })
 
     it('should hide guarantee value field when checkbox is unchecked', async () => {
@@ -113,12 +117,16 @@ describe('RiskCalculatorContainer', () => {
       render(<RiskCalculatorContainer />)
 
       const checkbox = screen.getByLabelText(/Possui garantias/i)
-      await user.click(checkbox) // Check
-      await user.click(checkbox) // Uncheck
+      await act(async () => {
+        await user.click(checkbox) // Check
+        await user.click(checkbox) // Uncheck
+      })
 
-      expect(
-        screen.queryByLabelText(/Valor da Garantia/i)
-      ).not.toBeInTheDocument()
+      await waitFor(() => {
+        expect(
+          screen.queryByLabelText(/Valor da Garantia/i)
+        ).not.toBeInTheDocument()
+      })
     })
 
     it('should render custom title when provided', () => {
@@ -134,20 +142,28 @@ describe('RiskCalculatorContainer', () => {
       render(<RiskCalculatorContainer />)
 
       // Fill form
-      await user.type(screen.getByLabelText(/Quantidade/i), '1000')
-      await user.type(screen.getByLabelText(/Valor Total/i), '150000')
+      await act(async () => {
+        await user.type(screen.getByLabelText(/Quantidade/i), '1000')
+        await user.type(screen.getByLabelText(/Valor Total/i), '150000')
+      })
 
       const issueDate = screen.getByLabelText(/Data de Emissão/i)
-      await user.type(issueDate, '2025-01-15')
+      await act(async () => {
+        await user.type(issueDate, '2025-01-15')
+      })
 
       const maturityDate = screen.getByLabelText(/Data de Vencimento/i)
-      await user.type(maturityDate, '2025-06-30')
+      await act(async () => {
+        await user.type(maturityDate, '2025-06-30')
+      })
 
       // Submit
       const submitButton = screen.getByRole('button', {
         name: /Calcular Risco/i
       })
-      await user.click(submitButton)
+      await act(async () => {
+        await user.click(submitButton)
+      })
 
       await waitFor(() => {
         expect(mockCalculate).toHaveBeenCalledTimes(1)
@@ -166,20 +182,28 @@ describe('RiskCalculatorContainer', () => {
       render(<RiskCalculatorContainer />)
 
       // Fill required fields
-      await user.type(screen.getByLabelText(/Quantidade/i), '500')
-      await user.type(screen.getByLabelText(/Valor Total/i), '75000')
-      await user.type(screen.getByLabelText(/Data de Emissão/i), '2025-01-01')
-      await user.type(
-        screen.getByLabelText(/Data de Vencimento/i),
-        '2025-12-31'
-      )
+      await act(async () => {
+        await user.type(screen.getByLabelText(/Quantidade/i), '500')
+        await user.type(screen.getByLabelText(/Valor Total/i), '75000')
+        await user.type(screen.getByLabelText(/Data de Emissão/i), '2025-01-01')
+        await user.type(
+          screen.getByLabelText(/Data de Vencimento/i),
+          '2025-12-31'
+        )
+      })
 
       // Enable guarantees
-      await user.click(screen.getByLabelText(/Possui garantias/i))
-      await user.type(screen.getByLabelText(/Valor da Garantia/i), '50000')
+      await act(async () => {
+        await user.click(screen.getByLabelText(/Possui garantias/i))
+        await user.type(screen.getByLabelText(/Valor da Garantia/i), '50000')
+      })
 
       // Submit
-      await user.click(screen.getByRole('button', { name: /Calcular Risco/i }))
+      await act(async () => {
+        await user.click(
+          screen.getByRole('button', { name: /Calcular Risco/i })
+        )
+      })
 
       await waitFor(() => {
         const callArgs = mockCalculate.mock.calls[0][0]
@@ -195,16 +219,22 @@ describe('RiskCalculatorContainer', () => {
       render(<RiskCalculatorContainer onCalculated={onCalculated} />)
 
       // Fill minimal form
-      await user.type(screen.getByLabelText(/Quantidade/i), '100')
-      await user.type(screen.getByLabelText(/Valor Total/i), '10000')
-      await user.type(screen.getByLabelText(/Data de Emissão/i), '2025-01-01')
-      await user.type(
-        screen.getByLabelText(/Data de Vencimento/i),
-        '2025-06-01'
-      )
+      await act(async () => {
+        await user.type(screen.getByLabelText(/Quantidade/i), '100')
+        await user.type(screen.getByLabelText(/Valor Total/i), '10000')
+        await user.type(screen.getByLabelText(/Data de Emissão/i), '2025-01-01')
+        await user.type(
+          screen.getByLabelText(/Data de Vencimento/i),
+          '2025-06-01'
+        )
+      })
 
       // Submit
-      await user.click(screen.getByRole('button', { name: /Calcular Risco/i }))
+      await act(async () => {
+        await user.click(
+          screen.getByRole('button', { name: /Calcular Risco/i })
+        )
+      })
 
       await waitFor(() => {
         expect(onCalculated).toHaveBeenCalledWith(mockApiResponse)
@@ -213,7 +243,7 @@ describe('RiskCalculatorContainer', () => {
   })
 
   describe('initial data', () => {
-    it('should populate form with initialData', () => {
+    it('should populate form with initialData', async () => {
       render(
         <RiskCalculatorContainer
           initialData={{
@@ -230,7 +260,9 @@ describe('RiskCalculatorContainer', () => {
       const commoditySelect = screen.getByLabelText(
         /Commodity/i
       ) as HTMLSelectElement
-      expect(commoditySelect.value).toBe('milho')
+      await waitFor(() => {
+        expect(commoditySelect.value).toBe('milho')
+      })
 
       const unitSelect = screen.getByLabelText(/Unidade/i) as HTMLSelectElement
       expect(unitSelect.value).toBe('toneladas')
@@ -331,12 +363,19 @@ describe('data transformation', () => {
     const user = userEvent.setup()
     render(<RiskCalculatorContainer />)
 
-    await user.type(screen.getByLabelText(/Quantidade/i), '100')
-    await user.type(screen.getByLabelText(/Valor Total/i), '10000')
-    await user.type(screen.getByLabelText(/Data de Emissão/i), '2025-03-25')
-    await user.type(screen.getByLabelText(/Data de Vencimento/i), '2025-09-15')
+    await act(async () => {
+      await user.type(screen.getByLabelText(/Quantidade/i), '100')
+      await user.type(screen.getByLabelText(/Valor Total/i), '10000')
+      await user.type(screen.getByLabelText(/Data de Emissão/i), '2025-03-25')
+      await user.type(
+        screen.getByLabelText(/Data de Vencimento/i),
+        '2025-09-15'
+      )
+    })
 
-    await user.click(screen.getByRole('button', { name: /Calcular Risco/i }))
+    await act(async () => {
+      await user.click(screen.getByRole('button', { name: /Calcular Risco/i }))
+    })
 
     await waitFor(() => {
       const callArgs = mockCalculate.mock.calls[0][0]

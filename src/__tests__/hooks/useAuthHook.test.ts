@@ -409,12 +409,16 @@ describe('useAuth Hook', () => {
       expect(result.current.isAuthenticated).toBe(true)
     })
 
-    it('should start with loading true during initialization', () => {
+    it('should start with loading true during initialization', async () => {
       const { result } = renderHook(() => useAuth())
 
       // Immediately after render, should be loading
       expect(result.current.isLoading).toBe(true)
       expect(result.current.isInitialized).toBe(false)
+
+      await waitFor(() => {
+        expect(result.current.isInitialized).toBe(true)
+      })
     })
   })
 })
