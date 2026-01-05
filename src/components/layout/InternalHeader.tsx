@@ -27,38 +27,40 @@ export function InternalHeader({
   return (
     <header
       className={cn(
-        'sticky top-0 z-30 border-b border-sand-300 bg-sand-200/95 backdrop-blur-xl',
+        'sticky top-0 z-30 border-b border-sand-300 bg-sand-100/95 backdrop-blur-xl dark:bg-verity-950/95',
         className
       )}
       role="banner"
     >
       <div
         className={cn(
-          'mx-auto flex h-14 w-full items-center justify-between px-4',
+          'mx-auto flex w-full flex-col gap-4 px-4 py-6 md:flex-row md:items-start md:justify-between',
           containerClassName || 'max-w-6xl'
         )}
       >
-        <div className="flex min-w-0 items-center gap-3">
+        <div className="flex min-w-0 items-start gap-3">
           <Link
             href={backHref}
             aria-label={backLabel}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-verity-700 transition-colors hover:bg-verity-50 hover:text-verity-900"
+            className="mt-1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border border-sand-200 bg-white text-verity-600 shadow-sm transition-all hover:border-verity-200 hover:text-verity-900"
           >
             <ChevronLeft className="h-5 w-5" />
           </Link>
 
-          <div className="min-w-0">
-            <h1 className="truncate font-display text-base font-semibold text-verity-950">
+          <div className="min-w-0 space-y-1">
+            <h1 className="truncate font-display text-2xl font-semibold tracking-tight text-verity-950 sm:text-3xl">
               {title}
             </h1>
             {subtitle ? (
-              <p className="truncate text-xs text-verity-600">{subtitle}</p>
+              <p className="line-clamp-2 text-sm text-verity-600">{subtitle}</p>
             ) : null}
           </div>
         </div>
 
         {actions ? (
-          <div className="flex items-center gap-2">{actions}</div>
+          <div className="flex flex-shrink-0 items-center gap-3 pl-12 md:pl-0">
+            {actions}
+          </div>
         ) : null}
       </div>
     </header>
