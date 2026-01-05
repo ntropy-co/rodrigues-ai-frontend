@@ -463,7 +463,10 @@ const SidebarContent = memo(function SidebarContent({
           <Tooltip>
             <TooltipTrigger asChild>
               <motion.button
-                whileHover={{ scale: 1.05, bg: 'var(--verity-900)' }}
+                whileHover={{
+                  scale: 1.05,
+                  backgroundColor: 'var(--verity-900)'
+                }}
                 whileTap={{ scale: 0.95 }}
                 onClick={onNewConversation}
                 className="flex h-9 w-9 items-center justify-center rounded-lg bg-verity-900 text-white shadow-sm transition-colors hover:bg-verity-800"
