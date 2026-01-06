@@ -271,7 +271,7 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
         {isCanvasOpen && (
           <div
             className={cn(
-              'relative z-20 h-full bg-sand-100 shadow-xl transition-all duration-300 ease-in-out',
+              'relative z-20 h-full bg-sand-100 shadow-xl transition-all duration-500 ease-out',
               isMobile ? 'absolute inset-0 w-full' : ''
             )}
             style={{

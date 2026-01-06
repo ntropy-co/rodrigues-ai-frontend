@@ -23,7 +23,7 @@ export const useCanvasStore = create<CanvasState>((set) => ({
   content: null,
   title: null,
   mode: 'view',
-  width: 50, // Default to 50% split
+  width: 55, // Default to 55% split - gives Canvas more prominence
 
   openCanvas: (content, title = 'Artifact', mode = 'view') =>
     set({ isOpen: true, content, title, mode }),
