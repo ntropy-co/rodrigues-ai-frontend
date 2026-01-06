@@ -37,7 +37,7 @@ const QuickActionButton = ({
     className="group flex items-center gap-2.5 rounded-full border border-sand-300 bg-white/60 px-6 py-3 text-sm font-medium text-verity-900 backdrop-blur-md transition-colors hover:border-verity-400 hover:bg-white/90"
   >
     <Icon
-      className="h-4.5 w-4.5 text-verity-600 transition-colors group-hover:text-verity-800"
+      className="h-5 w-5 text-verity-600 transition-colors group-hover:text-verity-800"
       strokeWidth={1.5}
     />
     {children}

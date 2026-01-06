@@ -380,6 +380,10 @@ const SidebarContent = memo(function SidebarContent({
   const [moveSessionId, setMoveSessionId] = useState<string | null>(null)
   const [isMoveDialogOpen, setIsMoveDialogOpen] = useState(false)
 
+  // State for expanding lists
+  const [isProjectsExpanded, setIsProjectsExpanded] = useState(false)
+  const [isConversationsExpanded, setIsConversationsExpanded] = useState(false)
+
   const handleMoveSession = async (projectId: string) => {
     if (!moveSessionId) return
 
@@ -464,7 +468,7 @@ const SidebarContent = memo(function SidebarContent({
         {/* Projetos Section */}
         <div className="mb-6">
           <div className="mb-2 flex items-center justify-between px-2">
-            <h3 className="font-display text-xs font-semibold uppercase tracking-wider text-verity-500">
+            <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-verity-600">
               Projetos
             </h3>
             <button
@@ -487,51 +491,48 @@ const SidebarContent = memo(function SidebarContent({
           ) : (
             <div className="space-y-0.5">
               {/* Header de "Todas as Conversas" (Compacto) */}
-              <button
-                type="button"
-                onClick={() => handleProjectSelect(null)}
-                className={cn(
-                  'mb-1 flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left text-sm transition-all',
-                  !selectedProjectId
-                    ? 'bg-sand-300 font-medium text-verity-950'
-                    : 'text-verity-600 hover:bg-sand-200 hover:text-verity-900'
-                )}
-              >
-                <LayoutGrid className="h-3.5 w-3.5" />
-                <span>Todas as Conversas</span>
-              </button>
-
-              {projects.slice(0, 3).map((project) => (
-                <ConversationCard
-                  key={project.id}
-                  id={project.id}
-                  title={project.title}
-                  timestamp={formatRelativeTime(new Date(project.created_at))}
-                  isActive={selectedProjectId === project.id}
-                  onClick={() =>
-                    handleProjectSelect(
-                      selectedProjectId === project.id ? null : project.id
-                    )
-                  }
-                  onUpdateTitle={(newTitle) =>
-                    onUpdateProject(project.id, { title: newTitle })
-                  }
-                  onDelete={() => onDeleteProject(project.id)}
-                  onViewDetails={() =>
-                    (window.location.href = `/projects/${project.id}`)
-                  }
-                />
-              ))}
+              {projects
+                .slice(0, isProjectsExpanded ? undefined : 3)
+                .map((project) => (
+                  <ConversationCard
+                    key={project.id}
+                    id={project.id}
+                    title={project.title}
+                    timestamp={formatRelativeTime(new Date(project.created_at))}
+                    isActive={selectedProjectId === project.id}
+                    onClick={() =>
+                      handleProjectSelect(
+                        selectedProjectId === project.id ? null : project.id
+                      )
+                    }
+                    onUpdateTitle={(newTitle) =>
+                      onUpdateProject(project.id, { title: newTitle })
+                    }
+                    onDelete={() => onDeleteProject(project.id)}
+                    onViewDetails={() =>
+                      (window.location.href = `/projects/${project.id}`)
+                    }
+                  />
+                ))}
 
               {/* View More Projects */}
               {projects.length > 3 && (
-                <Link
-                  href="/projects"
+                <button
+                  onClick={() => setIsProjectsExpanded(!isProjectsExpanded)}
                   className="mt-1 flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium text-verity-500 transition-colors hover:bg-sand-200 hover:text-verity-900"
                 >
-                  <span className="flex-1">Ver todos os projetos</span>
-                  <span className="text-[10px] opacity-70">{'->'}</span>
-                </Link>
+                  <span className="flex-1">
+                    {isProjectsExpanded ? 'Ver menos' : 'Ver todos os projetos'}
+                  </span>
+                  <span
+                    className={cn(
+                      'text-[10px] opacity-70 transition-transform',
+                      isProjectsExpanded && 'rotate-180'
+                    )}
+                  >
+                    {'->'}
+                  </span>
+                </button>
               )}
             </div>
           )}
@@ -541,7 +542,7 @@ const SidebarContent = memo(function SidebarContent({
         <div>
           <div className="mb-2 flex items-center justify-between px-2">
             <div className="flex items-center gap-2">
-              <h3 className="font-display text-xs font-semibold uppercase tracking-wider text-verity-500">
+              <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-verity-600">
                 Conversas
               </h3>
               {selectedProjectId && (
@@ -586,34 +587,49 @@ const SidebarContent = memo(function SidebarContent({
             </div>
           ) : (
             <div className="space-y-1">
-              {filteredSessions.slice(0, 5).map((session) => (
-                <ConversationCard
-                  key={session.session_id}
-                  id={session.session_id}
-                  title={session.title}
-                  timestamp={formatRelativeTime(session.created_at)}
-                  isActive={activeConversationId === session.session_id}
-                  onClick={() => {
-                    trackConversationSelected(session.session_id, 'sidebar')
-                    onSelectConversation?.(session.session_id)
-                  }}
-                  onUpdateTitle={(newTitle) =>
-                    onUpdateSession(session.session_id, { title: newTitle })
-                  }
-                  onDelete={() => onDeleteSession(session.session_id)}
-                  onMove={() => openMoveDialog(session.session_id)}
-                />
-              ))}
+              {filteredSessions
+                .slice(0, isConversationsExpanded ? undefined : 5)
+                .map((session) => (
+                  <ConversationCard
+                    key={session.session_id}
+                    id={session.session_id}
+                    title={session.title}
+                    timestamp={formatRelativeTime(session.created_at)}
+                    isActive={activeConversationId === session.session_id}
+                    onClick={() => {
+                      trackConversationSelected(session.session_id, 'sidebar')
+                      onSelectConversation?.(session.session_id)
+                    }}
+                    onUpdateTitle={(newTitle) =>
+                      onUpdateSession(session.session_id, { title: newTitle })
+                    }
+                    onDelete={() => onDeleteSession(session.session_id)}
+                    onMove={() => openMoveDialog(session.session_id)}
+                  />
+                ))}
 
               {/* View More History */}
               {filteredSessions.length > 5 && (
-                <Link
-                  href="/cpr/historico"
+                <button
+                  onClick={() =>
+                    setIsConversationsExpanded(!isConversationsExpanded)
+                  }
                   className="mt-1 flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium text-verity-500 transition-colors hover:bg-verity-50 hover:text-verity-900"
                 >
-                  <span className="flex-1">Ver histórico completo</span>
-                  <span className="text-[10px] opacity-70">{'->'}</span>
-                </Link>
+                  <span className="flex-1">
+                    {isConversationsExpanded
+                      ? 'Ver menos'
+                      : 'Ver histórico completo'}
+                  </span>
+                  <span
+                    className={cn(
+                      'text-[10px] opacity-70 transition-transform',
+                      isConversationsExpanded && 'rotate-180'
+                    )}
+                  >
+                    {'->'}
+                  </span>
+                </button>
               )}
             </div>
           )}
@@ -727,7 +743,7 @@ const ConversationCard = memo(function ConversationCard({
       }}
       whileTap={{ scale: 0.99 }}
       className={cn(
-        'group relative flex w-full cursor-pointer flex-col rounded-lg border-l-2 px-3 py-2.5 text-left outline-none transition-all duration-200',
+        'group relative flex w-full cursor-pointer flex-col rounded-lg border-l-2 px-3 py-1.5 text-left outline-none transition-all duration-200',
         isActive
           ? 'border-verity-600 bg-sand-300 text-verity-950 shadow-sm'
           : 'border-transparent bg-transparent text-verity-900 hover:border-verity-300 hover:bg-sand-200 hover:text-verity-950'
@@ -751,7 +767,7 @@ const ConversationCard = memo(function ConversationCard({
             <>
               <p
                 className={cn(
-                  'flex-1 truncate text-sm',
+                  'truncate text-sm transition-all group-hover:pr-12',
                   isActive
                     ? 'font-semibold text-verity-950'
                     : 'font-medium text-verity-900'
@@ -759,6 +775,11 @@ const ConversationCard = memo(function ConversationCard({
               >
                 {title}
               </p>
+
+              {/* Timestamp (Hidden by default, shown on hover, inline) */}
+              <span className="absolute right-3 top-2 text-xs font-light text-verity-400 opacity-0 transition-opacity group-hover:opacity-100">
+                {timestamp}
+              </span>
 
               {/* Edit Icon on Hover */}
               {onUpdateTitle && (
@@ -834,9 +855,6 @@ const ConversationCard = memo(function ConversationCard({
             {preview}
           </p>
         )}
-
-        {/* Timestamp */}
-        <p className="text-xs font-light text-verity-500">{timestamp}</p>
       </div>
 
       {/* Delete Confirmation Dialog */}
