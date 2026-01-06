@@ -7,7 +7,7 @@ import { useUIConfig } from '@/hooks/useUIConfig'
 export function ModelSelector() {
   const { ui } = useUIConfig()
   const [selectedModel] = useState({
-    id: 'rodrigues-ai',
+    id: 'verity-ai',
     name: ui.branding.displayModelName,
     description: 'Especialista em crédito agro e CPR'
   })

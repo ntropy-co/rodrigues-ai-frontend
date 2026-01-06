@@ -20,7 +20,7 @@ export const useChatActions = () => {
   // Função para salvar session ID no localStorage (usado quando backend retorna session_id)
   const saveSessionIdToStorage = useCallback((sessionIdToSave: string) => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('rodrigues_current_session_id', sessionIdToSave)
+      localStorage.setItem('verity_current_session_id', sessionIdToSave)
     }
   }, [])
 
@@ -36,7 +36,7 @@ export const useChatActions = () => {
   const createNewSession = useCallback(() => {
     setSessionId(null)
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('rodrigues_current_session_id')
+      localStorage.removeItem('verity_current_session_id')
     }
     return null
   }, [setSessionId])
