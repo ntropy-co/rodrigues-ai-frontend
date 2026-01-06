@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { useGreeting } from '@/hooks/useGreeting'
+import { useAuth } from '@/contexts/AuthContext'
 
 // Animation variants for staggered children
 const containerVariants = {
@@ -29,9 +30,18 @@ const itemVariants = {
 /**
  * Noble presentation greeting component.
  * Uses time-based dynamic greeting with sophisticated typography.
+ * Personalizes with user's first name when available.
  */
 export function Greeting() {
   const { greeting, subtext } = useGreeting()
+  const { user } = useAuth()
+
+  // Extract first name from full name or email
+  const firstName =
+    user?.name?.split(' ')[0] || user?.email?.split('@')[0] || ''
+  const personalizedGreeting = firstName
+    ? `${greeting}, ${firstName}`
+    : greeting
 
   return (
     <motion.div
@@ -44,7 +54,7 @@ export function Greeting() {
         variants={itemVariants}
         className="mb-1 font-display text-2xl font-semibold tracking-tight text-verity-950 md:text-3xl"
       >
-        {greeting}
+        {personalizedGreeting}
       </motion.h1>
       <motion.p
         variants={itemVariants}
