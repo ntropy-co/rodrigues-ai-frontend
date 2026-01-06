@@ -154,7 +154,7 @@ export function ChatHeader() {
           <DropdownMenuContent
             align="end"
             sideOffset={8}
-            className="w-72 overflow-hidden rounded-2xl border border-sand-200 bg-white p-0 shadow-2xl shadow-verity-900/20"
+            className="w-72 overflow-hidden rounded-2xl border border-sand-200 bg-sand-50 p-0 shadow-2xl shadow-verity-900/20"
           >
             {/* Gradient Header */}
             <div className="relative bg-gradient-to-br from-verity-800 via-verity-700 to-verity-900 px-5 py-6">
@@ -183,9 +183,7 @@ export function ChatHeader() {
                   href="/settings/organization"
                   className="flex cursor-pointer items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-verity-800 transition-all hover:bg-verity-50 hover:text-verity-950"
                 >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-verity-100">
-                    <Settings className="h-4 w-4 text-verity-600" />
-                  </div>
+                  <Settings className="h-5 w-5 text-verity-600" />
                   <div>
                     <p className="font-medium">Configurações</p>
                     <p className="text-xs text-verity-500">
@@ -200,9 +198,7 @@ export function ChatHeader() {
                   href="/contact"
                   className="flex cursor-pointer items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-verity-800 transition-all hover:bg-verity-50 hover:text-verity-950"
                 >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-verity-100">
-                    <HelpCircle className="h-4 w-4 text-verity-600" />
-                  </div>
+                  <HelpCircle className="h-5 w-5 text-verity-600" />
                   <div>
                     <p className="font-medium">Ajuda e Suporte</p>
                     <p className="text-xs text-verity-500">Central de ajuda</p>
@@ -217,9 +213,7 @@ export function ChatHeader() {
                 onClick={logout}
                 className="flex cursor-pointer items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-error-600 transition-all hover:bg-error-50"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-error-100">
-                  <LogOut className="h-4 w-4 text-error-500" />
-                </div>
+                <LogOut className="h-5 w-5 text-error-500" />
                 Sair da conta
               </DropdownMenuItem>
             </div>
