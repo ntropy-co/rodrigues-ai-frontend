@@ -8,21 +8,21 @@ Este documento lista limitações conhecidas e workarounds para o MVP.
 
 ## 🔶 Limitações Funcionais
 
-| Issue | Descrição | Workaround | Prioridade Pós-MVP |
-|-------|-----------|------------|-------------------|
-| **Slash Commands** | Sistema básico, apenas 5 comandos hardcoded | Usar linguagem natural | P2 |
-| **PDF Export** | Usa `window.print()` | Funcional, mas não ideal | P2 |
-| **Gráficos de Cotação** | Dados existem, sem visualização gráfica | Exibir em texto/tabela | P3 |
-| **Mentions (@)** | Não implementado | N/A | P3 |
+| Issue                   | Descrição                                   | Workaround               | Prioridade Pós-MVP |
+| ----------------------- | ------------------------------------------- | ------------------------ | ------------------ |
+| **Slash Commands**      | Sistema básico, apenas 5 comandos hardcoded | Usar linguagem natural   | P2                 |
+| **PDF Export**          | Usa `window.print()`                        | Funcional, mas não ideal | P2                 |
+| **Gráficos de Cotação** | Dados existem, sem visualização gráfica     | Exibir em texto/tabela   | P3                 |
+| **Mentions (@)**        | Não implementado                            | N/A                      | P3                 |
 
 ---
 
 ## 🔧 Limitações Técnicas
 
-| Issue | Descrição | Impacto | Plano |
-|-------|-----------|---------|-------|
-| **E2E Tests** | Alguns testes flaky (dependem do backend) | Baixo | Melhorar mocks |
-| **Bundle Size** | Não otimizado | Médio | Rodar ANALYZE=true |
+| Issue           | Descrição                                 | Impacto | Plano              |
+| --------------- | ----------------------------------------- | ------- | ------------------ |
+| **E2E Tests**   | Alguns testes flaky (dependem do backend) | Baixo   | Melhorar mocks     |
+| **Bundle Size** | Não otimizado                             | Médio   | Rodar ANALYZE=true |
 
 ---
 

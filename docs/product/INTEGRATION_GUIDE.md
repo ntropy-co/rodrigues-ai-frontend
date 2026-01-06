@@ -21,7 +21,7 @@ O contrato de API entre frontend e backend está **100% compatível**.
 // BFF encaminha para: POST ${BACKEND_URL}/api/v1/chat/
 
 interface ChatRequest {
-  message: string           // Mensagem do usuário
+  message: string // Mensagem do usuário
   session_id: string | null // ID da sessão (null = criar nova)
 }
 ```
@@ -30,10 +30,10 @@ interface ChatRequest {
 
 ```typescript
 interface ChatResponse {
-  text: string              // Resposta do agente
-  session_id: string        // ID da sessão
-  message_id: string        // ID da mensagem (para feedback)
-  sources?: string[]        // Fontes usadas (documentos)
+  text: string // Resposta do agente
+  session_id: string // ID da sessão
+  message_id: string // ID da mensagem (para feedback)
+  sources?: string[] // Fontes usadas (documentos)
 }
 ```
 
@@ -43,11 +43,11 @@ interface ChatResponse {
 
 O backend roteia automaticamente com base no conteúdo da mensagem:
 
-| Keywords na Mensagem | Ação do Backend |
-|---------------------|-----------------|
+| Keywords na Mensagem                       | Ação do Backend               |
+| ------------------------------------------ | ----------------------------- |
 | "analisar", "análise", "verificar" + "CPR" | Inicia workflow `analise_cpr` |
-| "criar", "emitir", "fazer" + "CPR" | Inicia workflow `criar_cpr` |
-| Outros | Chat conversacional padrão |
+| "criar", "emitir", "fazer" + "CPR"         | Inicia workflow `criar_cpr`   |
+| Outros                                     | Chat conversacional padrão    |
 
 **Implicação:** O frontend não precisa implementar lógica de roteamento. Basta enviar a mensagem e o backend decide.
 

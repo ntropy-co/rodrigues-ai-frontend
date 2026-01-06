@@ -11,21 +11,21 @@ O MVP do Verity Agro é focado em uma **interface de chat única** que centraliz
 
 ### Funcionalidades Core (MVP)
 
-| Funcionalidade | Interface | Status Frontend | Dependência Backend |
-|----------------|-----------|-----------------|---------------------|
-| **Tirar Dúvidas sobre CPR** | Chat | ✅ Pronto | RAG/Dialogflow |
-| **Criar CPR** | Chat (via prompt) | ✅ UI Pronta | Intent routing |
-| **Analisar CPR** | Chat + Upload | ✅ UI Pronta | Gemini Vision |
-| **Compliance CPR** | Chat | ✅ UI Pronta | Regras Lei 8.929/94 |
+| Funcionalidade              | Interface         | Status Frontend | Dependência Backend |
+| --------------------------- | ----------------- | --------------- | ------------------- |
+| **Tirar Dúvidas sobre CPR** | Chat              | ✅ Pronto       | RAG/Dialogflow      |
+| **Criar CPR**               | Chat (via prompt) | ✅ UI Pronta    | Intent routing      |
+| **Analisar CPR**            | Chat + Upload     | ✅ UI Pronta    | Gemini Vision       |
+| **Compliance CPR**          | Chat              | ✅ UI Pronta    | Regras Lei 8.929/94 |
 
 ### Funcionalidades Desabilitadas (MVP)
 
-| Funcionalidade | Motivo | Feature Flag |
-|----------------|--------|--------------|
-| Tools Dropdown | Foco no chat | `TOOLS_DROPDOWN: false` |
-| Páginas CPR dedicadas | Chat-first | Rotas existem mas não são promovidas |
-| Gráficos de Cotação | Nice-to-have | Dados existem, visual futuro |
-| Diff Viewer | Não é core | Não implementado |
+| Funcionalidade        | Motivo       | Feature Flag                         |
+| --------------------- | ------------ | ------------------------------------ |
+| Tools Dropdown        | Foco no chat | `TOOLS_DROPDOWN: false`              |
+| Páginas CPR dedicadas | Chat-first   | Rotas existem mas não são promovidas |
+| Gráficos de Cotação   | Nice-to-have | Dados existem, visual futuro         |
+| Diff Viewer           | Não é core   | Não implementado                     |
 
 ---
 

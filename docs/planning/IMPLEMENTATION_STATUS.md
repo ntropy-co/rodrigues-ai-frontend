@@ -41,12 +41,12 @@
 
 ## ❌ NÃO IMPLEMENTADAS (5 issues)
 
-| Issue    | Funcionalidade                 | %   | Próximo Passo                            |
-| -------- | ------------------------------ | --- | ---------------------------------------- |
-| #162     | Testes Automatizados           | 100%| ✅ Pronto (Infra) | `vitest.config.ts`, `src/test/setup.ts`                 |
-| #202     | Bundle Analyzer & Optimization | 100%| ✅ Pronto         | `next.config.ts` (ANALYZE env var)                      |
-| #201     | Acessibilidade WCAG 2.1        | 20% | ⚠️ Infra OK       | `axe-core` instalado, falta audit completo              |
-| #148-149 | PDF Export Real                | 50% | ⚠️ Infra OK       | `pdfkit` instalado, falta implementação backend         |
+| Issue    | Funcionalidade                 | %    | Próximo Passo     |
+| -------- | ------------------------------ | ---- | ----------------- | ----------------------------------------------- |
+| #162     | Testes Automatizados           | 100% | ✅ Pronto (Infra) | `vitest.config.ts`, `src/test/setup.ts`         |
+| #202     | Bundle Analyzer & Optimization | 100% | ✅ Pronto         | `next.config.ts` (ANALYZE env var)              |
+| #201     | Acessibilidade WCAG 2.1        | 20%  | ⚠️ Infra OK       | `axe-core` instalado, falta audit completo      |
+| #148-149 | PDF Export Real                | 50%  | ⚠️ Infra OK       | `pdfkit` instalado, falta implementação backend |
 
 ---
 
@@ -300,6 +300,7 @@
 - Radix UI (bom padrão base)
 
 **Próximos passos:**
+
 - Executar auditorias e corrigir violações
 
 ---
