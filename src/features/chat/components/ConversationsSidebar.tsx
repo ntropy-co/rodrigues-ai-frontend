@@ -111,9 +111,6 @@ export function ConversationsSidebar({
     loading: projectsLoading
   } = useProjects()
 
-  const [isProjectsExpanded, setIsProjectsExpanded] = useState(false)
-  const [isConversationsExpanded, setIsConversationsExpanded] = useState(false)
-
   // Fetch projects on mount
   useEffect(() => {
     fetchProjects()
@@ -382,6 +379,10 @@ const SidebarContent = memo(function SidebarContent({
   // Add state for moving conversation
   const [moveSessionId, setMoveSessionId] = useState<string | null>(null)
   const [isMoveDialogOpen, setIsMoveDialogOpen] = useState(false)
+
+  // State for expanding lists
+  const [isProjectsExpanded, setIsProjectsExpanded] = useState(false)
+  const [isConversationsExpanded, setIsConversationsExpanded] = useState(false)
 
   const handleMoveSession = async (projectId: string) => {
     if (!moveSessionId) return
