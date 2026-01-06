@@ -466,9 +466,9 @@ const SidebarContent = memo(function SidebarContent({
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto px-3 pb-4 pt-4">
         {/* Projetos Section */}
-        <div className="mb-8">
-          <div className="mb-2.5 flex items-center justify-between px-2">
-            <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-verity-600/70">
+        <div className="mb-6">
+          <div className="mb-2 flex items-center justify-between px-2">
+            <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-verity-600">
               Projetos
             </h3>
             <button
@@ -490,27 +490,29 @@ const SidebarContent = memo(function SidebarContent({
             </div>
           ) : (
             <div className="space-y-0.5">
-              {projects.slice(0, 3).map((project) => (
-                <ConversationCard
-                  key={project.id}
-                  id={project.id}
-                  title={project.title}
-                  timestamp={formatRelativeTime(new Date(project.created_at))}
-                  isActive={selectedProjectId === project.id}
-                  onClick={() =>
-                    handleProjectSelect(
-                      selectedProjectId === project.id ? null : project.id
-                    )
-                  }
-                  onUpdateTitle={(newTitle) =>
-                    onUpdateProject(project.id, { title: newTitle })
-                  }
-                  onDelete={() => onDeleteProject(project.id)}
-                  onViewDetails={() =>
-                    (window.location.href = `/projects/${project.id}`)
-                  }
-                />
-              ))}
+              {projects
+                .slice(0, isProjectsExpanded ? undefined : 3)
+                .map((project) => (
+                  <ConversationCard
+                    key={project.id}
+                    id={project.id}
+                    title={project.title}
+                    timestamp={formatRelativeTime(new Date(project.created_at))}
+                    isActive={selectedProjectId === project.id}
+                    onClick={() =>
+                      handleProjectSelect(
+                        selectedProjectId === project.id ? null : project.id
+                      )
+                    }
+                    onUpdateTitle={(newTitle) =>
+                      onUpdateProject(project.id, { title: newTitle })
+                    }
+                    onDelete={() => onDeleteProject(project.id)}
+                    onViewDetails={() =>
+                      (window.location.href = `/projects/${project.id}`)
+                    }
+                  />
+                ))}
 
               <AnimatePresence>
                 {isProjectsExpanded && (
@@ -575,7 +577,7 @@ const SidebarContent = memo(function SidebarContent({
         <div className="mb-4">
           <div className="mb-2.5 flex items-center justify-between px-2">
             <div className="flex items-center gap-2">
-              <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-verity-600/70">
+              <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-verity-600">
                 Conversas
               </h3>
               {selectedProjectId && (
@@ -620,24 +622,26 @@ const SidebarContent = memo(function SidebarContent({
             </div>
           ) : (
             <div className="space-y-1">
-              {filteredSessions.slice(0, 5).map((session) => (
-                <ConversationCard
-                  key={session.session_id}
-                  id={session.session_id}
-                  title={session.title}
-                  timestamp={formatRelativeTime(session.created_at)}
-                  isActive={activeConversationId === session.session_id}
-                  onClick={() => {
-                    trackConversationSelected(session.session_id, 'sidebar')
-                    onSelectConversation?.(session.session_id)
-                  }}
-                  onUpdateTitle={(newTitle) =>
-                    onUpdateSession(session.session_id, { title: newTitle })
-                  }
-                  onDelete={() => onDeleteSession(session.session_id)}
-                  onMove={() => openMoveDialog(session.session_id)}
-                />
-              ))}
+              {filteredSessions
+                .slice(0, isConversationsExpanded ? undefined : 5)
+                .map((session) => (
+                  <ConversationCard
+                    key={session.session_id}
+                    id={session.session_id}
+                    title={session.title}
+                    timestamp={formatRelativeTime(session.created_at)}
+                    isActive={activeConversationId === session.session_id}
+                    onClick={() => {
+                      trackConversationSelected(session.session_id, 'sidebar')
+                      onSelectConversation?.(session.session_id)
+                    }}
+                    onUpdateTitle={(newTitle) =>
+                      onUpdateSession(session.session_id, { title: newTitle })
+                    }
+                    onDelete={() => onDeleteSession(session.session_id)}
+                    onMove={() => openMoveDialog(session.session_id)}
+                  />
+                ))}
 
               <AnimatePresence>
                 {isConversationsExpanded && (
