@@ -742,7 +742,7 @@ const ConversationCard = memo(function ConversationCard({
       }}
       whileTap={{ scale: 0.99 }}
       className={cn(
-        'group relative flex w-full cursor-pointer flex-col rounded-lg border-l-2 px-3 py-2.5 text-left outline-none transition-all duration-200',
+        'group relative flex w-full cursor-pointer flex-col rounded-lg border-l-2 px-3 py-1.5 text-left outline-none transition-all duration-200',
         isActive
           ? 'border-verity-600 bg-sand-300 text-verity-950 shadow-sm'
           : 'border-transparent bg-transparent text-verity-900 hover:border-verity-300 hover:bg-sand-200 hover:text-verity-950'
@@ -766,7 +766,7 @@ const ConversationCard = memo(function ConversationCard({
             <>
               <p
                 className={cn(
-                  'flex-1 truncate text-sm',
+                  'truncate text-sm transition-all group-hover:pr-12',
                   isActive
                     ? 'font-semibold text-verity-950'
                     : 'font-medium text-verity-900'
@@ -774,6 +774,11 @@ const ConversationCard = memo(function ConversationCard({
               >
                 {title}
               </p>
+
+              {/* Timestamp (Hidden by default, shown on hover, inline) */}
+              <span className="absolute right-3 top-2 text-xs font-light text-verity-400 opacity-0 transition-opacity group-hover:opacity-100">
+                {timestamp}
+              </span>
 
               {/* Edit Icon on Hover */}
               {onUpdateTitle && (
@@ -849,9 +854,6 @@ const ConversationCard = memo(function ConversationCard({
             {preview}
           </p>
         )}
-
-        {/* Timestamp */}
-        <p className="text-xs font-light text-verity-500">{timestamp}</p>
       </div>
 
       {/* Delete Confirmation Dialog */}
