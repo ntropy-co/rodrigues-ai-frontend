@@ -9,24 +9,43 @@ import {
   HelpCircle,
   LogOut,
   PanelRight,
-  FileText
+  FileText,
+  LayoutDashboard,
+  TrendingUp,
+  FilePlus2,
+  Calculator,
+  History,
+  Folder,
+  Grid3X3
 } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
+  DropdownMenuLabel
 } from '@/components/ui/dropdown-menu'
 import { Avatar } from '@/components/Avatar'
 import { useLayoutStore } from '@/features/chat'
 import { useCanvasStore } from '@/features/canvas'
 import { useAuth } from '@/contexts/AuthContext'
 
+// Tools configuration for the dropdown
+const TOOLS = [
+  { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { href: '/quotes', icon: TrendingUp, label: 'Cotações' },
+  { href: '/cpr/wizard', icon: FilePlus2, label: 'Nova CPR' },
+  { href: '/cpr/simulator', icon: Calculator, label: 'Simulador' },
+  { href: '/cpr/historico', icon: History, label: 'Histórico CPR' },
+  { href: '/documents', icon: Folder, label: 'Documentos' }
+]
+
 export function ChatHeader() {
   const { user, logout } = useAuth()
   const { toggleConversationsSidebar, toggleFilesSidebar } = useLayoutStore()
   const [profileOpen, setProfileOpen] = useState(false)
+  const [toolsOpen, setToolsOpen] = useState(false)
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-sand-300 bg-sand-200/95 px-6 backdrop-blur-xl">
@@ -51,11 +70,49 @@ export function ChatHeader() {
         </div>
       </div>
 
-      {/* Spacer para manter layout ou apenas nada se for center */}
+      {/* Spacer */}
       <div className="flex-1" />
 
-      {/* Direita: Status + Files Toggle + Avatar */}
-      <div className="flex items-center gap-4">
+      {/* Direita: Tools + Canvas + Files + Avatar */}
+      <div className="flex items-center gap-2">
+        {/* Tools Dropdown */}
+        <DropdownMenu open={toolsOpen} onOpenChange={setToolsOpen}>
+          <DropdownMenuTrigger asChild>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex h-10 w-10 items-center justify-center rounded-lg text-verity-700 transition-colors hover:bg-sand-200 active:bg-sand-300"
+              aria-label="Ferramentas"
+              title="Ferramentas"
+            >
+              <Grid3X3 className="h-5 w-5" />
+            </motion.button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent
+            align="end"
+            className="w-56 rounded-xl border border-sand-300 bg-white p-2 shadow-xl shadow-verity-900/10"
+          >
+            <DropdownMenuLabel className="px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-verity-500">
+              Ferramentas
+            </DropdownMenuLabel>
+
+            <div className="mt-1 space-y-0.5">
+              {TOOLS.map((tool) => (
+                <DropdownMenuItem key={tool.href} asChild>
+                  <Link
+                    href={tool.href}
+                    className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-verity-800 transition-colors hover:bg-verity-50 hover:text-verity-950"
+                  >
+                    <tool.icon className="h-4 w-4 text-verity-500" />
+                    {tool.label}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         {/* Separator */}
         <div className="hidden h-8 w-px bg-sand-300 sm:block" />
 
@@ -119,7 +176,7 @@ export function ChatHeader() {
                   className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-verity-50"
                 >
                   <Settings className="h-4 w-4" />
-                  Configuracoes
+                  Configurações
                 </Link>
               </DropdownMenuItem>
 

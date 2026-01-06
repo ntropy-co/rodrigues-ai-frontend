@@ -12,13 +12,6 @@ import {
   SquarePen,
   LayoutGrid,
   Trash2,
-  TrendingUp,
-  Calculator,
-  History,
-  FileText,
-  HelpCircle,
-  FilePlus2,
-  LayoutDashboard,
   Maximize2,
   FolderInput
 } from 'lucide-react'
@@ -625,64 +618,6 @@ const SidebarContent = memo(function SidebarContent({
               )}
             </div>
           )}
-        </div>
-
-        {/* Ferramentas Section */}
-        <div className="mt-6 border-t border-sand-300/50 pt-4">
-          <h3 className="mb-2 px-2 font-display text-lg font-semibold text-verity-950">
-            Ferramentas
-          </h3>
-          <div className="space-y-1">
-            <Link
-              href="/dashboard"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-verity-700 transition-colors hover:bg-verity-50 hover:text-verity-900"
-            >
-              <LayoutDashboard className="h-4 w-4" />
-              Dashboard
-            </Link>
-            <Link
-              href="/quotes"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-verity-700 transition-colors hover:bg-verity-50 hover:text-verity-900"
-            >
-              <TrendingUp className="h-4 w-4" />
-              Cotações
-            </Link>
-            <Link
-              href="/cpr/wizard"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-verity-700 transition-colors hover:bg-verity-50 hover:text-verity-900"
-            >
-              <FilePlus2 className="h-4 w-4" />
-              Nova CPR
-            </Link>
-            <Link
-              href="/cpr/simulator"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-verity-700 transition-colors hover:bg-verity-50 hover:text-verity-900"
-            >
-              <Calculator className="h-4 w-4" />
-              Simulador CPR
-            </Link>
-            <Link
-              href="/cpr/historico"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-verity-700 transition-colors hover:bg-verity-50 hover:text-verity-900"
-            >
-              <History className="h-4 w-4" />
-              Histórico CPR
-            </Link>
-            <Link
-              href="/documents"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-verity-700 transition-colors hover:bg-verity-50 hover:text-verity-900"
-            >
-              <FileText className="h-4 w-4" />
-              Meus Documentos
-            </Link>
-            <Link
-              href="/help"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-verity-700 transition-colors hover:bg-verity-50 hover:text-verity-900"
-            >
-              <HelpCircle className="h-4 w-4" />
-              Central de Ajuda
-            </Link>
-          </div>
         </div>
       </div>
 
