@@ -433,7 +433,7 @@ export function InputBar({
         onDragLeave={() => setIsDragOver(false)}
         onDrop={handleDrop}
       >
-        <div className="relative mx-auto max-w-2xl">
+        <div className="relative mx-auto max-w-3xl">
           {/* Attachments Preview - Floating above */}
           {(attachments.length > 0 || externalAttachments.length > 0) && (
             <motion.div
