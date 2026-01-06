@@ -111,6 +111,9 @@ export function ConversationsSidebar({
     loading: projectsLoading
   } = useProjects()
 
+  const [isProjectsExpanded, setIsProjectsExpanded] = useState(false)
+  const [isConversationsExpanded, setIsConversationsExpanded] = useState(false)
+
   // Fetch projects on mount
   useEffect(() => {
     fetchProjects()
@@ -487,37 +490,48 @@ const SidebarContent = memo(function SidebarContent({
           ) : (
             <div className="space-y-0.5">
               {/* Header de "Todas as Conversas" (Compacto) */}
-              {projects.slice(0, 3).map((project) => (
-                <ConversationCard
-                  key={project.id}
-                  id={project.id}
-                  title={project.title}
-                  timestamp={formatRelativeTime(new Date(project.created_at))}
-                  isActive={selectedProjectId === project.id}
-                  onClick={() =>
-                    handleProjectSelect(
-                      selectedProjectId === project.id ? null : project.id
-                    )
-                  }
-                  onUpdateTitle={(newTitle) =>
-                    onUpdateProject(project.id, { title: newTitle })
-                  }
-                  onDelete={() => onDeleteProject(project.id)}
-                  onViewDetails={() =>
-                    (window.location.href = `/projects/${project.id}`)
-                  }
-                />
-              ))}
+              {projects
+                .slice(0, isProjectsExpanded ? undefined : 3)
+                .map((project) => (
+                  <ConversationCard
+                    key={project.id}
+                    id={project.id}
+                    title={project.title}
+                    timestamp={formatRelativeTime(new Date(project.created_at))}
+                    isActive={selectedProjectId === project.id}
+                    onClick={() =>
+                      handleProjectSelect(
+                        selectedProjectId === project.id ? null : project.id
+                      )
+                    }
+                    onUpdateTitle={(newTitle) =>
+                      onUpdateProject(project.id, { title: newTitle })
+                    }
+                    onDelete={() => onDeleteProject(project.id)}
+                    onViewDetails={() =>
+                      (window.location.href = `/projects/${project.id}`)
+                    }
+                  />
+                ))}
 
               {/* View More Projects */}
               {projects.length > 3 && (
-                <Link
-                  href="/projects"
+                <button
+                  onClick={() => setIsProjectsExpanded(!isProjectsExpanded)}
                   className="mt-1 flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium text-verity-500 transition-colors hover:bg-sand-200 hover:text-verity-900"
                 >
-                  <span className="flex-1">Ver todos os projetos</span>
-                  <span className="text-[10px] opacity-70">{'->'}</span>
-                </Link>
+                  <span className="flex-1">
+                    {isProjectsExpanded ? 'Ver menos' : 'Ver todos os projetos'}
+                  </span>
+                  <span
+                    className={cn(
+                      'text-[10px] opacity-70 transition-transform',
+                      isProjectsExpanded && 'rotate-180'
+                    )}
+                  >
+                    {'->'}
+                  </span>
+                </button>
               )}
             </div>
           )}
@@ -572,34 +586,49 @@ const SidebarContent = memo(function SidebarContent({
             </div>
           ) : (
             <div className="space-y-1">
-              {filteredSessions.slice(0, 5).map((session) => (
-                <ConversationCard
-                  key={session.session_id}
-                  id={session.session_id}
-                  title={session.title}
-                  timestamp={formatRelativeTime(session.created_at)}
-                  isActive={activeConversationId === session.session_id}
-                  onClick={() => {
-                    trackConversationSelected(session.session_id, 'sidebar')
-                    onSelectConversation?.(session.session_id)
-                  }}
-                  onUpdateTitle={(newTitle) =>
-                    onUpdateSession(session.session_id, { title: newTitle })
-                  }
-                  onDelete={() => onDeleteSession(session.session_id)}
-                  onMove={() => openMoveDialog(session.session_id)}
-                />
-              ))}
+              {filteredSessions
+                .slice(0, isConversationsExpanded ? undefined : 5)
+                .map((session) => (
+                  <ConversationCard
+                    key={session.session_id}
+                    id={session.session_id}
+                    title={session.title}
+                    timestamp={formatRelativeTime(session.created_at)}
+                    isActive={activeConversationId === session.session_id}
+                    onClick={() => {
+                      trackConversationSelected(session.session_id, 'sidebar')
+                      onSelectConversation?.(session.session_id)
+                    }}
+                    onUpdateTitle={(newTitle) =>
+                      onUpdateSession(session.session_id, { title: newTitle })
+                    }
+                    onDelete={() => onDeleteSession(session.session_id)}
+                    onMove={() => openMoveDialog(session.session_id)}
+                  />
+                ))}
 
               {/* View More History */}
               {filteredSessions.length > 5 && (
-                <Link
-                  href="/cpr/historico"
+                <button
+                  onClick={() =>
+                    setIsConversationsExpanded(!isConversationsExpanded)
+                  }
                   className="mt-1 flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium text-verity-500 transition-colors hover:bg-verity-50 hover:text-verity-900"
                 >
-                  <span className="flex-1">Ver histórico completo</span>
-                  <span className="text-[10px] opacity-70">{'->'}</span>
-                </Link>
+                  <span className="flex-1">
+                    {isConversationsExpanded
+                      ? 'Ver menos'
+                      : 'Ver histórico completo'}
+                  </span>
+                  <span
+                    className={cn(
+                      'text-[10px] opacity-70 transition-transform',
+                      isConversationsExpanded && 'rotate-180'
+                    )}
+                  >
+                    {'->'}
+                  </span>
+                </button>
               )}
             </div>
           )}
