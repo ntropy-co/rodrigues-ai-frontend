@@ -36,7 +36,7 @@ jobs:
       # Build step removed as Playwright uses dev server (npm run dev:e2e)
 
       - name: Run E2E tests
-        run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: npm run test:e2e -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
         env:
           CI: true
           # Local backend url, but likely unreachable in standard GitHub Actions without service container.

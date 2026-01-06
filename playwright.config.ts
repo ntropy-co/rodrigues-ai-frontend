@@ -26,9 +26,7 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     timeout: 120000, // 2 minutes for server startup
     env: {
-      NEXT_PUBLIC_API_URL: process.env.CI
-        ? 'https://rodrigues-ai-backend-production.up.railway.app'
-        : 'http://127.0.0.1:8000'
+      NEXT_PUBLIC_API_URL: 'http://127.0.0.1:8000'
     }
   }
 })
