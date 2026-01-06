@@ -441,7 +441,7 @@ export function InputBar({
             duration: 0.8,
             ease: [0.25, 0.46, 0.45, 0.94] // Easing butter
           }}
-          className="relative mx-auto max-w-xl pb-6"
+          className="relative mx-auto max-w-lg pb-4"
           style={{
             transformStyle: 'preserve-3d',
             backfaceVisibility: 'hidden',
@@ -527,7 +527,7 @@ export function InputBar({
 
           {/* Layer 4: Container Principal (Pílula Orgânica Suprema) */}
           <motion.div
-            className="group relative flex items-end gap-3 rounded-[3rem] border border-sand-200 bg-white/40 px-6 py-4 backdrop-blur-xl transition-all duration-300 hover:border-verity-200/50 hover:bg-white/60"
+            className="group relative flex items-end gap-2 rounded-full border border-sand-200 bg-white/50 px-5 py-3 backdrop-blur-xl transition-all duration-300 hover:border-verity-200/50 hover:bg-white/70"
             style={{
               transform: 'translateZ(0)',
               transformStyle: 'preserve-3d'
