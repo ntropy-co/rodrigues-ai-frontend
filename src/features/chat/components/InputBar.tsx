@@ -550,7 +550,7 @@ export function InputBar({
                   ? 'Pensando...'
                   : disabled
                     ? 'Aguarde...'
-                    : 'Pergunte alguma coisa'
+                    : 'Como posso auxiliar em sua análise hoje?'
               }
               rows={1}
               style={{ maxHeight: '200px' }}
