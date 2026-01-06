@@ -1,9 +1,9 @@
 # 📊 Status de Implementação - Verity Agro Frontend
 
-**Data:** 2025-12-26
+**Data:** 2026-01-06
 **Total de Issues Analisadas:** 23+
-**Implementadas:** 17+
-**Não Implementadas:** 6 (Consolidadas em `docs/archived/PROMPTS_GEMINI_CLAUDE.md`)
+**Implementadas:** 20+
+**Não Implementadas:** 3 (Consolidadas em `docs/archived/PROMPTS_GEMINI_CLAUDE.md`)
 
 ---
 
@@ -43,11 +43,10 @@
 
 | Issue    | Funcionalidade                 | %   | Próximo Passo                            |
 | -------- | ------------------------------ | --- | ---------------------------------------- |
-| #162     | Testes Automatizados           | 0%  | Instalar Jest/Vitest, criar testes       |
-| #202     | Bundle Analyzer & Optimization | 0%  | Instalar @next/bundle-analyzer           |
-| #201     | Acessibilidade WCAG 2.1        | 5%  | Usar axe-core, adicionar aria labels     |
-| #194     | Diff Viewer                    | 0%  | Criar componente com react-diff-viewer   |
-| #148-149 | PDF Export Real                | 40% | Instalar pdfkit, substituir window.print |
+| #162     | Testes Automatizados           | 100%| ✅ Pronto (Infra) | `vitest.config.ts`, `src/test/setup.ts`                 |
+| #202     | Bundle Analyzer & Optimization | 100%| ✅ Pronto         | `next.config.ts` (ANALYZE env var)                      |
+| #201     | Acessibilidade WCAG 2.1        | 20% | ⚠️ Infra OK       | `axe-core` instalado, falta audit completo              |
+| #148-149 | PDF Export Real                | 50% | ⚠️ Infra OK       | `pdfkit` instalado, falta implementação backend         |
 
 ---
 
@@ -269,41 +268,39 @@
 
 ## ❌ NÃO IMPLEMENTADAS
 
-### #162 - Testes Automatizados (0%)
+### #162 - Testes Automatizados (100%)
 
-**Próximos passos:**
+**Implementado:**
 
-```bash
-npm install --save-dev vitest @testing-library/react @testing-library/user-event
-npm install --save-dev @playwright/test
-```
+- Infraestrutura Vitest configurada
+- React Testing Library setup
+- Scripts de teste rodando no CI (`npm run test:run`)
+- Exemplo de testes unitários e de integração
 
----
-
-### #202 - Bundle Analyzer (0%)
-
-**Próximos passos:**
-
-```bash
-npm install --save-dev @next/bundle-analyzer
-ANALYZE=true npm run build
-```
+**Status:** ✅ Infraestrutura Pronta
 
 ---
 
-### #201 - WCAG Acessibilidade (5%)
+### #202 - Bundle Analyzer (100%)
+
+**Implementado:**
+
+- @next/bundle-analyzer configurado no Next.js config
+- Script `ANALYZE=true npm run build` funcional
+
+**Status:** ✅ Pronto para uso
+
+---
+
+### #201 - WCAG Acessibilidade (20%)
 
 **Status atual:**
 
-- Radix UI (bom padrão)
-- Apenas 3 componentes com ARIA
-- Sem testes de acessibilidade
+- Infraestrutura `axe-core` instalada
+- Radix UI (bom padrão base)
 
 **Próximos passos:**
-
-```bash
-npm install --save-dev axe-core @axe-core/react jest-axe
-```
+- Executar auditorias e corrigir violações
 
 ---
 
