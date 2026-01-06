@@ -7,7 +7,12 @@ import reactPlugin from 'eslint-plugin-react'
 
 export default [
   {
-    ignores: ['e2e/**/*', 'playwright-report/**/*', 'test-results/**/*', '.next/**/*']
+    ignores: [
+      'e2e/**/*',
+      'playwright-report/**/*',
+      'test-results/**/*',
+      '.next/**/*'
+    ]
   },
   {
     files: ['**/*.ts', '**/*.tsx'],

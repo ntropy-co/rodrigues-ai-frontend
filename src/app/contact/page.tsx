@@ -3,16 +3,26 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Loader2, ArrowLeft, Send, Sparkles, Building2, HelpCircle } from 'lucide-react'
+import {
+  Loader2,
+  ArrowLeft,
+  Send,
+  Sparkles,
+  Building2,
+  HelpCircle
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
 
 // Animation Config
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
+  }
 }
 
 const staggerContainer = {
@@ -95,15 +105,22 @@ export default function ContactPage() {
             <div className="flex items-start gap-3">
               <Building2 className="mt-1 h-5 w-5 text-verity-300" />
               <div>
-                <h4 className="font-medium text-white">Exclusividade Institucional</h4>
-                <p className="text-sm text-verity-300">Plataforma restrita a parceiros qualificados e instituições financeiras.</p>
+                <h4 className="font-medium text-white">
+                  Exclusividade Institucional
+                </h4>
+                <p className="text-sm text-verity-300">
+                  Plataforma restrita a parceiros qualificados e instituições
+                  financeiras.
+                </p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <HelpCircle className="mt-1 h-5 w-5 text-verity-300" />
               <div>
                 <h4 className="font-medium text-white">Concierge Dedicado</h4>
-                <p className="text-sm text-verity-300">Nossa equipe analisa cada perfil para garantir o match ideal.</p>
+                <p className="text-sm text-verity-300">
+                  Nossa equipe analisa cada perfil para garantir o match ideal.
+                </p>
               </div>
             </div>
           </div>
@@ -120,10 +137,12 @@ export default function ContactPage() {
       */}
       <div className="flex items-center justify-center bg-sand-50 px-4 py-12 sm:px-12 lg:px-20">
         <div className="mx-auto w-full max-w-md">
-
           {/* Mobile Header */}
           <div className="mb-8 lg:hidden">
-            <Link href="/login" className="flex items-center gap-2 text-sm text-verity-600">
+            <Link
+              href="/login"
+              className="flex items-center gap-2 text-sm text-verity-600"
+            >
               <ArrowLeft className="h-4 w-4" /> Voltar
             </Link>
           </div>
@@ -143,8 +162,8 @@ export default function ContactPage() {
                   Solicitação Recebida
                 </h3>
                 <p className="mb-8 text-verity-600">
-                  Nossa equipe de concierge analisará seu perfil e entrará
-                  em contato em breve através do email cadastrado.
+                  Nossa equipe de concierge analisará seu perfil e entrará em
+                  contato em breve através do email cadastrado.
                 </p>
                 <Link href="/login" className="w-full">
                   <Button className="h-11 w-full bg-verity-900 text-white hover:bg-verity-800">

@@ -45,9 +45,7 @@ function parseSSELine(line: string): SSEEvent | null {
         return {
           type: 'error',
           error:
-            typeof payload.error === 'string'
-              ? payload.error
-              : 'Unknown error'
+            typeof payload.error === 'string' ? payload.error : 'Unknown error'
         }
       }
     }
@@ -73,7 +71,7 @@ function parseSSELine(line: string): SSEEvent | null {
  */
 export const useAIStreamHandler = () => {
   const router = useRouter()
-// ... existing code ...
+  // ... existing code ...
 
   const abortControllerRef = useRef<AbortController | null>(null)
 

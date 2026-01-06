@@ -6,7 +6,7 @@
   .text-balance {
     text-wrap: balance;
   }
-  
+
   /* Advanced Typography */
   .font-display {
     font-feature-settings: var(--font-display-features);
@@ -16,63 +16,67 @@
   .numbers-tabular,
   .tabular-nums {
     font-variant-numeric: tabular-nums;
-    font-feature-settings: var(--font-tabular-features), "tnum" 1;
+    font-feature-settings:
+      var(--font-tabular-features),
+      'tnum' 1;
   }
 
   .heading-luxury {
     @apply font-display font-semibold tracking-tight;
     line-height: var(--leading-tight);
-    font-feature-settings: "ss01" 1, "ss02" 1;
+    font-feature-settings:
+      'ss01' 1,
+      'ss02' 1;
   }
 }
 
 @layer base {
   :root {
     --scrollbar-width: 0.1rem;
-    
+
     /* FINANCIAL ENTERPRISE PALETTE (Strict Grayscale + Restricted Brand) */
-    
+
     /* Brand Colors (Restricted use) */
     --brand-primary: 159 39% 17%; /* #1A3C30 (Verity Deep) */
-    --brand-accent: 36 38% 59%;   /* #BFA070 */
-    
+    --brand-accent: 36 38% 59%; /* #BFA070 */
+
     /* Verity Organic Palette (Warm Sand & Deep Green) */
-    
+
     /* Sand (Backgrounds & Neutrals) */
-    --sand-50: 30 20% 99%;    /* #FDFCFB */
-    --sand-100: 48 56% 98%;   /* #FDFCF8 */
-    --sand-200: 45 18% 94%;   /* #F3F1EB */
-    --sand-300: 48 16% 90%;   /* #EBE9E1 */
-    --sand-400: 0 0% 90%;     /* #E5E5E5 (Border) */
+    --sand-50: 30 20% 99%; /* #FDFCFB */
+    --sand-100: 48 56% 98%; /* #FDFCF8 */
+    --sand-200: 45 18% 94%; /* #F3F1EB */
+    --sand-300: 48 16% 90%; /* #EBE9E1 */
+    --sand-400: 0 0% 90%; /* #E5E5E5 (Border) */
 
     /* Verity Green (Brand & Text) */
     /* Primary Verity #1A3C30 Converted to HSL 159 39% 17% */
-    --verity-50: 156 20% 96%;   
-    --verity-100: 154 30% 93%;  
-    --verity-200: 152 25% 82%;  
-    --verity-300: 150 22% 69%;  
-    --verity-400: 150 25% 47%;  
-    --verity-500: 151 29% 39%;  
-    --verity-600: 152 29% 32%;  
-    --verity-700: 159 39% 17%;  
-    --verity-800: 159 39% 17%;  
-    --verity-900: 162 44% 9%;   
-    --verity-950: 164 55% 4%;   
+    --verity-50: 156 20% 96%;
+    --verity-100: 154 30% 93%;
+    --verity-200: 152 25% 82%;
+    --verity-300: 150 22% 69%;
+    --verity-400: 150 25% 47%;
+    --verity-500: 151 29% 39%;
+    --verity-600: 152 29% 32%;
+    --verity-700: 159 39% 17%;
+    --verity-800: 159 39% 17%;
+    --verity-900: 162 44% 9%;
+    --verity-950: 164 55% 4%;
 
     /* Semantic mapping */
     --background: var(--sand-100);
     --foreground: var(--verity-900);
-    
+
     --primary: var(--verity-800);
     --primary-foreground: var(--sand-100);
-    
+
     --muted: var(--sand-200);
     --muted-foreground: var(--verity-600);
-    
+
     --border: var(--sand-300);
     --input: var(--sand-300);
     --ring: var(--verity-400);
-    
+
     /* Enterprise specific vars */
     --enterprise-green: var(--brand-primary);
     --enterprise-gold: var(--brand-accent);
@@ -100,32 +104,32 @@
     /* Dark mode optimized for financial data visibility */
     --background: 164 55% 4%; /* Verity 950 */
     --foreground: 40 14% 97%; /* Sand 100 */
-    
+
     --card: 162 44% 5%; /* Verity 900+ */
     --card-foreground: 40 14% 97%;
-    
+
     --popover: 162 44% 5%;
     --popover-foreground: 40 14% 97%;
-    
+
     --primary: 150 25% 47%; /* Verity 400 */
     --primary-foreground: 0 0% 98%;
-    
+
     --secondary: 152 29% 20%;
     --secondary-foreground: 0 0% 98%;
-    
+
     --muted: 152 29% 20%;
     --muted-foreground: 150 22% 75%;
-    
+
     --accent: 152 29% 20%;
     --accent-foreground: 0 0% 98%;
-    
+
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    
+
     --border: 159 39% 17%;
     --input: 159 39% 17%;
     --ring: 150 25% 47%;
-    
+
     /* Enterprise specific vars - Dark */
     --enterprise-green: 152 33% 40%;
     --enterprise-gold: 36 38% 59%;
@@ -185,12 +189,12 @@
 
 /* Markdown content styling */
 .markdown-content {
-  @apply text-verity-950 leading-relaxed;
+  @apply leading-relaxed text-verity-950;
 }
 
 /* Listas ordenadas (numeradas) */
 .markdown-content ol {
-  @apply list-none space-y-2 ml-0 pl-0 mb-3;
+  @apply mb-3 ml-0 list-none space-y-2 pl-0;
   counter-reset: list-counter;
 }
 
@@ -200,20 +204,20 @@
 }
 
 .markdown-content ol li::before {
-  content: counter(list-counter) ".";
-  @apply inline-flex items-center justify-center
-         w-6 h-6 
-         bg-verity-100 
-         text-verity-900 
+  content: counter(list-counter) '.';
+  @apply mt-0.5 inline-flex h-6
+         w-6 flex-shrink-0 
+         items-center 
+         justify-center 
          rounded-md 
-         font-medium text-sm
-         flex-shrink-0
-         mt-0.5;
+         bg-verity-100 text-sm
+         font-medium
+         text-verity-900;
 }
 
 /* Listas não-ordenadas (bullets) */
 .markdown-content ul {
-  @apply list-none space-y-1 ml-0 pl-0 mb-3;
+  @apply mb-3 ml-0 list-none space-y-1 pl-0;
 }
 
 .markdown-content ul li {
@@ -221,8 +225,8 @@
 }
 
 .markdown-content ul li::before {
-  content: "•";
-  @apply text-verity-600 mt-1.5 flex-shrink-0;
+  content: '•';
+  @apply mt-1.5 flex-shrink-0 text-verity-600;
 }
 
 /* Paragraphs */
@@ -231,40 +235,47 @@
 }
 
 /* Glassmorphism Utilities (Verity Premium) */
-  .glass-panel {
-    background: hsl(var(--surface-glass) / 0.4);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid hsl(var(--border-subtle));
-  }
+.glass-panel {
+  background: hsl(var(--surface-glass) / 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid hsl(var(--border-subtle));
+}
 
-  /* Dark mode adjustment for glass */
-  .dark .glass-panel {
-    background: hsl(var(--surface-glass) / 0.4);
-    border: 1px solid hsl(var(--border-subtle));
-  }
+/* Dark mode adjustment for glass */
+.dark .glass-panel {
+  background: hsl(var(--surface-glass) / 0.4);
+  border: 1px solid hsl(var(--border-subtle));
+}
 
-  .glass-card {
-    @apply glass-panel rounded-2xl shadow-sm transition-all duration-300;
-  }
+.glass-card {
+  @apply glass-panel rounded-2xl shadow-sm transition-all duration-300;
+}
 
-  .glass-card:hover {
-    background: hsl(var(--surface-glass) / 0.5);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.04);
-    transform: translateY(-2px);
-  }
-  
-  .dark .glass-card:hover {
-    background: hsl(var(--surface-glass) / 0.5);
-  }
+.glass-card:hover {
+  background: hsl(var(--surface-glass) / 0.5);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+  transform: translateY(-2px);
+}
 
-  /* Headings Promotion */
-h1, h2, h3, h4 {
+.dark .glass-card:hover {
+  background: hsl(var(--surface-glass) / 0.5);
+}
+
+/* Headings Promotion */
+h1,
+h2,
+h3,
+h4 {
   @apply font-display tracking-tight text-verity-900;
 }
 
-h1 { @apply text-4xl mb-6; }
-h2 { @apply text-3xl mb-4; }
+h1 {
+  @apply mb-6 text-4xl;
+}
+h2 {
+  @apply mb-4 text-3xl;
+}
 
 /* Bold */
 .markdown-content strong {
@@ -273,25 +284,25 @@ h2 { @apply text-3xl mb-4; }
 
 /* Inline code */
 .markdown-content code {
-  @apply px-1.5 py-0.5 
-         bg-verity-100 
-         text-verity-900 
-         rounded 
-         font-mono text-sm;
+  @apply rounded bg-verity-100 
+         px-1.5 
+         py-0.5 
+         font-mono 
+         text-sm text-verity-900;
 }
 
 /* Code blocks */
 .markdown-content pre {
-  @apply bg-verity-950 
-         text-verity-50 
-         p-4 rounded-xl 
+  @apply my-3 
          overflow-x-auto 
-         my-3
-         font-mono text-sm;
+         rounded-xl bg-verity-950 
+         p-4 
+         font-mono
+         text-sm text-verity-50;
 }
 
 .markdown-content pre code {
   @apply bg-transparent 
-         text-verity-50 
-         p-0;
+         p-0 
+         text-verity-50;
 }

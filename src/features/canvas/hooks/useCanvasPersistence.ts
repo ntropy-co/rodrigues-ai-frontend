@@ -15,7 +15,7 @@ interface CanvasPersistence {
  * Uses localStorage as immediate persistence and syncs to backend (debounced).
  */
 export function useCanvasPersistence(sessionId: string | null) {
-  const { content, title, updateContent, openCanvas } = useCanvasStore()
+  const { content, title, openCanvas } = useCanvasStore()
   const lastSyncedRef = useRef<string>('')
 
   // Load canvas from localStorage on mount

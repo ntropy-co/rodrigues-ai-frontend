@@ -308,7 +308,7 @@ export function QuotesChart() {
     })
 
   // Statistics
-  const history = data?.data?.history || []
+  const history = useMemo(() => data?.data?.history || [], [data])
 
   const stats = useMemo(() => {
     if (history.length === 0) return null

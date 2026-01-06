@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Tests for useSessions hook
  */
@@ -6,6 +7,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { useSessions } from '@/features/chat/hooks/useSessions'
 import { chatApi } from '@/features/chat/api'
+import { SessionEntry } from '@/features/chat/types'
 
 // =============================================================================
 // Mocks
@@ -92,7 +94,7 @@ describe('useSessions', () => {
     it('should reject invalid project_id format', async () => {
       const { result } = renderHook(() => useSessions())
 
-      let sessions
+      let sessions: SessionEntry[] | undefined
       await act(async () => {
         sessions = await result.current.fetchSessions('invalid-project-id')
       })
@@ -137,7 +139,7 @@ describe('useSessions', () => {
 
       const { result } = renderHook(() => useSessions())
 
-      let session
+      let session: any = null
       await act(async () => {
         session = await result.current.createSession('Test Session')
       })
@@ -152,7 +154,7 @@ describe('useSessions', () => {
 
       const { result } = renderHook(() => useSessions())
 
-      let session
+      let session: any = null
       await act(async () => {
         session = await result.current.createSession(longTitle)
       })
@@ -171,7 +173,7 @@ describe('useSessions', () => {
 
       const { result } = renderHook(() => useSessions())
 
-      let session
+      let session: any = null
       await act(async () => {
         session = await result.current.createSession(maxTitle)
       })
@@ -183,7 +185,7 @@ describe('useSessions', () => {
     it('should reject invalid project_id format', async () => {
       const { result } = renderHook(() => useSessions())
 
-      let session
+      let session: any = null
       await act(async () => {
         session = await result.current.createSession(
           'Test',
@@ -203,7 +205,7 @@ describe('useSessions', () => {
 
       const { result } = renderHook(() => useSessions())
 
-      let session
+      let session: any = null
       await act(async () => {
         session = await result.current.createSession('Test', validProjectId)
       })
@@ -220,7 +222,7 @@ describe('useSessions', () => {
 
       const { result } = renderHook(() => useSessions())
 
-      let session
+      let session: any = null
       await act(async () => {
         session = await result.current.createSession('Test')
       })
@@ -238,7 +240,7 @@ describe('useSessions', () => {
 
       const { result } = renderHook(() => useSessions())
 
-      let session
+      let session: any = null
       await act(async () => {
         session = await result.current.updateSession(validSessionId, {
           title: 'Updated Title'
@@ -255,7 +257,7 @@ describe('useSessions', () => {
 
       const { result } = renderHook(() => useSessions())
 
-      let session
+      let session: any = null
       await act(async () => {
         session = await result.current.updateSession(validSessionId, {
           title: longTitle
@@ -276,7 +278,7 @@ describe('useSessions', () => {
 
       const { result } = renderHook(() => useSessions())
 
-      let session
+      let session: any = null
       await act(async () => {
         session = await result.current.updateSession(validSessionId, {
           title: maxTitle
@@ -294,7 +296,7 @@ describe('useSessions', () => {
 
       const { result } = renderHook(() => useSessions())
 
-      let session
+      let session: any = null
       await act(async () => {
         session = await result.current.updateSession(validSessionId, {
           title: 'New Title'

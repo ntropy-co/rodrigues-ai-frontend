@@ -81,6 +81,7 @@ export function CPRSimulator() {
     const saved = localStorage.getItem('cpr_simulator_history')
     if (saved) {
       try {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setHistory(JSON.parse(saved))
       } catch (e) {
         console.error('Failed to load history', e)

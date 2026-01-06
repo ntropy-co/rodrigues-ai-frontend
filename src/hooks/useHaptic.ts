@@ -29,37 +29,41 @@ const HAPTIC_PATTERNS = {
  * @returns Função trigger e estado de suporte/habilitação
  */
 export function useHaptic(): UseHapticReturn {
-  const [isSupported, setIsSupported] = useState(false)
-  const [isEnabled, setIsEnabled] = useState(false)
+  const [isSupported] = useState(() => {
+    return typeof window !== 'undefined' && 'vibrate' in navigator
+  })
+
+  // Initialize isEnabled based on support AND reduced motion preference
+  const [isEnabled, setIsEnabled] = useState(() => {
+    if (typeof window === 'undefined') return false
+    const supported = 'vibrate' in navigator
+    const reducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches
+    return supported && !reducedMotion
+  })
 
   useEffect(() => {
-    // Verificar suporte à Vibration API
-    const hasVibrationSupport =
-      typeof window !== 'undefined' && 'vibrate' in navigator
+    if (typeof window === 'undefined') return
 
-    setIsSupported(hasVibrationSupport)
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
 
-    // Verificar preferência de reduced-motion
-    if (typeof window !== 'undefined') {
-      const prefersReducedMotion = window.matchMedia(
-        '(prefers-reduced-motion: reduce)'
-      ).matches
-
-      // Haptic só habilitado se suportado E usuário não preferir reduced-motion
-      setIsEnabled(hasVibrationSupport && !prefersReducedMotion)
-
-      // Listener para mudanças na preferência
-      const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-      const handleChange = (e: MediaQueryListEvent) => {
-        setIsEnabled(hasVibrationSupport && !e.matches)
-      }
-
-      if (mediaQuery.addEventListener) {
-        mediaQuery.addEventListener('change', handleChange)
-        return () => mediaQuery.removeEventListener('change', handleChange)
-      }
+    const handleChange = (e: MediaQueryListEvent) => {
+      // isSupported is constant for the session, safe to use from closure or state
+      // strictly speaking, we should enable if supported AND NOT reduced motion
+      const supported = 'vibrate' in navigator
+      setIsEnabled(supported && !e.matches)
     }
-  }, [])
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleChange)
+      return () => mediaQuery.removeEventListener('change', handleChange)
+    } else {
+      // Fallback for older browsers
+      mediaQuery.addListener(handleChange)
+      return () => mediaQuery.removeListener(handleChange)
+    }
+  }, []) // Empty dependency array as we attach listener once
 
   const trigger = useCallback(
     (pattern: HapticPattern = 'light') => {

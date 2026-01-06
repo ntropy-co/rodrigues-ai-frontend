@@ -8,7 +8,7 @@ sequenceDiagram
     participant F as Frontend
     participant BFF as API Route
     participant B as Backend
-    
+
     U->>F: Submete email/senha
     F->>BFF: POST /api/auth/login
     BFF->>B: POST /api/v1/auth/login
@@ -32,10 +32,10 @@ const COOKIE_OPTIONS = {
 }
 ```
 
-| Cookie | Propósito | Expiração |
-|--------|-----------|-----------|
-| `auth_token` | JWT de acesso | 7 dias |
-| `refresh_token` | Renovação | 7 dias |
+| Cookie          | Propósito     | Expiração |
+| --------------- | ------------- | --------- |
+| `auth_token`    | JWT de acesso | 7 dias    |
+| `refresh_token` | Renovação     | 7 dias    |
 
 ## Proteção de Rotas
 
@@ -48,7 +48,7 @@ export function withAuth<P>(Component: ComponentType<P>) {
 }
 
 // Componente guard
-<AuthGuard requiredRole="admin">
+;<AuthGuard requiredRole="admin">
   <AdminPanel />
 </AuthGuard>
 ```
@@ -73,10 +73,10 @@ export const clearAllTokens = () => {
 
 ## Endpoints de Auth
 
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| POST | `/api/auth/login` | Login |
-| POST | `/api/auth/register` | Registro |
-| POST | `/api/auth/logout` | Logout |
-| POST | `/api/auth/refresh` | Refresh token |
-| GET | `/api/auth/me` | Dados do usuário |
+| Método | Rota                 | Descrição        |
+| ------ | -------------------- | ---------------- |
+| POST   | `/api/auth/login`    | Login            |
+| POST   | `/api/auth/register` | Registro         |
+| POST   | `/api/auth/logout`   | Logout           |
+| POST   | `/api/auth/refresh`  | Refresh token    |
+| GET    | `/api/auth/me`       | Dados do usuário |

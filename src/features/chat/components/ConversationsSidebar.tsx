@@ -20,8 +20,7 @@ import {
   FilePlus2,
   LayoutDashboard,
   Maximize2,
-  FolderInput,
-  FolderOpen
+  FolderInput
 } from 'lucide-react'
 import { ProjectDialog } from './ProjectDialog'
 import { MoveToProjectDialog } from './MoveToProjectDialog'
@@ -90,6 +89,7 @@ export function ConversationsSidebar({
   useEffect(() => {
     const savedProjectId = localStorage.getItem('verity_active_project')
     if (savedProjectId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedProjectId(savedProjectId)
     }
   }, [])
@@ -360,7 +360,7 @@ interface SidebarContentProps {
 // Inner content component to avoid duplication - memoized to prevent re-renders
 const SidebarContent = memo(function SidebarContent({
   searchQuery,
-  setSearchQuery,
+  // setSearchQuery removed
   onToggle,
   onNewConversation,
   activeConversationId,

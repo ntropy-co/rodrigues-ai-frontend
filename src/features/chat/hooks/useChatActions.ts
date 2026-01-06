@@ -95,14 +95,14 @@ export const useChatActions = () => {
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}))
           console.error('Failed to fetch chat history:', errorData)
-          return []
+          throw new Error(errorData.detail || 'Failed to fetch chat history')
         }
 
         const data = await response.json()
         return data.messages || []
       } catch (error) {
         console.error('Error fetching chat history:', error)
-        return []
+        throw error
       }
     },
     []

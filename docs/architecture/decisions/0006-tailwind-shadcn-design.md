@@ -1,9 +1,11 @@
 # ADR-0006: Tailwind CSS + Shadcn/ui Design System
 
 ## Status
+
 Accepted
 
 ## Date
+
 2024-12-30
 
 ## Context
@@ -17,6 +19,7 @@ The application needs a consistent, maintainable design system that:
 5. Supports dark mode (future consideration)
 
 Options evaluated:
+
 - **Material UI**: Heavy bundle, opinionated styling
 - **Chakra UI**: Good DX, but vendor lock-in
 - **Tailwind + Headless UI**: Low-level, need to build components
@@ -86,11 +89,11 @@ CSS Variables in `globals.css`:
 
 ```css
 :root {
-  --background: 40 33% 98%;      /* sand-100 */
-  --foreground: 150 35% 10%;     /* verity-900 */
-  --primary: 150 35% 17%;        /* verity-800 */
+  --background: 40 33% 98%; /* sand-100 */
+  --foreground: 150 35% 10%; /* verity-900 */
+  --primary: 150 35% 17%; /* verity-800 */
   --primary-foreground: 0 0% 100%;
-  --muted: 40 20% 94%;           /* sand-200 */
+  --muted: 40 20% 94%; /* sand-200 */
   --muted-foreground: 150 10% 40%;
   /* ... */
 }
@@ -107,6 +110,7 @@ const crimson = Crimson_Text({ variable: '--font-crimson' })
 ```
 
 Font classes in Tailwind:
+
 - `font-sans`: Inter (body text)
 - `font-display`: Crimson Text (headings)
 
@@ -158,14 +162,14 @@ export function Button({ children, ...props }) {
 
 ### Design Tokens Summary
 
-| Token | Usage |
-|-------|-------|
-| `verity-800` | Primary buttons, links |
-| `verity-700` | Hover states |
-| `verity-600` | Muted text |
-| `verity-100/50` | Backgrounds, cards |
-| `sand-100` | Page background |
-| `ouro-500` | Currency highlights |
+| Token           | Usage                  |
+| --------------- | ---------------------- |
+| `verity-800`    | Primary buttons, links |
+| `verity-700`    | Hover states           |
+| `verity-600`    | Muted text             |
+| `verity-100/50` | Backgrounds, cards     |
+| `sand-100`      | Page background        |
+| `ouro-500`      | Currency highlights    |
 
 ## References
 

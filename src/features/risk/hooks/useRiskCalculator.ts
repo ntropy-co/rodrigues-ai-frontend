@@ -138,7 +138,7 @@ export function useRiskCalculator() {
         return null
       }
     },
-    []  // No dependencies since auth is via cookies
+    [] // No dependencies since auth is via cookies
   )
 
   /**

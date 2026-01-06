@@ -12,6 +12,7 @@ Em vez disso, o browser fala com o BFF no mesmo dominio, e o BFF faz proxy
 para o backend real, normalizando erros, padroes de resposta e headers.
 
 Beneficios praticos:
+
 - Same-origin (menos problemas de CORS e preflight).
 - Segredos e tokens podem ficar no servidor.
 - Padronizacao de payloads e erros.
@@ -57,6 +58,7 @@ sequenceDiagram
 ```
 
 Responsabilidade do BFF:
+
 - Encaminhar a chamada.
 - Normalizar erros e formato de resposta.
 - Evitar CORS (same-origin).
@@ -76,6 +78,7 @@ sequenceDiagram
 ```
 
 Ponto chave:
+
 - O BFF deve padronizar o nome dos campos e o frontend deve esperar o mesmo
   contrato (ex: `token` vs `access_token`).
 
@@ -94,6 +97,7 @@ sequenceDiagram
 ```
 
 Responsabilidade do BFF:
+
 - Validar `session_id`.
 - Encaminhar auth header.
 - Uniformizar mensagens de erro.
@@ -133,19 +137,19 @@ Browser (UI)
 
 ## Por que este BFF existe
 
-1) Seguranca e segredos
+1. Seguranca e segredos
    - O browser nao pode guardar chaves secretas.
    - O BFF roda no servidor, entao pode falar com APIs privadas.
 
-2) CORS simplificado
+2. CORS simplificado
    - O browser fala com o mesmo dominio do frontend.
    - Menos preflight e menos cabecalhos CORS no backend.
 
-3) Normalizacao de contratos
+3. Normalizacao de contratos
    - O backend pode ter formatos variados.
    - O BFF deixa o frontend sempre com o mesmo formato.
 
-4) Observabilidade
+4. Observabilidade
    - O BFF centraliza logs, rate limiting e metricas.
 
 ## Responsabilidades do BFF (na pratica)
@@ -158,12 +162,12 @@ Browser (UI)
 
 ## Boas praticas ao criar nova rota BFF
 
-1) Criar rota em `src/app/api/<feature>/route.ts`.
-2) Ler o body/params com validacao minima.
-3) Encaminhar para o backend usando `fetch`.
-4) Normalizar o formato de resposta e erros.
-5) Incluir headers de cache quando fizer sentido.
-6) Cobrir com testes (quando a suite existir).
+1. Criar rota em `src/app/api/<feature>/route.ts`.
+2. Ler o body/params com validacao minima.
+3. Encaminhar para o backend usando `fetch`.
+4. Normalizar o formato de resposta e erros.
+5. Incluir headers de cache quando fizer sentido.
+6. Cobrir com testes (quando a suite existir).
 
 Exemplo basico (estrutura):
 
@@ -174,15 +178,21 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/example`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    })
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/example`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      }
+    )
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}))
-      return NextResponse.json({ detail: data.detail || 'Erro' }, { status: response.status })
+      return NextResponse.json(
+        { detail: data.detail || 'Erro' },
+        { status: response.status }
+      )
     }
 
     const data = await response.json()
@@ -204,13 +214,14 @@ export async function POST(request: NextRequest) {
 
 ## Como o fluxo roda em producao
 
-1) Usuario acessa o frontend (Vercel/host).
-2) A UI chama `/api/*` no mesmo dominio.
-3) O BFF executa no servidor (serverless/edge).
-4) O BFF chama o backend real.
-5) O BFF devolve a resposta normalizada.
+1. Usuario acessa o frontend (Vercel/host).
+2. A UI chama `/api/*` no mesmo dominio.
+3. O BFF executa no servidor (serverless/edge).
+4. O BFF chama o backend real.
+5. O BFF devolve a resposta normalizada.
 
 Isso garante:
+
 - Menos exposicao de segredos.
 - Menos problemas de CORS.
 - Evolucao do backend sem quebrar o frontend.

@@ -122,3 +122,4 @@ storybook-static/
 playwright-report/
 test-results/
 playwright/.cache/
+e2e/.auth/

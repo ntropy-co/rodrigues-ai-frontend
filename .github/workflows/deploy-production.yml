@@ -9,36 +9,42 @@ on:
         type: string
 
 jobs:
-  deploy:
+  validate:
     runs-on: ubuntu-latest
-    environment: production
-    if: github.event.inputs.confirm == 'deploy'
+    if: inputs.confirm == 'deploy'
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: main
+      - name: Validation (Lint & Typecheck)
+        run: |
+          echo "Running validation from reusable workflow..."
+          # Ideally we call reusable workflow here, but 'uses' cannot be conditioned easily inside steps of a job?
+          # Actually 'uses' at job level supports 'if'.
+          # So separating job is correct.
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
+  # Wait, 'uses' defines the job content. I cannot mix 'steps' and 'uses' in same job.
+  # So I define 'validate' job using 'uses'.
 
-      - name: Install dependencies
-        run: npm ci
+  validate-checks:
+    if: inputs.confirm == 'deploy'
+    uses: ./.github/workflows/validate.yml
+    secrets: inherit
 
-      - name: Install Vercel CLI
-        run: npm install -g vercel@latest
+  deploy:
+    needs: [validate-checks]
+    uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      environment: production
+      vercel_env: production
+      vercel_prod_flag: true
+    secrets:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 
-      - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Build Project
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Deploy to Vercel (Production)
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
-
+  create-release:
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    if: success()
+    steps:
+      - uses: actions/checkout@v4
       - name: Create GitHub Release
         uses: actions/github-script@v7
         with:

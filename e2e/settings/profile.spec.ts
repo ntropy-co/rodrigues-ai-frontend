@@ -18,9 +18,9 @@ import { test, expect } from '../fixtures/auth.fixture'
 
 test.describe('Settings Page Display', () => {
   test('should redirect /settings to /settings/organization', async ({
-    authenticatedPage
+    mockPage
   }) => {
-    const page = authenticatedPage
+    const page = mockPage
     await page.goto('/settings')
 
     // Should redirect to organization settings
@@ -29,9 +29,9 @@ test.describe('Settings Page Display', () => {
   })
 
   test('should display organization settings page elements', async ({
-    authenticatedPage
+    mockPage
   }) => {
-    const page = authenticatedPage
+    const page = mockPage
     await page.goto('/settings/organization')
 
     // Check page title
@@ -48,10 +48,8 @@ test.describe('Settings Page Display', () => {
     await expect(page.locator('button:has-text("Voltar")')).toBeVisible()
   })
 
-  test('should display organization info card', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
+  test('should display organization info card', async ({ mockPage }) => {
+    const page = mockPage
     await page.goto('/settings/organization')
 
     // Check for general info section
@@ -71,10 +69,8 @@ test.describe('Settings Page Display', () => {
     await expect(page.locator('#logo_url')).toBeVisible()
   })
 
-  test('should display branding/visual identity card', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
+  test('should display branding/visual identity card', async ({ mockPage }) => {
+    const page = mockPage
     await page.goto('/settings/organization')
 
     // Check for branding section
@@ -88,8 +84,8 @@ test.describe('Settings Page Display', () => {
     await expect(page.locator('#primary_color')).toBeVisible()
   })
 
-  test('should display save button', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should display save button', async ({ mockPage }) => {
+    const page = mockPage
     await page.goto('/settings/organization')
 
     // Check save button
@@ -105,9 +101,9 @@ test.describe('Settings Page Display', () => {
 
 test.describe('Organization Settings Update', () => {
   test('should pre-populate form with current organization data', async ({
-    authenticatedPage
+    mockPage
   }) => {
-    const page = authenticatedPage
+    const page = mockPage
 
     // Mock the organization data
     await page.route('**/api/organizations/current**', async (route) => {
@@ -136,8 +132,8 @@ test.describe('Organization Settings Update', () => {
     await expect(page.locator('#name')).toHaveValue('Test Organization')
   })
 
-  test('should update organization name', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should update organization name', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock GET organization
     await page.route('**/api/organizations/current**', async (route) => {
@@ -192,8 +188,8 @@ test.describe('Organization Settings Update', () => {
       })
   })
 
-  test('should update logo URL', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should update logo URL', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock organization
     await page.route('**/api/organizations/current**', async (route) => {
@@ -220,8 +216,8 @@ test.describe('Organization Settings Update', () => {
     await expect(page.locator('text=Pré-visualização do Logo')).toBeVisible()
   })
 
-  test('should update primary color', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should update primary color', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock organization
     await page.route('**/api/organizations/current**', async (route) => {
@@ -247,8 +243,8 @@ test.describe('Organization Settings Update', () => {
     await expect(page.locator('text=Pré-visualização')).toBeVisible()
   })
 
-  test('should display plan information', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should display plan information', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock organization with plan info
     await page.route('**/api/organizations/current**', async (route) => {
@@ -276,10 +272,8 @@ test.describe('Organization Settings Update', () => {
     await expect(page.locator('text=Slug')).toBeVisible()
   })
 
-  test('should show loading state during save', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
+  test('should show loading state during save', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock organization GET
     await page.route('**/api/organizations/current**', async (route) => {
@@ -333,8 +327,8 @@ test.describe('Organization Settings Update', () => {
 // ============================================================================
 
 test.describe('Team Management', () => {
-  test('should display team page', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should display team page', async ({ mockPage }) => {
+    const page = mockPage
     await page.goto('/settings/team')
 
     // Check page title
@@ -344,8 +338,8 @@ test.describe('Team Management', () => {
     ).toBeVisible()
   })
 
-  test('should display team member filters', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should display team member filters', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock users list
     await page.route('**/api/admin/users**', async (route) => {
@@ -375,8 +369,8 @@ test.describe('Team Management', () => {
     await expect(page.locator('text=Todos')).toBeVisible()
   })
 
-  test('should display team members list', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should display team members list', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock users list
     await page.route('**/api/admin/users**', async (route) => {
@@ -420,8 +414,8 @@ test.describe('Team Management', () => {
     await expect(page.locator('text=Team Member')).toBeVisible()
   })
 
-  test('should display role badges', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should display role badges', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock users list
     await page.route('**/api/admin/users**', async (route) => {
@@ -452,8 +446,8 @@ test.describe('Team Management', () => {
     await expect(page.locator('text=Administrador')).toBeVisible()
   })
 
-  test('should have invite member button', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should have invite member button', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock empty users list
     await page.route('**/api/admin/users**', async (route) => {
@@ -472,8 +466,8 @@ test.describe('Team Management', () => {
     ).toBeVisible()
   })
 
-  test('should navigate to invites page', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should navigate to invites page', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock users list
     await page.route('**/api/admin/users**', async (route) => {
@@ -493,10 +487,8 @@ test.describe('Team Management', () => {
     await page.waitForURL(/\/settings\/invites/, { timeout: 5000 })
   })
 
-  test('should show empty state when no members', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
+  test('should show empty state when no members', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock empty users list
     await page.route('**/api/admin/users**', async (route) => {
@@ -519,8 +511,8 @@ test.describe('Team Management', () => {
 // ============================================================================
 
 test.describe('Invites Management', () => {
-  test('should display invites page', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should display invites page', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock invites list
     await page.route('**/api/organizations/invites**', async (route) => {
@@ -540,8 +532,8 @@ test.describe('Invites Management', () => {
     ).toBeVisible()
   })
 
-  test('should display new invite button', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should display new invite button', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock invites list
     await page.route('**/api/organizations/invites**', async (route) => {
@@ -558,8 +550,8 @@ test.describe('Invites Management', () => {
     await expect(page.locator('button:has-text("Novo Convite")')).toBeVisible()
   })
 
-  test('should open new invite modal', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should open new invite modal', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock invites list
     await page.route('**/api/organizations/invites**', async (route) => {
@@ -581,8 +573,8 @@ test.describe('Invites Management', () => {
     await expect(page.locator('text=Permissão')).toBeVisible()
   })
 
-  test('should display invites list', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should display invites list', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock invites list
     await page.route('**/api/organizations/invites**', async (route) => {
@@ -611,8 +603,8 @@ test.describe('Invites Management', () => {
     await expect(page.locator('text=Pendente')).toBeVisible()
   })
 
-  test('should send invite', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should send invite', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock invites list
     await page.route('**/api/organizations/invites', async (route) => {
@@ -661,8 +653,8 @@ test.describe('Invites Management', () => {
       })
   })
 
-  test('should show status filter', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should show status filter', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock invites list
     await page.route('**/api/organizations/invites**', async (route) => {
@@ -685,8 +677,8 @@ test.describe('Invites Management', () => {
 // ============================================================================
 
 test.describe('Logout Functionality', () => {
-  test('should show user avatar menu', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should show user avatar menu', async ({ mockPage }) => {
+    const page = mockPage
     await page.goto('/dashboard')
 
     // Look for user avatar button
@@ -694,8 +686,8 @@ test.describe('Logout Functionality', () => {
     await expect(avatarButton).toBeVisible()
   })
 
-  test('should open user menu on click', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should open user menu on click', async ({ mockPage }) => {
+    const page = mockPage
     await page.goto('/dashboard')
 
     // Click user avatar
@@ -706,10 +698,8 @@ test.describe('Logout Functionality', () => {
     await expect(page.locator('button:has-text("Sair")')).toBeVisible()
   })
 
-  test('should have theme toggle in user menu', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
+  test('should have theme toggle in user menu', async ({ mockPage }) => {
+    const page = mockPage
     await page.goto('/dashboard')
 
     // Click user avatar
@@ -724,8 +714,8 @@ test.describe('Logout Functionality', () => {
     ).toBeVisible()
   })
 
-  test('should logout and redirect to login', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should logout and redirect to login', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock logout endpoint
     await page.route('**/api/auth/logout**', async (route) => {
@@ -756,9 +746,9 @@ test.describe('Logout Functionality', () => {
 
 test.describe('Settings Error Handling', () => {
   test('should show error state on organization load failure', async ({
-    authenticatedPage
+    mockPage
   }) => {
-    const page = authenticatedPage
+    const page = mockPage
 
     // Mock organization error
     await page.route('**/api/organizations/current**', async (route) => {
@@ -779,10 +769,8 @@ test.describe('Settings Error Handling', () => {
       })
   })
 
-  test('should show error state on team load failure', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
+  test('should show error state on team load failure', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock users error
     await page.route('**/api/admin/users**', async (route) => {
@@ -803,8 +791,8 @@ test.describe('Settings Error Handling', () => {
       })
   })
 
-  test('should show error when update fails', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should show error when update fails', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock organization GET success
     await page.route('**/api/organizations/current**', async (route) => {
@@ -844,8 +832,8 @@ test.describe('Settings Error Handling', () => {
       })
   })
 
-  test('should show invite creation error', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should show invite creation error', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock invites list
     await page.route('**/api/organizations/invites', async (route) => {
@@ -888,9 +876,9 @@ test.describe('Settings Error Handling', () => {
 
 test.describe('Settings Navigation', () => {
   test('should navigate back from organization settings', async ({
-    authenticatedPage
+    mockPage
   }) => {
-    const page = authenticatedPage
+    const page = mockPage
 
     // Mock organization
     await page.route('**/api/organizations/current**', async (route) => {
@@ -915,10 +903,8 @@ test.describe('Settings Navigation', () => {
     // Navigation happened - test passes if no error
   })
 
-  test('should navigate back from team settings', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
+  test('should navigate back from team settings', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock users
     await page.route('**/api/admin/users**', async (route) => {
@@ -938,10 +924,8 @@ test.describe('Settings Navigation', () => {
     // Navigation happened
   })
 
-  test('should navigate back from invites settings', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
+  test('should navigate back from invites settings', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock invites
     await page.route('**/api/organizations/invites**', async (route) => {
@@ -968,9 +952,9 @@ test.describe('Settings Navigation', () => {
 
 test.describe('Settings Loading States', () => {
   test('should show loading skeleton on organization page', async ({
-    authenticatedPage
+    mockPage
   }) => {
-    const page = authenticatedPage
+    const page = mockPage
 
     // Add delay to organization fetch
     await page.route('**/api/organizations/current**', async (route) => {
@@ -999,10 +983,8 @@ test.describe('Settings Loading States', () => {
       })
   })
 
-  test('should show loading skeleton on team page', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
+  test('should show loading skeleton on team page', async ({ mockPage }) => {
+    const page = mockPage
 
     // Add delay to users fetch
     await page.route('**/api/admin/users**', async (route) => {
@@ -1027,10 +1009,8 @@ test.describe('Settings Loading States', () => {
       })
   })
 
-  test('should show loading skeleton on invites page', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
+  test('should show loading skeleton on invites page', async ({ mockPage }) => {
+    const page = mockPage
 
     // Add delay to invites fetch
     await page.route('**/api/organizations/invites**', async (route) => {
@@ -1061,8 +1041,8 @@ test.describe('Settings Loading States', () => {
 // ============================================================================
 
 test.describe('Admin Actions on Team', () => {
-  test('should show action menu for team members', async ({ adminPage }) => {
-    const page = adminPage
+  test('should show action menu for team members', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock users list with non-current user
     await page.route('**/api/admin/users**', async (route) => {
@@ -1101,9 +1081,9 @@ test.describe('Admin Actions on Team', () => {
   })
 
   test('should show role change options in action menu', async ({
-    adminPage
+    mockPage
   }) => {
-    const page = adminPage
+    const page = mockPage
 
     // Mock users list
     await page.route('**/api/admin/users**', async (route) => {
@@ -1144,8 +1124,8 @@ test.describe('Admin Actions on Team', () => {
     }
   })
 
-  test('should show remove option in action menu', async ({ adminPage }) => {
-    const page = adminPage
+  test('should show remove option in action menu', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock users list
     await page.route('**/api/admin/users**', async (route) => {
@@ -1185,9 +1165,9 @@ test.describe('Admin Actions on Team', () => {
   })
 
   test('should show confirmation dialog for role change', async ({
-    adminPage
+    mockPage
   }) => {
-    const page = adminPage
+    const page = mockPage
 
     // Mock users list
     await page.route('**/api/admin/users**', async (route) => {
@@ -1230,9 +1210,9 @@ test.describe('Admin Actions on Team', () => {
   })
 
   test('should show confirmation dialog for member removal', async ({
-    adminPage
+    mockPage
   }) => {
-    const page = adminPage
+    const page = mockPage
 
     // Mock users list
     await page.route('**/api/admin/users**', async (route) => {
@@ -1280,10 +1260,8 @@ test.describe('Admin Actions on Team', () => {
 // ============================================================================
 
 test.describe('Invite Actions', () => {
-  test('should show action menu for pending invites', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
+  test('should show action menu for pending invites', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock invites list with pending invite
     await page.route('**/api/organizations/invites**', async (route) => {
@@ -1314,10 +1292,8 @@ test.describe('Invite Actions', () => {
     await expect(actionButton).toBeVisible()
   })
 
-  test('should show resend and cancel options', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
+  test('should show resend and cancel options', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock invites list with pending invite
     await page.route('**/api/organizations/invites**', async (route) => {
@@ -1352,8 +1328,8 @@ test.describe('Invite Actions', () => {
     await expect(page.locator('text=Cancelar')).toBeVisible()
   })
 
-  test('should resend invite', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should resend invite', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock invites list
     await page.route('**/api/organizations/invites', async (route) => {
@@ -1404,10 +1380,8 @@ test.describe('Invite Actions', () => {
       })
   })
 
-  test('should show cancel confirmation dialog', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
+  test('should show cancel confirmation dialog', async ({ mockPage }) => {
+    const page = mockPage
 
     // Mock invites list
     await page.route('**/api/organizations/invites**', async (route) => {

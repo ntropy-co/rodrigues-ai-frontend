@@ -142,13 +142,17 @@ export async function POST(request: NextRequest) {
       // Also set refresh token if available
       // maxAge matches backend REFRESH_TOKEN_EXPIRE_DAYS (30 days)
       if (payload.refresh_token) {
-        jsonResponse.cookies.set('verity_refresh_token', payload.refresh_token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
-          path: '/',
-          maxAge: 30 * 24 * 60 * 60 // 30 days in seconds (matches backend config)
-        })
+        jsonResponse.cookies.set(
+          'verity_refresh_token',
+          payload.refresh_token,
+          {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            path: '/',
+            maxAge: 30 * 24 * 60 * 60 // 30 days in seconds (matches backend config)
+          }
+        )
       }
 
       return jsonResponse

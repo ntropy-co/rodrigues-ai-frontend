@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/static-components */
 'use client'
 
 import { memo, useCallback } from 'react'

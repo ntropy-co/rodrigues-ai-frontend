@@ -52,6 +52,7 @@ export function TourProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const stored = localStorage.getItem('verity_seen_tours')
     if (stored) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSeenTours(new Set(JSON.parse(stored)))
     }
   }, [])

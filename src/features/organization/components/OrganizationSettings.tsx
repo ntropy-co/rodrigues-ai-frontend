@@ -143,10 +143,19 @@ export function OrganizationSettings({
   // Sync form data with organization
   useEffect(() => {
     if (organization) {
-      setFormData({
-        name: organization.name || '',
-        cnpj: organization.cnpj || '',
-        logo_url: ''
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setFormData((prev) => {
+        if (
+          prev.name === (organization.name || '') &&
+          prev.cnpj === (organization.cnpj || '')
+        ) {
+          return prev
+        }
+        return {
+          name: organization.name || '',
+          cnpj: organization.cnpj || '',
+          logo_url: ''
+        }
       })
       setHasChanges(false)
     }

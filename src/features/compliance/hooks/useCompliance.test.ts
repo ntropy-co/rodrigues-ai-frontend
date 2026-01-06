@@ -7,7 +7,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { useCompliance } from './useCompliance'
-import { ComplianceVerifyRequest, ComplianceVerifyResponse, ComplianceDashboard } from '../../types'
+import {
+  ComplianceVerifyRequest,
+  ComplianceVerifyResponse,
+  ComplianceDashboard
+} from '../types'
 
 // =============================================================================
 // Mocks
@@ -250,9 +254,9 @@ describe('useCompliance', () => {
     })
 
     it('should handle verification without document_id', async () => {
-      const requestWithoutId: ComplianceVerifyRequest = {
+      const requestWithoutId = {
         extracted_data: { produto: 'Milho' }
-      }
+      } as unknown as ComplianceVerifyRequest
 
       mockFetch.mockResolvedValueOnce({
         ok: true,

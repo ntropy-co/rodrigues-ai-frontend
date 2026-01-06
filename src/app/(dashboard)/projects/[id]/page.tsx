@@ -14,8 +14,6 @@ import {
 import { Button } from '@/components/ui/button'
 import { chatApi, type Project, type SessionEntry } from '@/features/chat'
 import { formatRelativeTime } from '@/lib/utils/time'
-import { cn } from '@/lib/utils'
-import { InternalHeader } from '@/components/layout/InternalHeader'
 
 export default function ProjectHubPage() {
   const { id } = useParams()
