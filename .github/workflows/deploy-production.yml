@@ -31,8 +31,7 @@ jobs:
       environment: production
       vercel_env: production
       vercel_prod_flag: true
-    secrets:
-      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    secrets: inherit
 
   create-release:
     runs-on: ubuntu-latest
