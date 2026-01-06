@@ -1,15 +1,16 @@
 /* eslint-disable react-hooks/immutability */
 'use client'
 
-import { easings } from '@/lib/animations/easings'
+
 import { motion } from 'framer-motion'
 import {
-  Paperclip,
   ArrowUp,
   X,
   FileText,
   Image as ImageIcon,
-  Loader2
+  Loader2,
+  Plus,
+  Mic
 } from 'lucide-react'
 import { useEffect, useRef, useState, ChangeEvent, useCallback } from 'react'
 import {
@@ -119,12 +120,12 @@ export function InputBar({
   const textareaRef = useCallback(
     (node: HTMLTextAreaElement | null) => {
       // Update local ref
-      ;(
+      ; (
         localTextareaRef as React.MutableRefObject<HTMLTextAreaElement | null>
       ).current = node
       // Update context ref if available
       if (contextRef) {
-        ;(
+        ; (
           contextRef as React.MutableRefObject<HTMLTextAreaElement | null>
         ).current = node
       }
@@ -157,22 +158,22 @@ export function InputBar({
   const filteredItems =
     suggestionMode === 'slash'
       ? SLASH_COMMANDS.filter((c) =>
-          c.trigger.toLowerCase().startsWith(suggestionQuery.toLowerCase())
-        )
+        c.trigger.toLowerCase().startsWith(suggestionQuery.toLowerCase())
+      )
       : suggestionMode === 'mention'
         ? [
-            ...STATIC_MENTIONS,
-            // Dynamic file mentions from externalAttachments and attachments
-            ...[...externalAttachments, ...attachments].map((file, idx) => ({
-              id: `file-${idx}`,
-              label: file.name,
-              description: formatFileSize(file.size), // Using utility
-              type: 'mention' as const,
-              trigger: `@${file.name.replace(/\s+/g, '_')}` // Normalize trigger
-            }))
-          ].filter((m) =>
-            m.trigger.toLowerCase().includes(suggestionQuery.toLowerCase())
-          )
+          ...STATIC_MENTIONS,
+          // Dynamic file mentions from externalAttachments and attachments
+          ...[...externalAttachments, ...attachments].map((file, idx) => ({
+            id: `file-${idx}`,
+            label: file.name,
+            description: formatFileSize(file.size), // Using utility
+            type: 'mention' as const,
+            trigger: `@${file.name.replace(/\s+/g, '_')}` // Normalize trigger
+          }))
+        ].filter((m) =>
+          m.trigger.toLowerCase().includes(suggestionQuery.toLowerCase())
+        )
         : []
 
   const closeSuggestions = () => {
@@ -423,55 +424,22 @@ export function InputBar({
       />
 
       <div
-        className={`relative w-full px-4 pb-8 pt-2 transition-colors md:px-6 ${
-          isDragOver ? 'bg-verity-100/50' : ''
-        }`}
+        className={`relative w-full px-4 pb-8 pt-2 transition-colors md:px-6 ${isDragOver ? 'bg-verity-100/50' : ''
+          }`}
         onDragOver={(e) => {
           e.preventDefault()
           setIsDragOver(true)
         }}
         onDragLeave={() => setIsDragOver(false)}
         onDrop={handleDrop}
-        style={{ perspective: '1000px' }}
       >
-        <motion.div
-          initial={{ opacity: 0, y: 30, rotateX: -15 }}
-          animate={{ opacity: 1, y: 0, rotateX: 0 }}
-          transition={{
-            duration: 0.8,
-            ease: [0.25, 0.46, 0.45, 0.94] // Easing butter
-          }}
-          className="relative mx-auto max-w-md pb-4"
-          style={{
-            transformStyle: 'preserve-3d',
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden'
-          }}
-        >
-          {/* Layer 6: Reflexo Inferior (Chão) */}
-          <div
-            className="absolute -bottom-10 left-0 right-0 h-10 rounded-[100%] bg-gradient-to-b from-verity-900/10 to-transparent blur-xl"
-            style={{
-              transform: 'translateZ(-40px) scaleY(0.4)',
-              transformOrigin: 'top'
-            }}
-          />
-
-          {/* Layer 5: Sombra Profunda */}
-          <div
-            className="absolute inset-0 rounded-[2.5rem] bg-verity-950/20 blur-2xl transition-all duration-500 group-hover:bg-verity-950/25"
-            style={{
-              transform: 'translateZ(-30px) scale(0.9) translateY(25px)'
-            }}
-          />
-
+        <div className="relative mx-auto max-w-3xl">
           {/* Attachments Preview - Floating above */}
           {(attachments.length > 0 || externalAttachments.length > 0) && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-4 flex flex-wrap gap-2 px-4"
-              style={{ transform: 'translateZ(10px)' }}
+              className="mb-4 flex flex-wrap gap-2 px-1"
             >
               {[
                 ...externalAttachments.map((f) => ({ ...f, isExternal: true })),
@@ -482,13 +450,13 @@ export function InputBar({
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: index * 0.05 }}
-                  className="relative flex items-center gap-2 overflow-hidden rounded-xl border border-sand-200 bg-sand-50/90 py-1.5 pl-3 pr-8 text-xs text-verity-900 shadow-lg backdrop-blur-md"
+                  className="relative flex items-center gap-2 overflow-hidden rounded-xl border border-sand-200 bg-sand-50/90 py-1.5 pl-3 pr-8 text-xs text-verity-900 shadow-sm backdrop-blur-md"
                 >
                   <div className="flex h-5 w-5 items-center justify-center rounded-md bg-sand-200 text-verity-600">
                     {(file.type || '').startsWith('image/') ? (
-                      <ImageIcon className="h-3 w-3" />
+                      <ImageIcon className="h-3 w-3" strokeWidth={1.5} />
                     ) : (
-                      <FileText className="h-3 w-3" />
+                      <FileText className="h-3 w-3" strokeWidth={1.5} />
                     )}
                   </div>
                   <div className="z-10 flex flex-col">
@@ -506,11 +474,6 @@ export function InputBar({
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         onRemoveExternalAttachment((file as any).id)
                       } else {
-                        // Correct index for local attachments
-                        // If it's local, we need to find its index in the 'attachments' array
-                        // But since we are mapping a combined array, the index here is global
-                        // This is tricky. Let's filter 'attachments' by reference?
-                        // Or easier: use the mixed array for display but separate removal logic.
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         const localIndex = attachments.indexOf(file as any)
                         if (localIndex !== -1) removeAttachment(localIndex)
@@ -518,46 +481,22 @@ export function InputBar({
                     }}
                     className="absolute right-1 top-1/2 z-20 -translate-y-1/2 rounded-full p-1 text-verity-400 transition-colors hover:bg-error-50 hover:text-error-500"
                   >
-                    <X className="h-3 w-3" />
+                    <X className="h-3 w-3" strokeWidth={1.5} />
                   </button>
                 </motion.div>
               ))}
             </motion.div>
           )}
 
-          {/* Layer 4: Container Principal (Pílula Orgânica Suprema) */}
+          {/* ChatGPT-style Pill Container (Verity Brand: Sand & Organic) */}
           <motion.div
-            className="group relative flex items-end gap-2 rounded-full border border-sand-200 bg-white/50 px-5 py-3 backdrop-blur-xl transition-all duration-300 hover:border-verity-200/50 hover:bg-white/70"
-            style={{
-              transform: 'translateZ(0)',
-              transformStyle: 'preserve-3d'
-            }}
+            className={`group relative flex min-h-[52px] w-full items-end gap-2 rounded-[26px] border px-4 py-3 transition-colors ${isFocused
+              ? 'border-verity-300 bg-white shadow-md shadow-verity-900/5 ring-1 ring-verity-300/20'
+              : 'border-sand-300 bg-sand-50 hover:border-sand-400'
+              } dark:bg-verity-900 dark:border-verity-800`}
             initial={false}
-            animate={isFocused ? 'focus' : 'rest'}
-            variants={{
-              rest: {
-                scale: 1,
-                boxShadow:
-                  '0 2px 10px rgba(45, 90, 69, 0.03), 0 10px 40px -10px rgba(45, 90, 69, 0.05)',
-                borderColor: 'rgba(212, 212, 208, 0.6)'
-              },
-              focus: {
-                scale: 1.01,
-                boxShadow:
-                  '0 4px 20px rgba(45, 90, 69, 0.06), 0 20px 60px -20px rgba(45, 90, 69, 0.1)',
-                borderColor: '#9DC4B0'
-              }
-            }}
-            transition={{ duration: 0.4, ease: easings.butter }}
+            animate={{ scale: 1 }}
           >
-            {/* Shimmer Removed for Cleaner Organic Look */}
-
-            {/* Layer 3: Borda Iluminada Superior */}
-            <div
-              className="absolute -top-px left-4 right-4 h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-60"
-              style={{ transform: 'translateZ(2px)' }}
-            />
-
             {/* Autosuggestion Floating Menu */}
             <SuggestionList
               isVisible={!!suggestionMode && filteredItems.length > 0}
@@ -568,7 +507,33 @@ export function InputBar({
               trigger={suggestionMode === 'slash' ? '/' : '@'}
             />
 
-            {/* Text Area */}
+            {/* Left Action: Attach (Plus) */}
+            <div className="mb-0.5 flex flex-shrink-0 items-center justify-center">
+              <input
+                type="file"
+                multiple
+                className="hidden"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+              />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      onClick={() => setIsUploadModalOpen(true)}
+                      className="flex h-8 w-8 items-center justify-center rounded-full text-verity-500 transition-colors hover:bg-sand-200 hover:text-verity-900 group-hover:text-verity-700"
+                      aria-label="Adicionar anexo"
+                    >
+                      <Plus className="h-5 w-5" strokeWidth={1.5} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>Adicionar anexo</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+
+            {/* Center: Text Input */}
             <textarea
               ref={textareaRef}
               id="chat-input"
@@ -578,138 +543,79 @@ export function InputBar({
               onFocus={() => setIsFocused(true)}
               onBlur={() => {
                 setIsFocused(false)
-                // Delayed close to allow click on suggestion list
                 setTimeout(closeSuggestions, 200)
               }}
               placeholder={
                 isLoading
-                  ? 'Digite sua próxima mensagem...'
+                  ? 'Pensando...'
                   : disabled
                     ? 'Aguarde...'
-                    : 'Descreva sua análise, use / para comandos ou @ para documentos...'
+                    : 'Como posso auxiliar em sua análise hoje?'
               }
-              role="combobox"
-              aria-label="Mensagem para o assistente Verity Agro"
-              aria-autocomplete="list"
-              aria-haspopup="listbox"
-              aria-expanded={!!suggestionMode}
-              aria-controls="suggestion-list"
-              aria-activedescendant={
-                suggestionMode
-                  ? `suggestion-option-${selectedIndex}`
-                  : undefined
-              }
-              className="relative z-10 flex-1 resize-none bg-transparent py-2.5 font-sans text-base text-verity-950 placeholder:text-verity-700 focus:outline-none"
-              disabled={disabled} // Only disable if strictly disabled (e.g. session loading)
               rows={1}
               style={{ maxHeight: '200px' }}
+              className="flex-1 resize-none bg-transparent py-1.5 text-base text-verity-950 placeholder:text-verity-400 focus:outline-none dark:text-sand-100 dark:placeholder:text-verity-600"
             />
 
-            {/* Action Buttons Zone */}
-            <div
-              className="relative z-10 flex flex-shrink-0 items-center gap-2 pb-1.5"
-              style={{ transformStyle: 'preserve-3d' }}
-            >
-              <input
-                type="file"
-                multiple
-                className="hidden"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-              />
-
-              <TooltipProvider delayDuration={300}>
-                {/* Attach Button - Opens Modal */}
+            {/* Right Actions: Mic & Send */}
+            <div className="mb-0.5 flex flex-shrink-0 items-center gap-2">
+              {/* Mic Button (Visual/Mock) */}
+              <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <motion.button
-                      whileHover={{ scale: 1.05, z: 10, rotateZ: 2 }}
-                      whileTap={{ scale: 0.95 }}
-                      aria-label="Anexar documentos"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setIsUploadModalOpen(true)
-                      }}
-                      disabled={disabled}
-                      className="flex h-10 w-10 items-center justify-center rounded-xl text-verity-700 transition-colors hover:bg-verity-50 hover:text-verity-950 disabled:cursor-not-allowed disabled:opacity-50"
+                    <button
+                      type="button"
+                      className="hidden h-8 w-8 items-center justify-center rounded-full text-verity-900 transition-colors hover:bg-sand-200 sm:flex dark:text-sand-300 dark:hover:bg-verity-800"
+                      aria-label="Usar microfone"
+                      onClick={() => toast.info('Entrada de voz em breve!')}
                     >
-                      <Paperclip className="h-5 w-5" />
-                    </motion.button>
+                      <Mic className="h-5 w-5" strokeWidth={1.5} />
+                    </button>
                   </TooltipTrigger>
-                  <TooltipContent className="border-verity-900 bg-verity-950 text-white">
-                    <p>Anexar documentos</p>
-                  </TooltipContent>
-                </Tooltip>
-
-                {/* Send Button */}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <motion.button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleSend()
-                      }}
-                      aria-label="Enviar mensagem"
-                      disabled={
-                        (!input.trim() &&
-                          attachments.length === 0 &&
-                          externalAttachments.length === 0) ||
-                        isLoading ||
-                        disabled
-                      }
-                      className={`relative flex h-10 w-10 items-center justify-center rounded-xl transition-all ${
-                        (!input.trim() &&
-                          attachments.length === 0 &&
-                          externalAttachments.length === 0) ||
-                        isLoading ||
-                        disabled
-                          ? 'cursor-not-allowed bg-sand-200 text-verity-300 opacity-70'
-                          : 'bg-gradient-to-br from-verity-900 to-verity-800 text-white shadow-lg shadow-verity-900/20'
-                      }`}
-                      whileHover={
-                        (!input.trim() &&
-                          attachments.length === 0 &&
-                          externalAttachments.length === 0) ||
-                        isLoading ||
-                        disabled
-                          ? {}
-                          : { scale: 1.1, z: 6, y: -2 }
-                      }
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {/* Inner 3D Highlight for Button */}
-                      <div
-                        className="absolute inset-0 rounded-xl bg-gradient-to-t from-transparent to-white/10"
-                        style={{ transform: 'translateZ(1px)' }}
-                      />
-
-                      {isLoading ? (
-                        <Loader2 className="relative z-10 h-5 w-5 animate-spin" />
-                      ) : (
-                        <ArrowUp className="relative z-10 h-5 w-5" />
-                      )}
-                    </motion.button>
-                  </TooltipTrigger>
-                  <TooltipContent className="border-verity-900 bg-verity-950 text-white">
-                    <p>Enviar mensagem</p>
-                  </TooltipContent>
+                  <TooltipContent>Entrada de voz</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
+
+              {/* Send Button */}
+              <motion.button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleSend()
+                }}
+                disabled={
+                  (!input.trim() &&
+                    attachments.length === 0 &&
+                    externalAttachments.length === 0) ||
+                  isLoading ||
+                  disabled
+                }
+                whileTap={{ scale: 0.95 }}
+                className={`flex h-8 w-8 items-center justify-center rounded-full transition-all ${(!input.trim() &&
+                  attachments.length === 0 &&
+                  externalAttachments.length === 0) ||
+                  isLoading ||
+                  disabled
+                  ? 'bg-sand-200 text-verity-300 cursor-not-allowed dark:bg-verity-800 dark:text-verity-600'
+                  : 'bg-verity-800 text-white hover:bg-verity-900 shadow-sm dark:bg-verity-600 dark:hover:bg-verity-500'
+                  }`}
+                aria-label="Enviar"
+              >
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <ArrowUp className="h-4 w-4" strokeWidth={2} />
+                )}
+              </motion.button>
             </div>
           </motion.div>
 
-          {/* Disclaimer */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="mt-4 text-center"
-          >
-            <p className="text-xs font-medium text-verity-800">
+          {/* Footer Text */}
+          <div className="mt-2 text-center">
+            <p className="text-[10px] text-verity-400 dark:text-verity-600">
               Verity Agro pode cometer erros. Verifique informações importantes.
             </p>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </>
   )
