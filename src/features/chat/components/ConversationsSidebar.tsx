@@ -466,9 +466,9 @@ const SidebarContent = memo(function SidebarContent({
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto px-3 pb-4 pt-4">
         {/* Projetos Section */}
-        <div className="mb-6">
-          <div className="mb-2 flex items-center justify-between px-2">
-            <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-verity-600">
+        <div className="mb-8">
+          <div className="mb-2.5 flex items-center justify-between px-2">
+            <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-verity-600/70">
               Projetos
             </h3>
             <button
@@ -572,10 +572,10 @@ const SidebarContent = memo(function SidebarContent({
         </div>
 
         {/* Conversas Section */}
-        <div>
-          <div className="mb-2 flex items-center justify-between px-2">
+        <div className="mb-4">
+          <div className="mb-2.5 flex items-center justify-between px-2">
             <div className="flex items-center gap-2">
-              <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-verity-600">
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-verity-600/70">
                 Conversas
               </h3>
               {selectedProjectId && (
