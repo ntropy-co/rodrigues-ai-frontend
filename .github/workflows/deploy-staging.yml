@@ -9,7 +9,6 @@ jobs:
     uses: ./.github/workflows/validate.yml
     secrets: inherit
 
-
   deploy:
     needs: [validate]
     uses: ./.github/workflows/reusable-deploy.yml

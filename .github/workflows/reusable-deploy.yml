@@ -21,7 +21,7 @@ on:
         required: true
     outputs:
       deployment-url:
-        description: "The deployment URL"
+        description: 'The deployment URL'
         value: ${{ jobs.deploy.outputs.url }}
 
 jobs:

@@ -16,19 +16,18 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validation (Lint & Typecheck)
         run: |
-           echo "Running validation from reusable workflow..."
-           # Ideally we call reusable workflow here, but 'uses' cannot be conditioned easily inside steps of a job?
-           # Actually 'uses' at job level supports 'if'.
-           # So separating job is correct.
-           
+          echo "Running validation from reusable workflow..."
+          # Ideally we call reusable workflow here, but 'uses' cannot be conditioned easily inside steps of a job?
+          # Actually 'uses' at job level supports 'if'.
+          # So separating job is correct.
+
   # Wait, 'uses' defines the job content. I cannot mix 'steps' and 'uses' in same job.
   # So I define 'validate' job using 'uses'.
-  
+
   validate-checks:
     if: inputs.confirm == 'deploy'
     uses: ./.github/workflows/validate.yml
     secrets: inherit
-
 
   deploy:
     needs: [validate-checks]
