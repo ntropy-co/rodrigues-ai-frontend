@@ -133,7 +133,7 @@ export function FilesSidebar({
         <div>
           <div className="mb-3 flex items-center justify-between px-1">
             <h4 className="text-[10px] font-bold uppercase tracking-[0.15em] text-verity-600/70">
-              Enviados por você
+              Documentos Enviados
             </h4>
             <span className="text-[10px] font-medium text-verity-400">
               {uploadedFiles.length}
