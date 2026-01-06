@@ -31,10 +31,12 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
-const BACKEND_URL =
-  process.env.API_URL ||
-  process.env.NEXT_PUBLIC_API_URL ||
-  'http://localhost:8000'
+// HARDCODED DEBUG URL TO BYPASS VERCEL ENV VAR ISSUES
+const BACKEND_URL = 'https://api.verityagro.com'
+// const BACKEND_URL =
+//   process.env.API_URL ||
+//   process.env.NEXT_PUBLIC_API_URL ||
+//   'http://localhost:8000'
 
 type BackendUser = {
   id: string
@@ -64,6 +66,8 @@ export async function POST(request: NextRequest) {
     const formData = new URLSearchParams()
     formData.append('username', body.email)
     formData.append('password', body.password)
+
+    console.log(`[Auth Login] Connecting to ${BACKEND_URL}...`)
 
     // Forward the request to the backend
     const response = await fetch(`${BACKEND_URL}/api/v1/auth/login`, {
@@ -164,9 +168,14 @@ export async function POST(request: NextRequest) {
       data
     })
     return NextResponse.json(data, { status: response.status })
-  } catch {
+  } catch (error) {
+    // IMPROVED ERROR LOGGING
+    console.error('[Auth Login] CRITICAL ERROR:', error)
     return NextResponse.json(
-      { detail: 'Internal server error' },
+      {
+        detail: 'Internal server error',
+        debug_error: String(error)
+      },
       { status: 500 }
     )
   }
