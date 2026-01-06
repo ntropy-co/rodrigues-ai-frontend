@@ -13,7 +13,10 @@ const QuickActionButton = ({
 }: {
   children: React.ReactNode
   onClick: () => void
-  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
+  icon: React.ComponentType<{
+    className?: string
+    strokeWidth?: number | string
+  }>
   delay?: number
 }) => (
   <motion.button
