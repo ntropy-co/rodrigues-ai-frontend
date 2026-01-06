@@ -17,7 +17,6 @@ import {
 } from 'lucide-react'
 import { ProjectDialog } from './ProjectDialog'
 import { MoveToProjectDialog } from './MoveToProjectDialog'
-import { Avatar } from './Avatar'
 import { cn } from '@/lib/utils'
 import { useSessions } from '../hooks/useSessions'
 import { useProjects, type Project } from '../hooks/useProjects'
@@ -728,19 +727,12 @@ const ConversationCard = memo(function ConversationCard({
       }}
       whileTap={{ scale: 0.99 }}
       className={cn(
-        'group relative flex w-full cursor-pointer items-start gap-3 rounded-lg border-l-0 px-3 py-2.5 text-left outline-none transition-all duration-200',
+        'group relative flex w-full cursor-pointer flex-col rounded-lg border-l-2 px-3 py-2.5 text-left outline-none transition-all duration-200',
         isActive
-          ? 'border-l-2 border-verity-900 bg-sand-300 font-semibold text-verity-950 shadow-sm'
-          : 'border-l-2 border-transparent bg-transparent text-verity-900 hover:bg-sand-200 hover:text-verity-950'
+          ? 'border-verity-600 bg-sand-300 text-verity-950 shadow-sm'
+          : 'border-transparent bg-transparent text-verity-900 hover:border-verity-300 hover:bg-sand-200 hover:text-verity-950'
       )}
     >
-      {/* Avatar mini */}
-      <Avatar
-        email={projectEmail || title}
-        size="sm"
-        className="mt-0.5 flex-shrink-0"
-      />
-
       {/* Conteúdo */}
       <div className="min-w-0 flex-1">
         {/* Título + Badge */}
