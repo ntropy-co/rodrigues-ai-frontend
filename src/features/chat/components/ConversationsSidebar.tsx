@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef, memo, useMemo } from 'react'
-import { motion } from 'framer-motion'
-import Link from 'next/link'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Search,
   Plus,
@@ -10,7 +9,6 @@ import {
   ChevronLeft,
   Loader2,
   SquarePen,
-  LayoutGrid,
   Trash2,
   Maximize2,
   FolderInput
@@ -352,7 +350,7 @@ interface SidebarContentProps {
 // Inner content component to avoid duplication - memoized to prevent re-renders
 const SidebarContent = memo(function SidebarContent({
   searchQuery,
-  // setSearchQuery removed
+  setSearchQuery,
   onToggle,
   onNewConversation,
   activeConversationId,
@@ -449,6 +447,7 @@ const SidebarContent = memo(function SidebarContent({
             type="search"
             placeholder="Buscar"
             value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="h-9 w-full rounded-lg border border-sand-300 bg-white/50 px-3 pl-9 text-sm text-verity-950 transition-all placeholder:text-verity-500 focus:border-verity-600 focus:outline-none focus:ring-0"
           />
         </div>
@@ -490,7 +489,6 @@ const SidebarContent = memo(function SidebarContent({
             </div>
           ) : (
             <div className="space-y-0.5">
-              {/* Header de "Todas as Conversas" (Compacto) */}
               {projects
                 .slice(0, isProjectsExpanded ? undefined : 3)
                 .map((project) => (
@@ -514,6 +512,42 @@ const SidebarContent = memo(function SidebarContent({
                     }
                   />
                 ))}
+
+              <AnimatePresence>
+                {isProjectsExpanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    className="space-y-0.5 overflow-hidden"
+                  >
+                    {projects.slice(3).map((project) => (
+                      <ConversationCard
+                        key={project.id}
+                        id={project.id}
+                        title={project.title}
+                        timestamp={formatRelativeTime(
+                          new Date(project.created_at)
+                        )}
+                        isActive={selectedProjectId === project.id}
+                        onClick={() =>
+                          handleProjectSelect(
+                            selectedProjectId === project.id ? null : project.id
+                          )
+                        }
+                        onUpdateTitle={(newTitle) =>
+                          onUpdateProject(project.id, { title: newTitle })
+                        }
+                        onDelete={() => onDeleteProject(project.id)}
+                        onViewDetails={() =>
+                          (window.location.href = `/projects/${project.id}`)
+                        }
+                      />
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* View More Projects */}
               {projects.length > 3 && (
@@ -539,8 +573,8 @@ const SidebarContent = memo(function SidebarContent({
         </div>
 
         {/* Conversas Section */}
-        <div>
-          <div className="mb-2 flex items-center justify-between px-2">
+        <div className="mb-4">
+          <div className="mb-2.5 flex items-center justify-between px-2">
             <div className="flex items-center gap-2">
               <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-verity-600">
                 Conversas
@@ -608,6 +642,42 @@ const SidebarContent = memo(function SidebarContent({
                   />
                 ))}
 
+              <AnimatePresence>
+                {isConversationsExpanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    className="space-y-1 overflow-hidden"
+                  >
+                    {filteredSessions.slice(5).map((session) => (
+                      <ConversationCard
+                        key={session.session_id}
+                        id={session.session_id}
+                        title={session.title}
+                        timestamp={formatRelativeTime(session.created_at)}
+                        isActive={activeConversationId === session.session_id}
+                        onClick={() => {
+                          trackConversationSelected(
+                            session.session_id,
+                            'sidebar'
+                          )
+                          onSelectConversation?.(session.session_id)
+                        }}
+                        onUpdateTitle={(newTitle) =>
+                          onUpdateSession(session.session_id, {
+                            title: newTitle
+                          })
+                        }
+                        onDelete={() => onDeleteSession(session.session_id)}
+                        onMove={() => openMoveDialog(session.session_id)}
+                      />
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               {/* View More History */}
               {filteredSessions.length > 5 && (
                 <button
@@ -651,7 +721,6 @@ interface ConversationCardProps {
   id: string
   title: string
   timestamp: string
-  projectEmail?: string
   preview?: string
   isActive?: boolean
   unreadCount?: number
@@ -665,7 +734,6 @@ interface ConversationCardProps {
 const ConversationCard = memo(function ConversationCard({
   title,
   timestamp,
-  projectEmail,
   preview,
   isActive = false,
   unreadCount = 0,
