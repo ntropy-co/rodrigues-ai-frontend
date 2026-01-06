@@ -55,19 +55,19 @@ export function FilesSidebar({
   const sidebarContent = (
     <div className="flex h-full w-[320px] flex-col">
       {/* Header */}
-      <div className="flex flex-col border-b border-verity-100 p-4">
+      <div className="flex flex-col border-b border-sand-300/50 bg-sand-200/50 p-4 backdrop-blur-sm">
         <div className="mb-1 flex items-center justify-between">
-          <h3 className="font-display text-lg font-semibold text-verity-950">
+          <h3 className="font-display text-base font-medium text-verity-950">
             Arquivos
           </h3>
           <button
             onClick={handleClose}
-            className="rounded-full p-1.5 text-verity-600 transition-colors hover:bg-verity-100 hover:text-verity-900"
+            className="rounded-full p-1.5 text-verity-600 transition-colors hover:bg-sand-300 hover:text-verity-900"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
-        <p className="text-xs text-verity-600">Documentos desta análise</p>
+        <p className="text-xs text-verity-500">Documentos desta análise</p>
       </div>
 
       {/* Content */}
@@ -75,10 +75,10 @@ export function FilesSidebar({
         {/* Uploads Section */}
         <div>
           <div className="mb-3 flex items-center justify-between px-1">
-            <h4 className="text-xs font-medium uppercase tracking-wide text-verity-700">
+            <h4 className="text-[10px] font-bold uppercase tracking-[0.15em] text-verity-600/70">
               Enviados por você
             </h4>
-            <span className="text-xs font-medium text-verity-400">
+            <span className="text-[10px] font-medium text-verity-400">
               {uploadedFiles.length}
             </span>
           </div>
@@ -105,10 +105,10 @@ export function FilesSidebar({
         {/* Generated Section */}
         <div>
           <div className="mb-3 flex items-center justify-between px-1">
-            <h4 className="text-xs font-medium uppercase tracking-wide text-verity-700">
+            <h4 className="text-[10px] font-bold uppercase tracking-[0.15em] text-verity-600/70">
               Gerados pela IA
             </h4>
-            <span className="text-xs font-medium text-verity-400">
+            <span className="text-[10px] font-medium text-verity-400">
               {generatedFiles.length}
             </span>
           </div>
@@ -141,7 +141,7 @@ export function FilesSidebar({
       {/* Footer */}
       <div className="border-t border-sand-300 bg-sand-200 p-4">
         <button
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-verity-200 bg-verity-50 px-4 py-2.5 text-sm font-medium text-verity-900 shadow-sm transition-all hover:bg-verity-100 hover:shadow-md active:scale-95 disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-xl border border-sand-400 bg-sand-300/50 px-4 py-2.5 text-sm font-medium text-verity-800 shadow-sm transition-all hover:bg-sand-300 hover:shadow-md active:scale-95 disabled:opacity-50"
           disabled={uploadedFiles.length === 0 && generatedFiles.length === 0}
         >
           <Download className="h-4 w-4" />
@@ -200,10 +200,10 @@ function EmptyState({
   return (
     <motion.div
       variants={item}
-      className="flex flex-col items-center justify-center rounded-lg border border-dashed border-verity-200 bg-verity-50/50 py-8 text-center"
+      className="flex flex-col items-center justify-center rounded-lg border border-dashed border-sand-400 bg-sand-100/50 py-8 text-center"
     >
-      <FileQuestion className="mb-2 h-8 w-8 text-verity-300" />
-      <p className="text-xs font-medium text-verity-700">{message}</p>
+      <FileQuestion className="mb-2 h-8 w-8 text-sand-400" />
+      <p className="text-xs font-medium text-verity-600">{message}</p>
       {subtext && (
         <p className="mt-0.5 text-[10px] text-verity-500">{subtext}</p>
       )}
