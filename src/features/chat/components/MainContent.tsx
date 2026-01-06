@@ -43,7 +43,6 @@ const QuickActionButton = ({
     {children}
   </motion.button>
 )
-
 interface MainContentProps {
   onSuggestionClick?: (suggestion: string) => void
 }
