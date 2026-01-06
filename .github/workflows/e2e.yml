@@ -33,18 +33,15 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      # Build step removed as Playwright uses dev server (npm run dev:e2e)
+      # Tests use API mocking (mockPage fixture), so no real backend is required.
+      # Credentials are optional - tests will skip gracefully if not provided.
 
       - name: Run E2E tests
         run: npm run test:e2e -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
         env:
           CI: true
-          # Local backend url, but likely unreachable in standard GitHub Actions without service container.
-          # Reverting to localhost:3000 (frontend) is standard as playwight starts it.
-          # The key is backend. Does backend need to run?
-          # The playwright config uses 'npm run dev:e2e' for webServer.
-          # If tests depend on a REAL backend, this might fail if not mocked or handled.
-          # Assuming current config works (albeit slow), just purely sharding it.
+          # Optional: If secrets are configured, programmatic auth will work.
+          # If not, tests will run with full API mocking.
           TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
           TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
           TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}

@@ -13,6 +13,10 @@
  */
 
 import { test, expect } from '../fixtures/auth.fixture'
+import {
+  setupAllMocks,
+  mockSessions as apiMockSessions
+} from '../fixtures/api-mocks'
 
 // ============================================================================
 // Test Data and Mock Responses
@@ -76,58 +80,33 @@ const mockStreamingResponse = `data: {"type": "content", "content": "Esta "}\n\n
 // ============================================================================
 
 test.describe('Chat Page Display', () => {
-  test.beforeEach(async ({ authenticatedPage }) => {
-    // Mock sessions endpoint
-    await authenticatedPage.route('**/api/sessions**', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          sessions: mockSessions,
-          total: mockSessions.length
-        })
-      })
-    })
-
-    // Mock projects endpoint
-    await authenticatedPage.route('**/api/projects**', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ projects: [], total: 0 })
-      })
-    })
+  test.beforeEach(async ({ mockPage }) => {
+    // All API mocks are already set up by the mockPage fixture
+    // Navigate to chat page
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
   })
 
   test('should display chat page with main layout elements', async ({
-    authenticatedPage
+    mockPage
   }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-
-    // Wait for page to load
-    await page.waitForLoadState('networkidle')
-
     // Check for main input bar
-    const chatInput = page.locator('#chat-input')
+    const chatInput = mockPage.locator('#chat-input')
     await expect(chatInput).toBeVisible({ timeout: 10000 })
 
     // Check for placeholder text
+    // Regex matches "Descreva" and accented "análise"
     await expect(chatInput).toHaveAttribute(
       'placeholder',
-      /descreva.*analise|mensagem/i
+      /descreva.*an.lise|mensagem/i
     )
   })
 
   test('should display conversations sidebar on desktop', async ({
-    authenticatedPage
+    mockPage
   }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
-
     // Check for "Nova Conversa" button
-    const newConversationButton = page.locator(
+    const newConversationButton = mockPage.locator(
       'button:has-text("Nova Conversa")'
     )
     await expect(newConversationButton)
@@ -137,7 +116,7 @@ test.describe('Chat Page Display', () => {
       })
 
     // Check for search input in sidebar
-    const searchInput = page.locator('input[placeholder*="Buscar"]')
+    const searchInput = mockPage.locator('input[placeholder*="Buscar"]')
     await expect(searchInput)
       .toBeVisible({ timeout: 5000 })
       .catch(() => {
@@ -145,29 +124,20 @@ test.describe('Chat Page Display', () => {
       })
   })
 
-  test('should display disclaimer text', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
-
+  test('should display disclaimer text', async ({ mockPage }) => {
     // Check for disclaimer
     await expect(
-      page.locator(
+      mockPage.locator(
         'text=/verity.*agro.*cometer.*erros|verifique.*informacoes/i'
       )
     ).toBeVisible({ timeout: 10000 })
   })
 
   test('should display welcome content when no messages', async ({
-    authenticatedPage
+    mockPage
   }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
-
     // When there are no messages, should show main content/suggestions
-    // Look for suggestion cards or welcome message
-    const mainContent = page.locator(
+    const mainContent = mockPage.locator(
       'text=/como.*posso.*ajudar|sugestoes|comece/i, [class*="suggestion"]'
     )
 
@@ -184,17 +154,14 @@ test.describe('Chat Page Display', () => {
 // ============================================================================
 
 test.describe('Session Management', () => {
-  test.beforeEach(async ({ authenticatedPage }) => {
+  test.beforeEach(async ({ mockPage }) => {
     // Mock sessions endpoint
-    await authenticatedPage.route('**/api/sessions**', async (route) => {
+    await mockPage.route('**/api/sessions**', async (route) => {
       if (route.request().method() === 'GET') {
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify({
-            sessions: mockSessions,
-            total: mockSessions.length
-          })
+          body: JSON.stringify(mockSessions)
         })
       } else {
         await route.continue()
@@ -202,28 +169,26 @@ test.describe('Session Management', () => {
     })
 
     // Mock projects endpoint
-    await authenticatedPage.route('**/api/projects**', async (route) => {
+    await mockPage.route('**/api/projects**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ projects: [], total: 0 })
+        body: JSON.stringify([])
       })
     })
   })
 
-  test('should display list of sessions in sidebar', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+  test('should display list of sessions in sidebar', async ({ mockPage }) => {
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Wait for sessions to load
-    await page.waitForTimeout(1000)
+    await mockPage.waitForTimeout(1000)
 
     // Check for session titles
     for (const session of mockSessions) {
-      const sessionCard = page.locator(`text=${session.title}`)
+      const sessionCard = mockPage.locator(`text=${session.title}`)
       await expect(sessionCard)
         .toBeVisible({ timeout: 5000 })
         .catch(() => {
@@ -233,14 +198,14 @@ test.describe('Session Management', () => {
   })
 
   test('should create new session when clicking Nova Conversa', async ({
-    authenticatedPage
+    mockPage
   }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Mock create session endpoint
-    await page.route('**/api/sessions', async (route) => {
+    await mockPage.route('**/api/sessions', async (route) => {
       if (route.request().method() === 'POST') {
         await route.fulfill({
           status: 201,
@@ -260,28 +225,26 @@ test.describe('Session Management', () => {
     })
 
     // Click new conversation button
-    const newButton = page.locator('button:has-text("Nova Conversa")')
+    const newButton = mockPage.locator('button:has-text("Nova Conversa")')
     if (await newButton.isVisible({ timeout: 5000 }).catch(() => false)) {
       await newButton.click()
 
       // Should navigate or reset the chat
-      await page.waitForTimeout(500)
+      await mockPage.waitForTimeout(500)
 
       // Input should be cleared and ready for new message
-      const chatInput = page.locator('#chat-input')
+      const chatInput = mockPage.locator('#chat-input')
       await expect(chatInput).toHaveValue('')
     }
   })
 
-  test('should select existing session from sidebar', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+  test('should select existing session from sidebar', async ({ mockPage }) => {
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Mock chat history endpoint
-    await page.route('**/api/chat/history/**', async (route) => {
+    await mockPage.route('**/api/chat/history/**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -293,47 +256,45 @@ test.describe('Session Management', () => {
     })
 
     // Wait for sessions to load
-    await page.waitForTimeout(1000)
+    await mockPage.waitForTimeout(1000)
 
     // Click on first session
-    const firstSession = page.locator(`text=${mockSessions[0].title}`)
+    const firstSession = mockPage.locator(`text=${mockSessions[0].title}`)
     if (await firstSession.isVisible({ timeout: 5000 }).catch(() => false)) {
       await firstSession.click()
 
       // URL should change to include session ID
-      await expect(page).toHaveURL(/\/chat\/s_test-session-001/, {
+      await expect(mockPage).toHaveURL(/\/chat\/s_test-session-001/, {
         timeout: 5000
       })
     }
   })
 
-  test('should search sessions', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+  test('should search sessions', async ({ mockPage }) => {
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Find and use search input
-    const searchInput = page.locator('input[placeholder*="Buscar"]')
+    const searchInput = mockPage.locator('input[placeholder*="Buscar"]')
     if (await searchInput.isVisible({ timeout: 5000 }).catch(() => false)) {
       await searchInput.fill('CPR')
 
       // Wait for filter to apply
-      await page.waitForTimeout(500)
+      await mockPage.waitForTimeout(500)
 
       // Should show matching sessions
-      await expect(page.locator('text=/CPR/i').first()).toBeVisible()
+      await expect(mockPage.locator('text=/CPR/i').first()).toBeVisible()
     }
   })
 
-  test('should delete session with confirmation', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+  test('should delete session with confirmation', async ({ mockPage }) => {
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Mock delete endpoint
-    await page.route('**/api/sessions/*', async (route) => {
+    await mockPage.route('**/api/sessions/*', async (route) => {
       if (route.request().method() === 'DELETE') {
         await route.fulfill({
           status: 200,
@@ -346,15 +307,17 @@ test.describe('Session Management', () => {
     })
 
     // Wait for sessions to load
-    await page.waitForTimeout(1000)
+    await mockPage.waitForTimeout(1000)
 
     // Find first session card and look for delete button (appears on hover)
-    const sessionCard = page.locator(`text=${mockSessions[0].title}`).first()
+    const sessionCard = mockPage
+      .locator(`text=${mockSessions[0].title}`)
+      .first()
     if (await sessionCard.isVisible({ timeout: 5000 }).catch(() => false)) {
       await sessionCard.hover()
 
       // Look for delete button (trash icon)
-      const deleteButton = page.locator(
+      const deleteButton = mockPage.locator(
         'button[title="Excluir"], button:has(svg.lucide-trash-2)'
       )
 
@@ -368,11 +331,13 @@ test.describe('Session Management', () => {
 
         // Should show confirmation dialog
         await expect(
-          page.locator('text=/confirmar.*exclusao|tem.*certeza/i')
+          mockPage.locator('text=/confirmar.*exclusao|tem.*certeza/i')
         ).toBeVisible({ timeout: 3000 })
 
         // Confirm deletion
-        const confirmButton = page.locator('button:has-text("Excluir")').last()
+        const confirmButton = mockPage
+          .locator('button:has-text("Excluir")')
+          .last()
         await confirmButton.click()
       }
     }
@@ -384,35 +349,33 @@ test.describe('Session Management', () => {
 // ============================================================================
 
 test.describe('Sending Messages', () => {
-  test.beforeEach(async ({ authenticatedPage }) => {
+  test.beforeEach(async ({ mockPage }) => {
     // Mock sessions endpoint
-    await authenticatedPage.route('**/api/sessions**', async (route) => {
+    await mockPage.route('**/api/sessions**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ sessions: [], total: 0 })
+        body: JSON.stringify([])
       })
     })
 
     // Mock projects endpoint
-    await authenticatedPage.route('**/api/projects**', async (route) => {
+    await mockPage.route('**/api/projects**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ projects: [], total: 0 })
+        body: JSON.stringify([])
       })
     })
   })
 
-  test('should send message when pressing Enter', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+  test('should send message when pressing Enter', async ({ mockPage }) => {
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Mock chat endpoint
-    await page.route('**/api/chat', async (route) => {
+    await mockPage.route('**/api/chat', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -421,7 +384,7 @@ test.describe('Sending Messages', () => {
     })
 
     // Mock streaming endpoint
-    await page.route('**/api/chat/stream', async (route) => {
+    await mockPage.route('**/api/chat/stream', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'text/event-stream',
@@ -430,7 +393,7 @@ test.describe('Sending Messages', () => {
     })
 
     // Type message
-    const chatInput = page.locator('#chat-input')
+    const chatInput = mockPage.locator('#chat-input')
     await expect(chatInput).toBeVisible({ timeout: 10000 })
     await chatInput.fill('Quero analisar uma CPR')
 
@@ -438,21 +401,21 @@ test.describe('Sending Messages', () => {
     await chatInput.press('Enter')
 
     // Wait for message to be sent
-    await page.waitForTimeout(500)
+    await mockPage.waitForTimeout(500)
 
     // Input should be cleared after sending
     await expect(chatInput).toHaveValue('')
   })
 
   test('should send message when clicking send button', async ({
-    authenticatedPage
+    mockPage
   }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Mock chat endpoint
-    await page.route('**/api/chat', async (route) => {
+    await mockPage.route('**/api/chat', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -461,7 +424,7 @@ test.describe('Sending Messages', () => {
     })
 
     // Mock streaming endpoint
-    await page.route('**/api/chat/stream', async (route) => {
+    await mockPage.route('**/api/chat/stream', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'text/event-stream',
@@ -470,48 +433,46 @@ test.describe('Sending Messages', () => {
     })
 
     // Type message
-    const chatInput = page.locator('#chat-input')
+    const chatInput = mockPage.locator('#chat-input')
     await expect(chatInput).toBeVisible({ timeout: 10000 })
     await chatInput.fill('Ola, preciso de ajuda')
 
     // Click send button
-    const sendButton = page.locator('button[aria-label="Enviar mensagem"]')
+    const sendButton = mockPage.locator('button[aria-label="Enviar mensagem"]')
     await expect(sendButton).toBeEnabled()
     await sendButton.click()
 
     // Wait for message to be sent
-    await page.waitForTimeout(500)
+    await mockPage.waitForTimeout(500)
 
     // Input should be cleared
     await expect(chatInput).toHaveValue('')
   })
 
-  test('should not send empty message', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+  test('should not send empty message', async ({ mockPage }) => {
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Send button should be disabled with empty input
-    const sendButton = page.locator('button[aria-label="Enviar mensagem"]')
+    const sendButton = mockPage.locator('button[aria-label="Enviar mensagem"]')
     await expect(sendButton).toBeDisabled()
 
     // Try pressing Enter with empty input
-    const chatInput = page.locator('#chat-input')
+    const chatInput = mockPage.locator('#chat-input')
     await chatInput.focus()
     await chatInput.press('Enter')
 
     // No message should be sent (no network request)
   })
 
-  test('should show loading state while sending', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+  test('should show loading state while sending', async ({ mockPage }) => {
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Mock chat endpoint with delay
-    await page.route('**/api/chat/stream', async (route) => {
+    await mockPage.route('**/api/chat/stream', async (route) => {
       await new Promise((resolve) => setTimeout(resolve, 1500))
       await route.fulfill({
         status: 200,
@@ -521,13 +482,13 @@ test.describe('Sending Messages', () => {
     })
 
     // Type and send message
-    const chatInput = page.locator('#chat-input')
+    const chatInput = mockPage.locator('#chat-input')
     await expect(chatInput).toBeVisible({ timeout: 10000 })
     await chatInput.fill('Mensagem de teste')
     await chatInput.press('Enter')
 
     // Should show loading indicator
-    const loadingIndicator = page.locator(
+    const loadingIndicator = mockPage.locator(
       '[class*="animate-spin"], svg.lucide-loader-2'
     )
     await expect(loadingIndicator)
@@ -538,13 +499,13 @@ test.describe('Sending Messages', () => {
   })
 
   test('should support multiline messages with Shift+Enter', async ({
-    authenticatedPage
+    mockPage
   }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
-    const chatInput = page.locator('#chat-input')
+    const chatInput = mockPage.locator('#chat-input')
     await expect(chatInput).toBeVisible({ timeout: 10000 })
 
     // Type first line
@@ -568,35 +529,35 @@ test.describe('Sending Messages', () => {
 // ============================================================================
 
 test.describe('AI Response Display', () => {
-  test.beforeEach(async ({ authenticatedPage }) => {
+  test.beforeEach(async ({ mockPage }) => {
     // Mock sessions endpoint
-    await authenticatedPage.route('**/api/sessions**', async (route) => {
+    await mockPage.route('**/api/sessions**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ sessions: [], total: 0 })
+        body: JSON.stringify([])
       })
     })
 
     // Mock projects endpoint
-    await authenticatedPage.route('**/api/projects**', async (route) => {
+    await mockPage.route('**/api/projects**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ projects: [], total: 0 })
+        body: JSON.stringify([])
       })
     })
   })
 
   test('should display assistant response after sending message', async ({
-    authenticatedPage
+    mockPage
   }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Mock streaming endpoint with immediate response
-    await page.route('**/api/chat/stream', async (route) => {
+    await mockPage.route('**/api/chat/stream', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'text/event-stream',
@@ -605,27 +566,27 @@ test.describe('AI Response Display', () => {
     })
 
     // Send a message
-    const chatInput = page.locator('#chat-input')
+    const chatInput = mockPage.locator('#chat-input')
     await expect(chatInput).toBeVisible({ timeout: 10000 })
     await chatInput.fill('Como funciona a analise de CPR?')
     await chatInput.press('Enter')
 
     // Wait for response to appear
-    await page.waitForTimeout(2000)
+    await mockPage.waitForTimeout(2000)
 
     // Look for the assistant's response text
     await expect(
-      page.locator('text=/resposta.*teste|assistente.*verity/i')
+      mockPage.locator('text=/resposta.*teste|assistente.*verity/i')
     ).toBeVisible({ timeout: 10000 })
   })
 
-  test('should display user message in chat', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+  test('should display user message in chat', async ({ mockPage }) => {
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Mock streaming endpoint
-    await page.route('**/api/chat/stream', async (route) => {
+    await mockPage.route('**/api/chat/stream', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'text/event-stream',
@@ -636,29 +597,29 @@ test.describe('AI Response Display', () => {
     const testMessage = 'Esta e minha mensagem de teste para o chat'
 
     // Send a message
-    const chatInput = page.locator('#chat-input')
+    const chatInput = mockPage.locator('#chat-input')
     await expect(chatInput).toBeVisible({ timeout: 10000 })
     await chatInput.fill(testMessage)
     await chatInput.press('Enter')
 
     // Wait for message to appear
-    await page.waitForTimeout(1000)
+    await mockPage.waitForTimeout(1000)
 
     // User message should be visible
-    await expect(page.locator(`text=${testMessage}`)).toBeVisible({
+    await expect(mockPage.locator(`text=${testMessage}`)).toBeVisible({
       timeout: 5000
     })
   })
 
   test('should display typing indicator while streaming', async ({
-    authenticatedPage
+    mockPage
   }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Mock streaming endpoint with slow response
-    await page.route('**/api/chat/stream', async (route) => {
+    await mockPage.route('**/api/chat/stream', async (route) => {
       // Slow stream to catch typing indicator
       await new Promise((resolve) => setTimeout(resolve, 1000))
       await route.fulfill({
@@ -669,13 +630,13 @@ test.describe('AI Response Display', () => {
     })
 
     // Send a message
-    const chatInput = page.locator('#chat-input')
+    const chatInput = mockPage.locator('#chat-input')
     await expect(chatInput).toBeVisible({ timeout: 10000 })
     await chatInput.fill('Pergunta que demora para responder')
     await chatInput.press('Enter')
 
     // Look for typing indicator
-    const typingIndicator = page.locator(
+    const typingIndicator = mockPage.locator(
       '[class*="typing"], [class*="pulse"], [class*="animate"]'
     )
 
@@ -693,33 +654,30 @@ test.describe('AI Response Display', () => {
 
 test.describe('Message History', () => {
   test('should load and display message history when opening session', async ({
-    authenticatedPage
+    mockPage
   }) => {
-    const page = authenticatedPage
+    // Using mockPage directly
 
     // Mock sessions endpoint
-    await page.route('**/api/sessions**', async (route) => {
+    await mockPage.route('**/api/sessions**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({
-          sessions: mockSessions,
-          total: mockSessions.length
-        })
+        body: JSON.stringify(mockSessions)
       })
     })
 
     // Mock projects endpoint
-    await page.route('**/api/projects**', async (route) => {
+    await mockPage.route('**/api/projects**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ projects: [], total: 0 })
+        body: JSON.stringify([])
       })
     })
 
     // Mock chat history endpoint
-    await page.route('**/api/chat/history/**', async (route) => {
+    await mockPage.route('**/api/chat/history/**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -731,48 +689,48 @@ test.describe('Message History', () => {
     })
 
     // Navigate directly to session
-    await page.goto('/chat/s_test-session-001')
-    await page.waitForLoadState('networkidle')
+    await mockPage.goto('/chat/s_test-session-001')
+    await mockPage.waitForLoadState('networkidle')
 
     // Wait for messages to load
-    await page.waitForTimeout(1000)
+    await mockPage.waitForTimeout(1000)
 
     // Check for user message
     await expect(
-      page.locator('text=/analisar.*CPR.*fazenda.*soja/i')
+      mockPage.locator('text=/analisar.*CPR.*fazenda.*soja/i')
     ).toBeVisible({ timeout: 10000 })
 
     // Check for assistant message
     await expect(
-      page.locator('text=/analise.*CPR.*preciso.*envie.*documento/i')
+      mockPage.locator('text=/analise.*CPR.*preciso.*envie.*documento/i')
     ).toBeVisible({ timeout: 10000 })
   })
 
   test('should scroll to bottom when new messages arrive', async ({
-    authenticatedPage
+    mockPage
   }) => {
-    const page = authenticatedPage
+    // Using mockPage directly
 
     // Mock sessions endpoint
-    await page.route('**/api/sessions**', async (route) => {
+    await mockPage.route('**/api/sessions**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ sessions: [], total: 0 })
+        body: JSON.stringify([])
       })
     })
 
     // Mock projects endpoint
-    await page.route('**/api/projects**', async (route) => {
+    await mockPage.route('**/api/projects**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ projects: [], total: 0 })
+        body: JSON.stringify([])
       })
     })
 
     // Mock streaming endpoint
-    await page.route('**/api/chat/stream', async (route) => {
+    await mockPage.route('**/api/chat/stream', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'text/event-stream',
@@ -780,16 +738,16 @@ test.describe('Message History', () => {
       })
     })
 
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Send multiple messages
-    const chatInput = page.locator('#chat-input')
+    const chatInput = mockPage.locator('#chat-input')
     await expect(chatInput).toBeVisible({ timeout: 10000 })
 
     await chatInput.fill('Primeira mensagem de teste')
     await chatInput.press('Enter')
-    await page.waitForTimeout(500)
+    await mockPage.waitForTimeout(500)
 
     // The chat area should be scrolled
     // This is a basic check - in reality we'd check scroll position
@@ -801,33 +759,33 @@ test.describe('Message History', () => {
 // ============================================================================
 
 test.describe('Document Attachment', () => {
-  test.beforeEach(async ({ authenticatedPage }) => {
+  test.beforeEach(async ({ mockPage }) => {
     // Mock sessions endpoint
-    await authenticatedPage.route('**/api/sessions**', async (route) => {
+    await mockPage.route('**/api/sessions**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ sessions: [], total: 0 })
+        body: JSON.stringify([])
       })
     })
 
     // Mock projects endpoint
-    await authenticatedPage.route('**/api/projects**', async (route) => {
+    await mockPage.route('**/api/projects**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ projects: [], total: 0 })
+        body: JSON.stringify([])
       })
     })
   })
 
-  test('should have attachment button', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+  test('should have attachment button', async ({ mockPage }) => {
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Look for attachment button (paperclip icon)
-    const attachButton = page.locator(
+    const attachButton = mockPage.locator(
       'button[aria-label="Anexar documentos"], button:has(svg.lucide-paperclip)'
     )
 
@@ -835,14 +793,14 @@ test.describe('Document Attachment', () => {
   })
 
   test('should open file upload modal when clicking attach', async ({
-    authenticatedPage
+    mockPage
   }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Click attachment button
-    const attachButton = page.locator(
+    const attachButton = mockPage.locator(
       'button[aria-label="Anexar documentos"], button:has(svg.lucide-paperclip)'
     )
 
@@ -856,22 +814,20 @@ test.describe('Document Attachment', () => {
 
       // Modal should open
       await expect(
-        page.locator(
+        mockPage.locator(
           'text=/upload|enviar.*arquivo|arrastar.*arquivo|selecionar.*arquivo/i'
         )
       ).toBeVisible({ timeout: 5000 })
     }
   })
 
-  test('should display attached file preview', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+  test('should display attached file preview', async ({ mockPage }) => {
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Mock document upload
-    await page.route('**/api/documents/upload**', async (route) => {
+    await mockPage.route('**/api/documents/upload**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -886,7 +842,7 @@ test.describe('Document Attachment', () => {
     })
 
     // Look for hidden file input
-    const fileInput = page.locator('input[type="file"]').first()
+    const fileInput = mockPage.locator('input[type="file"]').first()
 
     if ((await fileInput.count()) > 0) {
       // Upload a test file
@@ -897,22 +853,22 @@ test.describe('Document Attachment', () => {
       })
 
       // Wait for file preview to appear
-      await page.waitForTimeout(1000)
+      await mockPage.waitForTimeout(1000)
 
       // File name should be visible
-      await expect(page.locator('text=contrato-cpr.pdf')).toBeVisible({
+      await expect(mockPage.locator('text=contrato-cpr.pdf')).toBeVisible({
         timeout: 5000
       })
     }
   })
 
-  test('should allow removing attached file', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+  test('should allow removing attached file', async ({ mockPage }) => {
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // First attach a file
-    const fileInput = page.locator('input[type="file"]').first()
+    const fileInput = mockPage.locator('input[type="file"]').first()
 
     if ((await fileInput.count()) > 0) {
       await fileInput.setInputFiles({
@@ -922,10 +878,10 @@ test.describe('Document Attachment', () => {
       })
 
       // Wait for file preview
-      await page.waitForTimeout(500)
+      await mockPage.waitForTimeout(500)
 
       // Find and click remove button on file preview
-      const removeButton = page.locator(
+      const removeButton = mockPage.locator(
         '[class*="attachment"] button:has(svg.lucide-x), button[class*="remove"]'
       )
 
@@ -938,7 +894,9 @@ test.describe('Document Attachment', () => {
         await removeButton.first().click()
 
         // File should be removed
-        await expect(page.locator('text=arquivo-teste.pdf')).not.toBeVisible({
+        await expect(
+          mockPage.locator('text=arquivo-teste.pdf')
+        ).not.toBeVisible({
           timeout: 2000
         })
       }
@@ -951,44 +909,44 @@ test.describe('Document Attachment', () => {
 // ============================================================================
 
 test.describe('Slash Commands', () => {
-  test.beforeEach(async ({ authenticatedPage }) => {
+  test.beforeEach(async ({ mockPage }) => {
     // Mock sessions endpoint
-    await authenticatedPage.route('**/api/sessions**', async (route) => {
+    await mockPage.route('**/api/sessions**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ sessions: [], total: 0 })
+        body: JSON.stringify([])
       })
     })
 
     // Mock projects endpoint
-    await authenticatedPage.route('**/api/projects**', async (route) => {
+    await mockPage.route('**/api/projects**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ projects: [], total: 0 })
+        body: JSON.stringify([])
       })
     })
   })
 
   test('should show command suggestions when typing /', async ({
-    authenticatedPage
+    mockPage
   }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
-    const chatInput = page.locator('#chat-input')
+    const chatInput = mockPage.locator('#chat-input')
     await expect(chatInput).toBeVisible({ timeout: 10000 })
 
     // Type slash
     await chatInput.fill('/')
 
     // Wait for suggestions to appear
-    await page.waitForTimeout(500)
+    await mockPage.waitForTimeout(500)
 
     // Should show suggestion list
-    const suggestionList = page.locator(
+    const suggestionList = mockPage.locator(
       '[role="listbox"], [id="suggestion-list"], [class*="suggestion"]'
     )
 
@@ -999,24 +957,22 @@ test.describe('Slash Commands', () => {
       })
   })
 
-  test('should filter commands as user types', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+  test('should filter commands as user types', async ({ mockPage }) => {
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
-    const chatInput = page.locator('#chat-input')
+    const chatInput = mockPage.locator('#chat-input')
     await expect(chatInput).toBeVisible({ timeout: 10000 })
 
     // Type slash command
     await chatInput.fill('/canvas')
 
     // Wait for filtering
-    await page.waitForTimeout(500)
+    await mockPage.waitForTimeout(500)
 
     // Should show canvas command if available
-    await expect(page.locator('text=/canvas/i'))
+    await expect(mockPage.locator('text=/canvas/i'))
       .toBeVisible({ timeout: 3000 })
       .catch(() => {
         // Command might not be visible
@@ -1029,35 +985,35 @@ test.describe('Slash Commands', () => {
 // ============================================================================
 
 test.describe('Error Handling', () => {
-  test.beforeEach(async ({ authenticatedPage }) => {
+  test.beforeEach(async ({ mockPage }) => {
     // Mock sessions endpoint
-    await authenticatedPage.route('**/api/sessions**', async (route) => {
+    await mockPage.route('**/api/sessions**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ sessions: [], total: 0 })
+        body: JSON.stringify([])
       })
     })
 
     // Mock projects endpoint
-    await authenticatedPage.route('**/api/projects**', async (route) => {
+    await mockPage.route('**/api/projects**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ projects: [], total: 0 })
+        body: JSON.stringify([])
       })
     })
   })
 
   test('should display error when message fails to send', async ({
-    authenticatedPage
+    mockPage
   }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Mock failed chat endpoint
-    await page.route('**/api/chat**', async (route) => {
+    await mockPage.route('**/api/chat**', async (route) => {
       await route.fulfill({
         status: 500,
         contentType: 'application/json',
@@ -1065,7 +1021,7 @@ test.describe('Error Handling', () => {
       })
     })
 
-    await page.route('**/api/chat/stream**', async (route) => {
+    await mockPage.route('**/api/chat/stream**', async (route) => {
       await route.fulfill({
         status: 500,
         contentType: 'application/json',
@@ -1074,16 +1030,16 @@ test.describe('Error Handling', () => {
     })
 
     // Send a message
-    const chatInput = page.locator('#chat-input')
+    const chatInput = mockPage.locator('#chat-input')
     await expect(chatInput).toBeVisible({ timeout: 10000 })
     await chatInput.fill('Mensagem que vai falhar')
     await chatInput.press('Enter')
 
     // Wait for error
-    await page.waitForTimeout(2000)
+    await mockPage.waitForTimeout(2000)
 
     // Should show error message (toast or inline)
-    const errorMessage = page.locator(
+    const errorMessage = mockPage.locator(
       'text=/erro|falha|nao.*foi.*possivel/i, [role="alert"]'
     )
 
@@ -1095,12 +1051,12 @@ test.describe('Error Handling', () => {
   })
 
   test('should redirect to login when not authenticated', async ({
-    authenticatedPage
+    mockPage
   }) => {
-    const page = authenticatedPage
+    // Using mockPage directly
 
     // Mock auth check to fail
-    await page.route('**/api/auth/me**', async (route) => {
+    await mockPage.route('**/api/auth/me**', async (route) => {
       await route.fulfill({
         status: 401,
         contentType: 'application/json',
@@ -1109,56 +1065,52 @@ test.describe('Error Handling', () => {
     })
 
     // Clear cookies to simulate unauthenticated state
-    await page.context().clearCookies()
+    await mockPage.context().clearCookies()
 
     // Navigate to chat
-    await page.goto('/chat')
+    await mockPage.goto('/chat')
 
     // Should redirect to login
-    await expect(page).toHaveURL(/\/login/, { timeout: 10000 })
+    await expect(mockPage).toHaveURL(/\/login/, { timeout: 10000 })
   })
 
-  test('should handle network errors gracefully', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+  test('should handle network errors gracefully', async ({ mockPage }) => {
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Mock network failure
-    await page.route('**/api/chat/stream**', async (route) => {
+    await mockPage.route('**/api/chat/stream**', async (route) => {
       await route.abort('failed')
     })
 
     // Try to send a message
-    const chatInput = page.locator('#chat-input')
+    const chatInput = mockPage.locator('#chat-input')
     await expect(chatInput).toBeVisible({ timeout: 10000 })
     await chatInput.fill('Mensagem com erro de rede')
     await chatInput.press('Enter')
 
     // Wait for error handling
-    await page.waitForTimeout(2000)
+    await mockPage.waitForTimeout(2000)
 
     // Should show some feedback to user (input should still be usable)
     await expect(chatInput).toBeEnabled()
   })
 
-  test('should handle invalid session ID gracefully', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
+  test('should handle invalid session ID gracefully', async ({ mockPage }) => {
+    // Using mockPage directly
 
     // Mock sessions endpoint
-    await page.route('**/api/sessions**', async (route) => {
+    await mockPage.route('**/api/sessions**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ sessions: [], total: 0 })
+        body: JSON.stringify([])
       })
     })
 
     // Mock chat history to return error
-    await page.route('**/api/chat/history/**', async (route) => {
+    await mockPage.route('**/api/chat/history/**', async (route) => {
       await route.fulfill({
         status: 404,
         contentType: 'application/json',
@@ -1167,10 +1119,10 @@ test.describe('Error Handling', () => {
     })
 
     // Navigate to invalid session
-    await page.goto('/chat/s_invalid-session-id')
+    await mockPage.goto('/chat/s_invalid-session-id')
 
     // Should redirect to main chat page
-    await expect(page).toHaveURL(/\/chat$/, { timeout: 10000 })
+    await expect(mockPage).toHaveURL(/\/chat$/, { timeout: 10000 })
   })
 })
 
@@ -1179,60 +1131,58 @@ test.describe('Error Handling', () => {
 // ============================================================================
 
 test.describe('Accessibility', () => {
-  test.beforeEach(async ({ authenticatedPage }) => {
+  test.beforeEach(async ({ mockPage }) => {
     // Mock sessions endpoint
-    await authenticatedPage.route('**/api/sessions**', async (route) => {
+    await mockPage.route('**/api/sessions**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ sessions: [], total: 0 })
+        body: JSON.stringify([])
       })
     })
 
     // Mock projects endpoint
-    await authenticatedPage.route('**/api/projects**', async (route) => {
+    await mockPage.route('**/api/projects**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ projects: [], total: 0 })
+        body: JSON.stringify([])
       })
     })
   })
 
-  test('should have proper ARIA labels on input', async ({
-    authenticatedPage
-  }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+  test('should have proper ARIA labels on input', async ({ mockPage }) => {
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Check input has ARIA label
-    const chatInput = page.locator('#chat-input')
+    const chatInput = mockPage.locator('#chat-input')
     await expect(chatInput).toBeVisible({ timeout: 10000 })
     await expect(chatInput).toHaveAttribute('aria-label', /.+/)
   })
 
-  test('should be keyboard navigable', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+  test('should be keyboard navigable', async ({ mockPage }) => {
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Tab through elements
-    await page.keyboard.press('Tab')
-    await page.keyboard.press('Tab')
+    await mockPage.keyboard.press('Tab')
+    await mockPage.keyboard.press('Tab')
 
     // Eventually should reach the input
-    const focusedElement = page.locator(':focus')
+    const focusedElement = mockPage.locator(':focus')
     await expect(focusedElement).toBeVisible()
   })
 
-  test('should have proper focus management', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+  test('should have proper focus management', async ({ mockPage }) => {
+    // Using mockPage directly
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Click on input
-    const chatInput = page.locator('#chat-input')
+    const chatInput = mockPage.locator('#chat-input')
     await chatInput.click()
 
     // Input should be focused
@@ -1245,11 +1195,11 @@ test.describe('Accessibility', () => {
 // ============================================================================
 
 test.describe('Mobile Responsiveness', () => {
-  test('should work on mobile viewport', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should work on mobile viewport', async ({ mockPage }) => {
+    // Using mockPage directly
 
     // Mock sessions endpoint
-    await page.route('**/api/sessions**', async (route) => {
+    await mockPage.route('**/api/sessions**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -1261,34 +1211,34 @@ test.describe('Mobile Responsiveness', () => {
     })
 
     // Mock projects endpoint
-    await page.route('**/api/projects**', async (route) => {
+    await mockPage.route('**/api/projects**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ projects: [], total: 0 })
+        body: JSON.stringify([])
       })
     })
 
     // Set mobile viewport
-    await page.setViewportSize({ width: 375, height: 667 })
+    await mockPage.setViewportSize({ width: 375, height: 667 })
 
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Chat input should still be visible
-    const chatInput = page.locator('#chat-input')
+    const chatInput = mockPage.locator('#chat-input')
     await expect(chatInput).toBeVisible({ timeout: 10000 })
 
     // Send button should be visible
-    const sendButton = page.locator('button[aria-label="Enviar mensagem"]')
+    const sendButton = mockPage.locator('button[aria-label="Enviar mensagem"]')
     await expect(sendButton).toBeVisible()
   })
 
-  test('should toggle sidebar on mobile', async ({ authenticatedPage }) => {
-    const page = authenticatedPage
+  test('should toggle sidebar on mobile', async ({ mockPage }) => {
+    // Using mockPage directly
 
     // Mock sessions endpoint
-    await page.route('**/api/sessions**', async (route) => {
+    await mockPage.route('**/api/sessions**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -1300,22 +1250,24 @@ test.describe('Mobile Responsiveness', () => {
     })
 
     // Mock projects endpoint
-    await page.route('**/api/projects**', async (route) => {
+    await mockPage.route('**/api/projects**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ projects: [], total: 0 })
+        body: JSON.stringify([])
       })
     })
 
     // Set mobile viewport
-    await page.setViewportSize({ width: 375, height: 667 })
+    await mockPage.setViewportSize({ width: 375, height: 667 })
 
-    await page.goto('/chat')
-    await page.waitForLoadState('networkidle')
+    await mockPage.goto('/chat')
+    await mockPage.waitForLoadState('networkidle')
 
     // Sidebar should be hidden initially on mobile
-    const sidebar = page.locator('aside:has(button:has-text("Nova Conversa"))')
+    const sidebar = mockPage.locator(
+      'aside:has(button:has-text("Nova Conversa"))'
+    )
     await expect(sidebar)
       .not.toBeVisible({ timeout: 2000 })
       .catch(() => {
@@ -1323,7 +1275,7 @@ test.describe('Mobile Responsiveness', () => {
       })
 
     // Look for menu toggle button
-    const menuToggle = page.locator(
+    const menuToggle = mockPage.locator(
       'button[aria-label*="menu"], button:has(svg.lucide-menu), [class*="hamburger"]'
     )
 
@@ -1337,7 +1289,7 @@ test.describe('Mobile Responsiveness', () => {
 
       // Sidebar should become visible
       await expect(
-        page.locator('text=/nova.*conversa|conversas/i').first()
+        mockPage.locator('text=/nova.*conversa|conversas/i').first()
       ).toBeVisible({ timeout: 3000 })
     }
   })
