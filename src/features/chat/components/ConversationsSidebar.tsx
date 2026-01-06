@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef, memo, useMemo } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import {
   Search,
@@ -490,30 +490,63 @@ const SidebarContent = memo(function SidebarContent({
             </div>
           ) : (
             <div className="space-y-0.5">
-              {/* Header de "Todas as Conversas" (Compacto) */}
-              {projects
-                .slice(0, isProjectsExpanded ? undefined : 3)
-                .map((project) => (
-                  <ConversationCard
-                    key={project.id}
-                    id={project.id}
-                    title={project.title}
-                    timestamp={formatRelativeTime(new Date(project.created_at))}
-                    isActive={selectedProjectId === project.id}
-                    onClick={() =>
-                      handleProjectSelect(
-                        selectedProjectId === project.id ? null : project.id
-                      )
-                    }
-                    onUpdateTitle={(newTitle) =>
-                      onUpdateProject(project.id, { title: newTitle })
-                    }
-                    onDelete={() => onDeleteProject(project.id)}
-                    onViewDetails={() =>
-                      (window.location.href = `/projects/${project.id}`)
-                    }
-                  />
-                ))}
+              {projects.slice(0, 3).map((project) => (
+                <ConversationCard
+                  key={project.id}
+                  id={project.id}
+                  title={project.title}
+                  timestamp={formatRelativeTime(new Date(project.created_at))}
+                  isActive={selectedProjectId === project.id}
+                  onClick={() =>
+                    handleProjectSelect(
+                      selectedProjectId === project.id ? null : project.id
+                    )
+                  }
+                  onUpdateTitle={(newTitle) =>
+                    onUpdateProject(project.id, { title: newTitle })
+                  }
+                  onDelete={() => onDeleteProject(project.id)}
+                  onViewDetails={() =>
+                    (window.location.href = `/projects/${project.id}`)
+                  }
+                />
+              ))}
+
+              <AnimatePresence>
+                {isProjectsExpanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    className="space-y-0.5 overflow-hidden"
+                  >
+                    {projects.slice(3).map((project) => (
+                      <ConversationCard
+                        key={project.id}
+                        id={project.id}
+                        title={project.title}
+                        timestamp={formatRelativeTime(
+                          new Date(project.created_at)
+                        )}
+                        isActive={selectedProjectId === project.id}
+                        onClick={() =>
+                          handleProjectSelect(
+                            selectedProjectId === project.id ? null : project.id
+                          )
+                        }
+                        onUpdateTitle={(newTitle) =>
+                          onUpdateProject(project.id, { title: newTitle })
+                        }
+                        onDelete={() => onDeleteProject(project.id)}
+                        onViewDetails={() =>
+                          (window.location.href = `/projects/${project.id}`)
+                        }
+                      />
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* View More Projects */}
               {projects.length > 3 && (
@@ -587,26 +620,60 @@ const SidebarContent = memo(function SidebarContent({
             </div>
           ) : (
             <div className="space-y-1">
-              {filteredSessions
-                .slice(0, isConversationsExpanded ? undefined : 5)
-                .map((session) => (
-                  <ConversationCard
-                    key={session.session_id}
-                    id={session.session_id}
-                    title={session.title}
-                    timestamp={formatRelativeTime(session.created_at)}
-                    isActive={activeConversationId === session.session_id}
-                    onClick={() => {
-                      trackConversationSelected(session.session_id, 'sidebar')
-                      onSelectConversation?.(session.session_id)
-                    }}
-                    onUpdateTitle={(newTitle) =>
-                      onUpdateSession(session.session_id, { title: newTitle })
-                    }
-                    onDelete={() => onDeleteSession(session.session_id)}
-                    onMove={() => openMoveDialog(session.session_id)}
-                  />
-                ))}
+              {filteredSessions.slice(0, 5).map((session) => (
+                <ConversationCard
+                  key={session.session_id}
+                  id={session.session_id}
+                  title={session.title}
+                  timestamp={formatRelativeTime(session.created_at)}
+                  isActive={activeConversationId === session.session_id}
+                  onClick={() => {
+                    trackConversationSelected(session.session_id, 'sidebar')
+                    onSelectConversation?.(session.session_id)
+                  }}
+                  onUpdateTitle={(newTitle) =>
+                    onUpdateSession(session.session_id, { title: newTitle })
+                  }
+                  onDelete={() => onDeleteSession(session.session_id)}
+                  onMove={() => openMoveDialog(session.session_id)}
+                />
+              ))}
+
+              <AnimatePresence>
+                {isConversationsExpanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    className="space-y-1 overflow-hidden"
+                  >
+                    {filteredSessions.slice(5).map((session) => (
+                      <ConversationCard
+                        key={session.session_id}
+                        id={session.session_id}
+                        title={session.title}
+                        timestamp={formatRelativeTime(session.created_at)}
+                        isActive={activeConversationId === session.session_id}
+                        onClick={() => {
+                          trackConversationSelected(
+                            session.session_id,
+                            'sidebar'
+                          )
+                          onSelectConversation?.(session.session_id)
+                        }}
+                        onUpdateTitle={(newTitle) =>
+                          onUpdateSession(session.session_id, {
+                            title: newTitle
+                          })
+                        }
+                        onDelete={() => onDeleteSession(session.session_id)}
+                        onMove={() => openMoveDialog(session.session_id)}
+                      />
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* View More History */}
               {filteredSessions.length > 5 && (
