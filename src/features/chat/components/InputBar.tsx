@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/immutability */
 'use client'
 
-
 import { motion } from 'framer-motion'
 import {
   ArrowUp,
@@ -120,12 +119,12 @@ export function InputBar({
   const textareaRef = useCallback(
     (node: HTMLTextAreaElement | null) => {
       // Update local ref
-      ; (
+      ;(
         localTextareaRef as React.MutableRefObject<HTMLTextAreaElement | null>
       ).current = node
       // Update context ref if available
       if (contextRef) {
-        ; (
+        ;(
           contextRef as React.MutableRefObject<HTMLTextAreaElement | null>
         ).current = node
       }
@@ -158,22 +157,22 @@ export function InputBar({
   const filteredItems =
     suggestionMode === 'slash'
       ? SLASH_COMMANDS.filter((c) =>
-        c.trigger.toLowerCase().startsWith(suggestionQuery.toLowerCase())
-      )
+          c.trigger.toLowerCase().startsWith(suggestionQuery.toLowerCase())
+        )
       : suggestionMode === 'mention'
         ? [
-          ...STATIC_MENTIONS,
-          // Dynamic file mentions from externalAttachments and attachments
-          ...[...externalAttachments, ...attachments].map((file, idx) => ({
-            id: `file-${idx}`,
-            label: file.name,
-            description: formatFileSize(file.size), // Using utility
-            type: 'mention' as const,
-            trigger: `@${file.name.replace(/\s+/g, '_')}` // Normalize trigger
-          }))
-        ].filter((m) =>
-          m.trigger.toLowerCase().includes(suggestionQuery.toLowerCase())
-        )
+            ...STATIC_MENTIONS,
+            // Dynamic file mentions from externalAttachments and attachments
+            ...[...externalAttachments, ...attachments].map((file, idx) => ({
+              id: `file-${idx}`,
+              label: file.name,
+              description: formatFileSize(file.size), // Using utility
+              type: 'mention' as const,
+              trigger: `@${file.name.replace(/\s+/g, '_')}` // Normalize trigger
+            }))
+          ].filter((m) =>
+            m.trigger.toLowerCase().includes(suggestionQuery.toLowerCase())
+          )
         : []
 
   const closeSuggestions = () => {
@@ -424,8 +423,9 @@ export function InputBar({
       />
 
       <div
-        className={`relative w-full px-4 pb-8 pt-2 transition-colors md:px-6 ${isDragOver ? 'bg-verity-100/50' : ''
-          }`}
+        className={`relative w-full px-4 pb-8 pt-2 transition-colors md:px-6 ${
+          isDragOver ? 'bg-verity-100/50' : ''
+        }`}
         onDragOver={(e) => {
           e.preventDefault()
           setIsDragOver(true)
@@ -490,10 +490,11 @@ export function InputBar({
 
           {/* ChatGPT-style Pill Container (Verity Brand: Sand & Organic) */}
           <motion.div
-            className={`group relative flex min-h-[52px] w-full items-end gap-2 rounded-[26px] border px-4 py-3 transition-colors ${isFocused
-              ? 'border-verity-300 bg-white shadow-md shadow-verity-900/5 ring-1 ring-verity-300/20'
-              : 'border-sand-300 bg-sand-50 hover:border-sand-400'
-              } dark:bg-verity-900 dark:border-verity-800`}
+            className={`group relative flex min-h-[52px] w-full items-end gap-2 rounded-[26px] border px-4 py-3 transition-colors ${
+              isFocused
+                ? 'border-verity-300 bg-white shadow-md shadow-verity-900/5 ring-1 ring-verity-300/20'
+                : 'border-sand-300 bg-sand-50 hover:border-sand-400'
+            } dark:border-verity-800 dark:bg-verity-900`}
             initial={false}
             animate={{ scale: 1 }}
           >
@@ -565,7 +566,7 @@ export function InputBar({
                   <TooltipTrigger asChild>
                     <button
                       type="button"
-                      className="hidden h-8 w-8 items-center justify-center rounded-full text-verity-900 transition-colors hover:bg-sand-200 sm:flex dark:text-sand-300 dark:hover:bg-verity-800"
+                      className="hidden h-8 w-8 items-center justify-center rounded-full text-verity-900 transition-colors hover:bg-sand-200 dark:text-sand-300 dark:hover:bg-verity-800 sm:flex"
                       aria-label="Usar microfone"
                       onClick={() => toast.info('Entrada de voz em breve!')}
                     >
@@ -590,14 +591,15 @@ export function InputBar({
                   disabled
                 }
                 whileTap={{ scale: 0.95 }}
-                className={`flex h-8 w-8 items-center justify-center rounded-full transition-all ${(!input.trim() &&
-                  attachments.length === 0 &&
-                  externalAttachments.length === 0) ||
+                className={`flex h-8 w-8 items-center justify-center rounded-full transition-all ${
+                  (!input.trim() &&
+                    attachments.length === 0 &&
+                    externalAttachments.length === 0) ||
                   isLoading ||
                   disabled
-                  ? 'bg-sand-200 text-verity-300 cursor-not-allowed dark:bg-verity-800 dark:text-verity-600'
-                  : 'bg-verity-800 text-white hover:bg-verity-900 shadow-sm dark:bg-verity-600 dark:hover:bg-verity-500'
-                  }`}
+                    ? 'cursor-not-allowed bg-sand-200 text-verity-300 dark:bg-verity-800 dark:text-verity-600'
+                    : 'bg-verity-800 text-white shadow-sm hover:bg-verity-900 dark:bg-verity-600 dark:hover:bg-verity-500'
+                }`}
                 aria-label="Enviar"
               >
                 {isLoading ? (
