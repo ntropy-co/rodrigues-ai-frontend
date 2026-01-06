@@ -433,7 +433,7 @@ export function InputBar({
         onDragLeave={() => setIsDragOver(false)}
         onDrop={handleDrop}
       >
-        <div className="relative mx-auto max-w-3xl">
+        <div className="relative mx-auto max-w-2xl">
           {/* Attachments Preview - Floating above */}
           {(attachments.length > 0 || externalAttachments.length > 0) && (
             <motion.div
@@ -454,9 +454,9 @@ export function InputBar({
                 >
                   <div className="flex h-5 w-5 items-center justify-center rounded-md bg-sand-200 text-verity-600">
                     {(file.type || '').startsWith('image/') ? (
-                      <ImageIcon className="h-3 w-3" />
+                      <ImageIcon className="h-3 w-3" strokeWidth={1.5} />
                     ) : (
-                      <FileText className="h-3 w-3" />
+                      <FileText className="h-3 w-3" strokeWidth={1.5} />
                     )}
                   </div>
                   <div className="z-10 flex flex-col">
@@ -481,19 +481,19 @@ export function InputBar({
                     }}
                     className="absolute right-1 top-1/2 z-20 -translate-y-1/2 rounded-full p-1 text-verity-400 transition-colors hover:bg-error-50 hover:text-error-500"
                   >
-                    <X className="h-3 w-3" />
+                    <X className="h-3 w-3" strokeWidth={1.5} />
                   </button>
                 </motion.div>
               ))}
             </motion.div>
           )}
 
-          {/* ChatGPT-style Pill Container */}
+          {/* ChatGPT-style Pill Container (Verity Brand: Sand & Organic) */}
           <motion.div
-            className={`group relative flex min-h-[52px] w-full items-end gap-2 rounded-[2rem] border bg-[#f4f4f4] px-4 py-3 transition-colors dark:bg-[#2f2f2f] ${isFocused
-              ? 'border-verity-300 shadow-sm'
-              : 'border-transparent'
-              }`}
+            className={`group relative flex min-h-[52px] w-full items-end gap-2 rounded-[26px] border px-4 py-3 transition-colors ${isFocused
+              ? 'border-verity-300 bg-white shadow-md shadow-verity-900/5 ring-1 ring-verity-300/20'
+              : 'border-sand-300 bg-sand-50 hover:border-sand-400'
+              } dark:bg-verity-900 dark:border-verity-800`}
             initial={false}
             animate={{ scale: 1 }}
           >
@@ -522,10 +522,10 @@ export function InputBar({
                     <button
                       type="button"
                       onClick={() => setIsUploadModalOpen(true)}
-                      className="flex h-8 w-8 items-center justify-center rounded-full text-verity-500 transition-colors hover:bg-black/5 hover:text-verity-900 group-hover:text-verity-700"
+                      className="flex h-8 w-8 items-center justify-center rounded-full text-verity-500 transition-colors hover:bg-sand-200 hover:text-verity-900 group-hover:text-verity-700"
                       aria-label="Adicionar anexo"
                     >
-                      <Plus className="h-5 w-5" />
+                      <Plus className="h-5 w-5" strokeWidth={1.5} />
                     </button>
                   </TooltipTrigger>
                   <TooltipContent>Adicionar anexo</TooltipContent>
@@ -554,7 +554,7 @@ export function InputBar({
               }
               rows={1}
               style={{ maxHeight: '200px' }}
-              className="flex-1 resize-none bg-transparent py-1.5 text-base text-verity-950 placeholder:text-verity-500 focus:outline-none"
+              className="flex-1 resize-none bg-transparent py-1.5 text-base text-verity-950 placeholder:text-verity-400 focus:outline-none dark:text-sand-100 dark:placeholder:text-verity-600"
             />
 
             {/* Right Actions: Mic & Send */}
@@ -565,11 +565,11 @@ export function InputBar({
                   <TooltipTrigger asChild>
                     <button
                       type="button"
-                      className="hidden h-8 w-8 items-center justify-center rounded-full text-verity-900 transition-colors hover:bg-black/5 sm:flex"
+                      className="hidden h-8 w-8 items-center justify-center rounded-full text-verity-900 transition-colors hover:bg-sand-200 sm:flex dark:text-sand-300 dark:hover:bg-verity-800"
                       aria-label="Usar microfone"
                       onClick={() => toast.info('Entrada de voz em breve!')}
                     >
-                      <Mic className="h-5 w-5" />
+                      <Mic className="h-5 w-5" strokeWidth={1.5} />
                     </button>
                   </TooltipTrigger>
                   <TooltipContent>Entrada de voz</TooltipContent>
@@ -595,15 +595,15 @@ export function InputBar({
                   externalAttachments.length === 0) ||
                   isLoading ||
                   disabled
-                  ? 'bg-black/10 text-white cursor-not-allowed'
-                  : 'bg-blue-500 text-white hover:bg-blue-600 shadow-md'
+                  ? 'bg-sand-200 text-verity-300 cursor-not-allowed dark:bg-verity-800 dark:text-verity-600'
+                  : 'bg-verity-800 text-white hover:bg-verity-900 shadow-sm dark:bg-verity-600 dark:hover:bg-verity-500'
                   }`}
                 aria-label="Enviar"
               >
                 {isLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  <ArrowUp className="h-4 w-4" strokeWidth={3} />
+                  <ArrowUp className="h-4 w-4" strokeWidth={2} />
                 )}
               </motion.button>
             </div>
@@ -611,7 +611,7 @@ export function InputBar({
 
           {/* Footer Text */}
           <div className="mt-2 text-center">
-            <p className="text-[10px] text-verity-400">
+            <p className="text-[10px] text-verity-400 dark:text-verity-600">
               Verity Agro pode cometer erros. Verifique informações importantes.
             </p>
           </div>
