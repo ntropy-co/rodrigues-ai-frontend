@@ -464,7 +464,7 @@ const SidebarContent = memo(function SidebarContent({
         {/* Projetos Section */}
         <div className="mb-6">
           <div className="mb-2 flex items-center justify-between px-2">
-            <h3 className="font-display text-xs font-semibold uppercase tracking-wider text-verity-500">
+            <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-verity-600">
               Projetos
             </h3>
             <button
@@ -487,20 +487,6 @@ const SidebarContent = memo(function SidebarContent({
           ) : (
             <div className="space-y-0.5">
               {/* Header de "Todas as Conversas" (Compacto) */}
-              <button
-                type="button"
-                onClick={() => handleProjectSelect(null)}
-                className={cn(
-                  'mb-1 flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left text-sm transition-all',
-                  !selectedProjectId
-                    ? 'bg-sand-300 font-medium text-verity-950'
-                    : 'text-verity-600 hover:bg-sand-200 hover:text-verity-900'
-                )}
-              >
-                <LayoutGrid className="h-3.5 w-3.5" />
-                <span>Todas as Conversas</span>
-              </button>
-
               {projects.slice(0, 3).map((project) => (
                 <ConversationCard
                   key={project.id}
@@ -541,7 +527,7 @@ const SidebarContent = memo(function SidebarContent({
         <div>
           <div className="mb-2 flex items-center justify-between px-2">
             <div className="flex items-center gap-2">
-              <h3 className="font-display text-xs font-semibold uppercase tracking-wider text-verity-500">
+              <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-verity-600">
                 Conversas
               </h3>
               {selectedProjectId && (
