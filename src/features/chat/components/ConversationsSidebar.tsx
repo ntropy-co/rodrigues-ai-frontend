@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useRef, memo, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import Link from 'next/link'
 import {
   Search,
   Plus,
@@ -10,7 +9,6 @@ import {
   ChevronLeft,
   Loader2,
   SquarePen,
-  LayoutGrid,
   Trash2,
   Maximize2,
   FolderInput
@@ -723,7 +721,6 @@ interface ConversationCardProps {
   id: string
   title: string
   timestamp: string
-  projectEmail?: string
   preview?: string
   isActive?: boolean
   unreadCount?: number
@@ -737,7 +734,6 @@ interface ConversationCardProps {
 const ConversationCard = memo(function ConversationCard({
   title,
   timestamp,
-  projectEmail,
   preview,
   isActive = false,
   unreadCount = 0,
