@@ -29,6 +29,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     env:
+      VERCEL_ORG_ID: wX1zCrA2LCXa1WWpCjchAK1j
+      VERCEL_PROJECT_ID: prj_ITf2PQqh5l6NO7oM9YT846TckPPT
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
     outputs:
       url: ${{ steps.deploy.outputs.url }}
