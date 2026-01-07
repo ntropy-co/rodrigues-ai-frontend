@@ -45,23 +45,17 @@ export const stepCulturaSchema = z.object({
 export const stepValuesSchema = z
   .object({
     amount: z
-      .number({
-        invalid_type_error: 'Valor inválido',
-        required_error: 'Valor obrigatório'
-      })
+      .number({ error: 'Valor obrigatório' })
       .positive('Valor deve ser positivo'),
     quantity: z
-      .number({
-        invalid_type_error: 'Quantidade inválida',
-        required_error: 'Quantidade obrigatória'
-      })
+      .number({ error: 'Quantidade obrigatória' })
       .positive('Quantidade deve ser positiva'),
     unitPrice: z.number().optional(), // Calculado, mas permite override
     issueDate: z.string().min(1, 'Data de emissão obrigatória'),
     dueDate: z.string().min(1, 'Data de vencimento obrigatória'),
     deliveryPlace: z.string().min(3, 'Local de entrega obrigatório'),
     correctionIndex: z.enum(['IPCA', 'IGP-M', 'Nenhum'], {
-      required_error: 'Selecione um índice'
+      error: 'Selecione um índice'
     })
   })
   .refine(
@@ -130,23 +124,17 @@ export const cprWizardSchema = z.object({
 
   // Step 4: Valores (extract inner object shape from refined schema)
   amount: z
-    .number({
-      invalid_type_error: 'Valor inválido',
-      required_error: 'Valor obrigatório'
-    })
+    .number({ error: 'Valor obrigatório' })
     .positive('Valor deve ser positivo'),
   quantity: z
-    .number({
-      invalid_type_error: 'Quantidade inválida',
-      required_error: 'Quantidade obrigatória'
-    })
+    .number({ error: 'Quantidade obrigatória' })
     .positive('Quantidade deve ser positiva'),
   unitPrice: z.number().optional(),
   issueDate: z.string().min(1, 'Data de emissão obrigatória'),
   dueDate: z.string().min(1, 'Data de vencimento obrigatória'),
   deliveryPlace: z.string().min(3, 'Local de entrega obrigatório'),
   correctionIndex: z.enum(['IPCA', 'IGP-M', 'Nenhum'], {
-    required_error: 'Selecione um índice'
+    error: 'Selecione um índice'
   }),
 
   // Step 5: Garantias

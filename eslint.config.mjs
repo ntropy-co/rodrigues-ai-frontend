@@ -37,12 +37,9 @@ export default [
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
       'react/react-in-jsx-scope': 'off',
-      // Demote some strict rules to warnings to unblock CI after migration to ESLint 9 + React Hooks Plugin 7
+      // Demote some strict rules to warnings
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': 'warn',
-      'react-hooks/set-state-in-effect': 'warn',
-      'react-hooks/static-components': 'warn',
-      'react-hooks/immutability': 'warn'
+      '@typescript-eslint/no-unused-vars': 'warn'
     }
   }
 ]
