@@ -79,7 +79,6 @@ export function ConversationsSidebar({
   useEffect(() => {
     const savedProjectId = localStorage.getItem('verity_active_project')
     if (savedProjectId) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedProjectId(savedProjectId)
     }
   }, [])
