@@ -63,7 +63,6 @@ export function CPRWizard() {
     const saved = localStorage.getItem('cpr_wizard_state')
     if (saved) {
       try {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setData(JSON.parse(saved))
       } catch (e) {
         console.error('Failed to load wizard state', e)

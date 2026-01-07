@@ -193,7 +193,6 @@ export function StepReview({ data, onBack, goToStep }: StepReviewProps) {
   // Auto-calculate risk when step mounts
   useEffect(() => {
     if (riskRequest && !riskCalculated && !riskResult && !isCalculatingRisk) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setRiskCalculated(true)
       calculateRisk(riskRequest)
     }
@@ -219,7 +218,6 @@ export function StepReview({ data, onBack, goToStep }: StepReviewProps) {
         })
       }, 1500)
     } else {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setProgressStep(0)
     }
 
@@ -231,7 +229,6 @@ export function StepReview({ data, onBack, goToStep }: StepReviewProps) {
   // Handle document URL from API response
   useEffect(() => {
     if (cprState?.documentUrl) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDocumentUrl(cprState.documentUrl)
       setGenerated(true)
       toast.success('Minuta da CPR gerada com sucesso!')

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/static-components */
 'use client'
 
 import { useEditor, EditorContent } from '@tiptap/react'
