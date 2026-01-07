@@ -1,6 +1,6 @@
 'use client'
 
-import { useEditor, EditorContent } from '@tiptap/react'
+import { useEditor, EditorContent, type Editor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 import Underline from '@tiptap/extension-underline'
@@ -66,7 +66,7 @@ export function RichEditor({
           'prose prose-verity prose-lg max-w-none focus:outline-none min-h-[300px] px-8 py-6 font-display text-verity-800 leading-relaxed'
       }
     },
-    onUpdate: ({ editor }) => {
+    onUpdate: ({ editor }: { editor: Editor }) => {
       onChange(editor.getHTML())
     }
   })
