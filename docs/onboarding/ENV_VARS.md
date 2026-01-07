@@ -22,7 +22,7 @@
 
 | Variável              | Exemplo                                                  | Descrição                        |
 | --------------------- | -------------------------------------------------------- | -------------------------------- |
-| `NEXT_PUBLIC_API_URL` | `https://rodrigues-ai-backend-production.up.railway.app` | URL do backend FastAPI           |
+| `NEXT_PUBLIC_API_URL` | `https://api.verityagro.com` | URL do backend FastAPI           |
 | `NEXT_PUBLIC_APP_URL` | `https://ai.verityagro.com`                              | URL do frontend (auto na Vercel) |
 | `RESEND_API_KEY`      | `re_xxxxxxxxxxxxx`                                       | API key do Resend para emails    |
 | `EMAIL_FROM`          | `no-reply@verityagro.com`                                | Email remetente                  |
@@ -40,7 +40,7 @@
 
 | Variável                          | Exemplo                                                  | Descrição                |
 | --------------------------------- | -------------------------------------------------------- | ------------------------ |
-| `NEXT_PUBLIC_PLAYGROUND_ENDPOINT` | `https://rodrigues-ai-backend-production.up.railway.app` | Endpoint para playground |
+| `NEXT_PUBLIC_PLAYGROUND_ENDPOINT` | `https://api.verityagro.com` | Endpoint para playground |
 | `NEXT_PUBLIC_FRONTEND_URL`        | `http://localhost:3000`                                  | URL frontend (dev)       |
 | `UPSTASH_REDIS_REST_URL`          | `https://xxx.upstash.io`                                 | Redis cache (opcional)   |
 | `UPSTASH_REDIS_REST_TOKEN`        | `xxxxxxxxxxxxx`                                          | Token Redis              |
@@ -282,10 +282,10 @@ vercel env add RESEND_API_KEY production
 
 ```bash
 # Testar saúde do backend
-curl https://rodrigues-ai-backend-production.up.railway.app/api/v1/health/
+curl https://api.verityagro.com/api/v1/health/
 
 # Testar docs (se DOCS_ENABLED=true em staging)
-curl https://rodrigues-ai-backend-production.up.railway.app/docs
+curl https://api.verityagro.com/docs
 
 # Verificar frontend
 curl https://ai.verityagro.com

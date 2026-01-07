@@ -140,5 +140,5 @@ Proprietary - Verity Agro
 ## Links
 
 - **Frontend**: [Vercel](https://verity-agro.vercel.app)
-- **Backend**: [Railway](https://railway.app)
+- **Backend**: [Verity API](https://api.verityagro.com)
 - **Repository**: [GitHub](https://github.com/ntropy-co/rodrigues-ai-frontend)
