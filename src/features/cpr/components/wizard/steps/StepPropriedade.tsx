@@ -63,10 +63,7 @@ export const stepPropriedadeSchema = z.object({
     .optional()
     .or(z.literal('')),
   farmArea: z
-    .number({
-      invalid_type_error: 'Área inválida',
-      required_error: 'Área obrigatória'
-    })
+    .number({ error: 'Área inválida' })
     .positive('Área deve ser positiva'),
   farmState: z.string().min(2, 'Selecione o estado'),
   farmCity: z.string().min(2, 'Cidade é obrigatória'),

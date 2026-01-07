@@ -5,6 +5,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { useSessions } from './useSessions'
+import type { SessionEntry } from '@/types/playground'
 
 // =============================================================================
 // Mocks
@@ -141,13 +142,15 @@ describe('useSessions', () => {
 
       const { result } = renderHook(() => useSessions())
 
-      let session
+      let session: SessionEntry | null = null
       await act(async () => {
         session = await result.current.createSession('Test Session')
       })
 
       expect(session).not.toBeNull()
-      expect(session?.session_id).toBe(mockBackendSession.id)
+      expect((session as SessionEntry | null)?.session_id).toBe(
+        mockBackendSession.id
+      )
       expect(result.current.error).toBeNull()
     })
 
@@ -208,13 +211,13 @@ describe('useSessions', () => {
 
       const { result } = renderHook(() => useSessions())
 
-      let session
+      let session: SessionEntry | null = null
       await act(async () => {
         session = await result.current.createSession('Test', validProjectId)
       })
 
       expect(session).not.toBeNull()
-      expect(session?.project_id).toBe(validProjectId)
+      expect((session as SessionEntry | null)?.project_id).toBe(validProjectId)
       expect(result.current.error).toBeNull()
     })
 
@@ -247,7 +250,7 @@ describe('useSessions', () => {
 
       const { result } = renderHook(() => useSessions())
 
-      let session
+      let session: SessionEntry | null = null
       await act(async () => {
         session = await result.current.updateSession(mockBackendSession.id, {
           title: 'Updated Title'
@@ -255,7 +258,7 @@ describe('useSessions', () => {
       })
 
       expect(session).not.toBeNull()
-      expect(session?.title).toBe('Updated Title')
+      expect((session as SessionEntry | null)?.title).toBe('Updated Title')
       expect(result.current.error).toBeNull()
     })
 

@@ -206,7 +206,10 @@ describe('useCPRCreation', () => {
 
       const { result } = renderHook(() => useCPRCreation())
 
-      let response
+      let response: {
+        draft?: unknown
+        workflow?: { documentUrl?: string }
+      } | null = null
       await act(async () => {
         response = await result.current.submitDraft('draft-123')
       })
@@ -222,9 +225,10 @@ describe('useCPRCreation', () => {
           body: JSON.stringify({ confirm: true })
         }
       )
-      expect(response?.workflow?.documentUrl).toBe(
-        'https://storage.example.com/cpr-123.pdf'
-      )
+      expect(
+        (response as { workflow?: { documentUrl?: string } } | null)?.workflow
+          ?.documentUrl
+      ).toBe('https://storage.example.com/cpr-123.pdf')
       expect(result.current.draft?.documentUrl).toBe(
         'https://storage.example.com/cpr-123.pdf'
       )

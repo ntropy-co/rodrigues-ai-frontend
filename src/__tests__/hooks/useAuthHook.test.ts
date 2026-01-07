@@ -58,7 +58,23 @@ describe('useAuth Hook', () => {
     id: 'user-123',
     email: 'test@example.com',
     name: 'Test User',
-    role: 'analyst'
+    fullName: 'Test User',
+    role: 'analyst' as const,
+    organizationId: null,
+    isActive: true,
+    isSuperuser: false,
+    phoneNumber: null,
+    jobTitle: null,
+    avatarUrl: null,
+    companyName: null,
+    lastLoginAt: undefined,
+    loginCount: 1,
+    onboardingCompleted: false,
+    onboardingStep: 1,
+    planTier: 'free' as const,
+    storageUsedBytes: 0,
+    createdAt: new Date(),
+    updatedAt: undefined
   }
 
   const mockAuthResponse = {
@@ -245,7 +261,9 @@ describe('useAuth Hook', () => {
     const signupData = {
       email: 'newuser@example.com',
       password: 'SecurePassword123!',
-      name: 'New User'
+      confirmPassword: 'SecurePassword123!',
+      name: 'New User',
+      acceptTerms: true
     }
     const inviteToken = 'invite-token-123'
 
@@ -297,7 +315,10 @@ describe('useAuth Hook', () => {
 
   describe('Password Reset', () => {
     it('should request password reset successfully', async () => {
-      vi.mocked(authApi.requestPasswordReset).mockResolvedValue(undefined)
+      vi.mocked(authApi.requestPasswordReset).mockResolvedValue({
+        success: true,
+        message: 'Email sent'
+      })
 
       const { result } = renderHook(() => useAuth())
 
@@ -314,7 +335,10 @@ describe('useAuth Hook', () => {
     })
 
     it('should reset password successfully', async () => {
-      vi.mocked(authApi.resetPassword).mockResolvedValue(undefined)
+      vi.mocked(authApi.resetPassword).mockResolvedValue({
+        success: true,
+        message: 'Password reset'
+      })
 
       const { result } = renderHook(() => useAuth())
 
