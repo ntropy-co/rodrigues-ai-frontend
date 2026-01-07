@@ -143,7 +143,6 @@ export function OrganizationSettings({
   // Sync form data with organization
   useEffect(() => {
     if (organization) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData((prev) => {
         if (
           prev.name === (organization.name || '') &&
