@@ -44,19 +44,13 @@ export const stepCulturaSchema = z.object({
 
 export const stepValuesSchema = z
   .object({
-    amount: z
-      .number({ error: 'Valor obrigatório' })
-      .positive('Valor deve ser positivo'),
-    quantity: z
-      .number({ error: 'Quantidade obrigatória' })
-      .positive('Quantidade deve ser positiva'),
+    amount: z.number().positive('Valor deve ser positivo'),
+    quantity: z.number().positive('Quantidade deve ser positiva'),
     unitPrice: z.number().optional(), // Calculado, mas permite override
     issueDate: z.string().min(1, 'Data de emissão obrigatória'),
     dueDate: z.string().min(1, 'Data de vencimento obrigatória'),
     deliveryPlace: z.string().min(3, 'Local de entrega obrigatório'),
-    correctionIndex: z.enum(['IPCA', 'IGP-M', 'Nenhum'], {
-      error: 'Selecione um índice'
-    })
+    correctionIndex: z.enum(['IPCA', 'IGP-M', 'Nenhum'])
   })
   .refine(
     (data) => {
@@ -123,19 +117,13 @@ export const cprWizardSchema = z.object({
   ...stepCulturaSchema.shape,
 
   // Step 4: Valores (extract inner object shape from refined schema)
-  amount: z
-    .number({ error: 'Valor obrigatório' })
-    .positive('Valor deve ser positivo'),
-  quantity: z
-    .number({ error: 'Quantidade obrigatória' })
-    .positive('Quantidade deve ser positiva'),
+  amount: z.number().positive('Valor deve ser positivo'),
+  quantity: z.number().positive('Quantidade deve ser positiva'),
   unitPrice: z.number().optional(),
   issueDate: z.string().min(1, 'Data de emissão obrigatória'),
   dueDate: z.string().min(1, 'Data de vencimento obrigatória'),
   deliveryPlace: z.string().min(3, 'Local de entrega obrigatório'),
-  correctionIndex: z.enum(['IPCA', 'IGP-M', 'Nenhum'], {
-    error: 'Selecione um índice'
-  }),
+  correctionIndex: z.enum(['IPCA', 'IGP-M', 'Nenhum']),
 
   // Step 5: Garantias
   guaranteeType: z

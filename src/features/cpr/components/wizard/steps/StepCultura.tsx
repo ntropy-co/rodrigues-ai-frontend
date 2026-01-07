@@ -33,9 +33,7 @@ const UNITS = [
 export const stepCulturaSchema = z.object({
   commodity: z.string().min(1, 'Selecione a cultura'),
   safra: z.string().min(1, 'Selecione a safra'),
-  expectedQuantity: z
-    .number({ error: 'Quantidade obrigatória' })
-    .positive('Quantidade deve ser positiva'),
+  expectedQuantity: z.number().positive('Quantidade deve ser positiva'),
   unit: z.string().min(1, 'Selecione a unidade'),
   plantingDate: z.string().optional(),
   harvestDate: z.string().optional()
