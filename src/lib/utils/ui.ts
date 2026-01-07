@@ -40,7 +40,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
  * @returns Classe Tailwind de cor do texto
  */
 export function getCategoryColor(category: string): string {
-  return CATEGORY_COLORS[category] || 'text-gemini-verity-500'
+  return CATEGORY_COLORS[category] || 'text-gemini-gray-600'
 }
 
 /**

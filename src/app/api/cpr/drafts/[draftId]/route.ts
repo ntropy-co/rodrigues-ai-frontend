@@ -20,7 +20,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 export async function GET(
   request: NextRequest,
-  context: { params: Promise<{ draftId: string }> }
+  context: { params: { draftId: string } }
 ) {
   try {
     const authorization = getAuthorizationFromRequest(request)
@@ -32,7 +32,7 @@ export async function GET(
       )
     }
 
-    const { draftId } = await context.params
+    const { draftId } = context.params
 
     const response = await fetch(
       `${BACKEND_URL}/api/v1/cpr/drafts/${draftId}`,
@@ -72,7 +72,7 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  context: { params: Promise<{ draftId: string }> }
+  context: { params: { draftId: string } }
 ) {
   try {
     const authorization = getAuthorizationFromRequest(request)
@@ -84,7 +84,7 @@ export async function PATCH(
       )
     }
 
-    const { draftId } = await context.params
+    const { draftId } = context.params
     const body = await request.json()
 
     const response = await fetch(

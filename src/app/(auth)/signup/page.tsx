@@ -14,14 +14,14 @@ import {
   Info
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
-import { useAuthForm } from '@/features/auth'
-import { useInviteValidation } from '@/features/organization'
+import { useAuthForm } from '@/hooks/useAuthForm'
+import { useInviteValidation } from '@/hooks/useInviteValidation'
 import { validatePassword } from '@/lib/utils/auth-validators'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
-import { PasswordStrengthMeter } from '@/features/auth'
+import { PasswordStrengthMeter } from '@/components/v2/Auth/PasswordStrengthMeter'
 import {
   Tooltip,
   TooltipContent,
@@ -113,9 +113,7 @@ function SignupContent() {
       <div className="flex min-h-[600px] flex-col justify-center rounded-2xl border border-verity-100 bg-white p-8 shadow-xl shadow-verity-900/5 lg:p-10">
         <div className="mb-8 text-center">
           <Loader2 className="mx-auto mb-4 h-12 w-12 animate-spin text-verity-600" />
-          <p className="font-medium text-verity-700">
-            Validando seu convite...
-          </p>
+          <p className="font-medium text-verity-700">Validando seu convite...</p>
         </div>
         <SignupSkeleton />
       </div>
@@ -125,8 +123,8 @@ function SignupContent() {
   if (!isValid && !isInviteLoading) {
     return (
       <div className="rounded-2xl border border-verity-100 bg-white p-8 text-center shadow-xl shadow-verity-900/5 lg:p-10">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-error-50">
-          <AlertCircle className="h-8 w-8 text-error-500" />
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
+          <AlertCircle className="h-8 w-8 text-red-500" />
         </div>
         <h2 className="mb-2 font-display text-2xl font-semibold text-verity-950">
           Convite Inválido ou Expirado
@@ -166,17 +164,17 @@ function SignupContent() {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="mb-6 rounded-lg border border-ouro-600/20 bg-ouro-100/50 p-4"
+          className="bg-ouro-100/50 mb-6 rounded-lg border border-ouro-600/20 p-4"
         >
           <div className="flex items-start gap-3">
             <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-ouro-600/10">
-              <Mail className="h-5 w-5 text-ouro-900" />
+              <Mail className="text-ouro-900 h-5 w-5" />
             </div>
             <div>
-              <p className="mb-0.5 text-sm font-medium text-ouro-900">
+              <p className="text-ouro-900 mb-0.5 text-sm font-medium">
                 Convite de {organization.name}
               </p>
-              <p className="text-xs text-ouro-900/70">
+              <p className="text-ouro-900/70 text-xs">
                 Você foi convidado como{' '}
                 <span className="font-semibold">{invite?.role}</span>.
               </p>
@@ -194,9 +192,9 @@ function SignupContent() {
             exit={{ opacity: 0, height: 0, marginBottom: 0 }}
             className="overflow-hidden"
           >
-            <div className="flex items-start gap-3 rounded-lg border border-error-200 bg-error-50 p-4">
-              <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-error-600" />
-              <p className="text-sm text-error-700">{authError}</p>
+            <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
+              <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600" />
+              <p className="text-sm text-red-700">{authError}</p>
             </div>
           </motion.div>
         )}
@@ -224,12 +222,12 @@ function SignupContent() {
               className={cn(
                 'h-12 border-verity-200 bg-verity-50/50 px-4 text-verity-950 transition-all placeholder:text-verity-400/70',
                 'focus:border-verity-600 focus:bg-white focus:ring-4 focus:ring-verity-600/10',
-                errors.name && touched.name && 'border-error-300'
+                errors.name && touched.name && 'border-red-300'
               )}
             />
           </motion.div>
           {errors.name && touched.name && (
-            <p className="ml-1 text-xs text-error-600">{errors.name}</p>
+            <p className="ml-1 text-xs text-red-600">{errors.name}</p>
           )}
         </div>
 
@@ -278,7 +276,7 @@ function SignupContent() {
                 className={cn(
                   'h-12 border-verity-200 bg-verity-50/50 px-4 pr-12 text-verity-950 transition-all placeholder:text-verity-400/70',
                   'focus:border-verity-600 focus:bg-white focus:ring-4 focus:ring-verity-600/10',
-                  errors.password && touched.password && 'border-error-300'
+                  errors.password && touched.password && 'border-red-300'
                 )}
               />
             </motion.div>
@@ -301,7 +299,7 @@ function SignupContent() {
           )}
 
           {errors.password && touched.password && (
-            <p className="ml-1 text-xs text-error-600">{errors.password}</p>
+            <p className="ml-1 text-xs text-red-600">{errors.password}</p>
           )}
         </div>
 
@@ -323,12 +321,12 @@ function SignupContent() {
                 'focus:border-verity-600 focus:bg-white focus:ring-4 focus:ring-verity-600/10',
                 errors.confirmPassword &&
                   touched.confirmPassword &&
-                  'border-error-300'
+                  'border-red-300'
               )}
             />
           </motion.div>
           {errors.confirmPassword && touched.confirmPassword && (
-            <p className="ml-1 text-xs text-error-600">
+            <p className="ml-1 text-xs text-red-600">
               {errors.confirmPassword}
             </p>
           )}
@@ -360,7 +358,7 @@ function SignupContent() {
           </label>
         </div>
         {errors.acceptTerms && touched.acceptTerms && (
-          <p className="ml-1 text-xs text-error-600">{errors.acceptTerms}</p>
+          <p className="ml-1 text-xs text-red-600">{errors.acceptTerms}</p>
         )}
 
         {/* Submit Button */}

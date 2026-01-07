@@ -29,15 +29,12 @@ import {
   ArrowRight
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
-import {
-  useInvites,
-  type ValidateInviteResponse
-} from '@/features/organization'
+import { useInvites, type ValidateInviteResponse } from '@/hooks/useInvites'
 import { validatePassword, validateName } from '@/lib/utils/auth-validators'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
-import { PasswordStrengthMeter } from '@/features/auth'
+import { PasswordStrengthMeter } from '@/components/v2/Auth/PasswordStrengthMeter'
 import { staggerContainer, staggerItem, durations } from '@/lib/animations'
 
 // Background image for auth pages
@@ -98,32 +95,32 @@ function ErrorState({ state, message }: ErrorStateProps) {
       title: 'Convite Expirado',
       description:
         'Este convite expirou. Solicite um novo link ao administrador da sua organização.',
-      iconColor: 'text-ouro-500',
-      bgColor: 'bg-ouro-50'
+      iconColor: 'text-orange-500',
+      bgColor: 'bg-orange-50'
     },
     used: {
       icon: CheckCircle2,
       title: 'Convite Já Utilizado',
       description:
         'Este convite já foi aceito. Se você já tem uma conta, faça login.',
-      iconColor: 'text-verity-500',
-      bgColor: 'bg-verity-50'
+      iconColor: 'text-blue-500',
+      bgColor: 'bg-blue-50'
     },
     invalid: {
       icon: XCircle,
       title: 'Convite Inválido',
       description:
         'Não foi possível validar este convite. Verifique o link recebido ou solicite um novo.',
-      iconColor: 'text-error-500',
-      bgColor: 'bg-error-50'
+      iconColor: 'text-red-500',
+      bgColor: 'bg-red-50'
     },
     error: {
       icon: AlertCircle,
       title: 'Erro ao Carregar',
       description:
         message || 'Ocorreu um erro ao validar o convite. Tente novamente.',
-      iconColor: 'text-error-500',
-      bgColor: 'bg-error-50'
+      iconColor: 'text-red-500',
+      bgColor: 'bg-red-50'
     }
   }
 
@@ -191,8 +188,8 @@ function SuccessState({ organizationName, isAutoLoggedIn }: SuccessStateProps) {
       transition={{ duration: durations.slow }}
       className="rounded-2xl border border-verity-100 bg-white p-8 text-center shadow-xl shadow-verity-900/5 lg:p-10"
     >
-      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-verity-50">
-        <CheckCircle2 className="h-8 w-8 text-verity-500" />
+      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-50">
+        <CheckCircle2 className="h-8 w-8 text-green-500" />
       </div>
       <h2 className="mb-2 font-display text-2xl font-semibold text-verity-950">
         {isAutoLoggedIn ? 'Bem-vindo!' : 'Conta Criada!'}
@@ -365,8 +362,8 @@ function InviteContent() {
       // Store organization name for success screen
       setSuccessOrgName(inviteData?.organization_name || '')
 
-      // If we got a token, we're authenticated (BFF returns tokens if available)
-      if (result.token) {
+      // If user is returned, we're authenticated (tokens are in HttpOnly cookies)
+      if (result.user) {
         // Refetch user to update AuthContext
         try {
           await refetchUser()
@@ -474,24 +471,24 @@ function InviteContent() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
-          className="mb-6 rounded-lg border border-ouro-600/20 bg-ouro-100/50 p-4"
+          className="bg-ouro-100/50 mb-6 rounded-lg border border-ouro-600/20 p-4"
         >
           <div className="flex items-start gap-3">
             <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-ouro-600/10">
-              <Building2 className="h-5 w-5 text-ouro-900" />
+              <Building2 className="text-ouro-900 h-5 w-5" />
             </div>
             <div>
-              <p className="mb-0.5 text-sm font-medium text-ouro-900">
+              <p className="text-ouro-900 mb-0.5 text-sm font-medium">
                 {inviteData.organization_name}
               </p>
-              <p className="text-xs text-ouro-900/70">
+              <p className="text-ouro-900/70 text-xs">
                 Você foi convidado para fazer parte da organização como{' '}
                 <span className="font-semibold capitalize">
                   {inviteData.role}
                 </span>
                 .
               </p>
-              <p className="mt-1 text-xs text-ouro-900/60">
+              <p className="text-ouro-900/60 mt-1 text-xs">
                 Email: {inviteData.email}
               </p>
             </div>
@@ -508,9 +505,9 @@ function InviteContent() {
             exit={{ opacity: 0, height: 0, marginBottom: 0 }}
             className="overflow-hidden"
           >
-            <div className="flex items-start gap-3 rounded-lg border border-error-200 bg-error-50 p-4">
-              <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-error-600" />
-              <p className="text-sm text-error-700">{submitError}</p>
+            <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
+              <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600" />
+              <p className="text-sm text-red-700">{submitError}</p>
             </div>
           </motion.div>
         )}
@@ -533,12 +530,12 @@ function InviteContent() {
               className={cn(
                 'h-12 border-verity-200 bg-verity-50/50 px-4 text-verity-950 transition-all placeholder:text-verity-400/70',
                 'focus:border-verity-600 focus:bg-white focus:ring-4 focus:ring-verity-600/10',
-                errors.fullName && touched.fullName && 'border-error-300'
+                errors.fullName && touched.fullName && 'border-red-300'
               )}
             />
           </motion.div>
           {errors.fullName && touched.fullName && (
-            <p className="ml-1 text-xs text-error-600">{errors.fullName}</p>
+            <p className="ml-1 text-xs text-red-600">{errors.fullName}</p>
           )}
         </div>
 
@@ -577,7 +574,7 @@ function InviteContent() {
                 className={cn(
                   'h-12 border-verity-200 bg-verity-50/50 px-4 pr-12 text-verity-950 transition-all placeholder:text-verity-400/70',
                   'focus:border-verity-600 focus:bg-white focus:ring-4 focus:ring-verity-600/10',
-                  errors.password && touched.password && 'border-error-300'
+                  errors.password && touched.password && 'border-red-300'
                 )}
               />
             </motion.div>
@@ -601,7 +598,7 @@ function InviteContent() {
           )}
 
           {errors.password && touched.password && (
-            <p className="ml-1 text-xs text-error-600">{errors.password}</p>
+            <p className="ml-1 text-xs text-red-600">{errors.password}</p>
           )}
         </div>
 
@@ -626,7 +623,7 @@ function InviteContent() {
                   'focus:border-verity-600 focus:bg-white focus:ring-4 focus:ring-verity-600/10',
                   errors.confirmPassword &&
                     touched.confirmPassword &&
-                    'border-error-300'
+                    'border-red-300'
                 )}
               />
             </motion.div>
@@ -646,7 +643,7 @@ function InviteContent() {
             </button>
           </div>
           {errors.confirmPassword && touched.confirmPassword && (
-            <p className="ml-1 text-xs text-error-600">
+            <p className="ml-1 text-xs text-red-600">
               {errors.confirmPassword}
             </p>
           )}

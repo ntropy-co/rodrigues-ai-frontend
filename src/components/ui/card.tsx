@@ -9,7 +9,7 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      'rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--text-primary))] shadow-sm',
+      'rounded-xl border-none bg-white text-card-foreground shadow-sm ring-1 ring-black/5 dark:bg-verity-900/50 dark:ring-white/10',
       className
     )}
     {...props}
@@ -23,7 +23,7 @@ const GlassCard = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('glass-card text-[hsl(var(--text-primary))]', className)}
+    className={cn('glass-card text-card-foreground', className)}
     {...props}
   />
 ))

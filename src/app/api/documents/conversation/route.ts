@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
       headers: {
         'Cache-Control': 'private, max-age=30, stale-while-revalidate=60',
         'Access-Control-Allow-Origin':
-          process.env.NEXT_PUBLIC_APP_URL || 'https://verityagro.com.br',
+          process.env.NEXT_PUBLIC_APP_URL || 'https://rodriguesagro.com.br',
         'Access-Control-Allow-Credentials': 'true'
       }
     })
@@ -105,7 +105,7 @@ export async function GET(request: NextRequest) {
         status: 500,
         headers: {
           'Access-Control-Allow-Origin':
-            process.env.NEXT_PUBLIC_APP_URL || 'https://verityagro.com.br',
+            process.env.NEXT_PUBLIC_APP_URL || 'https://rodriguesagro.com.br',
           'Access-Control-Allow-Credentials': 'true'
         }
       }

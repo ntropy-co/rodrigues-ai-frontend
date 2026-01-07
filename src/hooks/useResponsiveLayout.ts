@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useLayoutStore } from '@/features/chat'
+import { useLayoutStore } from '@/stores/layoutStore'
 import { BREAKPOINTS } from '@/types/layout'
 
 /**

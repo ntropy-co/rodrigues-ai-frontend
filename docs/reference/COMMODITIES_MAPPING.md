@@ -6,41 +6,39 @@
 
 ## Tabela de Mapeamento
 
-| Commodity      | Frontend (Yahoo) | Backend (Interno) | Unidade Frontend | Unidade Backend |
-| -------------- | ---------------- | ----------------- | ---------------- | --------------- |
-| Soja           | `ZS=F`           | `SOJA`            | USD/bushel       | saca 60kg       |
-| Milho          | `ZC=F`           | `MILHO`           | USD/bushel       | saca 60kg       |
-| Trigo          | `ZW=F`           | `TRIGO`           | USD/bushel       | saca 60kg       |
-| Café           | `KC=F`           | `CAFE`            | USD/lb           | saca 60kg       |
-| Óleo de Soja   | `ZL=F`           | `OLEO_SOJA`       | USD/lb           | kg              |
-| Farelo de Soja | `ZM=F`           | `BSOJA`           | USD/ton          | tonelada        |
-| Açúcar         | `SB=F`           | `ACUCAR`          | USD/lb           | saca 50kg       |
-| Algodão        | `CT=F`           | `ALGODAO`         | USD/lb           | arroba 15kg     |
-| Boi Gordo      | `LE=F`           | `BOI`             | USD/lb           | arroba 15kg     |
+| Commodity | Frontend (Yahoo) | Backend (Interno) | Unidade Frontend | Unidade Backend |
+|-----------|------------------|-------------------|------------------|-----------------|
+| Soja | `ZS=F` | `SOJA` | USD/bushel | saca 60kg |
+| Milho | `ZC=F` | `MILHO` | USD/bushel | saca 60kg |
+| Trigo | `ZW=F` | `TRIGO` | USD/bushel | saca 60kg |
+| Café | `KC=F` | `CAFE` | USD/lb | saca 60kg |
+| Óleo de Soja | `ZL=F` | `OLEO_SOJA` | USD/lb | kg |
+| Farelo de Soja | `ZM=F` | `BSOJA` | USD/ton | tonelada |
+| Açúcar | `SB=F` | `ACUCAR` | USD/lb | saca 50kg |
+| Algodão | `CT=F` | `ALGODAO` | USD/lb | arroba 15kg |
+| Boi Gordo | `LE=F` | `BOI` | USD/lb | arroba 15kg |
 
 ---
 
 ## Commodities Apenas no Backend
 
-| Código    | Nome         | Notas                         |
-| --------- | ------------ | ----------------------------- |
-| `CAFE_R`  | Café Robusta | Sem equivalente Yahoo Finance |
-| `ETANOL`  | Etanol       | Mercado brasileiro            |
-| `BEZERRO` | Bezerro      | Mercado brasileiro            |
-| `FRANGO`  | Frango       | Mercado brasileiro            |
-| `SUINO`   | Suíno        | Mercado brasileiro            |
+| Código | Nome | Notas |
+|--------|------|-------|
+| `CAFE_R` | Café Robusta | Sem equivalente Yahoo Finance |
+| `ETANOL` | Etanol | Mercado brasileiro |
+| `BEZERRO` | Bezerro | Mercado brasileiro |
+| `FRANGO` | Frango | Mercado brasileiro |
+| `SUINO` | Suíno | Mercado brasileiro |
 
 ---
 
 ## Fontes de Dados
 
 ### Frontend
-
 - **Yahoo Finance API** via proxy BFF
 - Preços em USD (mercado internacional)
 
 ### Backend
-
 - **CEPEA/ESALQ:** Centro de Estudos Avançados em Economia Aplicada
 - **B3:** Brasil, Bolsa, Balcão
 - **CONAB:** Companhia Nacional de Abastecimento
@@ -50,11 +48,11 @@
 
 ## Arquivos de Referência
 
-| Arquivo            | Localização                     |
-| ------------------ | ------------------------------- |
-| Frontend constants | `src/lib/commodities.ts`        |
-| Backend model      | `app/models/commodity.py`       |
-| Backend routes     | `app/api/routes/commodities.py` |
+| Arquivo | Localização |
+|---------|-------------|
+| Frontend constants | `src/lib/commodities.ts` |
+| Backend model | `app/models/commodity.py` |
+| Backend routes | `app/api/routes/commodities.py` |
 
 ---
 
@@ -68,4 +66,4 @@
 
 ---
 
-_Documentado em: 2025-12-26_
+*Documentado em: 2025-12-26*

@@ -18,7 +18,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 export async function GET(
   request: NextRequest,
-  context: { params: Promise<{ draftId: string }> }
+  context: { params: { draftId: string } }
 ) {
   try {
     const authorization = getAuthorizationFromRequest(request)
@@ -30,7 +30,7 @@ export async function GET(
       )
     }
 
-    const { draftId } = await context.params
+    const { draftId } = context.params
     const url = new URL(`${BACKEND_URL}/api/v1/cpr/drafts/${draftId}/download`)
 
     const format = request.nextUrl.searchParams.get('format')

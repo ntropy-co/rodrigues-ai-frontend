@@ -209,7 +209,7 @@ const Img = ({ src, alt }: ImgProps) => {
 }
 
 const Table = ({ className, ...props }: TableProps) => (
-  <div className="w-full max-w-[560px] overflow-hidden rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]">
+  <div className="w-full max-w-[560px] overflow-hidden rounded-md border border-border">
     <div className="w-full overflow-x-auto">
       <table className={cn(className, 'w-full')} {...filterProps(props)} />
     </div>
@@ -220,7 +220,7 @@ const TableHead = ({ className, ...props }: TableHeaderProps) => (
   <thead
     className={cn(
       className,
-      'rounded-md border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-subtle))] p-2 text-left text-sm font-[600] text-[hsl(var(--text-secondary))]'
+      'rounded-md border-b border-border bg-transparent p-2 text-left text-sm font-[600]'
     )}
     {...filterProps(props)}
   />
@@ -239,20 +239,14 @@ const TableBody = ({ className, ...props }: TableBodyProps) => (
 
 const TableRow = ({ className, ...props }: TableRowProps) => (
   <tr
-    className={cn(
-      className,
-      'border-b border-[hsl(var(--border-subtle))] last:border-b-0'
-    )}
+    className={cn(className, 'border-b border-border last:border-b-0')}
     {...filterProps(props)}
   />
 )
 
 const TableCell = ({ className, ...props }: TableCellProps) => (
   <td
-    className={cn(
-      className,
-      'whitespace-nowrap p-2 font-[400] tabular-nums text-[hsl(var(--text-primary))]'
-    )}
+    className={cn(className, 'whitespace-nowrap p-2 font-[400]')}
     {...filterProps(props)}
   />
 )

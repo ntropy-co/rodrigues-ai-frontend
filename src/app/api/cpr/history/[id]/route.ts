@@ -49,7 +49,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     // Validate ID format
     if (!isValidUUID(id)) {
-      return NextResponse.json({ detail: 'Invalid ID format' }, { status: 400 })
+      return NextResponse.json(
+        { detail: 'Invalid ID format' },
+        { status: 400 }
+      )
     }
 
     console.log('[API /api/cpr/history/:id] GET:', id)
@@ -59,10 +62,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       headers: getBackendHeaders(authorization)
     })
 
-    return await handleBackendResponse(
-      response,
-      'Failed to fetch CPR history item'
-    )
+    return await handleBackendResponse(response, 'Failed to fetch CPR history item')
   } catch (error) {
     logRouteError('/api/cpr/history/:id', 'GET', error)
     return NextResponse.json(
@@ -87,7 +87,10 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     // Validate ID format
     if (!isValidUUID(id)) {
-      return NextResponse.json({ detail: 'Invalid ID format' }, { status: 400 })
+      return NextResponse.json(
+        { detail: 'Invalid ID format' },
+        { status: 400 }
+      )
     }
 
     // Parse request body
@@ -109,10 +112,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       body: JSON.stringify(body)
     })
 
-    return await handleBackendResponse(
-      response,
-      'Failed to update CPR history item'
-    )
+    return await handleBackendResponse(response, 'Failed to update CPR history item')
   } catch (error) {
     logRouteError('/api/cpr/history/:id', 'PATCH', error)
     return NextResponse.json(
@@ -137,7 +137,10 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     // Validate ID format
     if (!isValidUUID(id)) {
-      return NextResponse.json({ detail: 'Invalid ID format' }, { status: 400 })
+      return NextResponse.json(
+        { detail: 'Invalid ID format' },
+        { status: 400 }
+      )
     }
 
     console.log('[API /api/cpr/history/:id] DELETE:', id)
@@ -147,10 +150,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       headers: getBackendHeaders(authorization)
     })
 
-    return await handleBackendResponse(
-      response,
-      'Failed to delete CPR history item'
-    )
+    return await handleBackendResponse(response, 'Failed to delete CPR history item')
   } catch (error) {
     logRouteError('/api/cpr/history/:id', 'DELETE', error)
     return NextResponse.json(

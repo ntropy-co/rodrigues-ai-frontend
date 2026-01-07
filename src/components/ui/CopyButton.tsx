@@ -58,8 +58,8 @@ export function CopyButton({
     >
       {copied ? (
         <>
-          <Check className="h-3 w-3 text-verity-500" />
-          <span className="text-verity-500">Copiado</span>
+          <Check className="h-3 w-3 text-green-500" />
+          <span className="text-green-500">Copiado</span>
         </>
       ) : (
         <>

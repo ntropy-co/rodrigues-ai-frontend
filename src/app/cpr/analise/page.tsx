@@ -37,16 +37,22 @@ import {
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { InternalHeader } from '@/components/layout/InternalHeader'
+import { InternalHeader } from '@/components/v2/Header/InternalHeader'
 import { Card, CardContent } from '@/components/ui/card'
-import { ComplianceVerifier, type ExtractedData } from '@/features/compliance'
-import { RiskCalculator, type RiskCalculatorData } from '@/features/risk'
+import {
+  ComplianceVerifier,
+  type ExtractedData
+} from '@/components/v2/Compliance'
+import {
+  RiskCalculator,
+  type RiskCalculatorData
+} from '@/components/v2/RiskCalculator/RiskCalculator'
 import {
   useCPRAnalysis,
   type WorkflowMessage,
   type ComplianceResult,
   type RiskResult
-} from '@/features/cpr'
+} from '@/hooks/useCPRAnalysis'
 import { cn } from '@/lib/utils'
 
 // =============================================================================
@@ -408,9 +414,7 @@ function ExtractedDataSummary({ data }: ExtractedDataSummaryProps) {
                     item.value && (
                       <div key={item.label} className="text-sm">
                         <span className="text-verity-500">{item.label}:</span>{' '}
-                        <span className="tabular-nums text-verity-900">
-                          {item.value}
-                        </span>
+                        <span className="text-verity-900">{item.value}</span>
                       </div>
                     )
                 )}

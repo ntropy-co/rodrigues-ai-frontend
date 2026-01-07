@@ -60,27 +60,24 @@ npm run format
 
 ## Estrutura de Comandos
 
-| Comando             | Descrição                          |
-| ------------------- | ---------------------------------- |
-| `npm run dev`       | Inicia servidor de desenvolvimento |
-| `npm run build`     | Build de produção                  |
-| `npm run lint`      | Verifica erros de lint             |
-| `npm run format`    | Formata código                     |
-| `npm run typecheck` | Verifica tipos TypeScript          |
+| Comando | Descrição |
+|---------|-----------|
+| `npm run dev` | Inicia servidor de desenvolvimento |
+| `npm run build` | Build de produção |
+| `npm run lint` | Verifica erros de lint |
+| `npm run format` | Formata código |
+| `npm run typecheck` | Verifica tipos TypeScript |
 
 ## Troubleshooting
 
 ### Erro: "Cannot find module"
-
 ```bash
 rm -rf node_modules
 npm install
 ```
 
 ### Erro: "CORS blocked"
-
 Verifique se `NEXT_PUBLIC_API_URL` está correto no `.env.local`
 
 ### Erro: "Upstash connection failed"
-
 Rate limiting falha silenciosamente se Redis não estiver configurado. Para desenvolvimento local, isso é aceitável.

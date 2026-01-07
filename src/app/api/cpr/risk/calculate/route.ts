@@ -37,6 +37,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { getAuthorizationFromRequest } from '@/lib/api/auth-header'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -94,16 +95,8 @@ function validateRequest(body: Partial<RiskCalculateRequest>): string | null {
 
 export async function POST(request: NextRequest) {
   try {
-    // Get the Authorization header or extract from HttpOnly cookie
-    let authorization = request.headers.get('authorization')
-
-    // If no Authorization header, try to get token from HttpOnly cookie
-    if (!authorization) {
-      const accessToken = request.cookies.get('access_token')?.value
-      if (accessToken) {
-        authorization = `Bearer ${accessToken}`
-      }
-    }
+    // Get the Authorization header
+    const authorization = getAuthorizationFromRequest(request)
 
     if (!authorization) {
       return NextResponse.json(

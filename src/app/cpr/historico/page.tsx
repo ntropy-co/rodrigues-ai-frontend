@@ -4,14 +4,11 @@ import { useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { InternalHeader } from '@/components/layout/InternalHeader'
+import { InternalHeader } from '@/components/v2/Header/InternalHeader'
 import { toast } from 'sonner'
-import {
-  useCPRHistory,
-  CPRHistoryList,
-  CPRHistoryFiltersBar,
-  type CPRHistoryItem
-} from '@/features/cpr'
+import { useCPRHistory } from '@/hooks/useCPRHistory'
+import { CPRHistoryList, CPRHistoryFilters } from '@/components/v2/CPRHistory'
+import type { CPRHistoryItem } from '@/hooks/useCPRHistory'
 
 export default function CPRHistoricoPage() {
   const router = useRouter()
@@ -84,7 +81,7 @@ export default function CPRHistoricoPage() {
   }, [setFilters])
 
   return (
-    <div className="min-h-screen bg-sand-100 dark:bg-verity-950">
+    <div className="min-h-screen">
       <InternalHeader
         title="Historico de CPRs"
         subtitle="Visualize e gerencie analises e emissoes de CPR."
@@ -108,16 +105,13 @@ export default function CPRHistoricoPage() {
       <div className="container mx-auto max-w-6xl px-4 py-10">
         {/* Filters */}
         <div className="mb-6">
-          <CPRHistoryFiltersBar
-            filters={filters}
-            onFiltersChange={setFilters}
-          />
+          <CPRHistoryFilters filters={filters} onFiltersChange={setFilters} />
         </div>
 
         {/* Error state */}
         {error && (
-          <div className="mb-6 rounded-xl border border-error-200 bg-error-50/80 p-4 backdrop-blur-sm">
-            <p className="text-sm font-medium text-error-800">{error}</p>
+          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
+            <p className="text-red-600">{error}</p>
             <Button
               variant="outline"
               size="sm"
@@ -146,7 +140,7 @@ export default function CPRHistoricoPage() {
 
         {/* Summary */}
         {!isLoading && total > 0 && (
-          <div className="mt-6 text-center text-sm tabular-nums text-verity-500">
+          <div className="mt-6 text-center text-sm text-verity-500">
             Total: {total} {total === 1 ? 'registro' : 'registros'}
           </div>
         )}

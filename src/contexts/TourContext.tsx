@@ -52,7 +52,6 @@ export function TourProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const stored = localStorage.getItem('verity_seen_tours')
     if (stored) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSeenTours(new Set(JSON.parse(stored)))
     }
   }, [])
@@ -80,16 +79,6 @@ export function TourProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
-  const endTour = useCallback(() => {
-    if (currentTourId) {
-      markAsSeen(currentTourId)
-    }
-    setIsActive(false)
-    setCurrentTourId(null)
-    setSteps([])
-    setCurrentStepIndex(0)
-  }, [currentTourId, markAsSeen])
-
   const nextStep = useCallback(() => {
     if (currentStepIndex < steps.length - 1) {
       const nextIndex = currentStepIndex + 1
@@ -103,6 +92,16 @@ export function TourProvider({ children }: { children: React.ReactNode }) {
       endTour()
     }
   }, [currentStepIndex, steps, endTour])
+
+  const endTour = useCallback(() => {
+    if (currentTourId) {
+      markAsSeen(currentTourId)
+    }
+    setIsActive(false)
+    setCurrentTourId(null)
+    setSteps([])
+    setCurrentStepIndex(0)
+  }, [currentTourId, markAsSeen])
 
   const hasSeenTour = useCallback(
     (tourId: string) => {

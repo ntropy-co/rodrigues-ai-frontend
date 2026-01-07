@@ -23,10 +23,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthorizationFromRequest } from '@/lib/api/auth-header'
 
-const BACKEND_URL =
-  process.env.API_URL ||
-  process.env.NEXT_PUBLIC_API_URL ||
-  'http://localhost:8000'
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 export async function GET(request: NextRequest) {
   try {
@@ -48,15 +45,8 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    const contentType = response.headers.get('content-type') || ''
-    let data: unknown = null
-
-    if (contentType.includes('application/json')) {
-      data = await response.json()
-    } else {
-      const text = await response.text()
-      data = { detail: text || 'Unexpected response from backend' }
-    }
+    // Get the response data
+    const data = await response.json()
 
     // Map backend response to frontend expected format
     // Backend returns: { id, email, full_name, is_active, is_superuser, created_at, organization_id }
@@ -64,12 +54,10 @@ export async function GET(request: NextRequest) {
     if (response.ok) {
       return NextResponse.json(
         {
-          id: (data as { id: string }).id,
-          email: (data as { email: string }).email,
-          name: (data as { full_name?: string }).full_name || '',
-          role: (data as { is_superuser?: boolean }).is_superuser
-            ? 'admin'
-            : 'user'
+          id: data.id,
+          email: data.email,
+          name: data.full_name || '',
+          role: data.is_superuser ? 'admin' : 'user'
         },
         { status: response.status }
       )

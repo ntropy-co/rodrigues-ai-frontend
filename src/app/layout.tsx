@@ -1,5 +1,11 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Crimson_Pro } from 'next/font/google'
+import {
+  DM_Mono,
+  Geist,
+  Inter,
+  Playfair_Display,
+  Crimson_Pro
+} from 'next/font/google'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/components/providers/theme-provider'
@@ -7,25 +13,45 @@ import { AuthProvider } from '@/contexts/AuthContext'
 import { ChatInputProvider } from '@/contexts/ChatInputContext'
 import { PostHogProvider } from '@/components/providers/PostHogProvider'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
-import { InstallPromptGate } from '@/components/layout/InstallPromptGate'
+import { InstallPrompt } from '@/components/v2/InstallPrompt'
 import { QueryProvider } from '@/providers/QueryProvider'
-import { WebVitalsReporterWrapper } from '@/components/layout/Monitoring/WebVitalsReporterWrapper'
+import { WebVitalsReporterWrapper } from '@/components/v2/Monitoring/WebVitalsReporterWrapper'
 import { TourProvider } from '@/contexts/TourContext'
-import { TourGate } from '@/components/layout/TourGate'
+import { TourOverlay } from '@/components/v2/Tour/TourOverlay'
+import { VerityGuide } from '@/components/v2/Tour/VerityGuide'
 import './globals.css'
 
 const inter = Inter({
   variable: '--font-inter',
-  weight: ['300', '400', '500', '600', '700'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  subsets: ['latin'],
+  display: 'swap'
+})
+
+const playfair = Playfair_Display({
+  variable: '--font-playfair',
+  weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
   display: 'swap'
 })
 
 const crimson = Crimson_Pro({
   variable: '--font-crimson',
-  weight: ['400', '500', '600', '700'],
+  weight: ['200', '300', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
   display: 'swap'
+})
+
+const geistSans = Geist({
+  variable: '--font-geist-sans',
+  weight: '400',
+  subsets: ['latin']
+})
+
+const dmMono = DM_Mono({
+  subsets: ['latin'],
+  variable: '--font-dm-mono',
+  weight: '400'
 })
 
 export const viewport: Viewport = {
@@ -62,7 +88,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${crimson.variable} bg-sand-100 font-sans text-verity-900 antialiased selection:bg-verity-200 selection:text-verity-900`}
+        className={`${inter.variable} ${playfair.variable} ${crimson.variable} ${geistSans.variable} ${dmMono.variable} bg-sand-100 font-sans text-verity-900 antialiased selection:bg-verity-200 selection:text-verity-900`}
       >
         <ThemeProvider
           attribute="class"
@@ -79,9 +105,10 @@ export default function RootLayout({
                       <NuqsAdapter>{children}</NuqsAdapter>
                     </ErrorBoundary>
                     <Toaster />
-                    <InstallPromptGate />
+                    <InstallPrompt />
                     <WebVitalsReporterWrapper />
-                    <TourGate />
+                    <TourOverlay />
+                    <VerityGuide />
                   </QueryProvider>
                 </TourProvider>
               </ChatInputProvider>

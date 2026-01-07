@@ -11,7 +11,6 @@ export function ThemeToggle() {
 
   // Avoid hydration mismatch
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true)
   }, [])
 
@@ -38,9 +37,9 @@ export function ThemeToggle() {
       title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
     >
       {isDark ? (
-        <Icon type="sun" size="xs" className="text-ouro-500" />
+        <Icon type="sun" size="xs" className="text-yellow-500" />
       ) : (
-        <Icon type="moon" size="xs" className="text-verity-700" />
+        <Icon type="moon" size="xs" className="text-slate-700" />
       )}
     </Button>
   )

@@ -59,12 +59,14 @@ const mockDocuments = [
 // =============================================================================
 
 test.describe('Documents List Page', () => {
-  test.beforeEach(async ({ mockPage }) => {
-    await mockPage.goto('/documents')
+  test.beforeEach(async ({ authenticatedPage }) => {
+    await authenticatedPage.goto('/documents')
   })
 
-  test('should display documents page elements', async ({ mockPage }) => {
-    const page = mockPage
+  test('should display documents page elements', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     // Check page header
     await expect(page.locator('text=Meus Documentos')).toBeVisible()
@@ -84,8 +86,8 @@ test.describe('Documents List Page', () => {
     await expect(page.locator('text=Mais recentes')).toBeVisible()
   })
 
-  test('should show loading state initially', async ({ mockPage }) => {
-    const page = mockPage
+  test('should show loading state initially', async ({ authenticatedPage }) => {
+    const page = authenticatedPage
 
     // Intercept API to add delay
     await page.route('**/api/documents/user**', async (route) => {
@@ -105,8 +107,10 @@ test.describe('Documents List Page', () => {
     })
   })
 
-  test('should display empty state when no documents', async ({ mockPage }) => {
-    const page = mockPage
+  test('should display empty state when no documents', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     // Mock empty documents response
     await page.route('**/api/documents/user**', async (route) => {
@@ -129,9 +133,9 @@ test.describe('Documents List Page', () => {
   })
 
   test('should display document list with mocked data', async ({
-    mockPage
+    authenticatedPage
   }) => {
-    const page = mockPage
+    const page = authenticatedPage
 
     // Mock documents response
     await page.route('**/api/documents/user**', async (route) => {
@@ -162,8 +166,10 @@ test.describe('Documents List Page', () => {
     await expect(page.locator('text=Processado').first()).toBeVisible()
   })
 
-  test('should display file size correctly formatted', async ({ mockPage }) => {
-    const page = mockPage
+  test('should display file size correctly formatted', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     await page.route('**/api/documents/user**', async (route) => {
       await route.fulfill({
@@ -183,9 +189,9 @@ test.describe('Documents List Page', () => {
   })
 
   test('should navigate back when clicking back button', async ({
-    mockPage
+    authenticatedPage
   }) => {
-    const page = mockPage
+    const page = authenticatedPage
 
     // Navigate to documents from dashboard
     await page.goto('/dashboard')
@@ -204,9 +210,9 @@ test.describe('Documents List Page', () => {
 // =============================================================================
 
 test.describe('Documents Search and Filter', () => {
-  test.beforeEach(async ({ mockPage }) => {
+  test.beforeEach(async ({ authenticatedPage }) => {
     // Mock documents for all tests in this describe
-    await mockPage.route('**/api/documents/user**', async (route) => {
+    await authenticatedPage.route('**/api/documents/user**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -214,11 +220,13 @@ test.describe('Documents Search and Filter', () => {
       })
     })
 
-    await mockPage.goto('/documents')
+    await authenticatedPage.goto('/documents')
   })
 
-  test('should filter documents by search query', async ({ mockPage }) => {
-    const page = mockPage
+  test('should filter documents by search query', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     // Wait for documents to load
     await expect(page.locator('text=contrato-cpr-2024.pdf')).toBeVisible()
@@ -236,9 +244,9 @@ test.describe('Documents Search and Filter', () => {
   })
 
   test('should show no results message when search has no matches', async ({
-    mockPage
+    authenticatedPage
   }) => {
-    const page = mockPage
+    const page = authenticatedPage
 
     // Wait for documents to load
     await expect(page.locator('text=contrato-cpr-2024.pdf')).toBeVisible()
@@ -253,8 +261,10 @@ test.describe('Documents Search and Filter', () => {
     ).toBeVisible()
   })
 
-  test('should clear search and show all documents', async ({ mockPage }) => {
-    const page = mockPage
+  test('should clear search and show all documents', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     // Wait for documents to load
     await expect(page.locator('text=contrato-cpr-2024.pdf')).toBeVisible()
@@ -273,8 +283,8 @@ test.describe('Documents Search and Filter', () => {
     await expect(page.locator('text=safra-2024-imagem.png')).toBeVisible()
   })
 
-  test('should search case-insensitively', async ({ mockPage }) => {
-    const page = mockPage
+  test('should search case-insensitively', async ({ authenticatedPage }) => {
+    const page = authenticatedPage
 
     // Wait for documents to load
     await expect(page.locator('text=contrato-cpr-2024.pdf')).toBeVisible()
@@ -293,8 +303,8 @@ test.describe('Documents Search and Filter', () => {
 // =============================================================================
 
 test.describe('Documents Sorting', () => {
-  test.beforeEach(async ({ mockPage }) => {
-    await mockPage.route('**/api/documents/user**', async (route) => {
+  test.beforeEach(async ({ authenticatedPage }) => {
+    await authenticatedPage.route('**/api/documents/user**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -302,20 +312,22 @@ test.describe('Documents Sorting', () => {
       })
     })
 
-    await mockPage.goto('/documents')
+    await authenticatedPage.goto('/documents')
   })
 
-  test('should default to "Mais recentes" sort order', async ({ mockPage }) => {
-    const page = mockPage
+  test('should default to "Mais recentes" sort order', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     // Check default sort value
     await expect(page.locator('text=Mais recentes')).toBeVisible()
   })
 
   test('should allow changing sort order to "Mais antigos"', async ({
-    mockPage
+    authenticatedPage
   }) => {
-    const page = mockPage
+    const page = authenticatedPage
 
     // Wait for documents to load
     await expect(page.locator('text=contrato-cpr-2024.pdf')).toBeVisible()
@@ -346,9 +358,9 @@ test.describe('Documents Sorting', () => {
 
 test.describe('Documents Download', () => {
   test('should have download button for each document', async ({
-    mockPage
+    authenticatedPage
   }) => {
-    const page = mockPage
+    const page = authenticatedPage
 
     await page.route('**/api/documents/user**', async (route) => {
       await route.fulfill({
@@ -371,9 +383,9 @@ test.describe('Documents Download', () => {
   })
 
   test('should trigger download when clicking download button', async ({
-    mockPage
+    authenticatedPage
   }) => {
-    const page = mockPage
+    const page = authenticatedPage
 
     await page.route('**/api/documents/user**', async (route) => {
       await route.fulfill({
@@ -412,8 +424,10 @@ test.describe('Documents Download', () => {
     await page.waitForTimeout(500)
   })
 
-  test('should show error toast on download failure', async ({ mockPage }) => {
-    const page = mockPage
+  test('should show error toast on download failure', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     await page.route('**/api/documents/user**', async (route) => {
       await route.fulfill({
@@ -458,8 +472,10 @@ test.describe('Documents Download', () => {
 // =============================================================================
 
 test.describe('Documents Deletion', () => {
-  test('should have remove button for each document', async ({ mockPage }) => {
-    const page = mockPage
+  test('should have remove button for each document', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     await page.route('**/api/documents/user**', async (route) => {
       await route.fulfill({
@@ -480,9 +496,9 @@ test.describe('Documents Deletion', () => {
   })
 
   test('should open confirmation dialog when clicking remove', async ({
-    mockPage
+    authenticatedPage
   }) => {
-    const page = mockPage
+    const page = authenticatedPage
 
     await page.route('**/api/documents/user**', async (route) => {
       await route.fulfill({
@@ -517,8 +533,10 @@ test.describe('Documents Deletion', () => {
     await expect(page.locator('button:has-text("Remover")')).toBeVisible()
   })
 
-  test('should close dialog when clicking cancel', async ({ mockPage }) => {
-    const page = mockPage
+  test('should close dialog when clicking cancel', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     await page.route('**/api/documents/user**', async (route) => {
       await route.fulfill({
@@ -550,8 +568,10 @@ test.describe('Documents Deletion', () => {
     await expect(page.locator('text=contrato-cpr-2024.pdf')).toBeVisible()
   })
 
-  test('should delete document when confirming', async ({ mockPage }) => {
-    const page = mockPage
+  test('should delete document when confirming', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     let deleteCallMade = false
 
@@ -599,8 +619,10 @@ test.describe('Documents Deletion', () => {
       })
   })
 
-  test('should show error toast on deletion failure', async ({ mockPage }) => {
-    const page = mockPage
+  test('should show error toast on deletion failure', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     await page.route('**/api/documents/user**', async (route) => {
       await route.fulfill({
@@ -650,8 +672,10 @@ test.describe('Documents Deletion', () => {
 // =============================================================================
 
 test.describe('Document Upload Modal', () => {
-  test('should display upload modal elements', async ({ mockPage }) => {
-    const page = mockPage
+  test('should display upload modal elements', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     // Navigate to a page with upload modal (usually chat or analyze)
     await page.goto('/analyze')
@@ -684,9 +708,9 @@ test.describe('Document Upload Modal', () => {
   })
 
   test('should have file input with correct accept types', async ({
-    mockPage
+    authenticatedPage
   }) => {
-    const page = mockPage
+    const page = authenticatedPage
 
     await page.goto('/analyze')
 
@@ -706,8 +730,10 @@ test.describe('Document Upload Modal', () => {
     }
   })
 
-  test('should show file name after selecting a file', async ({ mockPage }) => {
-    const page = mockPage
+  test('should show file name after selecting a file', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     await page.goto('/analyze')
 
@@ -731,8 +757,10 @@ test.describe('Document Upload Modal', () => {
     }
   })
 
-  test('should show error for invalid file type', async ({ mockPage }) => {
-    const page = mockPage
+  test('should show error for invalid file type', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     await page.goto('/analyze')
 
@@ -758,8 +786,10 @@ test.describe('Document Upload Modal', () => {
     }
   })
 
-  test('should show error for file too large', async ({ mockPage }) => {
-    const page = mockPage
+  test('should show error for file too large', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     await page.goto('/analyze')
 
@@ -784,8 +814,10 @@ test.describe('Document Upload Modal', () => {
     }
   })
 
-  test('should close modal when clicking cancel', async ({ mockPage }) => {
-    const page = mockPage
+  test('should close modal when clicking cancel', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     await page.goto('/analyze')
 
@@ -807,8 +839,10 @@ test.describe('Document Upload Modal', () => {
     }
   })
 
-  test('should close modal when clicking X button', async ({ mockPage }) => {
-    const page = mockPage
+  test('should close modal when clicking X button', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     await page.goto('/analyze')
 
@@ -830,8 +864,10 @@ test.describe('Document Upload Modal', () => {
     }
   })
 
-  test('should show loading state during upload', async ({ mockPage }) => {
-    const page = mockPage
+  test('should show loading state during upload', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     await page.goto('/analyze')
 
@@ -880,9 +916,9 @@ test.describe('Document Upload Modal', () => {
 
 test.describe('Documents Error Handling', () => {
   test('should handle API error when loading documents', async ({
-    mockPage
+    authenticatedPage
   }) => {
-    const page = mockPage
+    const page = authenticatedPage
 
     // Mock API error
     await page.route('**/api/documents/user**', async (route) => {
@@ -899,8 +935,8 @@ test.describe('Documents Error Handling', () => {
     await expect(page.locator('text=Meus Documentos')).toBeVisible()
   })
 
-  test('should handle unauthorized access', async ({ mockPage }) => {
-    const page = mockPage
+  test('should handle unauthorized access', async ({ authenticatedPage }) => {
+    const page = authenticatedPage
 
     // Mock unauthorized response
     await page.route('**/api/documents/user**', async (route) => {
@@ -918,8 +954,10 @@ test.describe('Documents Error Handling', () => {
     await page.waitForTimeout(1000)
   })
 
-  test('should handle network error gracefully', async ({ mockPage }) => {
-    const page = mockPage
+  test('should handle network error gracefully', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     // Mock network failure
     await page.route('**/api/documents/user**', async (route) => {
@@ -939,9 +977,9 @@ test.describe('Documents Error Handling', () => {
 
 test.describe('Documents Accessibility', () => {
   test('should have proper aria labels on action buttons', async ({
-    mockPage
+    authenticatedPage
   }) => {
-    const page = mockPage
+    const page = authenticatedPage
 
     await page.route('**/api/documents/user**', async (route) => {
       await route.fulfill({
@@ -968,8 +1006,8 @@ test.describe('Documents Accessibility', () => {
     ).toBeVisible()
   })
 
-  test('should be keyboard navigable', async ({ mockPage }) => {
-    const page = mockPage
+  test('should be keyboard navigable', async ({ authenticatedPage }) => {
+    const page = authenticatedPage
 
     await page.route('**/api/documents/user**', async (route) => {
       await route.fulfill({
@@ -1003,8 +1041,10 @@ test.describe('Documents Accessibility', () => {
 // =============================================================================
 
 test.describe('Documents Responsive Design', () => {
-  test('should display properly on mobile viewport', async ({ mockPage }) => {
-    const page = mockPage
+  test('should display properly on mobile viewport', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 })
@@ -1029,8 +1069,10 @@ test.describe('Documents Responsive Design', () => {
     ).toBeVisible()
   })
 
-  test('should display properly on tablet viewport', async ({ mockPage }) => {
-    const page = mockPage
+  test('should display properly on tablet viewport', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     // Set tablet viewport
     await page.setViewportSize({ width: 768, height: 1024 })

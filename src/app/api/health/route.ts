@@ -14,7 +14,7 @@ export async function GET() {
         status: 'healthy',
         timestamp: new Date().toISOString(),
         services: {
-          database: 'ok' // Mock for now until we have a real DB
+          database: 'ok', // Mock for now until we have a real DB
           // redis: { status: 'connected', latency_ms: redisLatency }
         },
         version: process.env.npm_package_version || '0.1.0'

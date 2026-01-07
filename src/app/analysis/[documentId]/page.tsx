@@ -2,12 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
-import {
-  AnalysisLayout,
-  AnalysisSummary,
-  IssueCard,
-  type IssueSeverity
-} from '@/features/chat'
+import { AnalysisLayout } from '@/components/v2/Analysis/AnalysisLayout'
+import { AnalysisSummary } from '@/components/v2/Analysis/AnalysisSummary'
+import { IssueCard, IssueSeverity } from '@/components/v2/Analysis/IssueCard'
 import { FileText, Loader2 } from 'lucide-react'
 
 // Tipos para os dados de análise
@@ -94,10 +91,10 @@ export default function AnalysisPage() {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center bg-verity-50">
+      <div className="flex h-screen w-screen items-center justify-center bg-verde-50">
         <div className="text-center">
-          <Loader2 className="mx-auto h-12 w-12 animate-spin text-verity-600" />
-          <p className="mt-4 text-verity-700">Carregando análise...</p>
+          <Loader2 className="mx-auto h-12 w-12 animate-spin text-verde-600" />
+          <p className="mt-4 text-verde-700">Carregando análise...</p>
         </div>
       </div>
     )
@@ -105,9 +102,9 @@ export default function AnalysisPage() {
 
   if (!analysisData) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center bg-verity-50">
+      <div className="flex h-screen w-screen items-center justify-center bg-verde-50">
         <div className="text-center">
-          <p className="text-error-600">Erro ao carregar análise</p>
+          <p className="text-red-600">Erro ao carregar análise</p>
         </div>
       </div>
     )
@@ -133,14 +130,14 @@ export default function AnalysisPage() {
     <AnalysisLayout
       documentName={analysisData.documentName}
       documentPanel={
-        <div className="flex h-full flex-col items-center justify-center rounded-lg border-2 border-dashed border-sand-400 bg-white p-8">
-          <FileText className="mb-4 h-16 w-16 text-verity-300" />
-          <p className="text-sand-500 text-center">
+        <div className="flex h-full flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-white p-8">
+          <FileText className="mb-4 h-16 w-16 text-gray-400" />
+          <p className="text-center text-gray-500">
             Visualizador de PDF
             <br />
             <span className="text-sm">(Integrar react-pdf ou iframe)</span>
           </p>
-          <p className="mt-4 text-xs text-verity-300">
+          <p className="mt-4 text-xs text-gray-400">
             Document ID: {documentId}
           </p>
         </div>
@@ -157,7 +154,7 @@ export default function AnalysisPage() {
 
           {/* Lista de Issues */}
           <div>
-            <h3 className="mb-3 font-semibold text-verity-900">
+            <h3 className="mb-3 font-semibold text-verde-900">
               Problemas Encontrados ({analysisData.issues.length})
             </h3>
             <div className="space-y-3">

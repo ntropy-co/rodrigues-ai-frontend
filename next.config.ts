@@ -4,9 +4,6 @@ import { withSentryConfig } from '@sentry/nextjs'
 import bundleAnalyzer from '@next/bundle-analyzer'
 
 const nextConfig: NextConfig = {
-  turbopack: {
-    root: __dirname
-  },
   devIndicators: false,
 
   // Security headers
@@ -19,15 +16,15 @@ const nextConfig: NextConfig = {
           // Next.js precisa de 'unsafe-inline' para funcionar
           // Em desenvolvimento, 'unsafe-eval' é necessário para React Refresh (hot reload)
           process.env.NODE_ENV === 'development'
-            ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://us-assets.i.posthog.com"
-            : "script-src 'self' 'unsafe-inline' https://us-assets.i.posthog.com",
+            ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
+            : "script-src 'self' 'unsafe-inline'",
           // Permitir Google Fonts CSS
           "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
           "img-src 'self' data: https: blob:",
           // Permitir Google Fonts arquivos de fonte
           "font-src 'self' data: https://fonts.gstatic.com",
           // Permitir conexões com a API backend, Sentry e PostHog
-          "connect-src 'self' https://api.verityagro.com https://*.ingest.sentry.io https://*.sentry.io https://us.i.posthog.com https://us.posthog.com https://us-assets.i.posthog.com",
+          "connect-src 'self' https://rodrigues-ai-backend-production.up.railway.app https://api.rodriguesagro.com.br https://*.ingest.sentry.io https://*.sentry.io https://us.i.posthog.com https://us.posthog.com",
           "frame-ancestors 'none'",
           "base-uri 'self'",
           "form-action 'self'",
@@ -152,41 +149,24 @@ const pwaConfig = withPWA({
         }
       },
       {
-        // Navegações (HTML) - cache apenas para rotas públicas
+        // Navegações (HTML) - cache seguro apenas para o próprio site (evita cachear chamadas externas)
         urlPattern: ({ request, url }: { request: Request; url: URL }) => {
           const origin = (
             globalThis as unknown as { location?: { origin?: string } }
           ).location?.origin
 
-          if (
-            request.mode !== 'navigate' ||
-            url.origin !== origin ||
-            url.pathname.startsWith('/api') ||
-            url.pathname.startsWith('/_next')
-          ) {
-            return false
-          }
-
-          const publicPaths = [
-            '/',
-            '/login',
-            '/signup',
-            '/forgot-password',
-            '/reset-password',
-            '/contact'
-          ]
-
-          if (publicPaths.includes(url.pathname)) {
-            return true
-          }
-
-          return url.pathname.startsWith('/invite/')
+          return (
+            request.mode === 'navigate' &&
+            url.origin === origin &&
+            !url.pathname.startsWith('/api') &&
+            !url.pathname.startsWith('/_next')
+          )
         },
         handler: 'NetworkFirst',
         options: {
-          cacheName: 'public-pages',
+          cacheName: 'pages',
           expiration: {
-            maxEntries: 16,
+            maxEntries: 32,
             maxAgeSeconds: 86400
           }
         }

@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { InternalHeader } from '@/components/layout/InternalHeader'
+import { InternalHeader } from '@/components/v2/Header/InternalHeader'
 import {
   User,
   Building2,
@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/contexts/AuthContext'
-import { Avatar } from '@/features/chat'
+import { Avatar } from '@/components/v2/Avatar'
 import Link from 'next/link'
 
 // =============================================================================
@@ -102,7 +102,7 @@ function UserHero() {
       <Button
         onClick={logout}
         variant="outline"
-        className="w-full border-verity-700 bg-verity-900 text-verity-100 transition-colors hover:border-error-900 hover:bg-error-950 hover:text-error-100 sm:w-auto"
+        className="w-full border-verity-700 bg-verity-900 text-verity-100 transition-colors hover:border-red-900 hover:bg-red-950 hover:text-red-100 sm:w-auto"
       >
         <LogOut className="mr-2 h-4 w-4" />
         Encerrar Sessão

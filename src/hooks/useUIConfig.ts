@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import uiConfigData from '@/config/ui-config.json'
 
 interface UIConfig {
@@ -44,36 +44,40 @@ interface UIConfig {
 }
 
 export function useUIConfig(): UIConfig {
-  const [config] = useState<UIConfig>(() => {
-    const initialConfig = uiConfigData as UIConfig
+  const [config, setConfig] = useState<UIConfig>(uiConfigData as UIConfig)
 
-    // Sobrescrever com variáveis de ambiente se necessário
-    const envOverrides = {
-      ui: {
-        ...initialConfig.ui,
-        branding: {
-          ...initialConfig.ui.branding,
-          displayModelName:
-            process.env.NEXT_PUBLIC_AGENT_NAME ||
-            initialConfig.ui.branding.displayModelName
-        },
-        features: {
-          ...initialConfig.ui.features,
-          showProButton:
-            process.env.NEXT_PUBLIC_SHOW_PRO_BUTTON === 'true' ||
-            initialConfig.ui.features.showProButton,
-          showUploadButton:
-            process.env.NEXT_PUBLIC_SHOW_UPLOAD_BUTTON === 'true' ||
-            initialConfig.ui.features.showUploadButton,
-          showToolsButton:
-            process.env.NEXT_PUBLIC_SHOW_TOOLS_BUTTON === 'true' ||
-            initialConfig.ui.features.showToolsButton
+  useEffect(() => {
+    // Aqui podemos implementar lógica para carregar config de diferentes fontes
+    // Por exemplo, sobrescrever com variáveis de ambiente se necessário
+
+    setConfig((prevConfig) => {
+      const envOverrides = {
+        ui: {
+          ...prevConfig.ui,
+          branding: {
+            ...prevConfig.ui.branding,
+            displayModelName:
+              process.env.NEXT_PUBLIC_AGENT_NAME ||
+              prevConfig.ui.branding.displayModelName
+          },
+          features: {
+            ...prevConfig.ui.features,
+            showProButton:
+              process.env.NEXT_PUBLIC_SHOW_PRO_BUTTON === 'true' ||
+              prevConfig.ui.features.showProButton,
+            showUploadButton:
+              process.env.NEXT_PUBLIC_SHOW_UPLOAD_BUTTON === 'true' ||
+              prevConfig.ui.features.showUploadButton,
+            showToolsButton:
+              process.env.NEXT_PUBLIC_SHOW_TOOLS_BUTTON === 'true' ||
+              prevConfig.ui.features.showToolsButton
+          }
         }
       }
-    }
 
-    return { ...initialConfig, ...envOverrides }
-  })
+      return { ...prevConfig, ...envOverrides }
+    })
+  }, [])
 
   return config
 }

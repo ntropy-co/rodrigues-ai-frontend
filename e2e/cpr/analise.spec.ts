@@ -13,12 +13,14 @@ import { test, expect } from '../fixtures/auth.fixture'
 import path from 'path'
 
 test.describe('CPR Analysis Flow', () => {
-  test.beforeEach(async ({ mockPage }) => {
-    await mockPage.goto('/cpr/analise')
+  test.beforeEach(async ({ authenticatedPage }) => {
+    await authenticatedPage.goto('/cpr/analise')
   })
 
-  test('should display CPR analysis page elements', async ({ mockPage }) => {
-    const page = mockPage
+  test('should display CPR analysis page elements', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     // Check page title/header
     await expect(
@@ -34,8 +36,10 @@ test.describe('CPR Analysis Flow', () => {
     await expect(page.locator('text=/pdf.*doc.*docx/i')).toBeVisible()
   })
 
-  test('should show upload area with drag and drop', async ({ mockPage }) => {
-    const page = mockPage
+  test('should show upload area with drag and drop', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     // Find the upload area
     const uploadArea = page.locator('[class*="border-dashed"]').first()
@@ -48,9 +52,9 @@ test.describe('CPR Analysis Flow', () => {
   })
 
   test('should have file input accepting correct file types', async ({
-    mockPage
+    authenticatedPage
   }) => {
-    const page = mockPage
+    const page = authenticatedPage
 
     // Check hidden file input exists with correct accept types
     const fileInput = page.locator('input[type="file"]')
@@ -60,8 +64,8 @@ test.describe('CPR Analysis Flow', () => {
     )
   })
 
-  test('should navigate back to dashboard', async ({ mockPage }) => {
-    const page = mockPage
+  test('should navigate back to dashboard', async ({ authenticatedPage }) => {
+    const page = authenticatedPage
 
     // Find and click back button/link
     const backButton = page.locator(
@@ -76,8 +80,10 @@ test.describe('CPR Analysis Flow', () => {
 })
 
 test.describe('CPR Analysis Upload', () => {
-  test('should show file name after selecting a file', async ({ mockPage }) => {
-    const page = mockPage
+  test('should show file name after selecting a file', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
     await page.goto('/cpr/analise')
 
     // Create a test file
@@ -94,8 +100,10 @@ test.describe('CPR Analysis Upload', () => {
     await expect(page.locator('text=sample-cpr.pdf')).toBeVisible()
   })
 
-  test('should show loading state during upload', async ({ mockPage }) => {
-    const page = mockPage
+  test('should show loading state during upload', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
     await page.goto('/cpr/analise')
 
     // Intercept the upload request to add delay
@@ -128,9 +136,9 @@ test.describe('CPR Analysis Upload', () => {
 
 test.describe('CPR Analysis Chat Interface', () => {
   test('should display chat interface after upload starts', async ({
-    mockPage
+    authenticatedPage
   }) => {
-    const page = mockPage
+    const page = authenticatedPage
     await page.goto('/cpr/analise')
 
     // Mock successful upload and analysis start
@@ -168,9 +176,9 @@ test.describe('CPR Analysis Chat Interface', () => {
   })
 
   test('should allow sending messages when waiting for input', async ({
-    mockPage
+    authenticatedPage
   }) => {
-    const page = mockPage
+    const page = authenticatedPage
     await page.goto('/cpr/analise')
 
     // Mock the workflow to be in waiting state
@@ -208,8 +216,10 @@ test.describe('CPR Analysis Chat Interface', () => {
 })
 
 test.describe('CPR Analysis Results', () => {
-  test('should display compliance results section', async ({ mockPage }) => {
-    const page = mockPage
+  test('should display compliance results section', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
     await page.goto('/cpr/analise')
 
     // Mock completed analysis with compliance data
@@ -240,8 +250,10 @@ test.describe('CPR Analysis Results', () => {
     // In real scenario, it would appear after analysis completes
   })
 
-  test('should display risk analysis section', async ({ mockPage }) => {
-    const page = mockPage
+  test('should display risk analysis section', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
     await page.goto('/cpr/analise')
 
     // Mock completed analysis with risk data
@@ -271,8 +283,8 @@ test.describe('CPR Analysis Results', () => {
     // Verify structure exists for risk display
   })
 
-  test('should show extracted data summary', async ({ mockPage }) => {
-    const page = mockPage
+  test('should show extracted data summary', async ({ authenticatedPage }) => {
+    const page = authenticatedPage
     await page.goto('/cpr/analise')
 
     // After analysis, extracted data should be visible
@@ -290,9 +302,9 @@ test.describe('CPR Analysis Results', () => {
 
 test.describe('CPR Analysis Navigation', () => {
   test('should allow proceeding to CPR creation after analysis', async ({
-    mockPage
+    authenticatedPage
   }) => {
-    const page = mockPage
+    const page = authenticatedPage
     await page.goto('/cpr/analise')
 
     // Look for "proceed to creation" or similar button
@@ -307,8 +319,8 @@ test.describe('CPR Analysis Navigation', () => {
     }
   })
 
-  test('should allow starting new analysis', async ({ mockPage }) => {
-    const page = mockPage
+  test('should allow starting new analysis', async ({ authenticatedPage }) => {
+    const page = authenticatedPage
     await page.goto('/cpr/analise')
 
     // Look for "new analysis" or reset button

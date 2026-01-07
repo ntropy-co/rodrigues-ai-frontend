@@ -62,7 +62,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Try to fetch current user (cookies are sent automatically)
         const userData = await getCurrentUserApi()
         setUser(userData)
-      } catch {
+      } catch (error) {
+        console.error('Failed to load user:', error)
         setUser(null)
       } finally {
         setIsLoading(false)

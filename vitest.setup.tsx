@@ -9,17 +9,17 @@ vi.mock('next/navigation', () => ({
     prefetch: vi.fn(),
     back: vi.fn(),
     forward: vi.fn(),
-    refresh: vi.fn()
+    refresh: vi.fn(),
   }),
   usePathname: () => '/',
   useSearchParams: () => new URLSearchParams(),
-  useParams: () => ({})
+  useParams: () => ({}),
 }))
 
 // Mock next/image
 vi.mock('next/image', () => ({
   default: function MockImage(props: React.ComponentProps<'img'>) {
-    // eslint-disable-next-line @next/next/no-img-element
+    // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
     return <img {...props} />
-  }
+  },
 }))

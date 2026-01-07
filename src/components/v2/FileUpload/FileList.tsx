@@ -1,0 +1,118 @@
+'use client'
+
+import { FileText, Download, X, Loader2 } from 'lucide-react'
+
+export interface UserDocument {
+  id: string
+  filename: string
+  file_size: number
+  mime_type: string
+  processed: boolean
+  created_at: string
+}
+
+interface FileListProps {
+  documents: UserDocument[]
+  onRemove?: (documentId: string) => void
+  onDownload?: (documentId: string) => void
+  loading?: boolean
+}
+
+export function FileList({
+  documents,
+  onRemove,
+  onDownload,
+  loading
+}: FileListProps) {
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-4">
+        <Loader2 className="text-gemini-gray-400 h-5 w-5 animate-spin" />
+      </div>
+    )
+  }
+
+  if (documents.length === 0) {
+    return null
+  }
+
+  const formatFileSize = (bytes: number): string => {
+    if (bytes < 1024) return `${bytes} B`
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+  }
+
+  const getFileTypeLabel = (mimeType: string): string => {
+    if (mimeType.includes('pdf')) return 'PDF'
+    if (mimeType.includes('word') || mimeType.includes('document'))
+      return 'DOCX'
+    if (mimeType.includes('text')) return 'TXT'
+    if (mimeType.includes('image')) return 'Imagem'
+    return 'Arquivo'
+  }
+
+  return (
+    <div className="space-y-2">
+      <p className="text-gemini-gray-600 text-xs font-medium">
+        Documentos anexados ({documents.length})
+      </p>
+
+      <div className="space-y-2">
+        {documents.map((doc) => (
+          <div
+            key={doc.id}
+            className="border-gemini-gray-200 flex items-center gap-3 rounded-lg border bg-white p-3 shadow-sm"
+          >
+            {/* Icon */}
+            <div className="flex-shrink-0">
+              <div className="bg-gemini-blue/10 flex h-10 w-10 items-center justify-center rounded-lg">
+                <FileText className="text-gemini-blue h-5 w-5" />
+              </div>
+            </div>
+
+            {/* Info */}
+            <div className="min-w-0 flex-1">
+              <p className="text-gemini-gray-900 truncate text-sm font-medium">
+                {doc.filename}
+              </p>
+              <div className="text-gemini-gray-500 mt-1 flex items-center gap-2 text-xs">
+                <span>{getFileTypeLabel(doc.mime_type)}</span>
+                <span>•</span>
+                <span>{formatFileSize(doc.file_size)}</span>
+                {doc.processed && (
+                  <>
+                    <span>•</span>
+                    <span className="text-green-600">Processado</span>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-1">
+              {onDownload && (
+                <button
+                  onClick={() => onDownload(doc.id)}
+                  className="text-gemini-gray-600 hover-hover:bg-gemini-gray-100 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 transition-colors"
+                  aria-label="Baixar documento"
+                >
+                  <Download className="h-4 w-4" />
+                </button>
+              )}
+
+              {onRemove && (
+                <button
+                  onClick={() => onRemove(doc.id)}
+                  className="text-gemini-gray-600 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 transition-colors hover-hover:bg-red-100 hover-hover:text-red-600"
+                  aria-label="Remover documento"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}

@@ -1,38 +1,24 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Tests for useSessions hook
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
-import { useSessions } from '@/features/chat/hooks/useSessions'
-import { chatApi } from '@/features/chat/api'
-import { SessionEntry } from '@/features/chat/types'
+import { useSessions } from './useSessions'
 
 // =============================================================================
 // Mocks
 // =============================================================================
 
-const mockUser = {
-  id: 'user-123',
-  email: 'user@example.com',
-  name: 'Test User',
-  role: 'analyst'
-}
+const mockToken = 'test-jwt-token'
 vi.mock('@/contexts/AuthContext', () => ({
-  useAuth: () => ({ user: mockUser })
+  useAuth: () => ({ token: mockToken })
 }))
 
-vi.mock('@/features/chat/api', () => ({
-  chatApi: {
-    getSessions: vi.fn(),
-    createSession: vi.fn(),
-    deleteSession: vi.fn(),
-    updateSession: vi.fn()
-  }
+const mockFetchWithRefresh = vi.fn()
+vi.mock('@/lib/auth/token-refresh', () => ({
+  fetchWithRefresh: (...args: unknown[]) => mockFetchWithRefresh(...args)
 }))
-
-const mockChatApi = vi.mocked(chatApi)
 
 // =============================================================================
 // Test Data
@@ -41,11 +27,14 @@ const mockChatApi = vi.mocked(chatApi)
 const validSessionId = 's_12345678-1234-5678-9abc-123456789abc'
 const validProjectId = 'p_12345678-1234-5678-9abc-123456789abc'
 
-const mockSessionEntry = {
-  session_id: validSessionId,
+const mockBackendSession = {
+  id: validSessionId,
+  user_id: 'u_12345678-1234-5678-9abc-123456789abc',
   title: 'Test Session',
   project_id: null,
-  created_at: 1735257600
+  is_active: true,
+  created_at: '2025-12-27T00:00:00Z',
+  updated_at: '2025-12-27T00:00:00Z'
 }
 
 // =============================================================================
@@ -76,7 +65,10 @@ describe('useSessions', () => {
 
   describe('fetchSessions()', () => {
     it('should fetch sessions successfully', async () => {
-      mockChatApi.getSessions.mockResolvedValueOnce([mockSessionEntry])
+      mockFetchWithRefresh.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve([mockBackendSession])
+      })
 
       const { result } = renderHook(() => useSessions())
 
@@ -87,14 +79,14 @@ describe('useSessions', () => {
 
       expect(sessions).toHaveLength(1)
       expect(sessions![0]).toHaveProperty('session_id')
-      expect(sessions![0].session_id).toBe(mockSessionEntry.session_id)
+      expect(sessions![0].session_id).toBe(mockBackendSession.id)
       expect(result.current.error).toBeNull()
     })
 
     it('should reject invalid project_id format', async () => {
       const { result } = renderHook(() => useSessions())
 
-      let sessions: SessionEntry[] | undefined
+      let sessions
       await act(async () => {
         sessions = await result.current.fetchSessions('invalid-project-id')
       })
@@ -104,7 +96,10 @@ describe('useSessions', () => {
     })
 
     it('should accept valid project_id format', async () => {
-      mockChatApi.getSessions.mockResolvedValueOnce([])
+      mockFetchWithRefresh.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve([])
+      })
 
       const { result } = renderHook(() => useSessions())
 
@@ -112,14 +107,18 @@ describe('useSessions', () => {
         await result.current.fetchSessions(validProjectId)
       })
 
-      expect(mockChatApi.getSessions).toHaveBeenCalledWith(validProjectId)
+      expect(mockFetchWithRefresh).toHaveBeenCalledWith(
+        expect.stringContaining(`project_id=${validProjectId}`),
+        expect.any(Object)
+      )
       expect(result.current.error).toBeNull()
     })
 
     it('should handle fetch errors', async () => {
-      mockChatApi.getSessions.mockRejectedValueOnce(
-        new Error('Error fetching sessions')
-      )
+      mockFetchWithRefresh.mockResolvedValueOnce({
+        ok: false,
+        json: () => Promise.resolve({ detail: 'Error fetching sessions' })
+      })
 
       const { result } = renderHook(() => useSessions())
 
@@ -135,17 +134,20 @@ describe('useSessions', () => {
 
   describe('createSession()', () => {
     it('should create session successfully', async () => {
-      mockChatApi.createSession.mockResolvedValueOnce(mockSessionEntry)
+      mockFetchWithRefresh.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockBackendSession)
+      })
 
       const { result } = renderHook(() => useSessions())
 
-      let session: any = null
+      let session
       await act(async () => {
         session = await result.current.createSession('Test Session')
       })
 
       expect(session).not.toBeNull()
-      expect(session?.session_id).toBe(mockSessionEntry.session_id)
+      expect(session?.session_id).toBe(mockBackendSession.id)
       expect(result.current.error).toBeNull()
     })
 
@@ -154,7 +156,7 @@ describe('useSessions', () => {
 
       const { result } = renderHook(() => useSessions())
 
-      let session: any = null
+      let session
       await act(async () => {
         session = await result.current.createSession(longTitle)
       })
@@ -166,14 +168,14 @@ describe('useSessions', () => {
     it('should accept title at max length', async () => {
       const maxTitle = 'a'.repeat(200)
 
-      mockChatApi.createSession.mockResolvedValueOnce({
-        ...mockSessionEntry,
-        title: maxTitle
+      mockFetchWithRefresh.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ ...mockBackendSession, title: maxTitle })
       })
 
       const { result } = renderHook(() => useSessions())
 
-      let session: any = null
+      let session
       await act(async () => {
         session = await result.current.createSession(maxTitle)
       })
@@ -185,7 +187,7 @@ describe('useSessions', () => {
     it('should reject invalid project_id format', async () => {
       const { result } = renderHook(() => useSessions())
 
-      let session: any = null
+      let session
       await act(async () => {
         session = await result.current.createSession(
           'Test',
@@ -198,14 +200,15 @@ describe('useSessions', () => {
     })
 
     it('should accept valid project_id format', async () => {
-      mockChatApi.createSession.mockResolvedValueOnce({
-        ...mockSessionEntry,
-        project_id: validProjectId
+      mockFetchWithRefresh.mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({ ...mockBackendSession, project_id: validProjectId })
       })
 
       const { result } = renderHook(() => useSessions())
 
-      let session: any = null
+      let session
       await act(async () => {
         session = await result.current.createSession('Test', validProjectId)
       })
@@ -216,13 +219,14 @@ describe('useSessions', () => {
     })
 
     it('should handle API errors', async () => {
-      mockChatApi.createSession.mockRejectedValueOnce(
-        new Error('Error creating session')
-      )
+      mockFetchWithRefresh.mockResolvedValueOnce({
+        ok: false,
+        json: () => Promise.resolve({ detail: 'Error creating session' })
+      })
 
       const { result } = renderHook(() => useSessions())
 
-      let session: any = null
+      let session
       await act(async () => {
         session = await result.current.createSession('Test')
       })
@@ -234,15 +238,18 @@ describe('useSessions', () => {
 
   describe('updateSession()', () => {
     it('should update session successfully', async () => {
-      const updatedSession = { ...mockSessionEntry, title: 'Updated Title' }
+      const updatedSession = { ...mockBackendSession, title: 'Updated Title' }
 
-      mockChatApi.updateSession.mockResolvedValueOnce(updatedSession)
+      mockFetchWithRefresh.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(updatedSession)
+      })
 
       const { result } = renderHook(() => useSessions())
 
-      let session: any = null
+      let session
       await act(async () => {
-        session = await result.current.updateSession(validSessionId, {
+        session = await result.current.updateSession(mockBackendSession.id, {
           title: 'Updated Title'
         })
       })
@@ -257,9 +264,9 @@ describe('useSessions', () => {
 
       const { result } = renderHook(() => useSessions())
 
-      let session: any = null
+      let session
       await act(async () => {
-        session = await result.current.updateSession(validSessionId, {
+        session = await result.current.updateSession(mockBackendSession.id, {
           title: longTitle
         })
       })
@@ -271,16 +278,16 @@ describe('useSessions', () => {
     it('should accept title at max length', async () => {
       const maxTitle = 'a'.repeat(200)
 
-      mockChatApi.updateSession.mockResolvedValueOnce({
-        ...mockSessionEntry,
-        title: maxTitle
+      mockFetchWithRefresh.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ ...mockBackendSession, title: maxTitle })
       })
 
       const { result } = renderHook(() => useSessions())
 
-      let session: any = null
+      let session
       await act(async () => {
-        session = await result.current.updateSession(validSessionId, {
+        session = await result.current.updateSession(mockBackendSession.id, {
           title: maxTitle
         })
       })
@@ -290,15 +297,16 @@ describe('useSessions', () => {
     })
 
     it('should handle API errors', async () => {
-      mockChatApi.updateSession.mockRejectedValueOnce(
-        new Error('Error updating session')
-      )
+      mockFetchWithRefresh.mockResolvedValueOnce({
+        ok: false,
+        json: () => Promise.resolve({ detail: 'Error updating session' })
+      })
 
       const { result } = renderHook(() => useSessions())
 
-      let session: any = null
+      let session
       await act(async () => {
-        session = await result.current.updateSession(validSessionId, {
+        session = await result.current.updateSession(mockBackendSession.id, {
           title: 'New Title'
         })
       })
@@ -310,13 +318,16 @@ describe('useSessions', () => {
 
   describe('deleteSession()', () => {
     it('should delete session successfully', async () => {
-      mockChatApi.deleteSession.mockResolvedValueOnce(undefined)
+      mockFetchWithRefresh.mockResolvedValueOnce({
+        ok: true,
+        status: 204
+      })
 
       const { result } = renderHook(() => useSessions())
 
       let success
       await act(async () => {
-        success = await result.current.deleteSession(validSessionId)
+        success = await result.current.deleteSession(mockBackendSession.id)
       })
 
       expect(success).toBe(true)
@@ -324,15 +335,17 @@ describe('useSessions', () => {
     })
 
     it('should handle delete errors', async () => {
-      mockChatApi.deleteSession.mockRejectedValueOnce(
-        new Error('Session not found')
-      )
+      mockFetchWithRefresh.mockResolvedValueOnce({
+        ok: false,
+        status: 404,
+        json: () => Promise.resolve({ detail: 'Session not found' })
+      })
 
       const { result } = renderHook(() => useSessions())
 
       let success
       await act(async () => {
-        success = await result.current.deleteSession(validSessionId)
+        success = await result.current.deleteSession(mockBackendSession.id)
       })
 
       expect(success).toBe(false)

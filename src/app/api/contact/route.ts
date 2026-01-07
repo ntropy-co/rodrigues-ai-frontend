@@ -7,7 +7,7 @@
  * - `POST /api/contact`
  *
  * Backend:
- * - `POST ${BACKEND_URL}/api/v1/public/contact`
+ * - `POST ${BACKEND_URL}/api/v1/contact`
  *
  * Auth:
  * - NOT required (public endpoint)
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const response = await fetch(`${BACKEND_URL}/api/v1/public/contact`, {
+    const response = await fetch(`${BACKEND_URL}/api/v1/contact`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

@@ -27,6 +27,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { getAuthorizationFromRequest } from '@/lib/api/auth-header'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -44,20 +45,20 @@ export interface ChatResponse {
 
 export async function POST(request: NextRequest) {
   try {
-    // Get the Authorization header or extract from HttpOnly cookie
-    let authorization = request.headers.get('authorization')
+    // Get the Authorization header or token from cookie
+    let authorization = getAuthorizationFromRequest(request)
 
     // If no Authorization header, try to get token from HttpOnly cookie
     if (!authorization) {
-      const accessToken = request.cookies.get('verity_access_token')?.value
-      if (accessToken) {
-        authorization = `Bearer ${accessToken}`
+      const authToken = request.cookies.get('verity_access_token')?.value
+      if (authToken) {
+        authorization = `Bearer ${authToken}`
       }
     }
 
     if (!authorization) {
       return NextResponse.json(
-        { detail: 'Authorization header required' },
+        { detail: 'Authentication required' },
         { status: 401 }
       )
     }

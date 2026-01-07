@@ -78,7 +78,10 @@ public/worker-*.js.map
 
 # IDE - Editores de código
 .vscode/*
-
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 .idea/
 *.sublime-project
 *.sublime-workspace
@@ -122,4 +125,3 @@ storybook-static/
 playwright-report/
 test-results/
 playwright/.cache/
-e2e/.auth/

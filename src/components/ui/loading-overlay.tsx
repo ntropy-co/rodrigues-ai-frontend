@@ -84,7 +84,7 @@ export function LoadingOverlay({
                     transition={{ duration: 0.3, ease: 'easeOut' }}
                   />
                 </div>
-                <p className="mt-1 text-center text-xs tabular-nums text-muted-foreground">
+                <p className="mt-1 text-center text-xs text-muted-foreground">
                   {Math.round(progress)}%
                 </p>
               </div>

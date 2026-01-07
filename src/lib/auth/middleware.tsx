@@ -8,7 +8,7 @@
 import { useEffect, type ComponentType, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import type { UserRole } from '@/types/auth'
-import { useAuth } from '@/features/auth'
+import { useAuth } from '@/hooks/useAuthHook'
 
 // ============================================================================
 // ROLE HIERARCHY
@@ -39,7 +39,7 @@ function AuthLoadingScreen() {
     <div className="flex min-h-screen items-center justify-center bg-verity-50 dark:bg-background">
       <div className="text-center">
         <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-verity-900 border-t-transparent" />
-        <p className="text-sm text-verity-700 dark:text-verity-300">
+        <p className="text-sm text-verity-700 dark:text-gray-400">
           Verificando autenticação...
         </p>
       </div>

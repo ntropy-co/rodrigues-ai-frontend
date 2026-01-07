@@ -4,11 +4,12 @@ import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Upload, FileText, Loader2, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { InternalHeader } from '@/components/layout/InternalHeader'
+import { InternalHeader } from '@/components/v2/Header/InternalHeader'
 import { Card, CardContent } from '@/components/ui/card'
-import { AnalysisResult, AgentStateIndicator } from '@/features/chat'
-import { type AnalysisResultData } from '@/features/cpr'
-// import { useAuth } from '@/features/auth'
+import { AnalysisResult } from '@/components/v2/Analysis/AnalysisResult'
+import { AnalysisResultData } from '@/types/analysis'
+import { AgentStateIndicator } from '@/components/v2/ChatArea/AgentStateIndicator'
+// import { useAuth } from '@/hooks/useAuthHook'
 
 // Mock Data for demonstration
 const MOCK_ANALYSIS_RESULT: AnalysisResultData = {
@@ -178,7 +179,7 @@ export default function AnalysisPage() {
 
                   {status === 'uploading' && (
                     <div className="w-full max-w-md space-y-2">
-                      <div className="flex justify-between text-xs tabular-nums text-verity-700">
+                      <div className="flex justify-between text-xs text-verity-700">
                         <span>Enviando documento...</span>
                         <span>{progress}%</span>
                       </div>

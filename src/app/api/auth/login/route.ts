@@ -8,10 +8,7 @@
  *
  * Backend:
  * - `POST ${BACKEND_URL}/api/v1/auth/login` (OAuth2PasswordRequestForm)
- *   Returns: { access_token, refresh_token, token_type, user }
- *
- * OPTIMIZED: User data is now included in login response, eliminating
- * the need for a separate /auth/me call (saves ~300ms).
+ * - `GET  ${BACKEND_URL}/api/v1/auth/me` (buscar dados do usuário após login)
  *
  * Transformações de contrato:
  * - Frontend envia JSON: `{ email, password }`
@@ -31,29 +28,10 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
-// HARDCODED DEBUG URL TO BYPASS VERCEL ENV VAR ISSUES
+import { transformBackendUser } from '@/types/auth'
+import type { BackendUser } from '@/types/auth'
+
 const BACKEND_URL = 'https://api.verityagro.com'
-// const BACKEND_URL =
-//   process.env.API_URL ||
-//   process.env.NEXT_PUBLIC_API_URL ||
-//   'http://localhost:8000'
-
-type BackendUser = {
-  id: string
-  organization_id?: string | null
-  full_name?: string | null
-  phone_number?: string | null
-  job_title?: string | null
-  avatar_url?: string | null
-  company_name?: string | null
-  created_at?: string | null
-}
-
-type BackendLoginResponse = {
-  access_token: string
-  refresh_token?: string
-  user?: BackendUser
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -67,8 +45,6 @@ export async function POST(request: NextRequest) {
     formData.append('username', body.email)
     formData.append('password', body.password)
 
-    console.log(`[Auth Login] Connecting to ${BACKEND_URL}...`)
-
     // Forward the request to the backend
     const response = await fetch(`${BACKEND_URL}/api/v1/auth/login`, {
       method: 'POST',
@@ -78,44 +54,25 @@ export async function POST(request: NextRequest) {
       body: formData.toString()
     })
 
-    const contentType = response.headers.get('content-type') || ''
-    let data: unknown = null
+    // Get the response data
+    const data = await response.json()
 
-    if (contentType.includes('application/json')) {
-      data = await response.json()
-    } else {
-      const text = await response.text()
-      data = { detail: text || 'Unexpected response from backend' }
-    }
-
-    // If login successful, build complete response
-    // Backend now returns: { access_token, token_type, user }
-    // Frontend expects: { user, organization, expiresAt }
-    if (
-      response.ok &&
-      typeof data === 'object' &&
-      data !== null &&
-      'access_token' in data
-    ) {
-      // Use user data directly from backend response (no separate /auth/me call needed)
-      let user = null
-      const payload = data as BackendLoginResponse
-      if (payload.user) {
-        // Backend already returns UserPublic, transform to frontend format
-        user = {
-          id: payload.user.id,
-          organizationId: payload.user.organization_id,
-          name: payload.user.full_name || 'Usuário',
-          fullName: payload.user.full_name,
-          role: 'analyst', // Default role, backend should add this
-          phoneNumber: payload.user.phone_number,
-          jobTitle: payload.user.job_title,
-          avatarUrl: payload.user.avatar_url,
-          companyName: payload.user.company_name,
-          createdAt: payload.user.created_at,
-          status: 'active',
-          emailVerified: true
+    // If login successful, fetch user data and build complete response
+    // Backend returns: { access_token, token_type }
+    // Frontend expects: { token, user, organization, expiresAt }
+    if (response.ok && data.access_token) {
+      // Fetch user data using the new token
+      const userResponse = await fetch(`${BACKEND_URL}/api/v1/auth/me`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${data.access_token}`
         }
+      })
+
+      let user = null
+      if (userResponse.ok) {
+        const userData: BackendUser = await userResponse.json()
+        user = transformBackendUser(userData)
       }
 
       // Calculate expiration (30 minutes for access token, matching backend config)
@@ -135,7 +92,7 @@ export async function POST(request: NextRequest) {
       // Set HttpOnly cookie with the access token
       // SECURITY: HttpOnly prevents XSS from stealing tokens
       // maxAge matches backend ACCESS_TOKEN_EXPIRE_MINUTES (30 min)
-      jsonResponse.cookies.set('verity_access_token', payload.access_token, {
+      jsonResponse.cookies.set('verity_access_token', data.access_token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
@@ -145,37 +102,24 @@ export async function POST(request: NextRequest) {
 
       // Also set refresh token if available
       // maxAge matches backend REFRESH_TOKEN_EXPIRE_DAYS (30 days)
-      if (payload.refresh_token) {
-        jsonResponse.cookies.set(
-          'verity_refresh_token',
-          payload.refresh_token,
-          {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            path: '/',
-            maxAge: 30 * 24 * 60 * 60 // 30 days in seconds (matches backend config)
-          }
-        )
+      if (data.refresh_token) {
+        jsonResponse.cookies.set('verity_refresh_token', data.refresh_token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          path: '/',
+          maxAge: 30 * 24 * 60 * 60 // 30 days in seconds (matches backend config)
+        })
       }
 
       return jsonResponse
     }
 
-    console.error('[Auth Login] Backend error', {
-      status: response.status,
-      contentType,
-      data
-    })
+    // Return error response as-is
     return NextResponse.json(data, { status: response.status })
-  } catch (error) {
-    // IMPROVED ERROR LOGGING
-    console.error('[Auth Login] CRITICAL ERROR:', error)
+  } catch {
     return NextResponse.json(
-      {
-        detail: 'Internal server error',
-        debug_error: String(error)
-      },
+      { detail: 'Internal server error' },
       { status: 500 }
     )
   }

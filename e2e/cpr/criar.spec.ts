@@ -12,18 +12,18 @@
 import { test, expect } from '../fixtures/auth.fixture'
 
 test.describe('CPR Creation Wizard', () => {
-  test.beforeEach(async ({ mockPage }) => {
+  test.beforeEach(async ({ authenticatedPage }) => {
     // Clear any previous wizard state
-    await mockPage.evaluate(() => {
+    await authenticatedPage.evaluate(() => {
       localStorage.removeItem('cpr_wizard_state')
     })
-    await mockPage.goto('/cpr/wizard')
+    await authenticatedPage.goto('/cpr/wizard')
   })
 
   test('should display wizard with stepper navigation', async ({
-    mockPage
+    authenticatedPage
   }) => {
-    const page = mockPage
+    const page = authenticatedPage
 
     // Check wizard title
     await expect(page.locator('text=Nova CPR Financeira')).toBeVisible()
@@ -47,8 +47,8 @@ test.describe('CPR Creation Wizard', () => {
     }
   })
 
-  test('should start at step 1', async ({ mockPage }) => {
-    const page = mockPage
+  test('should start at step 1', async ({ authenticatedPage }) => {
+    const page = authenticatedPage
 
     // First step button should be active (scaled and primary colored)
     const step1Button = page.locator('button:has-text("1")').first()
@@ -59,9 +59,9 @@ test.describe('CPR Creation Wizard', () => {
   })
 
   test('should navigate through placeholder steps (1-3)', async ({
-    mockPage
+    authenticatedPage
   }) => {
-    const page = mockPage
+    const page = authenticatedPage
 
     // Step 1 → Step 2
     await page.click('button:has-text("Simular Conclusão e Avançar")')
@@ -76,8 +76,10 @@ test.describe('CPR Creation Wizard', () => {
     await expect(page.locator('label:has-text("Valor Total")')).toBeVisible()
   })
 
-  test('should not allow skipping to future steps', async ({ mockPage }) => {
-    const page = mockPage
+  test('should not allow skipping to future steps', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     // Try clicking step 4 directly
     const step4Button = page.locator('button:has-text("4")').first()
@@ -85,9 +87,9 @@ test.describe('CPR Creation Wizard', () => {
   })
 
   test('should allow navigating back to completed steps', async ({
-    mockPage
+    authenticatedPage
   }) => {
-    const page = mockPage
+    const page = authenticatedPage
 
     // Complete steps 1 and 2
     await page.click('button:has-text("Simular Conclusão e Avançar")')
@@ -103,8 +105,8 @@ test.describe('CPR Creation Wizard', () => {
 })
 
 test.describe('CPR Wizard - Step 4: Values', () => {
-  test.beforeEach(async ({ mockPage }) => {
-    const page = mockPage
+  test.beforeEach(async ({ authenticatedPage }) => {
+    const page = authenticatedPage
     await page.evaluate(() => {
       localStorage.removeItem('cpr_wizard_state')
     })
@@ -116,8 +118,8 @@ test.describe('CPR Wizard - Step 4: Values', () => {
     }
   })
 
-  test('should display all value fields', async ({ mockPage }) => {
-    const page = mockPage
+  test('should display all value fields', async ({ authenticatedPage }) => {
+    const page = authenticatedPage
 
     // Check all fields are visible
     await expect(page.locator('label:has-text("Valor Total")')).toBeVisible()
@@ -137,8 +139,8 @@ test.describe('CPR Wizard - Step 4: Values', () => {
     ).toBeVisible()
   })
 
-  test('should auto-calculate unit price', async ({ mockPage }) => {
-    const page = mockPage
+  test('should auto-calculate unit price', async ({ authenticatedPage }) => {
+    const page = authenticatedPage
 
     // Fill amount and quantity
     await page.fill('#amount', '100000')
@@ -148,8 +150,8 @@ test.describe('CPR Wizard - Step 4: Values', () => {
     await expect(page.locator('#unitPrice')).toHaveValue('100')
   })
 
-  test('should validate required fields', async ({ mockPage }) => {
-    const page = mockPage
+  test('should validate required fields', async ({ authenticatedPage }) => {
+    const page = authenticatedPage
 
     // Try to advance without filling required fields
     await page.click('button:has-text("Próximo")')
@@ -158,8 +160,8 @@ test.describe('CPR Wizard - Step 4: Values', () => {
     await expect(page.locator('[role="alert"]').first()).toBeVisible()
   })
 
-  test('should fill values form and advance', async ({ mockPage }) => {
-    const page = mockPage
+  test('should fill values form and advance', async ({ authenticatedPage }) => {
+    const page = authenticatedPage
 
     // Fill all required fields
     await page.fill('#amount', '150000')
@@ -187,8 +189,10 @@ test.describe('CPR Wizard - Step 4: Values', () => {
     await expect(page.locator('text=Tipo de Garantia')).toBeVisible()
   })
 
-  test('should navigate back to previous step', async ({ mockPage }) => {
-    const page = mockPage
+  test('should navigate back to previous step', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     await page.click('button:has-text("Voltar")')
 
@@ -198,8 +202,8 @@ test.describe('CPR Wizard - Step 4: Values', () => {
 })
 
 test.describe('CPR Wizard - Step 5: Guarantees', () => {
-  test.beforeEach(async ({ mockPage }) => {
-    const page = mockPage
+  test.beforeEach(async ({ authenticatedPage }) => {
+    const page = authenticatedPage
     await page.evaluate(() => {
       localStorage.removeItem('cpr_wizard_state')
     })
@@ -224,8 +228,10 @@ test.describe('CPR Wizard - Step 5: Guarantees', () => {
     await page.click('button:has-text("Próximo")')
   })
 
-  test('should display guarantee type options', async ({ mockPage }) => {
-    const page = mockPage
+  test('should display guarantee type options', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     // Check all guarantee options are visible
     const guaranteeOptions = [
@@ -240,8 +246,10 @@ test.describe('CPR Wizard - Step 5: Guarantees', () => {
     }
   })
 
-  test('should select multiple guarantee types', async ({ mockPage }) => {
-    const page = mockPage
+  test('should select multiple guarantee types', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     // Select multiple options
     await page.click('label:has-text("Penhor de Safra")')
@@ -252,8 +260,8 @@ test.describe('CPR Wizard - Step 5: Guarantees', () => {
     await expect(page.locator('#g-Hipoteca')).toBeChecked()
   })
 
-  test('should show/hide guarantor fields', async ({ mockPage }) => {
-    const page = mockPage
+  test('should show/hide guarantor fields', async ({ authenticatedPage }) => {
+    const page = authenticatedPage
 
     // Guarantor fields should be hidden initially
     await expect(page.locator('#gName')).not.toBeVisible()
@@ -271,8 +279,10 @@ test.describe('CPR Wizard - Step 5: Guarantees', () => {
     await expect(page.locator('#gName')).not.toBeVisible()
   })
 
-  test('should fill guarantees and advance to review', async ({ mockPage }) => {
-    const page = mockPage
+  test('should fill guarantees and advance to review', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     // Select guarantee type
     await page.click('label:has-text("Penhor de Safra")')
@@ -295,8 +305,8 @@ test.describe('CPR Wizard - Step 5: Guarantees', () => {
 })
 
 test.describe('CPR Wizard - Step 6: Review', () => {
-  test.beforeEach(async ({ mockPage }) => {
-    const page = mockPage
+  test.beforeEach(async ({ authenticatedPage }) => {
+    const page = authenticatedPage
     await page.evaluate(() => {
       localStorage.removeItem('cpr_wizard_state')
     })
@@ -326,8 +336,8 @@ test.describe('CPR Wizard - Step 6: Review', () => {
     await page.click('button:has-text("Próximo")')
   })
 
-  test('should display summary cards', async ({ mockPage }) => {
-    const page = mockPage
+  test('should display summary cards', async ({ authenticatedPage }) => {
+    const page = authenticatedPage
 
     // Check summary cards are visible
     await expect(page.locator('text=Valores e Prazos')).toBeVisible()
@@ -339,8 +349,10 @@ test.describe('CPR Wizard - Step 6: Review', () => {
     await expect(page.locator('text=Penhor de Safra')).toBeVisible()
   })
 
-  test('should have edit buttons for each section', async ({ mockPage }) => {
-    const page = mockPage
+  test('should have edit buttons for each section', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     // Find edit buttons
     const editButtons = page.locator('button:has-text("Editar")')
@@ -348,9 +360,9 @@ test.describe('CPR Wizard - Step 6: Review', () => {
   })
 
   test('should navigate to specific step when clicking edit', async ({
-    mockPage
+    authenticatedPage
   }) => {
-    const page = mockPage
+    const page = authenticatedPage
 
     // Click first edit button (Values)
     const editButtons = page.locator('button:has-text("Editar")')
@@ -360,8 +372,10 @@ test.describe('CPR Wizard - Step 6: Review', () => {
     await expect(page.locator('label:has-text("Valor Total")')).toBeVisible()
   })
 
-  test('should show risk calculation loading', async ({ mockPage }) => {
-    const page = mockPage
+  test('should show risk calculation loading', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     // Mock the risk calculation endpoint to add delay
     await page.route('**/api/risk/**', async (route) => {
@@ -397,9 +411,9 @@ test.describe('CPR Wizard - Step 6: Review', () => {
   })
 
   test('should require confirmation before generating', async ({
-    mockPage
+    authenticatedPage
   }) => {
-    const page = mockPage
+    const page = authenticatedPage
 
     // Generate button should be disabled without confirmation
     const generateButton = page.locator('button:has-text("Gerar Documento")')
@@ -412,8 +426,10 @@ test.describe('CPR Wizard - Step 6: Review', () => {
     await expect(generateButton).toBeEnabled()
   })
 
-  test('should show loading state during generation', async ({ mockPage }) => {
-    const page = mockPage
+  test('should show loading state during generation', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     // Mock the CPR creation endpoint
     await page.route('**/api/cpr/criar/**', async (route) => {
@@ -446,8 +462,10 @@ test.describe('CPR Wizard - Step 6: Review', () => {
 })
 
 test.describe('CPR Wizard - State Persistence', () => {
-  test('should persist wizard state in localStorage', async ({ mockPage }) => {
-    const page = mockPage
+  test('should persist wizard state in localStorage', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
     await page.evaluate(() => {
       localStorage.removeItem('cpr_wizard_state')
     })
@@ -475,8 +493,10 @@ test.describe('CPR Wizard - State Persistence', () => {
     expect(parsed.quantity).toBe(2500)
   })
 
-  test('should restore wizard state on reload', async ({ mockPage }) => {
-    const page = mockPage
+  test('should restore wizard state on reload', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
 
     // Set initial state in localStorage
     await page.evaluate(() => {
@@ -508,9 +528,9 @@ test.describe('CPR Wizard - State Persistence', () => {
 
 test.describe('CPR Wizard - Document Generation Success', () => {
   test('should display success state after generation', async ({
-    mockPage
+    authenticatedPage
   }) => {
-    const page = mockPage
+    const page = authenticatedPage
     await page.evaluate(() => {
       localStorage.removeItem('cpr_wizard_state')
     })
@@ -566,9 +586,9 @@ test.describe('CPR Wizard - Document Generation Success', () => {
   })
 
   test('should allow returning to edit after generation', async ({
-    mockPage
+    authenticatedPage
   }) => {
-    const page = mockPage
+    const page = authenticatedPage
     await page.evaluate(() => {
       localStorage.removeItem('cpr_wizard_state')
     })
@@ -621,8 +641,10 @@ test.describe('CPR Wizard - Document Generation Success', () => {
 })
 
 test.describe('CPR Wizard - Error Handling', () => {
-  test('should display error when generation fails', async ({ mockPage }) => {
-    const page = mockPage
+  test('should display error when generation fails', async ({
+    authenticatedPage
+  }) => {
+    const page = authenticatedPage
     await page.evaluate(() => {
       localStorage.removeItem('cpr_wizard_state')
     })
@@ -672,8 +694,8 @@ test.describe('CPR Wizard - Error Handling', () => {
     ).toBeVisible()
   })
 
-  test('should display high risk warning', async ({ mockPage }) => {
-    const page = mockPage
+  test('should display high risk warning', async ({ authenticatedPage }) => {
+    const page = authenticatedPage
     await page.evaluate(() => {
       localStorage.removeItem('cpr_wizard_state')
     })

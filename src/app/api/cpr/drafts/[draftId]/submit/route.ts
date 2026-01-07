@@ -18,7 +18,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 export async function POST(
   request: NextRequest,
-  context: { params: Promise<{ draftId: string }> }
+  context: { params: { draftId: string } }
 ) {
   try {
     const authorization = getAuthorizationFromRequest(request)
@@ -30,7 +30,7 @@ export async function POST(
       )
     }
 
-    const { draftId } = await context.params
+    const { draftId } = context.params
     const body = await request.json()
 
     const response = await fetch(

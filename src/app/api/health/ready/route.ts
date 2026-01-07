@@ -27,7 +27,7 @@ export async function GET() {
   // 2. Check Backend API
   try {
     const start = Date.now()
-    const response = await fetch(`${BACKEND_URL}/api/v1/health/ready`, {
+    const response = await fetch(`${BACKEND_URL}/health`, {
       signal: AbortSignal.timeout(5000) // 5s timeout
     })
     checks.backend = {

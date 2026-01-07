@@ -72,19 +72,19 @@ function ResetPasswordContent() {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="rounded-2xl border border-error-100 bg-white p-8 text-center shadow-xl shadow-error-900/5 lg:p-10"
+        className="rounded-2xl border border-red-100 bg-white p-8 text-center shadow-xl shadow-red-900/5 lg:p-10"
       >
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-error-50">
-          <AlertCircle className="h-8 w-8 text-error-600" />
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
+          <AlertCircle className="h-8 w-8 text-red-600" />
         </div>
-        <h2 className="mb-2 font-display text-2xl font-semibold text-error-950">
+        <h2 className="mb-2 font-display text-2xl font-semibold text-red-950">
           Link Inválido
         </h2>
-        <p className="mx-auto mb-8 max-w-xs text-error-700">
+        <p className="mx-auto mb-8 max-w-xs text-red-700">
           Este link de redefinição de senha é inválido ou expirou.
         </p>
         <Link href="/forgot-password">
-          <Button className="h-12 w-full rounded-lg bg-error-900 font-medium text-white hover:bg-error-800">
+          <Button className="h-12 w-full rounded-lg bg-red-900 font-medium text-white hover:bg-red-800">
             Solicitar Novo Link
           </Button>
         </Link>
@@ -153,9 +153,9 @@ function ResetPasswordContent() {
             exit={{ opacity: 0, height: 0, marginBottom: 0 }}
             className="overflow-hidden"
           >
-            <div className="flex items-start gap-3 rounded-lg border border-error-200 bg-error-50 p-4">
-              <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-error-600" />
-              <p className="text-sm text-error-700">{authError}</p>
+            <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
+              <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600" />
+              <p className="text-sm text-red-700">{authError}</p>
             </div>
           </motion.div>
         )}

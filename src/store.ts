@@ -1,0 +1,138 @@
+import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
+
+import {
+  type PlaygroundChatMessage,
+  type SessionEntry
+} from '@/types/playground'
+
+interface Agent {
+  value: string
+  label: string
+  model: {
+    provider: string
+  }
+  storage?: boolean
+}
+
+interface PlaygroundStore {
+  hydrated: boolean
+  setHydrated: () => void
+  streamingErrorMessage: string
+  setStreamingErrorMessage: (streamingErrorMessage: string) => void
+  endpoints: {
+    endpoint: string
+    id_playground_endpoint: string
+  }[]
+  setEndpoints: (
+    endpoints: {
+      endpoint: string
+      id_playground_endpoint: string
+    }[]
+  ) => void
+  isStreaming: boolean
+  setIsStreaming: (isStreaming: boolean) => void
+  isEndpointActive: boolean
+  setIsEndpointActive: (isActive: boolean) => void
+  isEndpointLoading: boolean
+  setIsEndpointLoading: (isLoading: boolean) => void
+  messages: PlaygroundChatMessage[]
+  setMessages: (
+    messages:
+      | PlaygroundChatMessage[]
+      | ((prevMessages: PlaygroundChatMessage[]) => PlaygroundChatMessage[])
+  ) => void
+  hasStorage: boolean
+  setHasStorage: (hasStorage: boolean) => void
+  selectedEndpoint: string
+  setSelectedEndpoint: (selectedEndpoint: string) => void
+  agents: Agent[]
+  setAgents: (agents: Agent[]) => void
+  selectedModel: string
+  setSelectedModel: (model: string) => void
+  agentId: string | null
+  setAgentId: (agentId: string | null) => void
+  sessionId: string | null
+  setSessionId: (sessionId: string | null) => void
+  sessionsData: SessionEntry[] | null
+  setSessionsData: (
+    sessionsData:
+      | SessionEntry[]
+      | ((prevSessions: SessionEntry[] | null) => SessionEntry[] | null)
+  ) => void
+  isSessionsLoading: boolean
+  setIsSessionsLoading: (isSessionsLoading: boolean) => void
+  locallyCreatedSessionIds: string[]
+  addLocallyCreatedSessionId: (sessionId: string) => void
+}
+
+export const usePlaygroundStore = create<PlaygroundStore>()(
+  persist(
+    (set) => ({
+      hydrated: false,
+      setHydrated: () => set({ hydrated: true }),
+      streamingErrorMessage: '',
+      setStreamingErrorMessage: (streamingErrorMessage) =>
+        set(() => ({ streamingErrorMessage })),
+      endpoints: [],
+      setEndpoints: (endpoints) => set(() => ({ endpoints })),
+      isStreaming: false,
+      setIsStreaming: (isStreaming) => set(() => ({ isStreaming })),
+      isEndpointActive: false,
+      setIsEndpointActive: (isActive) =>
+        set(() => ({ isEndpointActive: isActive })),
+      isEndpointLoading: true,
+      setIsEndpointLoading: (isLoading) =>
+        set(() => ({ isEndpointLoading: isLoading })),
+      messages: [],
+      setMessages: (messages) =>
+        set((state) => ({
+          messages:
+            typeof messages === 'function' ? messages(state.messages) : messages
+        })),
+      hasStorage: false,
+      setHasStorage: (hasStorage) => set(() => ({ hasStorage })),
+      selectedEndpoint: process.env.NEXT_PUBLIC_API_URL || '',
+      setSelectedEndpoint: (selectedEndpoint) =>
+        set(() => ({ selectedEndpoint })),
+      agents: [],
+      setAgents: (agents) => set({ agents }),
+      selectedModel: '',
+      setSelectedModel: (selectedModel) => set(() => ({ selectedModel })),
+      agentId: null,
+      setAgentId: (agentId) => set(() => ({ agentId })),
+      sessionId: null,
+      setSessionId: (sessionId) => set(() => ({ sessionId })),
+      sessionsData: null,
+      setSessionsData: (sessionsData) =>
+        set((state) => ({
+          sessionsData:
+            typeof sessionsData === 'function'
+              ? sessionsData(state.sessionsData)
+              : sessionsData
+        })),
+      isSessionsLoading: false,
+      setIsSessionsLoading: (isSessionsLoading) =>
+        set(() => ({ isSessionsLoading })),
+      locallyCreatedSessionIds: [],
+      addLocallyCreatedSessionId: (sessionId) =>
+        set((state) => ({
+          locallyCreatedSessionIds: state.locallyCreatedSessionIds.includes(
+            sessionId
+          )
+            ? state.locallyCreatedSessionIds
+            : [...state.locallyCreatedSessionIds, sessionId]
+        }))
+    }),
+    {
+      name: 'endpoint-storage',
+      storage: createJSONStorage(() => localStorage),
+      partialize: () => ({
+        selectedEndpoint: process.env.NEXT_PUBLIC_API_URL || ''
+      }),
+      onRehydrateStorage: () => (state) => {
+        state?.setHydrated?.()
+      }
+    }
+  )
+)

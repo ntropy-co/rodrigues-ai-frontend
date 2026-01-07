@@ -47,8 +47,7 @@ vi.mock('@/lib/auth/errors', () => ({
 
 // Import mocked modules and hook AFTER mocks are set up
 import * as authApi from '@/lib/auth/api'
-import { useAuth } from '@/features/auth'
-import { UserRole, PlanTier } from '@/types/auth'
+import { useAuth } from '@/hooks/useAuthHook'
 
 // =============================================================================
 // Test Setup
@@ -57,23 +56,9 @@ import { UserRole, PlanTier } from '@/types/auth'
 describe('useAuth Hook', () => {
   const mockUser = {
     id: 'user-123',
-    organizationId: null,
     email: 'test@example.com',
     name: 'Test User',
-    fullName: 'Test User',
-    role: 'analyst' as UserRole,
-    isActive: true,
-    isSuperuser: false,
-    phoneNumber: null,
-    jobTitle: null,
-    avatarUrl: null,
-    companyName: null,
-    loginCount: 0,
-    onboardingCompleted: false,
-    onboardingStep: 0,
-    planTier: 'free' as PlanTier,
-    storageUsedBytes: 0,
-    createdAt: new Date()
+    role: 'analyst'
   }
 
   const mockAuthResponse = {
@@ -260,9 +245,7 @@ describe('useAuth Hook', () => {
     const signupData = {
       email: 'newuser@example.com',
       password: 'SecurePassword123!',
-      confirmPassword: 'SecurePassword123!',
-      name: 'New User',
-      acceptTerms: true
+      name: 'New User'
     }
     const inviteToken = 'invite-token-123'
 
@@ -314,10 +297,7 @@ describe('useAuth Hook', () => {
 
   describe('Password Reset', () => {
     it('should request password reset successfully', async () => {
-      vi.mocked(authApi.requestPasswordReset).mockResolvedValue({
-        success: true,
-        message: 'Email sent'
-      })
+      vi.mocked(authApi.requestPasswordReset).mockResolvedValue(undefined)
 
       const { result } = renderHook(() => useAuth())
 
@@ -334,10 +314,7 @@ describe('useAuth Hook', () => {
     })
 
     it('should reset password successfully', async () => {
-      vi.mocked(authApi.resetPassword).mockResolvedValue({
-        success: true,
-        message: 'Password reset'
-      })
+      vi.mocked(authApi.resetPassword).mockResolvedValue(undefined)
 
       const { result } = renderHook(() => useAuth())
 
@@ -432,16 +409,12 @@ describe('useAuth Hook', () => {
       expect(result.current.isAuthenticated).toBe(true)
     })
 
-    it('should start with loading true during initialization', async () => {
+    it('should start with loading true during initialization', () => {
       const { result } = renderHook(() => useAuth())
 
       // Immediately after render, should be loading
       expect(result.current.isLoading).toBe(true)
       expect(result.current.isInitialized).toBe(false)
-
-      await waitFor(() => {
-        expect(result.current.isInitialized).toBe(true)
-      })
     })
   })
 })
