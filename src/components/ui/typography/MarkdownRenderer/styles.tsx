@@ -48,7 +48,7 @@ const UnorderedList = ({ className, ...props }: UnorderedListProps) => (
     className={cn(
       className,
       PARAGRAPH_SIZES.body,
-      'flex list-disc flex-col pl-10'
+      'flex list-disc flex-col gap-y-1 pl-6'
     )}
     {...filterProps(props)}
   />
@@ -59,7 +59,7 @@ const OrderedList = ({ className, ...props }: OrderedListProps) => (
     className={cn(
       className,
       PARAGRAPH_SIZES.body,
-      'flex list-decimal flex-col pl-10'
+      'flex list-decimal flex-col gap-y-1 pl-6'
     )}
     {...filterProps(props)}
   />
@@ -209,7 +209,7 @@ const Img = ({ src, alt }: ImgProps) => {
 }
 
 const Table = ({ className, ...props }: TableProps) => (
-  <div className="w-full max-w-[560px] overflow-hidden rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]">
+  <div className="w-full max-w-[480px] overflow-hidden rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-sm">
     <div className="w-full overflow-x-auto">
       <table className={cn(className, 'w-full')} {...filterProps(props)} />
     </div>

@@ -54,7 +54,7 @@ export const MessageBubble = memo(function MessageBubble({
       animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       className={cn(
-        'mb-8 flex w-full', // Increased margin for 3D space
+        'mb-3 flex w-full', // Tighter spacing like modern chat apps
         isUser ? 'justify-end' : 'justify-start'
       )}
       style={{ perspective: '800px' }} // Perspective for 3D items
@@ -65,8 +65,8 @@ export const MessageBubble = memo(function MessageBubble({
         className={cn(
           'relative flex flex-col',
           isUser
-            ? 'ml-12 max-w-[85%] md:max-w-[75%]'
-            : 'mr-12 max-w-[90%] md:max-w-[85%]',
+            ? 'ml-12 max-w-[80%] md:max-w-[65%]'
+            : 'mr-12 max-w-[75%] md:max-w-[65%]',
           'group'
         )}
       >
@@ -90,7 +90,7 @@ export const MessageBubble = memo(function MessageBubble({
         <motion.div
           transition={{ duration: 0.2 }}
           className={cn(
-            'relative px-6 py-4 text-lg leading-relaxed md:px-8',
+            'relative px-4 py-3 text-base leading-normal md:px-5',
             isUser
               ? 'rounded-3xl bg-verity-900 text-sand-50 shadow-sm'
               : 'rounded-none border-none bg-transparent p-0 text-verity-900 shadow-none'
@@ -100,7 +100,7 @@ export const MessageBubble = memo(function MessageBubble({
 
           {/* Content */}
           <div
-            className="relative z-10 text-base leading-relaxed"
+            className="relative z-10 text-[15px] leading-relaxed"
             style={{ transform: 'translateZ(10px)' }}
           >
             {/* translateZ for floating content effect */}

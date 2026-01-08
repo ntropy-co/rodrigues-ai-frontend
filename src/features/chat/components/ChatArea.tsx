@@ -132,7 +132,7 @@ export function ChatArea({ messages, isStreaming, onRefresh }: ChatAreaProps) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="space-y-6 pb-4 landscape:space-y-4"
+              className="space-y-2 pb-4 landscape:space-y-1"
               role="log"
               aria-label="Mensagens da conversa"
               aria-live="polite"
