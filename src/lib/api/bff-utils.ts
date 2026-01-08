@@ -86,7 +86,10 @@ export function isValidUUID(id: string): boolean {
 }
 
 /**
- * Validate session ID format (s_<uuid>)
+ * Validate session ID format (s_<uuid> or s_<32hexchars>)
+ *
+ * Backend generates session IDs in format: s_<32 hex chars> (no hyphens)
+ * Example: s_c4b12c3149fe469e881f01840deb19be
  *
  * @param sessionId - Session ID to validate
  * @returns True if valid session ID format
@@ -95,8 +98,10 @@ export function isValidSessionId(sessionId: string): boolean {
   if (!sessionId.startsWith('s_')) {
     return false
   }
-  const uuid = sessionId.substring(2)
-  return isValidUUID(uuid)
+  const id = sessionId.substring(2)
+  // Accept both UUID format (with hyphens) and 32 hex chars (without hyphens)
+  const hexOnlyRegex = /^[0-9a-f]{32}$/i
+  return isValidUUID(id) || hexOnlyRegex.test(id)
 }
 
 /**
