@@ -75,25 +75,51 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     }
 
     // Backend returns list of ConversationPublic
+    // Each conversation has: id, session_id, message (user), response (assistant), created_at
     // Transform to the format expected by frontend
     const conversations = await response.json()
 
     // Map backend format to frontend PlaygroundChatMessage format
-    const messages = conversations.map(
-      (conv: {
-        id: string
-        role: string
-        content: string
-        created_at: string
-        session_id: string
-      }) => ({
-        id: conv.id,
-        role: conv.role,
-        content: conv.content,
+    // Each conversation becomes 2 messages: user message + assistant response
+    interface ConversationPublic {
+      id: string
+      message: string
+      response: string
+      created_at: string
+      session_id: string
+      user_id?: string
+      model_used?: string
+      feedback?: string | null
+      trace_id?: string | null
+    }
+
+    const messages: Array<{
+      id: string
+      role: 'user' | 'assistant'
+      content: string
+      created_at: string
+      session_id: string
+    }> = []
+
+    conversations.forEach((conv: ConversationPublic) => {
+      // Add user message
+      messages.push({
+        id: `${conv.id}_user`,
+        role: 'user',
+        content: conv.message,
         created_at: conv.created_at,
         session_id: conv.session_id
       })
-    )
+
+      // Add assistant response
+      messages.push({
+        id: `${conv.id}_assistant`,
+        role: 'assistant',
+        content: conv.response,
+        created_at: conv.created_at,
+        session_id: conv.session_id
+      })
+    })
 
     return NextResponse.json({ messages }, { status: 200 })
   } catch (error) {
