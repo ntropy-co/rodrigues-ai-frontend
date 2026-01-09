@@ -23,6 +23,8 @@ import { cn } from '@/lib/utils'
 // Flag global para garantir que initializePlayground só execute UMA vez
 let playgroundInitializationStarted = false
 
+const isDebug = process.env.NODE_ENV === 'development'
+
 interface ChatLayoutProps {
   sessionId?: string
 }
@@ -77,25 +79,54 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
   useEffect(() => {
     const loadSession = async () => {
       if (!sessionId) {
+        if (isDebug) {
+          console.debug('[chat] loadSession skip: no route sessionId', {
+            routeSessionId: sessionId,
+            storeSessionId: currentSessionId
+          })
+        }
         setIsLoadingSession(false)
         return
       }
 
       if (locallyCreatedSessionIds.includes(sessionId)) {
+        if (isDebug) {
+          console.debug('[chat] loadSession skip: locally created', {
+            routeSessionId: sessionId,
+            storeSessionId: currentSessionId
+          })
+        }
         setIsLoadingSession(false)
         return
       }
 
       if (sessionId === currentSessionId) {
+        if (isDebug) {
+          console.debug('[chat] loadSession skip: already active', {
+            routeSessionId: sessionId,
+            storeSessionId: currentSessionId
+          })
+        }
         setIsLoadingSession(false)
         return
       }
 
       setIsLoadingSession(true)
+      if (isDebug) {
+        console.debug('[chat] loadSession start', {
+          routeSessionId: sessionId,
+          storeSessionId: currentSessionId
+        })
+      }
       const success = await loadSessionById(sessionId)
       setIsLoadingSession(false)
 
       if (!success) {
+        if (isDebug) {
+          console.debug('[chat] loadSession failed, redirecting to /chat', {
+            routeSessionId: sessionId
+          })
+        }
         router.push('/chat')
       }
     }
@@ -144,11 +175,22 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
   const handleNewConversation = () => {
     clearChat()
     setStagedFiles([])
+    if (isDebug) {
+      console.debug('[chat] new conversation, navigating to /chat', {
+        from: typeof window !== 'undefined' ? window.location.pathname : 'ssr'
+      })
+    }
     router.push('/chat')
   }
 
   const handleSelectConversation = (id: string) => {
     setStagedFiles([])
+    if (isDebug) {
+      console.debug('[chat] select conversation', {
+        from: typeof window !== 'undefined' ? window.location.pathname : 'ssr',
+        to: `/chat/${id}`
+      })
+    }
     router.push(`/chat/${id}`)
   }
 
@@ -215,43 +257,45 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
             <div className="h-32 md:h-40" />
           </div>
 
-          <div className="z-10 w-full">
-            <InputBar
-              onSendMessage={handleSendMessage}
-              message={message}
-              setMessage={setMessage}
-              isLoading={isStreaming}
-              disabled={isLoadingSession}
-              userId={user?.id}
-              sessionId={currentSessionId || undefined}
-              externalAttachments={stagedFiles}
-              onRemoveExternalAttachment={(id) => {
-                setStagedFiles((prev) => prev.filter((f) => f.id !== id))
-              }}
-              onSessionCreated={(newSessionId) => {
-                router.push(`/chat/${newSessionId}`)
-              }}
-              onFileUploaded={(documentId, uploadedSessionId, fileInfo) => {
-                if (fileInfo) {
-                  setStagedFiles((prev) => [
-                    ...prev,
-                    {
-                      id: documentId,
-                      name: fileInfo.name,
-                      size: fileInfo.size,
-                      type: fileInfo.type || ''
-                    }
-                  ])
-                }
+          <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-20 w-full bg-gradient-to-t from-sand-200 via-sand-200/80 to-transparent pb-6 pt-10">
+            <div className="pointer-events-auto w-full">
+              <InputBar
+                onSendMessage={handleSendMessage}
+                message={message}
+                setMessage={setMessage}
+                isLoading={isStreaming}
+                disabled={isLoadingSession}
+                userId={user?.id}
+                sessionId={currentSessionId || undefined}
+                externalAttachments={stagedFiles}
+                onRemoveExternalAttachment={(id) => {
+                  setStagedFiles((prev) => prev.filter((f) => f.id !== id))
+                }}
+                onSessionCreated={(newSessionId) => {
+                  router.push(`/chat/${newSessionId}`)
+                }}
+                onFileUploaded={(documentId, uploadedSessionId, fileInfo) => {
+                  if (fileInfo) {
+                    setStagedFiles((prev) => [
+                      ...prev,
+                      {
+                        id: documentId,
+                        name: fileInfo.name,
+                        size: fileInfo.size,
+                        type: fileInfo.type || ''
+                      }
+                    ])
+                  }
 
-                if (
-                  uploadedSessionId &&
-                  uploadedSessionId !== currentSessionId
-                ) {
-                  router.push(`/chat/${uploadedSessionId}`)
-                }
-              }}
-            />
+                  if (
+                    uploadedSessionId &&
+                    uploadedSessionId !== currentSessionId
+                  ) {
+                    router.push(`/chat/${uploadedSessionId}`)
+                  }
+                }}
+              />
+            </div>
           </div>
         </motion.div>
 

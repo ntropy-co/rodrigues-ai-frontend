@@ -189,30 +189,32 @@
 
 /* Markdown content styling */
 .markdown-content {
-  @apply leading-relaxed text-verity-950;
+  @apply leading-normal text-verity-950;
 }
 
 /* Listas ordenadas (numeradas) */
 .markdown-content ol {
-  @apply mb-3 ml-0 list-none space-y-2 pl-0;
+  @apply mb-3 ml-0 list-none space-y-3 pl-0;
   counter-reset: list-counter;
 }
 
 .markdown-content ol li {
-  @apply flex items-start gap-3;
+  @apply flex items-start gap-4;
   counter-increment: list-counter;
 }
 
 .markdown-content ol li::before {
-  content: counter(list-counter) '.';
-  @apply mt-0.5 inline-flex h-6
-         w-6 flex-shrink-0 
+  content: counter(list-counter);
+  @apply mt-0.5 inline-flex h-7
+         w-7 flex-shrink-0 
          items-center 
          justify-center 
-         rounded-md 
-         bg-verity-100 text-sm
-         font-medium
-         text-verity-900;
+         rounded-full
+         border border-verity-200
+         bg-verity-50 text-sm
+         font-bold
+         text-verity-800
+         shadow-sm;
 }
 
 /* Listas não-ordenadas (bullets) */

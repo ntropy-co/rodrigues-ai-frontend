@@ -440,7 +440,7 @@ export function InputBar({
             duration: 0.8,
             ease: [0.25, 0.46, 0.45, 0.94] // Easing butter
           }}
-          className="relative mx-auto max-w-md pb-4"
+          className="relative mx-auto max-w-2xl pb-2"
           style={{
             transformStyle: 'preserve-3d',
             backfaceVisibility: 'hidden',
@@ -526,7 +526,7 @@ export function InputBar({
 
           {/* Layer 4: Container Principal (Pílula Orgânica Suprema) */}
           <motion.div
-            className="group relative flex items-end gap-2 rounded-full border border-sand-200 bg-white/50 px-5 py-3 backdrop-blur-xl transition-all duration-300 hover:border-verity-200/50 hover:bg-white/70"
+            className="group relative flex items-end gap-2 rounded-full border border-sand-200 bg-white/50 px-5 py-2 backdrop-blur-xl transition-all duration-300 hover:border-verity-200/50 hover:bg-white/70"
             style={{
               transform: 'translateZ(0)',
               transformStyle: 'preserve-3d'
@@ -598,7 +598,7 @@ export function InputBar({
                   ? `suggestion-option-${selectedIndex}`
                   : undefined
               }
-              className="relative z-10 flex-1 resize-none bg-transparent py-2.5 font-sans text-base text-verity-950 placeholder:text-verity-700 focus:outline-none"
+              className="relative z-10 flex-1 resize-none bg-transparent py-2 font-sans text-base text-verity-950 placeholder:text-verity-700 focus:outline-none"
               disabled={disabled} // Only disable if strictly disabled (e.g. session loading)
               rows={1}
               style={{ maxHeight: '200px' }}

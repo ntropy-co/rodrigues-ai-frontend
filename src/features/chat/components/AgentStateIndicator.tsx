@@ -21,33 +21,33 @@ interface AgentStateIndicatorProps {
 const STATE_CONFIG = {
   thinking: {
     icon: Brain,
-    label: 'Pensando na resposta...',
-    color: 'text-verity-600',
-    bg: 'bg-verity-100'
-  },
-  analyzing: {
-    icon: Search,
-    label: 'Analisando dados...',
-    color: 'text-ouro-600',
-    bg: 'bg-ouro-100' // Assuming ouro exists, else fallback to warm color
-  },
-  summarizing: {
-    icon: FileText,
-    label: 'Resumindo informações...',
-    color: 'text-verity-700',
-    bg: 'bg-verity-200'
-  },
-  typing: {
-    icon: PenLine,
-    label: 'Digitando...',
-    color: 'text-verity-500',
-    bg: 'bg-verity-50'
+    label: 'Consultando C.P.R. Intel...',
+    color: 'text-ouro-700',
+    bg: 'bg-ouro-50 border-ouro-100/50'
   },
   searching: {
     icon: Database,
-    label: 'Buscando na base de conhecimento...',
+    label: 'Buscando na legislação...',
+    color: 'text-verity-700',
+    bg: 'bg-verity-50 border-verity-100/50'
+  },
+  analyzing: {
+    icon: Search,
+    label: 'Analisando conformidade...',
+    color: 'text-ouro-700',
+    bg: 'bg-ouro-50 border-ouro-100/50'
+  },
+  summarizing: {
+    icon: FileText,
+    label: 'Redigindo resposta...',
+    color: 'text-verity-700',
+    bg: 'bg-verity-50 border-verity-100/50'
+  },
+  typing: {
+    icon: PenLine,
+    label: 'Finalizando...',
     color: 'text-verity-600',
-    bg: 'bg-verity-100'
+    bg: 'bg-transparent border-transparent'
   }
 }
 
@@ -126,22 +126,27 @@ export function AgentStateIndicator({
           }
           transition={{ duration: prefersReducedMotion ? 0.1 : 0.3 }}
           className={cn(
-            'relative flex h-8 w-8 items-center justify-center rounded-xl shadow-sm',
+            'relative flex h-8 w-8 items-center justify-center rounded-xl border shadow-sm backdrop-blur-sm',
             config.bg
           )}
         >
           <Icon className={cn('h-4 w-4', config.color)} />
 
-          {/* Animated Ring/Glow - disabled for reduced motion */}
+          {/* Animated Ring/Glow - Premium Pulse */}
           {!prefersReducedMotion && (
             <motion.div
               className={cn(
-                'absolute inset-0 rounded-xl opacity-50',
+                'absolute inset-0 rounded-xl opacity-30',
                 config.bg
               )}
-              animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              style={{ willChange: 'transform, opacity' }}
+              animate={{
+                boxShadow: [
+                  '0 0 0 0px rgba(0,0,0,0)',
+                  '0 0 0 4px rgba(0,0,0,0.05)',
+                  '0 0 0 8px rgba(0,0,0,0)'
+                ]
+              }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
             />
           )}
         </motion.div>

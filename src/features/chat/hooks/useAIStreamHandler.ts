@@ -9,6 +9,8 @@ import { trackEvent } from '@/components/providers/PostHogProvider'
 
 // ... existing code ...
 
+const isDebug = process.env.NODE_ENV === 'development'
+
 type SSEEvent =
   | { type: 'content'; content: string }
   | { type: 'usage'; usage: unknown }
@@ -293,6 +295,15 @@ export const useAIStreamHandler = () => {
       const message =
         input instanceof FormData ? (input.get('message') as string) : input
 
+      if (isDebug) {
+        console.debug('[chat] handleStreamResponse start', {
+          explicitSessionId,
+          storeSessionId: sessionId,
+          messageLength: message?.trim().length ?? 0,
+          path: typeof window !== 'undefined' ? window.location.pathname : 'ssr'
+        })
+      }
+
       if (!message?.trim()) {
         setIsStreaming(false)
         return
@@ -334,6 +345,14 @@ export const useAIStreamHandler = () => {
       const sessionIdToUse =
         explicitSessionId !== undefined ? explicitSessionId : sessionId
 
+      if (isDebug) {
+        console.debug('[chat] resolved sessionId', {
+          sessionIdToUse,
+          explicitSessionId,
+          storeSessionId: sessionId
+        })
+      }
+
       try {
         // Use streaming if we have a session ID, otherwise use non-streaming
         // (streaming requires session_id to be set first)
@@ -363,6 +382,14 @@ export const useAIStreamHandler = () => {
         } else {
           // Non-streaming mode (new session)
           const data = await handleNonStreamingChat(message, null, signal)
+
+          if (isDebug) {
+            console.debug('[chat] non-streaming response', {
+              receivedSessionId: data.session_id,
+              currentPath:
+                typeof window !== 'undefined' ? window.location.pathname : 'ssr'
+            })
+          }
 
           // Track chat message event
           trackEvent('chat_message_sent', {
@@ -400,6 +427,12 @@ export const useAIStreamHandler = () => {
 
             // Navigate to session URL
             if (window.location.pathname !== `/chat/${data.session_id}`) {
+              if (isDebug) {
+                console.debug('[chat] navigating to new session', {
+                  from: window.location.pathname,
+                  to: `/chat/${data.session_id}`
+                })
+              }
               router.push(`/chat/${data.session_id}`)
             }
           }
