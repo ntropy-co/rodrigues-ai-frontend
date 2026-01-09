@@ -227,9 +227,8 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
         </AnimatePresence>
 
         <motion.div
-          layout
           className={cn(
-            'relative flex flex-col overflow-hidden bg-sand-200 transition-all duration-300 ease-in-out',
+            'relative flex h-full flex-col overflow-hidden bg-sand-200 transition-all duration-300 ease-in-out',
             isCanvasOpen && !isMobile ? 'border-r border-verity-200' : ''
           )}
           style={{
