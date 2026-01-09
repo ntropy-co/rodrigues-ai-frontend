@@ -36,7 +36,22 @@ export interface StreamChatRequest {
   session_id: string
 }
 
+import * as fs from 'fs'
+import * as path from 'path'
+
+function logDebug(message: string, data?: any) {
+  const logFile = path.join(process.cwd(), 'debug_log.txt')
+  const timestamp = new Date().toISOString()
+  const logEntry = `[${timestamp}] ${message} ${data ? JSON.stringify(data, null, 2) : ''}\n`
+  try {
+    fs.appendFileSync(logFile, logEntry)
+  } catch (e) {
+    // ignore
+  }
+}
+
 export async function POST(request: NextRequest) {
+  logDebug('--- NEW STREAM REQUEST ---')
   try {
     // Get the Authorization header or extract from HttpOnly cookie
     let authorization = request.headers.get('authorization')
@@ -50,6 +65,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!authorization) {
+      logDebug('Authorization missing')
       return new Response(
         JSON.stringify({ detail: 'Authorization header required' }),
         {
@@ -88,8 +104,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Verify token presence
+    logDebug('Authorization present:', !!authorization)
+
     // Forward to backend streaming endpoint
-    const backendResponse = await fetch(`${BACKEND_URL}/api/v1/chat/stream`, {
+    const fullUrl = `${BACKEND_URL}/api/v1/chat/stream`
+    logDebug('Forwarding to:', fullUrl)
+
+    const backendResponse = await fetch(fullUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -101,16 +123,20 @@ export async function POST(request: NextRequest) {
       })
     })
 
+    logDebug('Backend response status:', backendResponse.status)
+
     // Handle error responses
     if (!backendResponse.ok) {
       let errorDetail = 'Erro ao iniciar streaming'
       try {
         const errorData = await backendResponse.json()
+        logDebug('Backend error body:', errorData)
         errorDetail = errorData.detail || errorDetail
-      } catch {
+      } catch (e) {
+        logDebug('Could not parse error body:', e)
         errorDetail = `Backend error: ${backendResponse.status} ${backendResponse.statusText}`
       }
-      console.error('[API /api/chat/stream] Backend error:', errorDetail)
+      logDebug('Returning error to client:', errorDetail)
       return new Response(JSON.stringify({ detail: errorDetail }), {
         status: backendResponse.status,
         headers: { 'Content-Type': 'application/json' }
@@ -119,7 +145,7 @@ export async function POST(request: NextRequest) {
 
     // Check if we got a stream
     if (!backendResponse.body) {
-      console.error('[API /api/chat/stream] No response body from backend')
+      logDebug('No response body from backend')
       return new Response(
         JSON.stringify({ detail: 'No stream from backend' }),
         {
@@ -140,7 +166,7 @@ export async function POST(request: NextRequest) {
       }
     })
   } catch (error) {
-    console.error('[API /api/chat/stream] Error:', error)
+    logDebug('Internal Error:', error)
     return new Response(JSON.stringify({ detail: 'Internal server error' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }

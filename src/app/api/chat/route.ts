@@ -42,7 +42,22 @@ export interface ChatResponse {
   sources?: string[]
 }
 
+import * as fs from 'fs'
+import * as path from 'path'
+
+function logDebug(message: string, data?: unknown) {
+  const logFile = path.join(process.cwd(), 'debug_log.txt')
+  const timestamp = new Date().toISOString()
+  const logEntry = `[${timestamp}] [CHAT] ${message} ${data ? JSON.stringify(data, null, 2) : ''}\n`
+  try {
+    fs.appendFileSync(logFile, logEntry)
+  } catch {
+    // ignore
+  }
+}
+
 export async function POST(request: NextRequest) {
+  logDebug('--- NEW CHAT REQUEST ---')
   try {
     // Get the Authorization header or extract from HttpOnly cookie
     let authorization = request.headers.get('authorization')
@@ -56,6 +71,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!authorization) {
+      logDebug('Authorization missing')
       return NextResponse.json(
         { detail: 'Authorization header required' },
         { status: 401 }
@@ -66,6 +82,7 @@ export async function POST(request: NextRequest) {
     let body: ChatRequest
     try {
       body = await request.json()
+      logDebug('Request body:', body)
     } catch {
       return NextResponse.json(
         { detail: 'Invalid request body' },
@@ -75,6 +92,7 @@ export async function POST(request: NextRequest) {
 
     // Validate message
     if (!body.message?.trim()) {
+      logDebug('Empty message')
       return NextResponse.json(
         { detail: 'Message is required' },
         { status: 400 }
@@ -82,7 +100,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Forward to backend
-    const response = await fetch(`${BACKEND_URL}/api/v1/chat/`, {
+    const fullUrl = `${BACKEND_URL}/api/v1/chat/`
+    logDebug('Forwarding to:', fullUrl)
+    logDebug('Session ID:', body.session_id)
+
+    const response = await fetch(fullUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -94,16 +116,19 @@ export async function POST(request: NextRequest) {
       })
     })
 
+    logDebug('Backend response status:', response.status)
+
     // Handle error responses
     if (!response.ok) {
       let errorDetail = 'Erro ao enviar mensagem'
       try {
         const errorData = await response.json()
+        logDebug('Backend error body:', errorData)
         errorDetail = errorData.detail || errorDetail
       } catch {
         errorDetail = `Backend error: ${response.status} ${response.statusText}`
       }
-      console.error('[API /api/chat] Backend error:', errorDetail)
+      logDebug('Returning error to client:', errorDetail)
       return NextResponse.json(
         { detail: errorDetail },
         { status: response.status }
@@ -112,9 +137,10 @@ export async function POST(request: NextRequest) {
 
     // Return successful response
     const data: ChatResponse = await response.json()
+    logDebug('Success response:', data)
     return NextResponse.json(data, { status: 200 })
   } catch (error) {
-    console.error('[API /api/chat] Error:', error)
+    logDebug('Internal Error:', error)
     return NextResponse.json(
       { detail: 'Internal server error' },
       { status: 500 }

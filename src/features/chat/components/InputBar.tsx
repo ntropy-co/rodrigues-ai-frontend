@@ -578,18 +578,13 @@ export function InputBar({
         style={{ perspective: '1000px' }}
       >
         <motion.div
-          initial={{ opacity: 0, y: 30, rotateX: -15 }}
-          animate={{ opacity: 1, y: 0, rotateX: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{
-            duration: 0.8,
-            ease: [0.25, 0.46, 0.45, 0.94] // Easing butter
+            duration: 0.4,
+            ease: 'easeOut'
           }}
           className="relative mx-auto max-w-2xl pb-2"
-          style={{
-            transformStyle: 'preserve-3d',
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden'
-          }}
         >
           {/* Layer 6: Reflexo Inferior (Chão) */}
           <div

@@ -45,9 +45,10 @@ const QuickActionButton = ({
 )
 interface MainContentProps {
   onSuggestionClick?: (suggestion: string) => void
+  inputBar?: React.ReactNode
 }
 
-export function MainContent({}: MainContentProps) {
+export function MainContent({ inputBar }: MainContentProps) {
   const { openFilesSidebar } = useLayoutStore()
   const router = useRouter()
 
@@ -82,6 +83,11 @@ export function MainContent({}: MainContentProps) {
             Simulador
           </QuickActionButton>
         </div>
+
+        {/* Input Bar Slot (Centered Layout) */}
+        {inputBar && (
+          <div className="mx-auto mt-8 w-full max-w-2xl">{inputBar}</div>
+        )}
       </div>
     </main>
   )

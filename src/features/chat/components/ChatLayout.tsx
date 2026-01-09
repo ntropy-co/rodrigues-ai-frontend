@@ -194,6 +194,43 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
     router.push(`/chat/${id}`)
   }
 
+  // Helper to render the InputBar with common props
+  const renderInputBar = () => (
+    <InputBar
+      onSendMessage={handleSendMessage}
+      message={message}
+      setMessage={setMessage}
+      isLoading={isStreaming}
+      disabled={isLoadingSession}
+      userId={user?.id}
+      sessionId={currentSessionId || undefined}
+      externalAttachments={stagedFiles}
+      onRemoveExternalAttachment={(id) => {
+        setStagedFiles((prev) => prev.filter((f) => f.id !== id))
+      }}
+      onSessionCreated={(newSessionId) => {
+        router.push(`/chat/${newSessionId}`)
+      }}
+      onFileUploaded={(documentId, uploadedSessionId, fileInfo) => {
+        if (fileInfo) {
+          setStagedFiles((prev) => [
+            ...prev,
+            {
+              id: documentId,
+              name: fileInfo.name,
+              size: fileInfo.size,
+              type: fileInfo.type || ''
+            }
+          ])
+        }
+
+        if (uploadedSessionId && uploadedSessionId !== currentSessionId) {
+          router.push(`/chat/${uploadedSessionId}`)
+        }
+      }}
+    />
+  )
+
   return (
     <div className="flex h-screen w-screen flex-col bg-sand-100 dark:bg-background">
       <ChatHeader />
@@ -226,9 +263,9 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
           )}
         </AnimatePresence>
 
-        <motion.div
+        <div
           className={cn(
-            'relative flex h-full flex-col overflow-hidden bg-sand-200 transition-all duration-300 ease-in-out',
+            'relative flex h-full flex-col bg-sand-200 transition-all duration-300 ease-in-out',
             isCanvasOpen && !isMobile ? 'border-r border-verity-200' : ''
           )}
           style={{
@@ -240,6 +277,7 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
               isCanvasOpen && !isMobile ? `${100 - canvasWidth}%` : '100%'
           }}
         >
+          {/* Scrollable Content Area */}
           <div className="flex flex-1 flex-col overflow-y-auto">
             {isLoadingSession ? (
               <div className="flex h-full items-center justify-center">
@@ -249,54 +287,39 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
                 </div>
               </div>
             ) : hasMessages ? (
-              <ChatArea messages={messages} isStreaming={isStreaming} />
+              <>
+                <ChatArea messages={messages} isStreaming={isStreaming} />
+                {/* Spacer to allow scrolling above InputBar */}
+                <div className="h-40" />
+              </>
             ) : (
-              <MainContent onSuggestionClick={handleSuggestionClick} />
-            )}
-            <div className="h-32 md:h-40" />
-          </div>
-
-          <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-20 w-full bg-gradient-to-t from-sand-200 via-sand-200/80 to-transparent pb-6 pt-10">
-            <div className="pointer-events-auto w-full">
-              <InputBar
-                onSendMessage={handleSendMessage}
-                message={message}
-                setMessage={setMessage}
-                isLoading={isStreaming}
-                disabled={isLoadingSession}
-                userId={user?.id}
-                sessionId={currentSessionId || undefined}
-                externalAttachments={stagedFiles}
-                onRemoveExternalAttachment={(id) => {
-                  setStagedFiles((prev) => prev.filter((f) => f.id !== id))
-                }}
-                onSessionCreated={(newSessionId) => {
-                  router.push(`/chat/${newSessionId}`)
-                }}
-                onFileUploaded={(documentId, uploadedSessionId, fileInfo) => {
-                  if (fileInfo) {
-                    setStagedFiles((prev) => [
-                      ...prev,
-                      {
-                        id: documentId,
-                        name: fileInfo.name,
-                        size: fileInfo.size,
-                        type: fileInfo.type || ''
-                      }
-                    ])
-                  }
-
-                  if (
-                    uploadedSessionId &&
-                    uploadedSessionId !== currentSessionId
-                  ) {
-                    router.push(`/chat/${uploadedSessionId}`)
-                  }
-                }}
+              <MainContent
+                onSuggestionClick={handleSuggestionClick}
+                inputBar={renderInputBar()}
               />
-            </div>
+            )}
           </div>
-        </motion.div>
+
+          {/* Sticky Bottom Input Bar - Always visible at bottom when has messages */}
+          {hasMessages && (
+            <div
+              className="sticky bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-sand-200 via-sand-200/80 to-transparent pb-6 pt-10"
+              style={{
+                position: 'fixed',
+                bottom: 0,
+                left: isConversationsOpen && !isMobile ? '256px' : '0',
+                right:
+                  isCanvasOpen && !isMobile
+                    ? `${canvasWidth}%`
+                    : isFilesOpen && !isMobile
+                      ? '320px'
+                      : '0'
+              }}
+            >
+              {renderInputBar()}
+            </div>
+          )}
+        </div>
 
         {/* Canvas Panel - Always render when open (takes priority over FilesSidebar) */}
         {isCanvasOpen && !isMobile && (
