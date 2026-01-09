@@ -52,7 +52,7 @@ export function MainContent({}: MainContentProps) {
   const router = useRouter()
 
   return (
-    <main className="flex flex-1 flex-col items-center justify-center px-4 py-8 md:px-8">
+    <main className="flex flex-1 flex-col items-center justify-center px-4 py-8 pb-40 md:px-8">
       <div className="mx-auto w-full max-w-3xl space-y-10">
         <Greeting />
 

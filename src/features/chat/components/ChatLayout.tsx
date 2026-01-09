@@ -241,7 +241,7 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
               isCanvasOpen && !isMobile ? `${100 - canvasWidth}%` : '100%'
           }}
         >
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex flex-1 flex-col overflow-y-auto">
             {isLoadingSession ? (
               <div className="flex h-full items-center justify-center">
                 <div className="text-center">

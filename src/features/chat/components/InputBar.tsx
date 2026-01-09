@@ -1,14 +1,15 @@
 'use client'
 
 import { easings } from '@/lib/animations/easings'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Paperclip,
   ArrowUp,
   X,
   FileText,
   Image as ImageIcon,
-  Loader2
+  Loader2,
+  Plus
 } from 'lucide-react'
 import { useEffect, useRef, useState, ChangeEvent, useCallback } from 'react'
 import {
@@ -408,9 +409,152 @@ export function InputBar({
     }
   }
 
+  // --- ChatGPT Style Layout ---
+  const [showAttachMenu, setShowAttachMenu] = useState(false)
+
+  // New Upload State
+  const [uploadingFiles, setUploadingFiles] = useState<
+    Array<{
+      name: string
+      size: number
+      type?: string
+      progress: number
+      error?: string
+    }>
+  >([])
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      if (showAttachMenu && !target.closest('.attach-menu-container')) {
+        setShowAttachMenu(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [showAttachMenu])
+
+  // --- Upload Logic ---
+  const handleNativeFileSelect = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return
+
+    // Close menu if open
+    setShowAttachMenu(false)
+
+    const files = Array.from(e.target.files)
+
+    // Reset input
+    if (fileInputRef.current) fileInputRef.current.value = ''
+
+    // Add to uploading state
+    const newUploads = files.map((f) => ({
+      name: f.name,
+      size: f.size,
+      type: f.type,
+      progress: 0,
+      file: f
+    }))
+
+    setUploadingFiles((prev) => [
+      ...prev,
+      ...newUploads.map(({ file, ...rest }) => rest)
+    ])
+
+    // Process each file
+    for (const { file } of newUploads) {
+      await uploadFile(file)
+    }
+  }
+
+  const uploadFile = async (file: File) => {
+    try {
+      // Validations (simulated from modal)
+      const MAX_SIZE = 10 * 1024 * 1024 // 10MB
+      if (file.size > MAX_SIZE) {
+        throw new Error('Arquivo muito grande (Máx 10MB)')
+      }
+
+      // Simulate Progress
+      setUploadingFiles((prev) =>
+        prev.map((u) => (u.name === file.name ? { ...u, progress: 10 } : u))
+      )
+
+      // 1. Ensure Session Exists
+      let targetSessionId = sessionId
+      if (!targetSessionId) {
+        // Create session on the fly if needed
+        // We need to fetch /api/sessions
+        // Ideally this should be a utility, but implementing inline for now
+        try {
+          const sessionRes = await fetch('/api/sessions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title: 'Análise de documento' })
+          })
+          if (sessionRes.ok) {
+            const sessionData = await sessionRes.json()
+            targetSessionId = sessionData.id
+            if (onSessionCreated && targetSessionId)
+              onSessionCreated(targetSessionId)
+          }
+        } catch (e) {
+          console.error('Error creating session', e)
+        }
+      }
+
+      setUploadingFiles((prev) =>
+        prev.map((u) => (u.name === file.name ? { ...u, progress: 30 } : u))
+      )
+
+      // 2. Upload
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('user_id', userId)
+      if (targetSessionId) formData.append('session_id', targetSessionId)
+      formData.append('auto_process', 'true')
+
+      const response = await fetch('/api/documents/upload', {
+        method: 'POST',
+        body: formData
+      })
+
+      if (!response.ok) {
+        throw new Error('Falha no upload')
+      }
+
+      const data = await response.json()
+
+      setUploadingFiles((prev) =>
+        prev.map((u) => (u.name === file.name ? { ...u, progress: 100 } : u))
+      )
+
+      // 3. Complete
+      if (onFileUploaded && targetSessionId) {
+        onFileUploaded(data.id, targetSessionId, {
+          name: file.name,
+          size: file.size,
+          type: file.type
+        })
+      }
+
+      // Remove from uploading list after short delay
+      setTimeout(() => {
+        setUploadingFiles((prev) => prev.filter((u) => u.name !== file.name))
+      }, 500)
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Erro'
+      setUploadingFiles((prev) =>
+        prev.map((u) =>
+          u.name === file.name ? { ...u, error: msg, progress: 0 } : u
+        )
+      )
+      toast.error(`Erro ao enviar ${file.name}: ${msg}`)
+    }
+  }
+
   return (
     <>
-      {/* File Upload Modal */}
       <FileUploadModal
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
@@ -465,7 +609,9 @@ export function InputBar({
           />
 
           {/* Attachments Preview - Floating above */}
-          {(attachments.length > 0 || externalAttachments.length > 0) && (
+          {(attachments.length > 0 ||
+            externalAttachments.length > 0 ||
+            uploadingFiles.length > 0) && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -473,8 +619,22 @@ export function InputBar({
               style={{ transform: 'translateZ(10px)' }}
             >
               {[
-                ...externalAttachments.map((f) => ({ ...f, isExternal: true })),
-                ...attachments.map((f) => ({ ...f, isExternal: false }))
+                ...externalAttachments.map((f) => ({
+                  ...f,
+                  isExternal: true,
+                  isUploading: false
+                })),
+                ...attachments.map((f) => ({
+                  ...f,
+                  isExternal: false,
+                  isUploading: false
+                })),
+                ...uploadingFiles.map((f) => ({
+                  ...f,
+                  isExternal: false,
+                  isUploading: true,
+                  id: 'temp'
+                }))
               ].map((file, index) => (
                 <motion.div
                   key={`${file.name}-${index}`}
@@ -484,7 +644,10 @@ export function InputBar({
                   className="relative flex items-center gap-2 overflow-hidden rounded-xl border border-sand-200 bg-sand-50/90 py-1.5 pl-3 pr-8 text-xs text-verity-900 shadow-lg backdrop-blur-md"
                 >
                   <div className="flex h-5 w-5 items-center justify-center rounded-md bg-sand-200 text-verity-600">
-                    {(file.type || '').startsWith('image/') ? (
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {(file as any).isUploading ? (
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                    ) : (file.type || '').startsWith('image/') ? (
                       <ImageIcon className="h-3 w-3" />
                     ) : (
                       <FileText className="h-3 w-3" />
@@ -495,34 +658,88 @@ export function InputBar({
                       {file.name}
                     </span>
                     <span className="text-[10px] text-verity-500">
-                      {formatFileSize(file.size)}
+                      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                      {(file as any).error ? (
+                        <span className="text-error-500">Erro</span>
+                      ) : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      (file as any).isUploading ? (
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        `Enviando... ${(file as any).progress}%`
+                      ) : (
+                        formatFileSize(file.size)
+                      )}
                     </span>
                   </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      if (file.isExternal && onRemoveExternalAttachment) {
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                  {!(file as any).isUploading && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        onRemoveExternalAttachment((file as any).id)
-                      } else {
-                        // Correct index for local attachments
-                        // If it's local, we need to find its index in the 'attachments' array
-                        // But since we are mapping a combined array, the index here is global
-                        // This is tricky. Let's filter 'attachments' by reference?
-                        // Or easier: use the mixed array for display but separate removal logic.
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        const localIndex = attachments.indexOf(file as any)
-                        if (localIndex !== -1) removeAttachment(localIndex)
-                      }
-                    }}
-                    className="absolute right-1 top-1/2 z-20 -translate-y-1/2 rounded-full p-1 text-verity-400 transition-colors hover:bg-error-50 hover:text-error-500"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
+                        if (
+                          (file as any).isExternal &&
+                          onRemoveExternalAttachment
+                        ) {
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                          onRemoveExternalAttachment((file as any).id)
+                        } else {
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                          const localIndex = attachments.indexOf(file as any)
+                          if (localIndex !== -1) removeAttachment(localIndex)
+                        }
+                      }}
+                      className="absolute right-1 top-1/2 z-20 -translate-y-1/2 rounded-full p-1 text-verity-400 transition-colors hover:bg-error-50 hover:text-error-500"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  )}
                 </motion.div>
               ))}
             </motion.div>
           )}
+
+          {/* Attach Menu Dropdown - Positioned relative to the 3D container, or float it? 
+              Ideally it should be outside or on top. We'll put it in a motion div that floats.
+          */}
+          <AnimatePresence>
+            {showAttachMenu && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                transition={{ duration: 0.1 }}
+                className="attach-menu-container absolute bottom-full left-0 z-50 mb-4 ml-4 min-w-[240px] overflow-hidden rounded-2xl border border-sand-200 bg-white p-1.5 shadow-xl md:left-0"
+                style={{ transform: 'translateZ(30px)' }}
+              >
+                <button
+                  onClick={() => {
+                    // setIsUploadModalOpen(true) // OLD
+                    fileInputRef.current?.click() // NEW: Native File Picker
+                  }}
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-verity-800 hover:bg-sand-50"
+                >
+                  <Paperclip className="h-5 w-5 text-verity-600" />
+                  Adicionar fotos e arquivos
+                </button>
+                <button
+                  onClick={() => setShowAttachMenu(false)}
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-verity-800 hover:bg-sand-50"
+                >
+                  <ImageIcon className="h-5 w-5 text-verity-600" />
+                  Criar imagem
+                </button>
+                <button
+                  onClick={() => setShowAttachMenu(false)}
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-verity-800 hover:bg-sand-50"
+                >
+                  <div className="flex h-5 w-5 items-center justify-center rounded-full border border-verity-600">
+                    <span className="text-[10px] font-bold">A</span>
+                  </div>
+                  Modo Agente
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Layer 4: Container Principal (Pílula Orgânica Suprema) */}
           <motion.div
@@ -549,8 +766,6 @@ export function InputBar({
             }}
             transition={{ duration: 0.4, ease: easings.butter }}
           >
-            {/* Shimmer Removed for Cleaner Organic Look */}
-
             {/* Layer 3: Borda Iluminada Superior */}
             <div
               className="absolute -top-px left-4 right-4 h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-60"
@@ -567,6 +782,22 @@ export function InputBar({
               trigger={suggestionMode === 'slash' ? '/' : '@'}
             />
 
+            {/* Plus Button (Kept from Change #2), now integrated */}
+            <div className="attach-menu-container mb-1 flex items-center">
+              <button
+                onClick={() => setShowAttachMenu(!showAttachMenu)}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-sand-100 text-verity-600 transition-colors hover:bg-verity-900 hover:text-white"
+                aria-label="Adicionar anexos"
+              >
+                <motion.div
+                  animate={{ rotate: showAttachMenu ? 45 : 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Plus className="h-5 w-5" />
+                </motion.div>
+              </button>
+            </div>
+
             {/* Text Area */}
             <textarea
               ref={textareaRef}
@@ -577,29 +808,19 @@ export function InputBar({
               onFocus={() => setIsFocused(true)}
               onBlur={() => {
                 setIsFocused(false)
-                // Delayed close to allow click on suggestion list
                 setTimeout(closeSuggestions, 200)
               }}
               placeholder={
                 isLoading
-                  ? 'Digite sua próxima mensagem...'
+                  ? 'Pensando...'
                   : disabled
                     ? 'Aguarde...'
-                    : 'Descreva sua análise, use / para comandos ou @ para documentos...'
+                    : 'Descreva sua análise...'
               }
               role="combobox"
               aria-label="Mensagem para o assistente Verity Agro"
-              aria-autocomplete="list"
-              aria-haspopup="listbox"
-              aria-expanded={!!suggestionMode}
-              aria-controls="suggestion-list"
-              aria-activedescendant={
-                suggestionMode
-                  ? `suggestion-option-${selectedIndex}`
-                  : undefined
-              }
-              className="relative z-10 flex-1 resize-none bg-transparent py-2 font-sans text-base text-verity-950 placeholder:text-verity-700 focus:outline-none"
-              disabled={disabled} // Only disable if strictly disabled (e.g. session loading)
+              className="relative z-10 flex-1 resize-none bg-transparent px-2 py-2 font-sans text-base text-verity-950 placeholder:text-verity-500 focus:outline-none"
+              disabled={disabled}
               rows={1}
               style={{ maxHeight: '200px' }}
             />
@@ -614,33 +835,13 @@ export function InputBar({
                 multiple
                 className="hidden"
                 ref={fileInputRef}
-                onChange={handleFileChange}
+                onChange={
+                  handleNativeFileSelect
+                } /* CHANGED to native handler */
               />
 
+              {/* Send Button - Reverted to Change #3 (Old Style) */}
               <TooltipProvider delayDuration={300}>
-                {/* Attach Button - Opens Modal */}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <motion.button
-                      whileHover={{ scale: 1.05, z: 10, rotateZ: 2 }}
-                      whileTap={{ scale: 0.95 }}
-                      aria-label="Anexar documentos"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setIsUploadModalOpen(true)
-                      }}
-                      disabled={disabled}
-                      className="flex h-10 w-10 items-center justify-center rounded-xl text-verity-700 transition-colors hover:bg-verity-50 hover:text-verity-950 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      <Paperclip className="h-5 w-5" />
-                    </motion.button>
-                  </TooltipTrigger>
-                  <TooltipContent className="border-verity-900 bg-verity-950 text-white">
-                    <p>Anexar documentos</p>
-                  </TooltipContent>
-                </Tooltip>
-
-                {/* Send Button */}
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <motion.button
@@ -654,14 +855,16 @@ export function InputBar({
                           attachments.length === 0 &&
                           externalAttachments.length === 0) ||
                         isLoading ||
-                        disabled
+                        disabled ||
+                        uploadingFiles.length > 0 // Disable send while uploading
                       }
                       className={`relative flex h-10 w-10 items-center justify-center rounded-xl transition-all ${
                         (!input.trim() &&
                           attachments.length === 0 &&
                           externalAttachments.length === 0) ||
                         isLoading ||
-                        disabled
+                        disabled ||
+                        uploadingFiles.length > 0
                           ? 'cursor-not-allowed bg-sand-200 text-verity-300 opacity-70'
                           : 'bg-gradient-to-br from-verity-900 to-verity-800 text-white shadow-lg shadow-verity-900/20'
                       }`}
@@ -670,7 +873,8 @@ export function InputBar({
                           attachments.length === 0 &&
                           externalAttachments.length === 0) ||
                         isLoading ||
-                        disabled
+                        disabled ||
+                        uploadingFiles.length > 0
                           ? {}
                           : { scale: 1.1, z: 6, y: -2 }
                       }
@@ -682,7 +886,7 @@ export function InputBar({
                         style={{ transform: 'translateZ(1px)' }}
                       />
 
-                      {isLoading ? (
+                      {isLoading || uploadingFiles.length > 0 ? (
                         <Loader2 className="relative z-10 h-5 w-5 animate-spin" />
                       ) : (
                         <ArrowUp className="relative z-10 h-5 w-5" />
