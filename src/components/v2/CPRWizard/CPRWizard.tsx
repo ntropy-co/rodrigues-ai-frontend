@@ -22,7 +22,7 @@ const STEPS = [
   { id: 3, title: 'Cultura' },
   { id: 4, title: 'Valores' },
   { id: 5, title: 'Garantias' },
-  { id: 6, title: 'Revisǜo' }
+  { id: 6, title: 'Revisão' }
 ]
 
 const DRAFT_STORAGE_KEY = 'cpr_wizard_draft_id'
