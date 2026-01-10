@@ -767,7 +767,7 @@ export function CPRAnalysisChat({
               >
                 <RiskCalculator
                   data={transformRiskResult(state.riskResult)}
-                  title="Analise de Risco"
+                  title="Análise de Risco"
                 />
               </motion.div>
             )}
