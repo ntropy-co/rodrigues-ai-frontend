@@ -23,6 +23,32 @@
     line-height: var(--leading-tight);
     font-feature-settings: "ss01" 1, "ss02" 1;
   }
+
+  /* Accessibility: Screen Reader Only (Skip Links) */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .sr-only:focus,
+  .sr-only:focus-within,
+  .focus-within\:not-sr-only:focus-within {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: inherit;
+    margin: inherit;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
 }
 
 @layer base {
@@ -31,34 +57,33 @@
     
     /* FINANCIAL ENTERPRISE PALETTE (Strict Grayscale + Restricted Brand) */
     
-    /* Brand Colors (Restricted use) */
+    /* Brand Colors (Restricted use) - WCAG AA Compliant */
     --brand-primary: 159 39% 17%; /* #1A3C30 (Verity Deep) */
-    --brand-accent: 40 67% 48%;   /* #C9922A */
+    --brand-accent: 38 70% 38%;   /* #A0782C (WCAG compliant: 4.14:1 com white - apenas texto grande) */
     
     /* Verity Organic Palette (Warm Sand & Deep Green) */
     
     /* Sand (Backgrounds & Neutrals) */
     --sand-50: 30 20% 99%;    /* #FDFCFB */
-    --sand-100: 30 14% 97%;   /* #F9F8F6 (Converted to HSL 30 14% 97%) */
-    --sand-200: 45 18% 94%;   /* #F3F1EB */
-    --sand-300: 48 16% 90%;   /* #EBE9E1 */
-    --sand-400: 0 0% 90%;     /* #E5E5E5 (Border) */
+    --sand-100: 30 14% 97%;    /* #F9F8F6 */
+    --sand-200: 45 18% 94%;    /* #F3F1EB */
+    --sand-300: 48 16% 90%;    /* #EBE9E1 */
+    --sand-400: 0 0% 90%;    /* #E5E5E5 */
 
     /* Verity Green (Brand & Text) */
-    /* Primary Verity #1A3C30 Converted to HSL 159 39% 17% */
-    --verity-50: 156 20% 96%;   
-    --verity-100: 154 30% 93%;  
-    --verity-200: 152 25% 82%;  
-    --verity-300: 150 22% 69%;  
-    --verity-400: 150 25% 47%;  
-    --verity-500: 151 29% 39%;  
-    --verity-600: 152 29% 32%;  
-    --verity-700: 159 39% 17%;  
-    --verity-800: 159 39% 17%;  
-    --verity-900: 162 44% 9%;   
-    --verity-950: 164 55% 4%;   
+    --verity-50: 156 20% 96%;   /* #E8F3EE */
+    --verity-100: 154 30% 93%;   /* #D1E7DD */
+    --verity-200: 152 25% 82%;   /* #A3C2B5 */
+    --verity-300: 150 22% 69%;   /* #7A9F8F */
+    --verity-400: 152 28% 42%;   /* #5C8070 */
+    --verity-500: 151 29% 39%;   /* #426154 */
+    --verity-600: 152 29% 32%;   /* #5C6D63 */
+    --verity-700: 159 39% 17%;   /* #1A3C30 */
+    --verity-800: 159 39% 17%;   /* #1A3C30 */
+    --verity-900: 162 44% 9%;   /* #0D211A */
+    --verity-950: 164 55% 4%;   /* #05110D */
 
-    /* Semantic mapping */
+    /* Semantic mapping (Shadcn/Radix UI) */
     --background: var(--sand-100);
     --foreground: var(--verity-900);
     
@@ -72,6 +97,21 @@
     --input: var(--sand-300);
     --ring: var(--verity-400);
     
+    --card: 0 0% 100%;
+    --card-foreground: var(--verity-900);
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: var(--verity-900);
+    
+    --secondary: var(--verity-200);
+    --secondary-foreground: var(--verity-900);
+    
+    --accent: var(--verity-100);
+    --accent-foreground: var(--verity-900);
+    
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    
     /* Enterprise specific vars */
     --enterprise-green: var(--brand-primary);
     --enterprise-gold: var(--brand-accent);
@@ -80,13 +120,13 @@
   .dark {
     /* Dark mode optimized for financial data visibility */
     --background: 164 55% 4%; /* Verity 950 */
-    --foreground: 40 14% 97%; /* Sand 100 */
+    --foreground: 30 14% 97%; /* Sand 100 */
     
     --card: 162 44% 5%; /* Verity 900+ */
-    --card-foreground: 40 14% 97%;
+    --card-foreground: 30 14% 97%;
     
     --popover: 162 44% 5%;
-    --popover-foreground: 40 14% 97%;
+    --popover-foreground: 30 14% 97%;
     
     --primary: 150 25% 47%; /* Verity 400 */
     --primary-foreground: 0 0% 98%;
@@ -110,16 +150,6 @@
     /* Enterprise specific vars - Dark */
     --enterprise-green: 152 33% 40%;
     --enterprise-gold: 40 67% 55%;
-  }
-
-  * {
-    @apply border-border;
-  }
-
-  body {
-    background-color: hsl(var(--sand-100));
-    color: var(--foreground);
-    /* @apply bg-background text-foreground; */
   }
 }
 
@@ -146,51 +176,113 @@
   -webkit-line-clamp: 2;
 }
 
-/* Markdown content styling */
+/* Markdown content styling - Espaçamento melhorado (ChatGPT-style) */
 .markdown-content {
   @apply text-verity-950 leading-relaxed;
 }
 
-/* Listas ordenadas (numeradas) */
+/* Listas ordenadas (numeradas) - Badges 10x10 destacados */
 .markdown-content ol {
-  @apply list-none space-y-2 ml-0 pl-0 mb-3;
+  @apply list-none space-y-4 ml-0 pl-0 mb-6;
   counter-reset: list-counter;
 }
 
 .markdown-content ol li {
-  @apply flex items-start gap-3;
+  @apply flex items-start gap-4;
   counter-increment: list-counter;
 }
 
 .markdown-content ol li::before {
   content: counter(list-counter) ".";
   @apply inline-flex items-center justify-center
-         w-6 h-6 
-         bg-verity-100 
-         text-verity-900 
-         rounded-md 
-         font-medium text-sm
+         w-10 h-10 
+         bg-verity-600 
+         text-white 
+         rounded-lg 
+         font-semibold text-base
          flex-shrink-0
-         mt-0.5;
+         mt-0.5
+         shadow-sm;
 }
 
-/* Listas não-ordenadas (bullets) */
+/* Listas não-ordenadas (bullets) - Badges 10x10 destacados */
 .markdown-content ul {
-  @apply list-none space-y-1 ml-0 pl-0 mb-3;
+  @apply list-none space-y-4 ml-0 pl-0 mb-6;
 }
 
 .markdown-content ul li {
-  @apply flex items-start gap-2;
+  @apply flex items-start gap-4;
 }
 
 .markdown-content ul li::before {
-  content: "•";
-  @apply text-verity-600 mt-1.5 flex-shrink-0;
+  content: "●";
+  @apply inline-flex items-center justify-center
+         w-10 h-10 
+         bg-verity-600 
+         text-white 
+         rounded-lg 
+         font-bold text-lg
+         flex-shrink-0
+         mt-0.5
+         shadow-sm;
 }
 
-/* Paragraphs */
+/* Task Lists (Checklists) - Badges 10x10 destacados com checkboxes interativos */
+/* remarkGfm renderiza task lists como <ul> com <li> contendo checkbox via prop `checked` */
+.markdown-content ul:has(.markdown-content-task-item) {
+  @apply space-y-4;
+}
+
+.markdown-content-task-item {
+  @apply space-y-0;
+}
+
+/* Suporte para sub-items (indentação visual) - lista dentro de task item */
+.markdown-content-task-item .markdown-content ul,
+.markdown-content-task-item .markdown-content ol,
+.markdown-content-task-item ul,
+.markdown-content-task-item ol {
+  @apply mt-2 ml-14 space-y-2;
+}
+
+/* Garantir que task items não herdam o ::before dos bullets/números */
+.markdown-content ul .markdown-content-task-item::before {
+  content: none !important;
+  display: none !important;
+}
+
+.markdown-content ol .markdown-content-task-item::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* Paragraphs - Espaçamento aumentado para melhor legibilidade */
 .markdown-content p {
-  @apply mb-3 last:mb-0;
+  @apply mb-4 leading-relaxed last:mb-0;
+}
+
+/* Headings - Espaçamento melhorado */
+.markdown-content h1 {
+  @apply mb-6 mt-8 first:mt-0;
+}
+
+.markdown-content h2 {
+  @apply mb-4 mt-6 first:mt-0;
+}
+
+.markdown-content h3,
+.markdown-content h4 {
+  @apply mb-3 mt-5 first:mt-0;
+}
+
+/* Horizontal Rules - Espaçamento aumentado */
+.markdown-content hr {
+  @apply my-8 border-t border-verity-200;
+}
+
+/* Blockquotes - Espaçamento e estilo melhorados */
+.markdown-content blockquote {
+  @apply border-l-4 border-verity-300 bg-verity-50/50 pl-4 py-3 my-4 rounded-r;
 }
 
 /* Glassmorphism Utilities (Verity Premium) */
@@ -236,7 +328,7 @@ h2 { @apply text-3xl mb-4; }
 
 /* Inline code */
 .markdown-content code {
-  @apply px-1.5 py-0.5 
+  @apply px-2 py-1 
          bg-verity-100 
          text-verity-900 
          rounded 

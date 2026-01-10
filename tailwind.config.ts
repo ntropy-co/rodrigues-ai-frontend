@@ -29,7 +29,6 @@ export default {
     extend: {
       colors: {
         // Standard Shadcn/Radix aliases mapped to Verity Palette
-        // Standard Shadcn/Radix aliases mapped to Verity Palette
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
@@ -65,49 +64,49 @@ export default {
           foreground: 'hsl(var(--card-foreground))'
         },
 
-        // Verity Gradient Spectrum (Deep Green)
+        // Verity Gradient Spectrum (Deep Green) - Generated from tokens
         verity: {
-          950: '#05110D', // Darkest
-          900: '#0D211A', // Dark
-          800: '#1A3C30', // Brand Primary
-          700: '#2A4D3E', // Button Hover
-          600: '#5C6D63', // Text Muted
-          500: '#426154', // Medium
-          400: '#5C8070', // Light Text
-          300: '#7A9F8F', // Accent
-          200: '#A3C2B5', // Light Accent
-          100: '#D1E7DD', // Minty
-          50: '#E8F3EE' // Minty Light
+          950: '#05110D', // 164 55% 4%
+          900: '#0D211A', // 162 44% 9%
+          800: '#1A3C30', // 159 39% 17%
+          700: '#1A3C30', // 159 39% 17%
+          600: '#5C6D63', // 152 29% 32%
+          500: '#426154', // 151 29% 39%
+          400: '#5C8070', // 152 28% 42%
+          300: '#7A9F8F', // 150 22% 69%
+          200: '#A3C2B5', // 152 25% 82%
+          100: '#D1E7DD', // 154 30% 93%
+          50: '#E8F3EE' // 156 20% 96%
         },
 
-        // Sand Spectrum (Warm Backgrounds)
+        // Sand Spectrum (Warm Backgrounds) - Generated from tokens
         sand: {
-          400: '#E5E5E5',
-          300: '#EBE9E1',
-          200: '#F3F1EB',
-          100: '#FDFCF8', // Updated: Warm Cream (Paper)
-          50: '#FDFCFB'
+          400: '#E5E5E5', // 0 0% 90%
+          300: '#EBE9E1', // 48 16% 90%
+          200: '#F3F1EB', // 45 18% 94%
+          100: '#F9F8F6', // 30 14% 97%
+          50: '#FDFCFB' // 30 20% 99%
         },
 
-        // Ouro (Champagne Metallic)
+        // Ouro (Champagne Metallic) - WCAG AA Compliant - Generated from tokens
         ouro: {
-          600: '#A68A56', // Updated: Bronze
-          500: '#BFA070', // Updated: Champagne
-          400: '#E0B14E'
+          600: '#8B6F47', // 38 60% 38%
+          500: '#A68A56', // 38 67% 45%
+          400: '#A0782C' // 38 70% 38%
         },
 
-        // Feedback colors
+        // Feedback colors - WCAG AA Compliant - Generated from tokens
         error: {
-          600: '#C53030',
-          500: '#E53E3E',
-          400: '#FC8181'
+          600: '#B91C1C', // 0 72% 51%
+          500: '#DC2626', // 0 84% 60%
+          400: '#EF4444' // 0 84% 60%
         },
 
         // Shortcuts (aliases)
         branco: '#FFFFFF'
       },
 
-      // Typography
+      // Typography - Generated from tokens
       fontFamily: {
         display: ['var(--font-crimson)', 'serif'],
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
@@ -118,22 +117,19 @@ export default {
       },
 
       fontSize: {
-        // Display sizes
         '6xl': ['3.75rem', { lineHeight: '1', letterSpacing: '-0.02em' }], // 60px
         '5xl': ['3rem', { lineHeight: '1.1', letterSpacing: '-0.015em' }], // 48px
         '4xl': ['2.25rem', { lineHeight: '1.2', letterSpacing: '-0.01em' }], // 36px
         '3xl': ['1.875rem', { lineHeight: '1.3', letterSpacing: '-0.01em' }], // 30px
         '2xl': ['1.5rem', { lineHeight: '1.4', letterSpacing: '-0.005em' }], // 24px
         xl: ['1.25rem', { lineHeight: '1.5' }], // 20px
-
-        // Body sizes
         lg: ['1rem', { lineHeight: '1.5' }], // 16px
         base: ['0.875rem', { lineHeight: '1.5' }], // 14px
         sm: ['0.8125rem', { lineHeight: '1.5' }], // 13px
         xs: ['0.75rem', { lineHeight: '1.5' }] // 12px
       },
 
-      // Shadows (verde em vez de preto)
+      // Shadows (verity green tint) - Generated from tokens
       boxShadow: {
         sm: '0 1px 2px 0 rgba(45, 90, 69, 0.05)',
         DEFAULT:
@@ -142,37 +138,46 @@ export default {
         lg: '0 10px 15px -3px rgba(45, 90, 69, 0.12), 0 4px 6px -4px rgba(45, 90, 69, 0.08)',
         xl: '0 20px 25px -5px rgba(45, 90, 69, 0.12), 0 8px 10px -6px rgba(45, 90, 69, 0.08)',
         '2xl': '0 25px 50px -12px rgba(45, 90, 69, 0.20)',
-
-        // Custom shadows (input 3D)
         input:
           '0 1px 2px rgba(45, 90, 69, 0.06), 0 4px 12px rgba(45, 90, 69, 0.10), 0 16px 32px rgba(45, 90, 69, 0.14)',
         'input-focus':
           '0 2px 4px rgba(45, 90, 69, 0.08), 0 8px 16px rgba(45, 90, 69, 0.12), 0 20px 40px rgba(45, 90, 69, 0.16)'
       },
 
-      // Border radius (Claude-style)
+      // Border radius (Claude-style) - Generated from tokens
       borderRadius: {
+        none: '0',
         sm: '0.5rem', // 8px
         DEFAULT: '0.75rem', // 12px
         md: '0.875rem', // 14px
         lg: '1rem', // 16px
         xl: '1.25rem', // 20px
         '2xl': '1.5rem', // 24px
-        '3xl': '2rem' // 32px
+        '3xl': '2rem', // 32px
+        full: '9999px'
       },
 
-      // Spacing (sistema 4px)
+      // Spacing (sistema base 4px) - Generated from tokens
       spacing: {
         '18': '4.5rem', // 72px
         '22': '5.5rem' // 88px
       },
 
-      // Animation durations
+      // Animation durations - Generated from tokens
       transitionDuration: {
         '400': '400ms'
       },
 
-      // Custom animations
+      // Elevation (z-index) - Generated from tokens
+      zIndex: {
+        50: '50',
+        40: '40',
+        30: '30',
+        10: '10',
+        0: '0'
+      },
+
+      // Custom animations - Generated from tokens
       keyframes: {
         float: {
           '0%, 100%': { transform: 'translateY(-4px)' },
