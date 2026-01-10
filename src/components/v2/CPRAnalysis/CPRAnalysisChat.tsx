@@ -861,7 +861,7 @@ export function CPRAnalysisChat({
             </div>
 
             <p className="mt-2 text-center text-xs text-verity-500">
-              Verity Agro pode cometer erros. Verifique informacoes importantes.
+              Verity Agro pode cometer erros. Verifique informações importantes.
             </p>
           </form>
         </div>
