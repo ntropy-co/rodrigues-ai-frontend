@@ -305,7 +305,7 @@ function ExtractedDataCard({ data }: ExtractedDataCardProps) {
       >
         <div className="flex items-center gap-2">
           <FileText className="h-5 w-5 text-verity-600" />
-          <h4 className="font-semibold text-verity-900">Dados Extraidos</h4>
+          <h4 className="font-semibold text-verity-900">Dados Extraídos</h4>
         </div>
         <motion.div animate={{ rotate: isExpanded ? 180 : 0 }}>
           <ArrowDown className="h-4 w-4 text-verity-500" />
