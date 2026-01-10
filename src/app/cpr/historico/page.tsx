@@ -83,7 +83,7 @@ export default function CPRHistoricoPage() {
   return (
     <div className="min-h-screen">
       <InternalHeader
-        title="Historico de CPRs"
+        title="Histórico de CPRs"
         subtitle="Visualize e gerencie analises e emissoes de CPR."
         backHref="/chat"
         containerClassName="max-w-6xl"
