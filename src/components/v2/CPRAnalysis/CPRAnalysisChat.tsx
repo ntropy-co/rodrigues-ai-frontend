@@ -445,7 +445,7 @@ function ExtractedDataCard({ data }: ExtractedDataCardProps) {
                 <div className="grid gap-2 text-sm md:grid-cols-3">
                   {data.datas.emissao && (
                     <div>
-                      <span className="text-verity-500">Emissao:</span>{' '}
+                      <span className="text-verity-500">Emissão:</span>{' '}
                       <span className="font-medium text-verity-900">
                         {data.datas.emissao}
                       </span>
