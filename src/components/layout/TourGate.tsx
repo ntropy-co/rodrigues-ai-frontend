@@ -1,5 +1,8 @@
 'use client'
 
+// MVP: Tour feature disabled
+const ENABLE_TOUR = false
+
 import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
 import { useTour } from '@/contexts/TourContext'
@@ -28,6 +31,8 @@ const TOUR_ROUTES = [
 ]
 
 export function TourGate() {
+  if (!ENABLE_TOUR) return null
+
   const pathname = usePathname() || '/'
   const { isActive } = useTour()
   const isEligible = TOUR_ROUTES.some((route) => route.test(pathname))

@@ -1,5 +1,12 @@
 'use client'
 
+// MVP: Feature flags
+const CANVAS_ENABLED = false
+const ENABLE_IMAGE_CREATION = false
+const ENABLE_AGENT_MODE = false
+const ENABLE_SLASH_COMMANDS = false
+const ENABLE_MENTION_COMMANDS = false
+
 import { easings } from '@/lib/animations/easings'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -188,38 +195,43 @@ export function InputBar({
     const textBeforeCursor = text.slice(0, cursorPos)
 
     // 1. Check Slash Command (Start of line)
-    const slashMatch = textBeforeCursor.match(/^\/(\w*)$/)
-    if (slashMatch) {
-      setSuggestionMode('slash')
-      setSuggestionQuery(textBeforeCursor) // Includes '/' for filtering convenience
-      const coords = getCaretCoordinates(textarea, cursorPos)
-      setSuggestionPos({
-        top: coords.top + SUGGESTION_VERTICAL_OFFSET,
-        left: coords.left
-      })
-      setSelectedIndex(0)
-      return
+    if (ENABLE_SLASH_COMMANDS) {
+      const slashMatch = textBeforeCursor.match(/^\/(\w*)$/)
+      if (slashMatch) {
+        setSuggestionMode('slash')
+        setSuggestionQuery(textBeforeCursor) // Includes '/' for filtering convenience
+        const coords = getCaretCoordinates(textarea, cursorPos)
+        setSuggestionPos({
+          top: coords.top + SUGGESTION_VERTICAL_OFFSET,
+          left: coords.left
+        })
+        setSelectedIndex(0)
+        return
+      }
     }
 
     // 2. Check Mention (Anywhere)
     // Regex: Look for @ followed by word chars at end of string
-    const mentionMatch = textBeforeCursor.match(/@(\w*)$/)
-    if (mentionMatch) {
-      setSuggestionMode('mention')
-      setSuggestionQuery(mentionMatch[0]) // '@sometext'
-      const coords = getCaretCoordinates(textarea, cursorPos)
-      setSuggestionPos({
-        top: coords.top + SUGGESTION_VERTICAL_OFFSET,
-        left: coords.left
-      })
-      setSelectedIndex(0)
-      return
+    if (ENABLE_MENTION_COMMANDS) {
+      const mentionMatch = textBeforeCursor.match(/@(\w*)$/)
+      if (mentionMatch) {
+        setSuggestionMode('mention')
+        setSuggestionQuery(mentionMatch[0]) // '@sometext'
+        const coords = getCaretCoordinates(textarea, cursorPos)
+        setSuggestionPos({
+          top: coords.top + SUGGESTION_VERTICAL_OFFSET,
+          left: coords.left
+        })
+        setSelectedIndex(0)
+        return
+      }
     }
 
     closeSuggestions()
   }
 
   const handleCreateCanvas = () => {
+    if (!CANVAS_ENABLED) return
     useCanvasStore
       .getState()
       .openCanvas(
@@ -267,7 +279,7 @@ export function InputBar({
       } else if (item.id === 'help' || item.id === 'commands') {
         // Alias for help
         toast.info(
-          'Comandos: /canvas (Editor), /limpar (Novo), /upload (Arq), /juris (Pesquisa Legal)',
+          'Comandos: /limpar (Novo), /upload (Arq), /juris (Pesquisa Legal)',
           { duration: 5000 }
         )
         handleInputChange('')
@@ -335,7 +347,7 @@ export function InputBar({
 
   const handleSend = () => {
     // DEV: Open Canvas Trigger (Legacy check, kept for safety)
-    if (input.trim() === '/canvas') {
+    if (CANVAS_ENABLED && input.trim() === '/canvas') {
       handleCreateCanvas()
       return
     }
@@ -716,22 +728,26 @@ export function InputBar({
                   <Paperclip className="h-5 w-5 text-verity-600" />
                   Adicionar fotos e arquivos
                 </button>
-                <button
-                  onClick={() => setShowAttachMenu(false)}
-                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-verity-800 hover:bg-sand-50"
-                >
-                  <ImageIcon className="h-5 w-5 text-verity-600" />
-                  Criar imagem
-                </button>
-                <button
-                  onClick={() => setShowAttachMenu(false)}
-                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-verity-800 hover:bg-sand-50"
-                >
-                  <div className="flex h-5 w-5 items-center justify-center rounded-full border border-verity-600">
-                    <span className="text-[10px] font-bold">A</span>
-                  </div>
-                  Modo Agente
-                </button>
+                {ENABLE_IMAGE_CREATION && (
+                  <button
+                    onClick={() => setShowAttachMenu(false)}
+                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-verity-800 hover:bg-sand-50"
+                  >
+                    <ImageIcon className="h-5 w-5 text-verity-600" />
+                    Criar imagem
+                  </button>
+                )}
+                {ENABLE_AGENT_MODE && (
+                  <button
+                    onClick={() => setShowAttachMenu(false)}
+                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-verity-800 hover:bg-sand-50"
+                  >
+                    <div className="flex h-5 w-5 items-center justify-center rounded-full border border-verity-600">
+                      <span className="text-[10px] font-bold">A</span>
+                    </div>
+                    Modo Agente
+                  </button>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
@@ -769,7 +785,11 @@ export function InputBar({
 
             {/* Autosuggestion Floating Menu */}
             <SuggestionList
-              isVisible={!!suggestionMode && filteredItems.length > 0}
+              isVisible={
+                (ENABLE_SLASH_COMMANDS || ENABLE_MENTION_COMMANDS) &&
+                !!suggestionMode &&
+                filteredItems.length > 0
+              }
               items={filteredItems}
               selectedIndex={selectedIndex}
               onSelect={selectItem}

@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
@@ -25,6 +25,7 @@ import { useDocuments } from '@/features/documents'
 import { useCPRHistory } from '@/features/cpr'
 import { cn } from '@/lib/utils'
 import { TourTrigger, WELCOME_STEPS } from '@/features/tour'
+import { FEATURE_FLAGS } from '@/config/feature-flags'
 
 // =============================================================================
 // Zero-UI Components (Atmospheric Design)
@@ -235,12 +236,23 @@ function DashboardContent() {
   const router = useRouter()
   const { isAuthenticated, isLoading, user } = useAuth()
 
-  // Redirect logic
+  // Redirect logic - feature flag check
+  useEffect(() => {
+    if (!FEATURE_FLAGS.DASHBOARD) {
+      router.replace('/chat')
+    }
+  }, [router])
+
+  // Redirect logic - auth check
   React.useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       router.push('/login')
     }
   }, [isAuthenticated, isLoading, router])
+
+  if (!FEATURE_FLAGS.DASHBOARD) {
+    return null // Evitar flash de conteúdo
+  }
 
   if (isLoading || !isAuthenticated) {
     return (

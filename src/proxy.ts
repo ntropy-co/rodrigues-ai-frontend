@@ -46,7 +46,7 @@ const MUTATION_METHODS = ['POST', 'PUT', 'DELETE', 'PATCH']
 // Paths that don't require CSRF validation (public endpoints)
 const CSRF_EXEMPT_PATHS = ['/api/health', '/api/webhooks'] as const
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { method, headers, nextUrl } = request
   // Security Fix: Parse x-forwarded-for correctly to prevent spoofing
   // Only use the FIRST IP (set by the trusted proxy), ignore attacker-injected IPs

@@ -1,0 +1,46 @@
+[2026-01-11T17:39:43.541Z] [CHAT] --- NEW CHAT REQUEST --- 
+[2026-01-11T17:39:43.542Z] [CHAT] Request body: {
+  "message": "oi",
+  "session_id": null
+}
+[2026-01-11T17:39:43.542Z] [CHAT] Forwarding to: "https://api.verityagro.com/api/v1/chat/"
+[2026-01-11T17:39:43.542Z] [CHAT] Session ID: 
+[2026-01-11T17:39:49.460Z] [CHAT] Backend response status: 500
+[2026-01-11T17:39:49.460Z] [CHAT] Backend error body: {
+  "detail": "Internal server error"
+}
+[2026-01-11T17:39:49.460Z] [CHAT] Returning error to client: "Internal server error"
+[2026-01-11T21:56:16.814Z] [CHAT] --- NEW CHAT REQUEST --- 
+[2026-01-11T21:56:16.815Z] [CHAT] Request body: {
+  "message": "oi",
+  "session_id": null
+}
+[2026-01-11T21:56:16.815Z] [CHAT] Forwarding to: "https://api.verityagro.com/api/v1/chat/"
+[2026-01-11T21:56:16.815Z] [CHAT] Session ID: 
+[2026-01-11T21:56:22.743Z] [CHAT] Backend response status: 500
+[2026-01-11T21:56:22.744Z] [CHAT] Backend error body: {
+  "detail": "Internal server error"
+}
+[2026-01-11T21:56:22.744Z] [CHAT] Returning error to client: "Internal server error"
+[2026-01-11T22:33:13.084Z] [CHAT] --- NEW CHAT REQUEST --- 
+[2026-01-11T22:33:13.084Z] [CHAT] Request body: {
+  "message": "me ajude a analisar uma cpr",
+  "session_id": null
+}
+[2026-01-11T22:33:13.085Z] [CHAT] Forwarding to: "https://api.verityagro.com/api/v1/chat/"
+[2026-01-11T22:33:13.085Z] [CHAT] Session ID: 
+[2026-01-11T22:33:25.602Z] [CHAT] Backend response status: 200
+[2026-01-11T22:33:25.602Z] [CHAT] Success response: {
+  "text": "Para analisar sua CPR, preciso do documento. Envie o arquivo ou ID do documento.",
+  "session_id": "s_d9f9293de7b54cc898eec814df54e909",
+  "message_id": "3478f0ce-85f5-47b5-97f7-bceda1eb06d0",
+  "sources": null
+}
+[2026-01-11T22:35:35.710Z] --- NEW STREAM REQUEST --- 
+[2026-01-11T22:35:35.710Z] Authorization present: true
+[2026-01-11T22:35:35.710Z] Forwarding to: "https://api.verityagro.com/api/v1/chat/stream"
+[2026-01-11T22:35:36.866Z] Backend response status: 200
+[2026-01-11T23:10:57.875Z] --- NEW STREAM REQUEST --- 
+[2026-01-11T23:10:57.875Z] Authorization present: true
+[2026-01-11T23:10:57.875Z] Forwarding to: "https://api.verityagro.com/api/v1/chat/stream"
+[2026-01-11T23:10:58.960Z] Backend response status: 200
