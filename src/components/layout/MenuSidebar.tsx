@@ -1,5 +1,11 @@
 'use client'
 
+// MVP: Feature flags
+const ENABLE_QUOTES = false
+const ENABLE_CPR_SIMULATOR = false
+const ENABLE_CPR_HISTORY = false
+const ENABLE_DOCUMENTS = false
+
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
@@ -245,27 +251,31 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
               Mercado & Crédito
             </h3>
             <div className="space-y-0.5">
-              <button
-                onClick={() => {
-                  router.push('/quotes')
-                  onClose()
-                }}
-                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-[hsl(var(--surface-subtle))] dark:text-verity-300"
-              >
-                <TrendingUp className="h-4 w-4 text-verity-500" />
-                Cotações
-              </button>
+              {ENABLE_QUOTES && (
+                <button
+                  onClick={() => {
+                    router.push('/quotes')
+                    onClose()
+                  }}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-[hsl(var(--surface-subtle))] dark:text-verity-300"
+                >
+                  <TrendingUp className="h-4 w-4 text-verity-500" />
+                  Cotações
+                </button>
+              )}
 
-              <button
-                onClick={() => {
-                  router.push('/cpr/simulator')
-                  onClose()
-                }}
-                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-[hsl(var(--surface-subtle))] dark:text-verity-300"
-              >
-                <Calculator className="h-4 w-4 text-verity-500" />
-                Simulador CPR
-              </button>
+              {ENABLE_CPR_SIMULATOR && (
+                <button
+                  onClick={() => {
+                    router.push('/cpr/simulator')
+                    onClose()
+                  }}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-[hsl(var(--surface-subtle))] dark:text-verity-300"
+                >
+                  <Calculator className="h-4 w-4 text-verity-500" />
+                  Simulador CPR
+                </button>
+              )}
 
               <button
                 onClick={() => {
@@ -286,27 +296,31 @@ export function MenuSidebar({ isOpen, onClose }: MenuSidebarProps) {
               Gestão
             </h3>
             <div className="space-y-0.5">
-              <button
-                onClick={() => {
-                  router.push('/documents')
-                  onClose()
-                }}
-                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-[hsl(var(--surface-subtle))] dark:text-verity-300"
-              >
-                <Search className="h-4 w-4 text-verity-500" />
-                Meus Documentos
-              </button>
+              {ENABLE_DOCUMENTS && (
+                <button
+                  onClick={() => {
+                    router.push('/documents')
+                    onClose()
+                  }}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-[hsl(var(--surface-subtle))] dark:text-verity-300"
+                >
+                  <Search className="h-4 w-4 text-verity-500" />
+                  Meus Documentos
+                </button>
+              )}
 
-              <button
-                onClick={() => {
-                  router.push('/cpr/historico')
-                  onClose()
-                }}
-                className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-[hsl(var(--surface-subtle))] dark:text-verity-300"
-              >
-                <History className="h-4 w-4 text-verity-500" />
-                Histórico CPR
-              </button>
+              {ENABLE_CPR_HISTORY && (
+                <button
+                  onClick={() => {
+                    router.push('/cpr/historico')
+                    onClose()
+                  }}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-verity-700 transition-colors hover:bg-[hsl(var(--surface-subtle))] dark:text-verity-300"
+                >
+                  <History className="h-4 w-4 text-verity-500" />
+                  Histórico CPR
+                </button>
+              )}
 
               <button
                 onClick={() => {

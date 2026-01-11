@@ -1,5 +1,8 @@
 import { create } from 'zustand'
 
+// MVP: Canvas feature disabled
+const CANVAS_ENABLED = false
+
 export type CanvasMode = 'view' | 'edit'
 
 interface CanvasState {
@@ -25,8 +28,10 @@ export const useCanvasStore = create<CanvasState>((set) => ({
   mode: 'view',
   width: 55, // Default to 55% split - gives Canvas more prominence
 
-  openCanvas: (content, title = 'Artifact', mode = 'view') =>
-    set({ isOpen: true, content, title, mode }),
+  openCanvas: (content, title = 'Artifact', mode = 'view') => {
+    if (!CANVAS_ENABLED) return
+    set({ isOpen: true, content, title, mode })
+  },
 
   closeCanvas: () => set({ isOpen: false }),
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -12,9 +12,16 @@ import {
   CPRHistoryFiltersBar,
   type CPRHistoryItem
 } from '@/features/cpr'
+import { FEATURE_FLAGS } from '@/config/feature-flags'
 
 export default function CPRHistoricoPage() {
   const router = useRouter()
+
+  useEffect(() => {
+    if (!FEATURE_FLAGS.CPR_HISTORY) {
+      router.replace('/chat')
+    }
+  }, [router])
 
   const {
     items,
@@ -29,6 +36,10 @@ export default function CPRHistoricoPage() {
     deleteEntry,
     refetch
   } = useCPRHistory()
+
+  if (!FEATURE_FLAGS.CPR_HISTORY) {
+    return null // Evitar flash de conteúdo
+  }
 
   // Check if any filter is active
   const hasFilters =

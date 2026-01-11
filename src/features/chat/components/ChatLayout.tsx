@@ -1,5 +1,9 @@
 'use client'
 
+// MVP: Feature flags
+const CANVAS_ENABLED = false
+const ENABLE_FILES_SIDEBAR = false
+
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -322,7 +326,7 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
         </div>
 
         {/* Canvas Panel - Always render when open (takes priority over FilesSidebar) */}
-        {isCanvasOpen && !isMobile && (
+        {CANVAS_ENABLED && isCanvasOpen && !isMobile && (
           <ResizeHandle
             onResize={(delta) => {
               const newWidth = Math.min(
@@ -334,7 +338,7 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
           />
         )}
 
-        {isCanvasOpen && (
+        {CANVAS_ENABLED && isCanvasOpen && (
           <div
             className={cn(
               'relative z-20 h-full bg-sand-100 shadow-xl transition-all duration-500 ease-out',
@@ -348,22 +352,26 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
           </div>
         )}
 
-        <FilesSidebar
-          conversationId={currentSessionId || null}
-          isOpen={isFilesOpen && !isMobile}
-          onClose={closeFilesSidebar}
-        />
-
-        <AnimatePresence>
-          {isMobile && isFilesOpen && (
+        {ENABLE_FILES_SIDEBAR && (
+          <>
             <FilesSidebar
               conversationId={currentSessionId || null}
-              isOpen={true}
-              overlay={true}
+              isOpen={isFilesOpen && !isMobile}
               onClose={closeFilesSidebar}
             />
-          )}
-        </AnimatePresence>
+
+            <AnimatePresence>
+              {isMobile && isFilesOpen && (
+                <FilesSidebar
+                  conversationId={currentSessionId || null}
+                  isOpen={true}
+                  overlay={true}
+                  onClose={closeFilesSidebar}
+                />
+              )}
+            </AnimatePresence>
+          </>
+        )}
       </div>
     </div>
   )

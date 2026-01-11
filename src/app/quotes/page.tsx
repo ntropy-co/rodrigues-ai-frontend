@@ -1,10 +1,12 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Skeleton } from '@/components/ui/skeleton'
 import { InternalHeader } from '@/components/layout/InternalHeader'
 import dynamic from 'next/dynamic'
+import { FEATURE_FLAGS } from '@/config/feature-flags'
 
 // Lazy load the chart component
 const QuotesChart = dynamic(
@@ -19,6 +21,18 @@ const QuotesChart = dynamic(
 const queryClient = new QueryClient()
 
 export default function QuotesPage() {
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!FEATURE_FLAGS.QUOTES) {
+      router.replace('/chat')
+    }
+  }, [router])
+
+  if (!FEATURE_FLAGS.QUOTES) {
+    return null // Evitar flash de conteúdo
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen">

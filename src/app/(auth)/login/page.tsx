@@ -111,10 +111,8 @@ function LoginContent() {
           </p>
         </div>
 
-        <div className="relative z-10 flex items-center gap-4 text-xs font-medium text-verity-400">
-          <span>© 2026 Verity Agro Intelligence</span>
-          <span className="h-1 w-1 rounded-full bg-verity-600"></span>
-          <span>São Paulo • Mato Grosso • Goiás</span>
+        <div className="relative z-10 text-xs font-medium text-verity-400">
+          <span>© 2026 Verity Agro</span>
         </div>
       </div>
 

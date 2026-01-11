@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { FileText, Loader2, Search } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
@@ -25,6 +25,7 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import { toast } from 'sonner'
+import { FEATURE_FLAGS } from '@/config/feature-flags'
 
 export default function DocumentsHistoryPage() {
   const router = useRouter()
@@ -39,6 +40,13 @@ export default function DocumentsHistoryPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc')
   const [deleteId, setDeleteId] = useState<string | null>(null)
+
+  // Redirect logic - feature flag check
+  useEffect(() => {
+    if (!FEATURE_FLAGS.DOCUMENTS) {
+      router.replace('/chat')
+    }
+  }, [router])
 
   // Filter and Sort - must be before early return to follow hooks rules
   const filteredDocuments = useMemo(() => {
@@ -57,6 +65,10 @@ export default function DocumentsHistoryPage() {
 
     return docs
   }, [documents, searchQuery, sortOrder])
+
+  if (!FEATURE_FLAGS.DOCUMENTS) {
+    return null // Evitar flash de conteúdo
+  }
 
   // Guard - must be after all hooks
   if (!authLoading && !isAuthenticated) {

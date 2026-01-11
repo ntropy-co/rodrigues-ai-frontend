@@ -448,6 +448,7 @@ const SidebarContent = memo(function SidebarContent({
             type="search"
             placeholder="Buscar"
             value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="h-9 w-full rounded-lg border border-sand-300 bg-white/50 px-3 pl-9 text-sm text-verity-950 transition-all placeholder:text-verity-500 focus:border-verity-600 focus:outline-none focus:ring-0"
           />
         </div>

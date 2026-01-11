@@ -7,6 +7,9 @@ import {
   LucideIcon
 } from 'lucide-react'
 
+// MVP: Canvas feature disabled
+const CANVAS_ENABLED = false
+
 export type CommandType = 'slash' | 'mention'
 
 export interface AgentCommand {
@@ -44,14 +47,18 @@ export const SLASH_COMMANDS: AgentCommand[] = [
     type: 'slash',
     trigger: '/claude'
   },
-  {
-    id: 'canvas',
-    label: 'Canvas Mode',
-    description: 'Abrir workspace de edição',
-    icon: FileText,
-    type: 'slash',
-    trigger: '/canvas'
-  },
+  ...(CANVAS_ENABLED
+    ? [
+        {
+          id: 'canvas',
+          label: 'Canvas Mode',
+          description: 'Abrir workspace de edição',
+          icon: FileText,
+          type: 'slash' as const,
+          trigger: '/canvas'
+        }
+      ]
+    : []),
   {
     id: 'reset',
     label: 'Reset Thread',

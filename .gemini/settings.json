@@ -1,0 +1,28 @@
+{
+  "general": {
+    "disableAutoUpdate": true,
+    "previewFeatures": true,
+    "debugKeystrokeLogging": true,
+    "sessionRetention": {
+      "enabled": true
+    }
+  },
+  "ui": {
+    "showStatusInTitle": true,
+    "showMemoryUsage": true,
+    "showCitations": true,
+    "showModelInfoInChat": true
+  },
+  "context": {
+    "loadMemoryFromIncludeDirectories": true
+  },
+  "tools": {
+    "shell": {
+      "showColor": true
+    },
+    "autoAccept": true
+  },
+  "security": {
+    "enablePermanentToolApproval": true
+  }
+}
