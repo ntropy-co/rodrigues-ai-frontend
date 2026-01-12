@@ -11,7 +11,8 @@ export default [
       'e2e/**/*',
       'playwright-report/**/*',
       'test-results/**/*',
-      '.next/**/*'
+      '.next/**/*',
+      'next-env.d.ts'
     ]
   },
   {
@@ -36,6 +37,8 @@ export default [
       ...hooksPlugin.configs.recommended.rules,
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
+      'react-hooks/set-state-in-effect': 'warn',
+      'react-hooks/static-components': 'warn',
       'react/react-in-jsx-scope': 'off',
       // Demote some strict rules to warnings
       '@typescript-eslint/no-explicit-any': 'warn',

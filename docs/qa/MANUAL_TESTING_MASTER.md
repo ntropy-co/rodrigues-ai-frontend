@@ -5,12 +5,12 @@ Use este guia para validar funcionalidades antes de releases ou deploys em produ
 
 ## 📋 Status Overview
 
-| Funcionalidade              | Prioridade |   Status   | Link                                              |
-| :-------------------------- | :--------: | :--------: | :------------------------------------------------ |
-| **Agentic Input Bar**       |  🔥 Alta   | `Pendente` | [Ver Testes](./features/01_AGENTIC_INPUT_BAR.md)  |
-| **CPR Wizard (Step 4-6)**   |  🔥 Alta   | `Pendente` | [Ver Testes](./features/02_CPR_WIZARD.md)         |
-| **Template Generator**      |   Medium   | `Pendente` | [Ver Testes](./features/03_TEMPLATE_GENERATOR.md) |
-| **Web Vitals & Monitoring** |    Low     | `Pendente` | [Ver Testes](./features/04_OBSERVABILITY.md)      |
+| Funcionalidade | Prioridade | Status | Link |
+| :--- | :---: | :---: | :--- |
+| **Agentic Input Bar** | 🔥 Alta | `Pendente` | [Ver Testes](./features/01_AGENTIC_INPUT_BAR.md) |
+| **CPR Wizard (Step 4-6)** | 🔥 Alta | `Pendente` | [Ver Testes](./features/02_CPR_WIZARD.md) |
+| **Template Generator** | Medium | `Pendente` | [Ver Testes](./features/03_TEMPLATE_GENERATOR.md) |
+| **Web Vitals & Monitoring**| Low | `Pendente` | [Ver Testes](./features/04_OBSERVABILITY.md) |
 
 ---
 

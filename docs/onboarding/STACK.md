@@ -264,7 +264,7 @@ O backend e um projeto separado hospedado no Railway:
 | **Vertex AI Search** | Busca em documentos |
 | **Railway**          | Hosting             |
 
-**URL Producao:** `https://api.verityagro.com`
+**URL Producao:** `https://rodrigues-ai-backend-production.up.railway.app`
 
 ---
 

@@ -31,10 +31,11 @@ const TOUR_ROUTES = [
 ]
 
 export function TourGate() {
-  if (!ENABLE_TOUR) return null
-
   const pathname = usePathname() || '/'
   const { isActive } = useTour()
+
+  if (!ENABLE_TOUR) return null
+
   const isEligible = TOUR_ROUTES.some((route) => route.test(pathname))
 
   if (!isEligible) return null

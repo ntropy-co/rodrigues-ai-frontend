@@ -6,7 +6,7 @@ const ENABLE_FILES_SIDEBAR = false
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 import { ChatHeader } from './ChatHeader'
 import { MainContent } from './MainContent'
 import { InputBar } from './InputBar'

@@ -535,11 +535,11 @@ MODERADAS:
 
 ### No Codebase Atual
 
-| Arquivo                 | Item                                    | Severidade | Status |
-| ----------------------- | --------------------------------------- | ---------- | :----: |
-| `/api/documents/upload` | Auth forward para backend               | Media      |   ✅   |
-| `useDocuments.ts`       | Usa `fetchWithRefresh` (inclui auth)    | Media      |   ✅   |
-| `FileUploadModal.tsx`   | Trata erro de rede e exibe feedback     | Baixa      |   ✅   |
+| Arquivo                 | Item                                   | Severidade | Status |
+| ----------------------- | -------------------------------------- | ---------- | :----: |
+| `/api/documents/upload` | Auth forward para backend              | Media      |   ✅   |
+| `useDocuments.ts`       | Usa `fetchWithRefresh` (inclui auth)   | Media      |   ✅   |
+| `FileUploadModal.tsx`   | Trata erro de rede e exibe feedback    | Baixa      |   ✅   |
 | `store.ts`              | `locallyCreatedSessionIds` nao persiste | Baixa      |   ⏳   |
 
 ### Melhorias Necessarias

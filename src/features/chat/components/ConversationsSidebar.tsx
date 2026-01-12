@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useRef, memo, useMemo } from 'react'
 import { motion } from 'framer-motion'
-import Link from 'next/link'
 import {
   Search,
   Plus,
@@ -10,11 +9,11 @@ import {
   ChevronLeft,
   Loader2,
   SquarePen,
-  LayoutGrid,
   Trash2,
   Maximize2,
   FolderInput
 } from 'lucide-react'
+import { useShallow } from 'zustand/react/shallow'
 import { ProjectDialog } from './ProjectDialog'
 import { MoveToProjectDialog } from './MoveToProjectDialog'
 import { cn } from '@/lib/utils'
@@ -22,6 +21,7 @@ import { useSessions } from '../hooks/useSessions'
 import { useProjects, type Project } from '../hooks/useProjects'
 import { useDebounce } from '@/hooks/useDebounce'
 import { formatRelativeTime } from '@/lib/utils/time'
+import { usePlaygroundStore } from '../stores/playgroundStore'
 import type { SessionEntry } from '../types'
 import {
   trackConversationSelected,
@@ -63,115 +63,203 @@ interface ConversationsSidebarProps {
 
 export function ConversationsSidebar({
   isOpen = true,
+
   overlay = false,
+
   onToggle,
+
   activeConversationId,
+
   onSelectConversation,
+
   onNewConversation
 }: ConversationsSidebarProps) {
   const [searchQuery, setSearchQuery] = useState('')
-  const [sessions, setSessions] = useState<SessionEntry[]>([])
-  const [projects, setProjects] = useState<Project[]>([])
+
+  const { sessionsData, setSessionsData, projectsData, setProjectsData } =
+    usePlaygroundStore(
+      useShallow((state) => ({
+        sessionsData: state.sessionsData,
+
+        setSessionsData: state.setSessionsData,
+
+        projectsData: state.projectsData,
+
+        setProjectsData: state.setProjectsData
+      }))
+    )
+
+  const sessions = sessionsData || []
+
+  const projects = projectsData || []
+
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
     null
   )
+
   const [isProjectDialogOpen, setIsProjectDialogOpen] = useState(false)
 
   // Initialize from localStorage on mount
+
   useEffect(() => {
     const savedProjectId = localStorage.getItem('verity_active_project')
+
     if (savedProjectId) {
       setSelectedProjectId(savedProjectId)
     }
   }, [])
 
   // Persist selection changes
+
   const handleProjectSelect = useCallback((projectId: string | null) => {
     setSelectedProjectId(projectId)
+
     if (projectId) {
       localStorage.setItem('verity_active_project', projectId)
+
       trackProjectSelected(projectId)
     } else {
       localStorage.removeItem('verity_active_project')
     }
   }, [])
+
   const {
     fetchSessions,
+
     createSession,
+
     updateSession,
+
     deleteSession,
+
     loading: sessionsLoading
   } = useSessions()
+
   const {
     fetchProjects,
+
     createProject,
+
     updateProject,
+
     deleteProject,
+
     loading: projectsLoading
   } = useProjects()
 
   // Fetch projects on mount
+
   useEffect(() => {
     fetchProjects()
-      .then(setProjects)
+      .then(setProjectsData)
+
       .catch((err) => {
         console.error('[ConversationsSidebar] Error fetching projects:', err)
       })
-  }, [fetchProjects])
+  }, [fetchProjects, setProjectsData])
 
   // Fetch sessions when selectedProjectId changes
+
   useEffect(() => {
+    // Fetch and update store
+
     fetchSessions(selectedProjectId)
-      .then(setSessions)
+      .then(setSessionsData)
+
       .catch((err) => {
         console.error('[ConversationsSidebar] Error fetching sessions:', err)
       })
-  }, [fetchSessions, selectedProjectId])
+  }, [fetchSessions, selectedProjectId, setSessionsData])
 
-  // Memoized handlers to prevent re-renders of child components
+  // Memoized handlers with Optimistic Updates
+
   const handleUpdateSession = useCallback(
-    async (id: string, data: { title?: string }) => {
-      await updateSession(id, data)
-      fetchSessions(selectedProjectId)
-        .then(setSessions)
-        .catch((err) => {
-          console.error(
-            '[ConversationsSidebar] Error refreshing sessions:',
-            err
-          )
-        })
+    async (
+      id: string,
+      data: { title?: string; project_id?: string | null }
+    ) => {
+      // 1. Optimistic update
+
+      const previousSessions = sessionsData
+
+      setSessionsData((prev) =>
+        prev
+          ? prev.map((s) => (s.session_id === id ? { ...s, ...data } : s))
+          : []
+      )
+
+      try {
+        await updateSession(id, data)
+
+        // Background re-fetch to ensure consistency
+
+        const updatedSessions = await fetchSessions(selectedProjectId)
+
+        setSessionsData(updatedSessions)
+      } catch (err) {
+        // Revert on error
+
+        console.error('[ConversationsSidebar] Error updating session:', err)
+
+        setSessionsData(previousSessions ?? [])
+      }
     },
-    [updateSession, fetchSessions, selectedProjectId]
+
+    [
+      updateSession,
+      fetchSessions,
+      selectedProjectId,
+      sessionsData,
+      setSessionsData
+    ]
   )
 
   const handleUpdateProject = useCallback(
     async (id: string, data: { title?: string }) => {
-      await updateProject(id, data)
-      fetchProjects()
-        .then(setProjects)
-        .catch((err) => {
-          console.error(
-            '[ConversationsSidebar] Error refreshing projects:',
-            err
-          )
-        })
+      // 1. Optimistic update
+
+      const previousProjects = projectsData
+
+      setProjectsData((prev) =>
+        prev ? prev.map((p) => (p.id === id ? { ...p, ...data } : p)) : []
+      )
+
+      try {
+        await updateProject(id, data)
+
+        // Background re-fetch
+
+        const updatedProjects = await fetchProjects()
+
+        setProjectsData(updatedProjects)
+      } catch (err) {
+        console.error('[ConversationsSidebar] Error updating project:', err)
+
+        setProjectsData(previousProjects ?? [])
+      }
     },
-    [updateProject, fetchProjects]
+
+    [updateProject, fetchProjects, projectsData, setProjectsData]
   )
 
   const handleCreateProject = useCallback(
     async (data: { title: string }) => {
-      await createProject(data)
-      fetchProjects()
-        .then(setProjects)
-        .catch((err) => {
-          console.error(
-            '[ConversationsSidebar] Error refreshing projects:',
-            err
+      try {
+        const newProject = await createProject(data)
+
+        // Optimistically add to list (using the response from create)
+
+        if (newProject) {
+          setProjectsData((prev) =>
+            prev ? [newProject, ...prev] : [newProject]
           )
-        })
+        }
+      } catch (err) {
+        console.error('[ConversationsSidebar] Error creating project:', err)
+      }
     },
-    [createProject, fetchProjects]
+
+    [createProject, setProjectsData]
   )
 
   const handleOpenProjectDialog = useCallback(() => {
@@ -179,45 +267,94 @@ export function ConversationsSidebar({
   }, [])
 
   // Memoized handlers to prevent re-renders from inline functions
+
   const handleSelectAndClose = useCallback(
     (id: string) => {
       onSelectConversation?.(id)
+
       onToggle?.()
     },
+
     [onSelectConversation, onToggle]
   )
 
   const handleDeleteSession = useCallback(
     async (id: string) => {
-      await deleteSession(id)
-      fetchSessions(selectedProjectId).then(setSessions)
+      // 1. Optimistic update
+
+      const previousSessions = sessionsData
+
+      setSessionsData((prev) =>
+        prev ? prev.filter((s) => s.session_id !== id) : []
+      )
+
+      try {
+        await deleteSession(id)
+
+        // Background re-fetch (optional, but good for consistency)
+
+        const updatedSessions = await fetchSessions(selectedProjectId)
+
+        setSessionsData(updatedSessions)
+      } catch (err) {
+        console.error('[ConversationsSidebar] Error deleting session:', err)
+
+        setSessionsData(previousSessions ?? [])
+      }
     },
-    [deleteSession, fetchSessions, selectedProjectId]
+
+    [
+      deleteSession,
+      fetchSessions,
+      selectedProjectId,
+      sessionsData,
+      setSessionsData
+    ]
   )
 
   const handleDeleteProject = useCallback(
     async (id: string) => {
-      await deleteProject(id)
-      fetchProjects().then(setProjects)
+      // 1. Optimistic update
+
+      const previousProjects = projectsData
+
+      setProjectsData((prev) => (prev ? prev.filter((p) => p.id !== id) : []))
+
+      try {
+        await deleteProject(id)
+
+        // Background re-fetch
+
+        const updatedProjects = await fetchProjects()
+
+        setProjectsData(updatedProjects)
+      } catch (err) {
+        console.error('[ConversationsSidebar] Error deleting project:', err)
+
+        setProjectsData(previousProjects ?? [])
+      }
     },
-    [deleteProject, fetchProjects]
+
+    [deleteProject, fetchProjects, projectsData, setProjectsData]
   )
 
   const handleNewAnalysis = useCallback(async () => {
     if (selectedProjectId) {
-      const newSession = await createSession(undefined, selectedProjectId)
-      if (newSession && onSelectConversation) {
-        onSelectConversation(newSession.session_id)
-        // Update list
-        fetchSessions(selectedProjectId)
-          .then(setSessions)
-          .catch((err) => {
-            console.error(
-              '[ConversationsSidebar] Error refreshing sessions:',
-              err
-            )
-          })
-        if (onToggle) onToggle()
+      try {
+        const newSession = await createSession(undefined, selectedProjectId)
+        if (newSession) {
+          // Optimistically add new session to the list
+          setSessionsData((prev) =>
+            prev ? [newSession, ...prev] : [newSession]
+          )
+
+          if (onSelectConversation) {
+            onSelectConversation(newSession.session_id)
+            if (onToggle) onToggle()
+          }
+        }
+      } catch (err) {
+        console.error('[ConversationsSidebar] Error creating session:', err)
       }
     } else {
       onNewConversation?.()
@@ -226,9 +363,9 @@ export function ConversationsSidebar({
     selectedProjectId,
     createSession,
     onSelectConversation,
-    fetchSessions,
     onToggle,
-    onNewConversation
+    onNewConversation,
+    setSessionsData
   ])
 
   if (overlay) {
@@ -480,7 +617,7 @@ const SidebarContent = memo(function SidebarContent({
             </button>
           </div>
 
-          {projectsLoading ? (
+          {projectsLoading && projects.length === 0 ? (
             <div className="flex items-center justify-center py-2">
               <Loader2 className="h-3 w-3 animate-spin text-verity-600" />
             </div>
@@ -567,7 +704,7 @@ const SidebarContent = memo(function SidebarContent({
             </TooltipProvider>
           </div>
 
-          {sessionsLoading ? (
+          {sessionsLoading && filteredSessions.length === 0 ? (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="h-5 w-5 animate-spin text-verity-600" />
             </div>
@@ -651,7 +788,7 @@ interface ConversationCardProps {
   id: string
   title: string
   timestamp: string
-  projectEmail?: string
+  _projectEmail?: string
   preview?: string
   isActive?: boolean
   unreadCount?: number
@@ -665,7 +802,8 @@ interface ConversationCardProps {
 const ConversationCard = memo(function ConversationCard({
   title,
   timestamp,
-  projectEmail,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _projectEmail,
   preview,
   isActive = false,
   unreadCount = 0,

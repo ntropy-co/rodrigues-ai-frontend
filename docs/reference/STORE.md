@@ -41,9 +41,7 @@ interface PlaygroundStore {
     endpoint: string
     id_playground_endpoint: string
   }>
-  setEndpoints: (
-    endpoints: Array<{ endpoint: string; id_playground_endpoint: string }>
-  ) => void
+  setEndpoints: (endpoints: Array<{ endpoint: string; id_playground_endpoint: string }>) => void
   selectedEndpoint: string
   setSelectedEndpoint: (selectedEndpoint: string) => void
   isEndpointActive: boolean
@@ -56,9 +54,7 @@ interface PlaygroundStore {
   // ===========================
   messages: PlaygroundChatMessage[]
   setMessages: (
-    messages:
-      | PlaygroundChatMessage[]
-      | ((prev: PlaygroundChatMessage[]) => PlaygroundChatMessage[])
+    messages: PlaygroundChatMessage[] | ((prev: PlaygroundChatMessage[]) => PlaygroundChatMessage[])
   ) => void
 
   // ===========================
@@ -80,9 +76,7 @@ interface PlaygroundStore {
   setSessionId: (sessionId: string | null) => void
   sessionsData: SessionEntry[] | null
   setSessionsData: (
-    sessionsData:
-      | SessionEntry[]
-      | ((prev: SessionEntry[] | null) => SessionEntry[] | null)
+    sessionsData: SessionEntry[] | ((prev: SessionEntry[] | null) => SessionEntry[] | null)
   ) => void
   isSessionsLoading: boolean
   setIsSessionsLoading: (isSessionsLoading: boolean) => void
@@ -229,19 +223,13 @@ function useSessionManagement() {
   const setSessionId = usePlaygroundStore((s) => s.setSessionId)
   const sessionsData = usePlaygroundStore((s) => s.sessionsData)
   const setSessionsData = usePlaygroundStore((s) => s.setSessionsData)
-  const addLocalSession = usePlaygroundStore(
-    (s) => s.addLocallyCreatedSessionId
-  )
+  const addLocalSession = usePlaygroundStore((s) => s.addLocallyCreatedSessionId)
 
   const createNewSession = (id: string) => {
     setSessionId(id)
     addLocalSession(id)
     setSessionsData((prev) => [
-      {
-        session_id: id,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      },
+      { session_id: id, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
       ...(prev || [])
     ])
   }
@@ -304,7 +292,6 @@ create<PlaygroundStore>()(
 ## Boas Práticas
 
 1. **Seleção Seletiva**: Sempre use seletores para evitar re-renders
-
    ```typescript
    // ✅ Bom
    const messages = usePlaygroundStore((s) => s.messages)
@@ -314,7 +301,6 @@ create<PlaygroundStore>()(
    ```
 
 2. **Updaters Funcionais**: Use funções para atualizações baseadas em estado anterior
-
    ```typescript
    // ✅ Bom
    setMessages((prev) => [...prev, newMessage])
@@ -324,16 +310,14 @@ create<PlaygroundStore>()(
    ```
 
 3. **Hydration Check**: Sempre verifique hidratação para SSR
-
    ```typescript
    if (!hydrated) return <Loading />
    ```
 
 4. **Imutabilidade**: Sempre retorne novos objetos/arrays
-
    ```typescript
    // ✅ Bom
-   setSessionsData((prev) => (prev ? [...prev, newSession] : [newSession]))
+   setSessionsData((prev) => prev ? [...prev, newSession] : [newSession])
 
    // ❌ Ruim (mutação direta)
    sessionsData.push(newSession)

@@ -1,23 +1,19 @@
 # ADR-0002: Zustand for State Management
 
 ## Status
-
 Accepted
 
 ## Date
-
 2024-12-30
 
 ## Context
 
 The application needs client-side state management for:
-
 - UI state (modals, sidebars, theme)
 - Playground/CPR workflow state (multi-step forms, document data)
 - User preferences (persisted settings)
 
 Options considered:
-
 1. **Redux**: Industry standard, but verbose boilerplate
 2. **Zustand**: Minimal API, TypeScript-first, small bundle
 3. **Jotai**: Atomic state, similar to Recoil
@@ -59,13 +55,12 @@ export const usePlaygroundStore = create<PlaygroundStore>()(
 
         setCPRType: (type) => set({ cprType: type }),
         setEmitter: (data) => set({ emitter: data }),
-        resetPlayground: () =>
-          set({
-            cprType: null,
-            emitter: null,
-            commodity: null,
-            guarantees: []
-          })
+        resetPlayground: () => set({
+          cprType: null,
+          emitter: null,
+          commodity: null,
+          guarantees: []
+        })
       }),
       { name: 'playground-storage' }
     )

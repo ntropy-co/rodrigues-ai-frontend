@@ -1,11 +1,9 @@
 # ADR-0004: JWT Token Refresh Strategy
 
 ## Status
-
 Accepted
 
 ## Date
-
 2024-12-30
 
 ## Context
@@ -18,7 +16,6 @@ The application uses JWT-based authentication with the Python backend. Key requi
 4. **Security**: Tokens must not be accessible to JavaScript (XSS protection)
 
 Challenges:
-
 - Access tokens expire frequently
 - Users should stay logged in across page refreshes
 - Multiple concurrent requests might fail simultaneously on expiration

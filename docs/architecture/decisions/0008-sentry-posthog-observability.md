@@ -1,11 +1,9 @@
 # ADR-0008: Sentry + PostHog Observability Stack
 
 ## Status
-
 Accepted
 
 ## Date
-
 2024-12-30
 
 ## Context
@@ -18,7 +16,6 @@ Production applications require observability for:
 4. **Session Replay**: Debug issues by watching user sessions
 
 Options evaluated:
-
 - **Sentry**: Industry-leading error tracking and performance
 - **PostHog**: Open-source product analytics with feature flags
 - **Mixpanel**: User analytics (expensive at scale)
@@ -166,23 +163,21 @@ export function WebVitals() {
 
 ### Sampling Strategy
 
-| Metric         | Sample Rate | Rationale              |
-| -------------- | ----------- | ---------------------- |
-| Sentry Errors  | 100%        | All errors captured    |
-| Sentry Traces  | 10%         | Performance monitoring |
-| PostHog Events | 100%        | All analytics events   |
-| Session Replay | 10%         | Storage costs          |
+| Metric | Sample Rate | Rationale |
+|--------|-------------|-----------|
+| Sentry Errors | 100% | All errors captured |
+| Sentry Traces | 10% | Performance monitoring |
+| PostHog Events | 100% | All analytics events |
+| Session Replay | 10% | Storage costs |
 
 ### Key Dashboards
 
 **Sentry:**
-
 - Error frequency and trends
 - Performance (LCP, FID, CLS)
 - Release health
 
 **PostHog:**
-
 - User funnels (signup → CPR complete)
 - Feature usage heatmaps
 - Session recordings for debugging

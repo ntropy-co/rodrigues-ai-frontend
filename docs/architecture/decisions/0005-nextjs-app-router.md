@@ -1,11 +1,9 @@
 # ADR-0005: Next.js App Router Architecture
 
 ## Status
-
 Accepted
 
 ## Date
-
 2024-12-30
 
 ## Context
@@ -103,7 +101,6 @@ export function ClientComponent({ data }) {
 ### Current Usage
 
 Most pages are Client Components (`'use client'`) due to:
-
 - Heavy interactivity (forms, wizards)
 - Authentication context usage
 - Real-time updates and polling
@@ -135,14 +132,14 @@ Most pages are Client Components (`'use client'`) due to:
 
 ## File Conventions
 
-| File            | Purpose                        |
-| --------------- | ------------------------------ |
-| `page.tsx`      | Route UI                       |
-| `layout.tsx`    | Shared layout wrapper          |
-| `loading.tsx`   | Loading UI (Suspense fallback) |
-| `error.tsx`     | Error UI (Error Boundary)      |
-| `not-found.tsx` | 404 UI                         |
-| `route.ts`      | API endpoint                   |
+| File | Purpose |
+|------|---------|
+| `page.tsx` | Route UI |
+| `layout.tsx` | Shared layout wrapper |
+| `loading.tsx` | Loading UI (Suspense fallback) |
+| `error.tsx` | Error UI (Error Boundary) |
+| `not-found.tsx` | 404 UI |
+| `route.ts` | API endpoint |
 
 ## References
 

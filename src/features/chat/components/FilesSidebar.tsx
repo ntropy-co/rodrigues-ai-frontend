@@ -1,6 +1,4 @@
-'use client'
-
-import { memo, useCallback } from 'react'
+import { memo, useCallback, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { useFilesSidebarStore } from '@/features/chat'
 import { useChatFiles } from '../hooks/useChatFiles'
@@ -219,7 +217,10 @@ const FileItem = memo(function FileItem({
   onDownload: (fileId: string) => void
   isGenerated?: boolean
 }) {
-  const Icon = getFileIcon(file.fileExtension)
+  const Icon = useMemo(
+    () => getFileIcon(file.fileExtension),
+    [file.fileExtension]
+  )
 
   const handleClick = useCallback(() => {
     onDownload(file.id)

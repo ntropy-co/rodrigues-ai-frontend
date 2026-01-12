@@ -99,7 +99,22 @@ export const useChatActions = () => {
         }
 
         const data = await response.json()
-        return data.messages || []
+
+        // Map backend response to frontend format
+        const mappedMessages: PlaygroundChatMessage[] = (data.messages || [])
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .map((msg: any) => ({
+            ...msg,
+            // Fix role mismatch (backend returns 'assistant', frontend expects 'agent')
+            role: msg.role === 'assistant' ? 'agent' : msg.role,
+            // Fix date format (backend returns ISO string, frontend expects Unix timestamp in seconds)
+            created_at:
+              typeof msg.created_at === 'string'
+                ? Math.floor(new Date(msg.created_at).getTime() / 1000)
+                : msg.created_at
+          }))
+
+        return mappedMessages
       } catch (error) {
         console.error('Error fetching chat history:', error)
         throw error
