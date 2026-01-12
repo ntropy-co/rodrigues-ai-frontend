@@ -39,13 +39,13 @@ export interface StreamChatRequest {
 import * as fs from 'fs'
 import * as path from 'path'
 
-function logDebug(message: string, data?: any) {
+function logDebug(message: string, data?: unknown) {
   const logFile = path.join(process.cwd(), 'debug_log.txt')
   const timestamp = new Date().toISOString()
   const logEntry = `[${timestamp}] ${message} ${data ? JSON.stringify(data, null, 2) : ''}\n`
   try {
     fs.appendFileSync(logFile, logEntry)
-  } catch (e) {
+  } catch {
     // ignore
   }
 }

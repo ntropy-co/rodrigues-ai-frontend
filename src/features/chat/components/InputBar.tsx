@@ -374,17 +374,6 @@ export function InputBar({
     }
   }
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const newFiles = Array.from(e.target.files)
-      setAttachments((prev) => [...prev, ...newFiles])
-
-      if (onFileSelect) {
-        newFiles.forEach((f) => onFileSelect(f))
-      }
-    }
-  }
-
   const removeAttachment = (index: number) => {
     setAttachments((prev) => prev.filter((_, i) => i !== index))
   }
@@ -470,7 +459,7 @@ export function InputBar({
 
     setUploadingFiles((prev) => [
       ...prev,
-      ...newUploads.map(({ file, ...rest }) => rest)
+      ...newUploads.map(({ ...rest }) => rest)
     ])
 
     // Process each file
@@ -705,7 +694,7 @@ export function InputBar({
             </motion.div>
           )}
 
-          {/* Attach Menu Dropdown - Positioned relative to the 3D container, or float it? 
+          {/* Attach Menu Dropdown - Positioned relative to the 3D container, or float it?
               Ideally it should be outside or on top. We'll put it in a motion div that floats.
           */}
           <AnimatePresence>

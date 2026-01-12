@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
 import { type PlaygroundChatMessage, type SessionEntry } from '@/features/chat'
+import { type Project } from '../api'
 
 interface Agent {
   value: string
@@ -57,6 +58,12 @@ interface PlaygroundStore {
       | SessionEntry[]
       | ((prevSessions: SessionEntry[] | null) => SessionEntry[] | null)
   ) => void
+  projectsData: Project[] | null
+  setProjectsData: (
+    projectsData:
+      | Project[]
+      | ((prevProjects: Project[] | null) => Project[] | null)
+  ) => void
   isSessionsLoading: boolean
   setIsSessionsLoading: (isSessionsLoading: boolean) => void
   locallyCreatedSessionIds: string[]
@@ -107,6 +114,14 @@ export const usePlaygroundStore = create<PlaygroundStore>()(
             typeof sessionsData === 'function'
               ? sessionsData(state.sessionsData)
               : sessionsData
+        })),
+      projectsData: null,
+      setProjectsData: (projectsData) =>
+        set((state) => ({
+          projectsData:
+            typeof projectsData === 'function'
+              ? projectsData(state.projectsData)
+              : projectsData
         })),
       isSessionsLoading: false,
       setIsSessionsLoading: (isSessionsLoading) =>

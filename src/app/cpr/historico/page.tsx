@@ -37,16 +37,6 @@ export default function CPRHistoricoPage() {
     refetch
   } = useCPRHistory()
 
-  if (!FEATURE_FLAGS.CPR_HISTORY) {
-    return null // Evitar flash de conteúdo
-  }
-
-  // Check if any filter is active
-  const hasFilters =
-    (filters.type && filters.type !== 'all') ||
-    (filters.status && filters.status !== 'all') ||
-    Boolean(filters.commodity)
-
   // Handle view item
   const handleView = useCallback(
     (item: CPRHistoryItem) => {
@@ -93,6 +83,16 @@ export default function CPRHistoricoPage() {
   const handleClearFilters = useCallback(() => {
     setFilters({})
   }, [setFilters])
+
+  if (!FEATURE_FLAGS.CPR_HISTORY) {
+    return null // Evitar flash de conteúdo
+  }
+
+  // Check if any filter is active
+  const hasFilters =
+    (filters.type && filters.type !== 'all') ||
+    (filters.status && filters.status !== 'all') ||
+    Boolean(filters.commodity)
 
   return (
     <div className="min-h-screen bg-sand-100 dark:bg-verity-950">

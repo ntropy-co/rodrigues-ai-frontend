@@ -6,7 +6,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 import Underline from '@tiptap/extension-underline'
 import TextAlign from '@tiptap/extension-text-align'
 import Highlight from '@tiptap/extension-highlight'
-import { useEffect, useCallback } from 'react'
+import { useEffect } from 'react'
 import {
   Bold,
   Italic,
@@ -33,6 +33,36 @@ interface RichEditorProps {
   onChange: (content: string) => void
   placeholder?: string
   className?: string
+}
+
+interface ToolbarButtonProps {
+  onClick: () => void
+  isActive?: boolean
+  icon: React.ComponentType<{ className?: string }>
+  title: string
+}
+
+function ToolbarButton({
+  onClick,
+  isActive,
+  icon: Icon,
+  title
+}: ToolbarButtonProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={title}
+      className={cn(
+        'flex h-8 w-8 items-center justify-center rounded-md transition-colors',
+        isActive
+          ? 'bg-verity-900 text-white'
+          : 'text-verity-600 hover:bg-sand-200 hover:text-verity-900'
+      )}
+    >
+      <Icon className="h-4 w-4" />
+    </button>
+  )
 }
 
 export function RichEditor({
@@ -77,35 +107,6 @@ export function RichEditor({
       editor.commands.setContent(content)
     }
   }, [content, editor])
-
-  const ToolbarButton = useCallback(
-    ({
-      onClick,
-      isActive,
-      icon: Icon,
-      title
-    }: {
-      onClick: () => void
-      isActive?: boolean
-      icon: React.ComponentType<{ className?: string }>
-      title: string
-    }) => (
-      <button
-        type="button"
-        onClick={onClick}
-        title={title}
-        className={cn(
-          'flex h-8 w-8 items-center justify-center rounded-md transition-colors',
-          isActive
-            ? 'bg-verity-900 text-white'
-            : 'text-verity-600 hover:bg-sand-200 hover:text-verity-900'
-        )}
-      >
-        <Icon className="h-4 w-4" />
-      </button>
-    ),
-    []
-  )
 
   if (!editor) {
     return (

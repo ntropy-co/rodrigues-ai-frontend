@@ -8,12 +8,10 @@
 ## 1. Navegação e Validação
 
 ### Cenário 1.1: Bloqueio de Avanço
-
 - [ ] **Ação**: Entre no Step 4 (Garantias) sem preencher nada e tente clicar em "Próximo".
 - [ ] **Resultado Esperado**: O botão deve estar desabilitado ou exibir erro de validação nos campos obrigatórios.
 
 ### Cenário 1.2: Persistência de Estado
-
 - [ ] **Ação**: Preencha o Step 4 e avance para o Step 5. Clique em "Voltar".
 - [ ] **Resultado Esperado**: Os dados preenchidos no Step 4 devem estar lá.
 
@@ -37,6 +35,6 @@
 
 - [ ] **Ação**: Aguardar geração.
 - [ ] **Resultado Esperado**:
-  - Mensagem de sucesso (Confetti ou Ícone Verde).
-  - Botão para "Baixar PDF" ou "Visualizar Minuta".
-  - Botão "Voltar ao Início" que reseta o wizard.
+    - Mensagem de sucesso (Confetti ou Ícone Verde).
+    - Botão para "Baixar PDF" ou "Visualizar Minuta".
+    - Botão "Voltar ao Início" que reseta o wizard.
