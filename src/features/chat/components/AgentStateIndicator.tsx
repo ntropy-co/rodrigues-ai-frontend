@@ -61,12 +61,13 @@ export function AgentStateIndicator({
 
   // Simulate sequence with proper cleanup
   useEffect(() => {
+    // Total sequence ~4.5s to match typical RAG + Generation latency
     const sequence: { state: AgentState; duration: number }[] = [
-      { state: 'thinking', duration: 1500 },
-      { state: 'searching', duration: 1800 },
-      { state: 'analyzing', duration: 2000 },
-      { state: 'summarizing', duration: 1200 },
-      { state: 'typing', duration: 8000 } // Remains indefinitely usually until replaced
+      { state: 'thinking', duration: 800 },
+      { state: 'searching', duration: 1200 },
+      { state: 'analyzing', duration: 1500 },
+      { state: 'summarizing', duration: 1000 },
+      { state: 'typing', duration: 8000 }
     ]
 
     let currentIndex = 0
@@ -124,7 +125,13 @@ export function AgentStateIndicator({
               ? { opacity: 0 }
               : { scale: 0.8, opacity: 0, rotateX: 90 }
           }
-          transition={{ duration: prefersReducedMotion ? 0.1 : 0.3 }}
+          transition={{
+            type: 'spring',
+            stiffness: 200,
+            damping: 20,
+            mass: 1,
+            duration: 0.5
+          }}
           className={cn(
             'relative flex h-8 w-8 items-center justify-center rounded-xl border shadow-sm backdrop-blur-sm',
             config.bg
@@ -146,7 +153,11 @@ export function AgentStateIndicator({
                   '0 0 0 8px rgba(0,0,0,0)'
                 ]
               }}
-              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              transition={{
+                duration: 2.5,
+                repeat: Infinity,
+                ease: 'easeInOut'
+              }}
             />
           )}
         </motion.div>
@@ -163,7 +174,11 @@ export function AgentStateIndicator({
             prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: -10 }
           }
           animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
-          transition={{ duration: prefersReducedMotion ? 0.1 : 0.2 }}
+          transition={{
+            type: 'spring',
+            stiffness: 300,
+            damping: 25
+          }}
           className={cn('text-sm font-medium', config.color)}
         >
           {config.label}

@@ -7,7 +7,7 @@ import { PlaygroundChatMessage } from '../types'
 import { RefreshIndicator } from './RefreshIndicator'
 import { EmptyState } from './EmptyState'
 import { MessageBubble } from './MessageBubble'
-import { TypingIndicator } from './TypingIndicator'
+import { AgentStateIndicator } from './AgentStateIndicator'
 import { usePullToRefresh } from '@/hooks/usePullToRefresh'
 import { MESSAGE_ROLES } from '@/lib/constants'
 import { toast } from 'sonner'
@@ -155,7 +155,7 @@ export function ChatArea({ messages, isStreaming, onRefresh }: ChatAreaProps) {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
                   >
-                    <TypingIndicator />
+                    <AgentStateIndicator />
                   </motion.div>
                 )}
 

@@ -32,7 +32,6 @@ export * from './components/RefreshIndicator'
 export * from './components/SourceCitation'
 export * from './components/StreamingText'
 export * from './components/SuggestionList'
-export * from './components/TypingIndicator'
 
 // Hooks
 export * from './hooks/useSessions'
