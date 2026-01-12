@@ -5,9 +5,9 @@ import withPWA from '@ducanh2912/next-pwa'
 import bundleAnalyzer from '@next/bundle-analyzer'
 
 const nextConfig: NextConfig = {
-  turbopack: {
-    root: __dirname
-  },
+  // Configuração turbopack vazia para evitar erro com plugins webpack
+  // Next.js 16 usa Turbopack por padrão, mas plugins podem adicionar webpack config
+  turbopack: {},
   devIndicators: false,
 
   // Security headers
