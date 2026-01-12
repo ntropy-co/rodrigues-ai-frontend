@@ -351,7 +351,7 @@ interface SidebarContentProps {
 // Inner content component to avoid duplication - memoized to prevent re-renders
 const SidebarContent = memo(function SidebarContent({
   searchQuery,
-  // setSearchQuery removed
+  setSearchQuery,
   onToggle,
   onNewConversation,
   activeConversationId,
