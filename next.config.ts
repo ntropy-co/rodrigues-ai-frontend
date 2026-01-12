@@ -1,12 +1,13 @@
 import type { NextConfig } from 'next'
 import withPWA from '@ducanh2912/next-pwa'
-import { withSentryConfig } from '@sentry/nextjs'
+// Temporariamente comentado para resolver erro middleware.js.nft.json no Vercel
+// import { withSentryConfig } from '@sentry/nextjs'
 import bundleAnalyzer from '@next/bundle-analyzer'
 
 const nextConfig: NextConfig = {
-  turbopack: {
-    root: __dirname
-  },
+  // Configuração turbopack vazia para evitar erro com plugins webpack
+  // Next.js 16 usa Turbopack por padrão, mas plugins podem adicionar webpack config
+  turbopack: {},
   devIndicators: false,
 
   // Security headers
@@ -196,35 +197,35 @@ const pwaConfig = withPWA({
 })
 
 // Sentry configuration for source maps upload
-const sentryOptions = {
-  // Organization and project slugs from Sentry
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-
-  // Auth token for uploading source maps
-  authToken: process.env.SENTRY_AUTH_TOKEN,
-
-  // Suppress logs unless in CI
-  silent: !process.env.CI,
-
-  // Hide source maps from browser devtools in production
-  hideSourceMaps: true,
-
-  // Bundle size optimizations
-  bundleSizeOptimizations: {
-    excludeDebugStatements: true
-  },
-
-  // Widen client file upload to help with file tracing issues
-  // This can help resolve issues with @vercel/nft and middleware.js.nft.json
-  widenClientFileUpload: true
-}
+// Temporariamente desabilitado para resolver erro middleware.js.nft.json no Vercel
+// TODO: Reabilitar quando o problema do Sentry com middleware for resolvido
+// const sentryOptions = {
+//   // Organization and project slugs from Sentry
+//   org: process.env.SENTRY_ORG,
+//   project: process.env.SENTRY_PROJECT,
+//
+//   // Auth token for uploading source maps
+//   authToken: process.env.SENTRY_AUTH_TOKEN,
+//
+//   // Suppress logs unless in CI
+//   silent: !process.env.CI,
+//
+//   // Hide source maps from browser devtools in production
+//   hideSourceMaps: true,
+//
+//   // Bundle size optimizations
+//   bundleSizeOptimizations: {
+//     excludeDebugStatements: true
+//   }
+// }
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true'
 })
 
-export default withSentryConfig(
-  withBundleAnalyzer(pwaConfig(nextConfig)),
-  sentryOptions
-)
+// Temporariamente removido withSentryConfig para resolver erro middleware.js.nft.json
+// export default withSentryConfig(
+//   withBundleAnalyzer(pwaConfig(nextConfig)),
+//   sentryOptions
+// )
+export default withBundleAnalyzer(pwaConfig(nextConfig))
