@@ -213,7 +213,11 @@ const sentryOptions = {
   // Bundle size optimizations
   bundleSizeOptimizations: {
     excludeDebugStatements: true
-  }
+  },
+
+  // Widen client file upload to help with file tracing issues
+  // This can help resolve issues with @vercel/nft and middleware.js.nft.json
+  widenClientFileUpload: true
 }
 
 const withBundleAnalyzer = bundleAnalyzer({
