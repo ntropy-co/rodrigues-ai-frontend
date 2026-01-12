@@ -44,3 +44,29 @@
 [2026-01-11T23:10:57.875Z] Authorization present: true
 [2026-01-11T23:10:57.875Z] Forwarding to: "https://api.verityagro.com/api/v1/chat/stream"
 [2026-01-11T23:10:58.960Z] Backend response status: 200
+[2026-01-12T00:05:57.568Z] [CHAT] --- NEW CHAT REQUEST --- 
+[2026-01-12T00:05:57.569Z] [CHAT] Request body: {
+  "message": "consegue me ajudar?",
+  "session_id": null
+}
+[2026-01-12T00:05:57.569Z] [CHAT] Forwarding to: "https://api.verityagro.com/api/v1/chat/"
+[2026-01-12T00:05:57.569Z] [CHAT] Session ID: 
+[2026-01-12T00:06:05.338Z] [CHAT] Backend response status: 500
+[2026-01-12T00:06:05.339Z] [CHAT] Backend error body: {
+  "detail": "Internal server error"
+}
+[2026-01-12T00:06:05.339Z] [CHAT] Returning error to client: "Internal server error"
+[2026-01-12T00:16:56.407Z] [CHAT] --- NEW CHAT REQUEST --- 
+[2026-01-12T00:16:56.408Z] [CHAT] Request body: {
+  "message": "oi",
+  "session_id": null
+}
+[2026-01-12T00:16:56.408Z] [CHAT] Forwarding to: "http://localhost:8000/api/v1/chat/"
+[2026-01-12T00:16:56.408Z] [CHAT] Session ID: 
+[2026-01-12T00:17:15.031Z] [CHAT] Backend response status: 200
+[2026-01-12T00:17:15.031Z] [CHAT] Success response: {
+  "text": "Sou especializada em CPR (Cédula de Produto Rural) e crédito agrícola. Posso ajudar com dúvidas sobre financiamento rural, garantias, ou operações de agronegócio. Como posso ajudar nesse contexto?",
+  "session_id": "s_61a9c68b5bc146209b2ff7441bea6382",
+  "message_id": "ff742acb-77f6-4116-af39-4d9d478993f0",
+  "sources": null
+}
