@@ -4,25 +4,35 @@
 const CANVAS_ENABLED = false
 const ENABLE_FILES_SIDEBAR = false
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { AnimatePresence } from 'framer-motion'
-import { ChatHeader } from './ChatHeader'
-import { MainContent } from './MainContent'
-import { InputBar } from './InputBar'
-import { ChatArea } from './ChatArea'
 import { FilesSidebar } from './FilesSidebar'
-import { ConversationsSidebar } from './ConversationsSidebar'
+import dynamic from 'next/dynamic'
+
+const VerityThread = dynamic(
+  () => import('./assistant-ui/VerityThread').then((mod) => mod.VerityThread),
+  { ssr: false }
+)
 import { CanvasPanel } from '@/features/canvas'
 import { ResizeHandle } from '@/features/canvas/components/ResizeHandle'
 import { usePlaygroundStore } from '../stores/playgroundStore'
 import { useLayoutStore } from '@/features/chat'
 import { useCanvasStore } from '@/features/canvas'
-import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 import { useChatActions } from '../hooks/useChatActions'
 import { useAIStreamHandler } from '../hooks/useAIStreamHandler'
 import { useAuth } from '@/contexts/AuthContext'
 import { cn } from '@/lib/utils'
+
+// shadcn sidebar
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger
+} from '@/components/ui/sidebar'
+import { AppSidebar } from '@/components/layout/AppSidebar'
+import { Separator } from '@/components/ui/separator'
+import { Hexagon } from 'lucide-react'
 
 // Flag global para garantir que initializePlayground só execute UMA vez
 let playgroundInitializationStarted = false
@@ -36,37 +46,22 @@ interface ChatLayoutProps {
 export function ChatLayout({ sessionId }: ChatLayoutProps) {
   const router = useRouter()
   const { user } = useAuth()
-  const [message, setMessage] = useState('')
-  const [hasMessages, setHasMessages] = useState(false)
   const [isLoadingSession, setIsLoadingSession] = useState(false)
-  const [stagedFiles, setStagedFiles] = useState<
-    Array<{ name: string; size: number; type: string; id: string }>
-  >([])
 
-  // Responsive layout hook
-  useResponsiveLayout()
-
-  // Layout store
-  const {
-    conversationsSidebar,
-    filesSidebar,
-    isMobile,
-    closeConversationsSidebar,
-    closeFilesSidebar
-  } = useLayoutStore()
+  // Layout store (mantém para files sidebar e canvas)
+  const { filesSidebar, isMobile, closeFilesSidebar } = useLayoutStore()
 
   // Canvas Store
   const { isOpen: isCanvasOpen, width: canvasWidth } = useCanvasStore()
 
-  const isConversationsOpen = conversationsSidebar === 'open'
   const isFilesOpen = filesSidebar === 'open'
 
-  const messages = usePlaygroundStore((state) => state.messages)
-  const isStreaming = usePlaygroundStore((state) => state.isStreaming)
   const currentSessionId = usePlaygroundStore((state) => state.sessionId)
   const locallyCreatedSessionIds = usePlaygroundStore(
     (state) => state.locallyCreatedSessionIds
   )
+  const messages = usePlaygroundStore((state) => state.messages)
+  const isStreaming = usePlaygroundStore((state) => state.isStreaming)
 
   const { initializePlayground, loadSessionById, clearChat } = useChatActions()
   const { handleStreamResponse } = useAIStreamHandler()
@@ -144,41 +139,22 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
     locallyCreatedSessionIds
   ])
 
-  // Verificar se há mensagens
-  useEffect(() => {
-    setHasMessages(messages.length > 0)
-  }, [messages])
+  const handleSendMessage = useCallback(
+    async (msg: string, files?: File[]) => {
+      if (!msg.trim() || isStreaming) return
 
-  const handleSendMessage = async (
-    msg: string,
-    files?: File[],
-    toolId?: string
-  ) => {
-    if ((!msg.trim() && stagedFiles.length === 0) || isStreaming) return
+      const { sessionId: currentSessionIdFromStore } =
+        usePlaygroundStore.getState()
 
-    const { sessionId: currentSessionIdFromStore } =
-      usePlaygroundStore.getState()
+      const sessionIdToUse = currentSessionIdFromStore || null
 
-    const sessionIdToUse = currentSessionIdFromStore || null
-
-    const allFiles = [
-      ...stagedFiles.map((f) => ({ name: f.name, size: f.size })),
-      ...(files || [])
-    ]
-
-    await handleStreamResponse(msg, allFiles, sessionIdToUse, toolId)
-    setMessage('')
-    setStagedFiles([])
-  }
-
-  const handleSuggestionClick = (suggestion: string) => {
-    setMessage(suggestion)
-    handleSendMessage(suggestion)
-  }
+      await handleStreamResponse(msg, files || [], sessionIdToUse)
+    },
+    [isStreaming, handleStreamResponse]
+  )
 
   const handleNewConversation = () => {
     clearChat()
-    setStagedFiles([])
     if (isDebug) {
       console.debug('[chat] new conversation, navigating to /chat', {
         from: typeof window !== 'undefined' ? window.location.pathname : 'ssr'
@@ -188,7 +164,6 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
   }
 
   const handleSelectConversation = (id: string) => {
-    setStagedFiles([])
     if (isDebug) {
       console.debug('[chat] select conversation', {
         from: typeof window !== 'undefined' ? window.location.pathname : 'ssr',
@@ -198,91 +173,39 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
     router.push(`/chat/${id}`)
   }
 
-  // Helper to render the InputBar with common props
-  const renderInputBar = () => (
-    <InputBar
-      onSendMessage={handleSendMessage}
-      message={message}
-      setMessage={setMessage}
-      isLoading={isStreaming}
-      disabled={isLoadingSession}
-      userId={user?.id}
-      sessionId={currentSessionId || undefined}
-      externalAttachments={stagedFiles}
-      onRemoveExternalAttachment={(id) => {
-        setStagedFiles((prev) => prev.filter((f) => f.id !== id))
-      }}
-      onSessionCreated={(newSessionId) => {
-        router.push(`/chat/${newSessionId}`)
-      }}
-      onFileUploaded={(documentId, uploadedSessionId, fileInfo) => {
-        if (fileInfo) {
-          setStagedFiles((prev) => [
-            ...prev,
-            {
-              id: documentId,
-              name: fileInfo.name,
-              size: fileInfo.size,
-              type: fileInfo.type || ''
-            }
-          ])
-        }
-
-        if (uploadedSessionId && uploadedSessionId !== currentSessionId) {
-          router.push(`/chat/${uploadedSessionId}`)
-        }
-      }}
-    />
-  )
-
   return (
-    <div className="flex h-screen w-screen flex-col bg-sand-100 dark:bg-background">
-      <ChatHeader />
+    <SidebarProvider>
+      <AppSidebar
+        activeConversationId={currentSessionId}
+        onSelectConversation={handleSelectConversation}
+        onNewConversation={handleNewConversation}
+      />
+      <SidebarInset>
+        {/* Header simplificado */}
+        <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b border-sand-300 bg-sand-200/95 px-4 backdrop-blur-xl">
+          <SidebarTrigger className="-ml-1" />
+          <Separator orientation="vertical" className="mr-2 h-4" />
+          <span className="font-display text-lg font-semibold tracking-tight text-verity-950">
+            Verity Agro
+          </span>
+        </header>
 
-      <div className="relative flex flex-1 overflow-hidden">
-        <ConversationsSidebar
-          isOpen={isConversationsOpen && !isMobile}
-          onToggle={closeConversationsSidebar}
-          activeConversationId={currentSessionId}
-          onSelectConversation={handleSelectConversation}
-          onNewConversation={handleNewConversation}
-        />
-
-        <AnimatePresence>
-          {isMobile && isConversationsOpen && (
-            <ConversationsSidebar
-              isOpen={true}
-              overlay={true}
-              onToggle={closeConversationsSidebar}
-              activeConversationId={currentSessionId}
-              onSelectConversation={(id) => {
-                handleSelectConversation(id)
-                closeConversationsSidebar()
-              }}
-              onNewConversation={() => {
-                handleNewConversation()
-                closeConversationsSidebar()
-              }}
-            />
-          )}
-        </AnimatePresence>
-
-        <div
-          className={cn(
-            'relative flex h-full flex-col bg-sand-200 transition-all duration-300 ease-in-out',
-            isCanvasOpen && !isMobile ? 'border-r border-verity-200' : ''
-          )}
-          style={{
-            flex:
-              isCanvasOpen && !isMobile
-                ? `0 0 ${100 - canvasWidth}%`
-                : '1 1 0%',
-            maxWidth:
-              isCanvasOpen && !isMobile ? `${100 - canvasWidth}%` : '100%'
-          }}
-        >
-          {/* Scrollable Content Area */}
-          <div className="flex flex-1 flex-col overflow-y-auto">
+        {/* Main content area */}
+        <div className="relative flex flex-1 overflow-hidden">
+          <div
+            className={cn(
+              'relative flex h-full w-full flex-col transition-all duration-300 ease-in-out',
+              isCanvasOpen && !isMobile ? 'border-r border-verity-200' : ''
+            )}
+            style={{
+              flex:
+                isCanvasOpen && !isMobile
+                  ? `0 0 ${100 - canvasWidth}%`
+                  : '1 1 0%',
+              maxWidth:
+                isCanvasOpen && !isMobile ? `${100 - canvasWidth}%` : '100%'
+            }}
+          >
             {isLoadingSession ? (
               <div className="flex h-full items-center justify-center">
                 <div className="text-center">
@@ -290,89 +213,61 @@ export function ChatLayout({ sessionId }: ChatLayoutProps) {
                   <p className="text-verity-700">Carregando conversa...</p>
                 </div>
               </div>
-            ) : hasMessages ? (
-              <>
-                <ChatArea messages={messages} isStreaming={isStreaming} />
-                {/* Spacer to allow scrolling above InputBar */}
-                <div className="h-40" />
-              </>
             ) : (
-              <MainContent
-                onSuggestionClick={handleSuggestionClick}
-                inputBar={renderInputBar()}
-              />
+              <VerityThread onSendMessage={handleSendMessage} />
             )}
           </div>
 
-          {/* Sticky Bottom Input Bar - Always visible at bottom when has messages */}
-          {hasMessages && (
+          {/* Canvas Panel */}
+          {CANVAS_ENABLED && isCanvasOpen && !isMobile && (
+            <ResizeHandle
+              onResize={(delta) => {
+                const newWidth = Math.min(
+                  80,
+                  Math.max(20, canvasWidth + (delta / window.innerWidth) * 100)
+                )
+                useCanvasStore.getState().setWidth(newWidth)
+              }}
+            />
+          )}
+
+          {CANVAS_ENABLED && isCanvasOpen && (
             <div
-              className="sticky bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-sand-200 via-sand-200/80 to-transparent pb-6 pt-10"
+              className={cn(
+                'relative z-20 h-full bg-sand-100 shadow-xl transition-all duration-500 ease-out',
+                isMobile ? 'absolute inset-0 w-full' : ''
+              )}
               style={{
-                position: 'fixed',
-                bottom: 0,
-                left: isConversationsOpen && !isMobile ? '256px' : '0',
-                right:
-                  isCanvasOpen && !isMobile
-                    ? `${canvasWidth}%`
-                    : isFilesOpen && !isMobile
-                      ? '320px'
-                      : '0'
+                width: isMobile ? '100%' : `${canvasWidth}%`
               }}
             >
-              {renderInputBar()}
+              <CanvasPanel />
             </div>
           )}
+
+          {/* Files Sidebar */}
+          {ENABLE_FILES_SIDEBAR && (
+            <>
+              <FilesSidebar
+                conversationId={currentSessionId || null}
+                isOpen={isFilesOpen && !isMobile}
+                onClose={closeFilesSidebar}
+              />
+
+              <AnimatePresence>
+                {isMobile && isFilesOpen && (
+                  <FilesSidebar
+                    conversationId={currentSessionId || null}
+                    isOpen={true}
+                    overlay={true}
+                    onClose={closeFilesSidebar}
+                  />
+                )}
+              </AnimatePresence>
+            </>
+          )}
         </div>
-
-        {/* Canvas Panel - Always render when open (takes priority over FilesSidebar) */}
-        {CANVAS_ENABLED && isCanvasOpen && !isMobile && (
-          <ResizeHandle
-            onResize={(delta) => {
-              const newWidth = Math.min(
-                80,
-                Math.max(20, canvasWidth + (delta / window.innerWidth) * 100)
-              )
-              useCanvasStore.getState().setWidth(newWidth)
-            }}
-          />
-        )}
-
-        {CANVAS_ENABLED && isCanvasOpen && (
-          <div
-            className={cn(
-              'relative z-20 h-full bg-sand-100 shadow-xl transition-all duration-500 ease-out',
-              isMobile ? 'absolute inset-0 w-full' : ''
-            )}
-            style={{
-              width: isMobile ? '100%' : `${canvasWidth}%`
-            }}
-          >
-            <CanvasPanel />
-          </div>
-        )}
-
-        {ENABLE_FILES_SIDEBAR && (
-          <>
-            <FilesSidebar
-              conversationId={currentSessionId || null}
-              isOpen={isFilesOpen && !isMobile}
-              onClose={closeFilesSidebar}
-            />
-
-            <AnimatePresence>
-              {isMobile && isFilesOpen && (
-                <FilesSidebar
-                  conversationId={currentSessionId || null}
-                  isOpen={true}
-                  overlay={true}
-                  onClose={closeFilesSidebar}
-                />
-              )}
-            </AnimatePresence>
-          </>
-        )}
-      </div>
-    </div>
+      </SidebarInset>
+    </SidebarProvider>
   )
 }

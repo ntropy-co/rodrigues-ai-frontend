@@ -7,7 +7,9 @@ import bundleAnalyzer from '@next/bundle-analyzer'
 const nextConfig: NextConfig = {
   // Configuração turbopack vazia para evitar erro com plugins webpack
   // Next.js 16 usa Turbopack por padrão, mas plugins podem adicionar webpack config
-  turbopack: {},
+  turbopack: {
+    root: process.cwd()
+  },
   devIndicators: false,
 
   // Security headers

@@ -105,10 +105,22 @@ export const useAIStreamHandler = () => {
     setMessages((prevMessages) => {
       const newMessages = [...prevMessages]
       const lastMessage = newMessages[newMessages.length - 1]
+
       if (lastMessage && lastMessage.role === 'agent') {
         lastMessage.streamingError = true
+        return newMessages
+      } else {
+        // Create error message if no agent message exists yet
+        return [
+          ...newMessages,
+          {
+            role: 'agent',
+            content: '',
+            streamingError: true,
+            created_at: Math.floor(Date.now() / 1000)
+          }
+        ]
       }
-      return newMessages
     })
   }, [setMessages])
 
@@ -120,10 +132,22 @@ export const useAIStreamHandler = () => {
       setMessages((prevMessages) => {
         const newMessages = [...prevMessages]
         const lastMessage = newMessages[newMessages.length - 1]
+
         if (lastMessage && lastMessage.role === 'agent') {
+          // Append to existing agent message
           lastMessage.content = (lastMessage.content || '') + chunk
+          return newMessages
+        } else {
+          // Create new agent message (first chunk)
+          return [
+            ...newMessages,
+            {
+              role: 'agent',
+              content: chunk,
+              created_at: Math.floor(Date.now() / 1000)
+            }
+          ]
         }
-        return newMessages
       })
     },
     [setMessages]
@@ -333,14 +357,6 @@ export const useAIStreamHandler = () => {
         files: files?.map((f) => ({ name: f.name, size: f.size }))
       })
 
-      // Add placeholder for agent response
-      addMessage({
-        role: 'agent',
-        content: '',
-        streamingError: false,
-        created_at: Math.floor(Date.now() / 1000) + 1
-      })
-
       // Determine session ID to use
       const sessionIdToUse =
         explicitSessionId !== undefined ? explicitSessionId : sessionId
@@ -437,16 +453,12 @@ export const useAIStreamHandler = () => {
             }
           }
 
-          // Update agent message with response
-          setMessages((prevMessages) => {
-            const newMessages = [...prevMessages]
-            const lastMessage = newMessages[newMessages.length - 1]
-            if (lastMessage && lastMessage.role === 'agent') {
-              lastMessage.content = data.text
-              lastMessage.id = data.message_id
-              lastMessage.created_at = Math.floor(Date.now() / 1000)
-            }
-            return newMessages
+          // Add agent message with response
+          addMessage({
+            role: 'agent',
+            content: data.text,
+            id: data.message_id,
+            created_at: Math.floor(Date.now() / 1000)
           })
         }
       } catch (error) {
